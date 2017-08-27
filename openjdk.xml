@@ -1,0 +1,168 @@
+<project>
+    <shortName>OpenJDK</shortName>
+    <fullName>AdoptOpenJDK</fullName>
+    <version>jdk8u144-b01</version>
+    <logoImage>logo.png</logoImage>
+    <splashImage>splash.png</splashImage>
+    <componentList>
+        <component>
+            <name>default</name>
+            <description>Tarball</description>
+            <canBeEdited>1</canBeEdited>
+            <requiredSize></requiredSize>
+            <selected>1</selected>
+            <show>1</show>
+            <folderList>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfiles</name>
+                    <platforms>all</platforms>
+                    <shortcutList>
+                        <shortcut>
+                            <comment>Uninstall</comment>
+                            <exec>${installdir}/${uninstallerName}</exec>
+                            <icon></icon>
+                            <name>Uninstall ${product_fullname}</name>
+                            <path>${installdir}</path>
+                            <platforms>all</platforms>
+                            <runAsAdmin>0</runAsAdmin>
+                            <runInTerminal>0</runInTerminal>
+                            <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                            <windowsExecArgs></windowsExecArgs>
+                            <windowsIcon></windowsIcon>
+                            <windowsPath>${installdir}</windowsPath>
+                        </shortcut>
+                    </shortcutList>
+                </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfileslinux</name>
+                    <platforms>linux</platforms>
+                </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfileswindows</name>
+                    <platforms>windows</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>windows/OpenJDK.zip</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfilesosx</name>
+                    <platforms>osx</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>osx/OpenJDK.tar.gz</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+            </folderList>
+            <startMenuShortcutList>
+                <startMenuShortcut>
+                    <comment>Uninstall ${product_fullname}</comment>
+                    <name>Uninstall ${product_fullname}</name>
+                    <runAsAdmin>0</runAsAdmin>
+                    <runInTerminal>0</runInTerminal>
+                    <windowsExec>${installdir}/${uninstallerName}.exe</windowsExec>
+                    <windowsExecArgs></windowsExecArgs>
+                    <windowsIcon></windowsIcon>
+                    <windowsPath>${installdir}/</windowsPath>
+                </startMenuShortcut>
+            </startMenuShortcutList>
+        </component>
+    </componentList>
+    <readyToInstallActionList>
+        <if>
+            <actionList>
+                <removeDirectoryFromPath>
+                    <path>${installDir}/${product_version}/bin</path>
+                </removeDirectoryFromPath>
+            </actionList>
+            <conditionRuleList>
+                <isTrue>
+                    <value>${defaultJVM}</value>
+                </isTrue>
+            </conditionRuleList>
+        </if>
+    </readyToInstallActionList>
+    <postInstallationActionList>
+        <if>
+            <actionList>
+                <unzip>
+                    <destinationDirectory>${installDir}/</destinationDirectory>
+                    <zipFile>${installDir}/OpenJDK.zip</zipFile>
+                </unzip>
+                <deleteFile>
+                    <path>${installDir}/OpenJDK.zip</path>
+                </deleteFile>
+
+                <!-- Some Actions related to Windows -->
+            </actionList>
+            <conditionRuleList>
+                <platformTest type="windows"/>
+            </conditionRuleList>
+            <elseActionList>
+                <runProgram>
+                    <program>tar</program>
+                    <programArguments>-xzf "${installDir}/OpenJDK.tar.gz" -C "${installdir}"</programArguments>
+                    <progressText>Extracting tarball</progressText>
+                </runProgram>
+                <deleteFile>
+                    <path>${installDir}/OpenJDK.tar.gz</path>
+                </deleteFile>
+
+                <!-- Some Actions not related to Windows -->
+            </elseActionList>
+        </if>
+        <if>
+            <actionList>
+                <addDirectoryToPath>
+                    <insertAt>beginning</insertAt>
+                    <path>${installDir}/${product_version}/bin</path>
+                    <progressText>Adding to path</progressText>
+                </addDirectoryToPath>
+            </actionList>
+            <conditionRuleList>
+                <isTrue>
+                    <value>${defaultJVM}</value>
+                </isTrue>
+            </conditionRuleList>
+        </if>
+    </postInstallationActionList>
+    <enableRollback>0</enableRollback>
+    <enableSslSupport>1</enableSslSupport>
+    <enableTimestamp>1</enableTimestamp>
+    <saveRelativePaths>1</saveRelativePaths>
+    <vendor>AdoptOpenJDK</vendor>
+    <windows64bitMode>1</windows64bitMode>
+    <parameterList>
+        <directoryParameter>
+            <name>installdir</name>
+            <description>Installer.Parameter.installdir.description</description>
+            <explanation>Installer.Parameter.installdir.explanation</explanation>
+            <value>${platform_install_prefix}/${product_shortname}</value>
+            <default>${platform_install_prefix}/${product_shortname}</default>
+            <allowEmptyValue>0</allowEmptyValue>
+            <cliOptionName>prefix</cliOptionName>
+            <mustBeWritable>1</mustBeWritable>
+            <mustExist>0</mustExist>
+            <width>30</width>
+        </directoryParameter>
+        <booleanParameter>
+            <name>defaultJVM</name>
+            <title>Default JVM</title>
+            <description>Would you like to install this Java as the default JVM on the machine?</description>
+            <explanation>Setting default JVM</explanation>
+            <value>defaultJVM</value>
+            <default>true</default>
+        </booleanParameter>
+    </parameterList>
+</project>
+
