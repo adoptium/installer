@@ -140,8 +140,8 @@
     <enableRollback>0</enableRollback>
     <enableSslSupport>1</enableSslSupport>
     <enableTimestamp>1</enableTimestamp>
-    <osxApplicationBundleIcon>/logo.icns</osxApplicationBundleIcon>
-    <osxUninstallerApplicationBundleIcon>/logo.icns</osxUninstallerApplicationBundleIcon>
+    <osxApplicationBundleIcon>logo.icns</osxApplicationBundleIcon>
+    <osxUninstallerApplicationBundleIcon>logo.icns</osxUninstallerApplicationBundleIcon>
     <saveRelativePaths>1</saveRelativePaths>
     <vendor>AdoptOpenJDK</vendor>
     <windows64bitMode>1</windows64bitMode>
