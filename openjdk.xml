@@ -141,6 +141,13 @@
             </conditionRuleList>
         </if>
     </postInstallationActionList>
+    <postUninstallationActionList>
+        <deleteFile>
+            <explanation>Removing ${installDir}/${product_version}</explanation>
+            <path>${installDir}/${product_version}</path>
+            <progressText>Removing ${installDir}/${product_version}</progressText>
+        </deleteFile>
+    </postUninstallationActionList>
     <createOsxBundleDmg>1</createOsxBundleDmg>
     <enableRollback>0</enableRollback>
     <enableSslSupport>1</enableSslSupport>
