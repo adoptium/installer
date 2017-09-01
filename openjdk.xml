@@ -153,6 +153,9 @@
     <enableSslSupport>1</enableSslSupport>
     <enableTimestamp>1</enableTimestamp>
     <osxApplicationBundleIcon>logo.icns</osxApplicationBundleIcon>
+    <osxApplicationBundleIdentifier>com.adoptopenjdk.installer</osxApplicationBundleIdentifier>
+    <osxSigningPkcs12File>osx.p12</osxSigningPkcs12File>
+    <osxSigningPkcs12Password>${OSX_SIGN_PASSWORD}</osxSigningPkcs12Password>
     <osxUninstallerApplicationBundleIcon>logo.icns</osxUninstallerApplicationBundleIcon>
     <saveRelativePaths>1</saveRelativePaths>
     <vendor>AdoptOpenJDK</vendor>
