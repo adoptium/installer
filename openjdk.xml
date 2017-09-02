@@ -2,6 +2,7 @@
     <shortName>OpenJDK</shortName>
     <fullName>AdoptOpenJDK</fullName>
     <version>jdk8u144-b01</version>
+    <leftImage>side-logo.png</leftImage>
     <logoImage>logo.png</logoImage>
     <splashImage>splash.png</splashImage>
     <componentList>
