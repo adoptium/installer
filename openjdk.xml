@@ -159,8 +159,12 @@
     <osxSigningPkcs12Password>${OSX_SIGN_PASSWORD}</osxSigningPkcs12Password>
     <osxUninstallerApplicationBundleIcon>logo.icns</osxUninstallerApplicationBundleIcon>
     <saveRelativePaths>1</saveRelativePaths>
+    <signWindowsUninstaller>1</signWindowsUninstaller>
     <vendor>AdoptOpenJDK</vendor>
     <windows64bitMode>1</windows64bitMode>
+    <windowsSigningPkcs12File>windows.p12</windowsSigningPkcs12File>
+    <windowsSigningPkcs12Password>${WINDOWS_SIGN_PASSWORD}</windowsSigningPkcs12Password>
+    <windowsSigningTimestampServer>timestamp.digicert.com</windowsSigningTimestampServer>
     <parameterList>
         <directoryParameter>
             <name>installdir</name>
