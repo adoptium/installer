@@ -80,6 +80,23 @@
                         </distributionFile>
                     </distributionFileList>
                 </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfiles390s</name>
+                    <platforms>linux-s390x</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>linux_s390x/OpenJDK.tar.gz</origin>
+                        </distributionFile>
+                    </distributionFileList>
+                </folder>
+                <folder>
+                    <description>Program Files</description>
+                    <destination>${installdir}</destination>
+                    <name>programfilesppc64le</name>
+                    <platforms>linux-ppc</platforms>
+                </folder>
             </folderList>
             <startMenuShortcutList>
                 <startMenuShortcut>

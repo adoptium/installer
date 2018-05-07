@@ -2,3 +2,5 @@ osx/
 windows/
 linux_x64/
 aix/
+linux_s390x/
+linux_ppc64le/
