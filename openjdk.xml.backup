@@ -96,6 +96,11 @@
                     <destination>${installdir}</destination>
                     <name>programfilesppc64le</name>
                     <platforms>linux-ppc</platforms>
+                    <distributionFileList>
+                        <distributionFile>
+                            <origin>linux_ppc64le/OpenJDK.tar.gz</origin>
+                        </distributionFile>
+                    </distributionFileList>
                 </folder>
             </folderList>
             <startMenuShortcutList>
