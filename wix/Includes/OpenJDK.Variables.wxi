@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+  <!-- Setup UI strings. -->
+  <?if $(env.PLATFORM)="x86"?>
+    <?define ProgramFilesFolder="ProgramFilesFolder" ?>
+    <?define Win64="no" ?>
+    <?define Arch="(x86)" ?>
+  <?else?>
+    <?define ProgramFilesFolder="ProgramFiles64Folder" ?>
+    <?define Win64="yes" ?>
+    <?define Arch="(x64)" ?>
+  <?endif?>
+
+  <?if $(env.PRODUCT_CATEGORY)="jre"?>
+    <?define ProductCategory="Java Runtime Environment" ?>
+  <?else?>
+    <?define ProductCategory="Java Development Kit" ?>
+  <?endif?>
+
+  <?define ProductVersion="$(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion).$(var.ProductPatchVersion)" ?>
+  <?define ProductName="!(loc.ProductName)" ?>
+  <?define ProductNameWithVersion="!(loc.ProductName) $(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion) $(var.Arch)" ?>
+  <?define ProductLanguage="!(loc.ProductLanguage)" ?>
+  <?define ProductManufacturer="AdoptOpenJDK" ?>
+  <?define AppFolder="jdk-$(var.ProductVersion)" ?>
+  
+	<!-- Static settings, DO NOT TOUCH or upgrades will break! -->
+	<?define ProductUpgradeCode="{D05EE616-B211-4AF7-8D14-56C38C9E7E24}" ?>
+	<?define RTMProductVersion="1.0.0" ?>
+</Include>
