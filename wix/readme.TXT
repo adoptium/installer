@@ -6,7 +6,7 @@ Requirements for build environment:
 3. Digital signature service if the MSI should be signed (optional).
 
 
-How to upgrade to a new Skype Version:
+How to upgrade to a new OpenJDK Version:
 ========================================
 
 1. Download latest OpenJDK zip.
