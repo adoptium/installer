@@ -23,8 +23,8 @@ cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\WiLangId.vbs
 cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\wisubstg.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.msi ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst %LANGID%
 cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\wisubstg.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.msi
 
-REM del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi"
-REM del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst"
+del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi"
+del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst"
 goto exit
 
 :failed
