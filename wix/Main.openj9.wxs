@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <?include $(sys.CURRENTDIR)Includes\$(var.ProductSku).Variables.wxi ?>
+
+  <Product Id="$(var.ProductId)" Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)">
+    <Package Description="!(loc.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" InstallerVersion="200" Compressed="yes" />
+    <Media Id="1" Cabinet="Data1.cab" EmbedCab="yes" CompressionLevel="high" />
+    <Property Id="ARPHELPLINK" Value="!(loc.ProductHelpLink)" />
+    <Property Id="ARPURLINFOABOUT" Value="!(loc.ProductUrlInfoAbout)" />
+    <Property Id="ARPURLUPDATEINFO" Value="!(loc.ProductUrlUpdateInfo)" />
+    <Property Id="ALLUSERS" Value="1" />
+    <Property Id="ARPPRODUCTICON" Value="logo.ico" />
+    <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
+    <Icon Id="logo.ico" SourceFile="$(var.SetupResourcesDir)\logo.ico" />
+
+    <!-- Windows 7 and later is required. -->
+    <Condition Message="!(loc.OSVersionRequired)"><![CDATA[Installed OR VersionNT >= 601]]></Condition>
+    <Condition Message="!(loc.ProductIsNotSupportedOnItanium)"><![CDATA[(Not ITANIUM = "Itanium") AND (Not ITANIUM = "Itanium 2")]]></Condition>
+
+    <!--
+      We may need to be able to install JDK in parallel. Therefore an in-place
+      upgrade need to be disabled. Keep the code as reference in case we allow
+      this in future or with JRE.
+		<Upgrade Id="$(var.ProductUpgradeCode)">
+			<UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWPRODUCTFOUND" IncludeMinimum="no" />
+			<UpgradeVersion Minimum="$(var.RTMProductVersion)" IncludeMinimum="yes" Maximum="$(var.ProductVersion)" Property="UPGRADEFOUND" IncludeMaximum="no" MigrateFeatures="yes" />
+		</Upgrade>
+		<CustomAction Id="PreventDowngrading" Error="!(loc.NewerVersionInstalled)" />
+
+		<InstallExecuteSequence>
+			<Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
+			<RemoveExistingProducts After="InstallFinalize" />
+		</InstallExecuteSequence>
+		<InstallUISequence>
+			<Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
+		</InstallUISequence>
+    -->
+    
+    <!-- Define the directory structure -->
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <?if $(env.Platform)=x86?>
+				<Directory Id="ProgramFilesFolder">
+          <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+            <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+          </Directory>
+				</Directory>
+			<?else?>
+				<Directory Id="ProgramFiles64Folder">
+          <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+            <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+          </Directory>
+				</Directory>
+			<?endif?>
+    </Directory>
+
+    <!--
+      RemoveFolderEx requires that we "remember" the path for uninstall.
+      This workaround is only required for the uninstall.
+    -->
+    <Property Id="INSTALLDIR">
+      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="raw" Win64="$(var.Win64)" />
+    </Property>
+
+    <!-- Add the shortcuts to your installer package -->
+    <DirectoryRef Id="INSTALLDIR">
+      <Component Id="CleanupMainInstallDir" Guid="*">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Main" Type="integer" Value="1" />
+        <!-- We need to use INSTALLDIR variable here or RemoveFolderEx will not remove on "install". -->
+        <util:RemoveFolderEx On="uninstall" Property="INSTALLDIR" />
+        <RemoveFolder Id="PRODUCTMANUFACTURER_REMOVE" Directory="PRODUCTMANUFACTURER" On="uninstall" />
+      </Component>
+      <Component Id="AddToEnvironmentPath" Guid="{3C49B8C7-DCF0-4CA4-A1BE-65234815182E}">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="EnvironmentPath" Type="integer" Value="1" />
+        <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="yes" Part="last" Action="set" System="yes" />
+      </Component>
+      <Component Id="SetJavaHomeVariable" Guid="{AD7A595B-C512-4017-9598-1A7AA4CC2F9F}">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" />
+        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]bin" Permanent="yes" Part="last" Action="set" System="yes" />
+      </Component>
+    </DirectoryRef>
+
+    <!-- List of features to install -->
+    <Feature Id="FeatureTools" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.ProductName)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
+      <ComponentRef Id="CleanupMainInstallDir" />
+      <ComponentGroupRef Id="AppFiles" />
+
+			<Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+				<ComponentRef Id="AddToEnvironmentPath" />
+			</Feature>
+			<Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+				<ComponentRef Id="SetJavaHomeVariable" />
+			</Feature>
+    </Feature>
+    <!-- <Feature Id="FeatureSource" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.FeatureSourceTitle)" Description="!(loc.FeatureSourceDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
+      <ComponentGroupRef Id="SrcFiles" />
+    </Feature> -->
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SetupResourcesDir)\license-OpenJ9.en-us.rtf" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.SetupResourcesDir)\wix-dialog.bmp" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.SetupResourcesDir)\wix-banner.bmp" />
+    <UI>
+      <UIRef Id="WixUI_FeatureTree" />
+    </UI>
+  </Product>
+</Wix>

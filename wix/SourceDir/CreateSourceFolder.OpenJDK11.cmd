@@ -1,0 +1,22 @@
+@ECHO OFF
+
+SET JDK_NAME=OpenJDK11
+SET JDK_VERSION=11.0.0.28
+
+SET ARCH=x64
+
+SET JDK_VERSION_NONSTANDARD=11_28
+SET PACKAGE_TYPE=hotspot
+REM OpenJDK11-jdk_x64_windows_hotspot_11_28
+"%ProgramFiles%\7-Zip\7z.exe" x "%JDK_NAME%-jdk_%ARCH%_windows_hotspot_%JDK_VERSION_NONSTANDARD%.zip" -o"%JDK_NAME%\%PACKAGE_TYPE%\%ARCH%" "*" -r
+
+SET PACKAGE_TYPE=openj9
+REM OpenJDK11-jdk_x64_windows_openj9_11_28
+"%ProgramFiles%\7-Zip\7z.exe" x "%JDK_NAME%-jdk_%ARCH%_windows_openj9_%JDK_VERSION_NONSTANDARD%.zip" -o"%JDK_NAME%\%PACKAGE_TYPE%\%ARCH%" "*" -r
+
+
+SET ARCH=
+SET JDK_NAME=
+SET JDK_VERSION=
+SET JDK_VERSION_NONSTANDARD=
+SET PACKAGE_TYPE=
