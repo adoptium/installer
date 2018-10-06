@@ -27,11 +27,9 @@ How to upgrade to a new OpenJDK Version:
  
 4. Run "Build.cmd" to create the MSI setup in "ReleaseDir".
 
-  - Build.OpenJDKxx.cmd
-      If both versions can be build at the same time.
-  - Build.OpenJDKxx.withEclipseOpenJ9.cmd
-      If OpenJDK need to be build with Eclipse OpenJ9 only.
-  - Build.OpenJDKxx.withHotspot.cmd
-      If OpenJDK need to be build with Hotspot only.
+  - Build.OpenJDKxx.jdk_x64_windows_openj9.cmd
+      If OpenJDK needs to be built with Eclipse OpenJ9.
+  - Build.OpenJDKxx.jdk_x64_windows_hotspot.cmd
+      If OpenJDK needs to be built with Hotspot.
 
 5. Deploy via Active Directory GPO.
