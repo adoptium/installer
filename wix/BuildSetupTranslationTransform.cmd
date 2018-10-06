@@ -19,12 +19,12 @@ REM Build without extra Source Code feature
 IF EXIST Files-!OUTPUT_BASE_FILENAME!.wixobj "%WIX%bin\light.exe" Main.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" -loc "Lang\%PRODUCT_SKU%.Base.!CULTURE!.wxl" -loc "Lang\%PRODUCT_SKU%.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 
 cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\WiLangId.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi Product %LANGID%
-"%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x86\msitran" -g "ReleaseDir\!OUTPUT_BASE_FILENAME!.MUI.msi" "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" "ReleaseDir\!CULTURE!.mst"
-cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\wisubstg.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.MUI.msi ReleaseDir\!CULTURE!.mst %LANGID%
+"%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x86\msitran" -g "ReleaseDir\!OUTPUT_BASE_FILENAME!.MUI.msi" "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst"
+cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\wisubstg.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.MUI.msi ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst %LANGID%
 cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_VERSION%\bin\x64\wisubstg.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.MUI.msi
 
 del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi"
-del /Q "ReleaseDir\!CULTURE!.mst"
+del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst"
 goto exit
 
 :failed
