@@ -6,11 +6,11 @@ SET OPENJ9_VERSION=0.9.0
 
 SET ARCH=x64
 
-SET PACKAGE_TYPE=withHotspot
+SET PACKAGE_TYPE=hotspot
 REM OpenJDK10_x64_Windows_jdk-10.0.2.13
 "%ProgramFiles%\7-Zip\7z.exe" x "%JDK_NAME%_%ARCH%_Windows_jdk-%JDK_VERSION%.zip" -o"%JDK_NAME%\%PACKAGE_TYPE%\%ARCH%" "*" -r
 
-SET PACKAGE_TYPE=withEclipseOpenJ9
+SET PACKAGE_TYPE=openj9
 REM e.g. OpenJDK10-OPENJ9_x64_Windows_jdk-10.0.2.13_openj9-0.9.0
 "%ProgramFiles%\7-Zip\7z.exe" x "%JDK_NAME%-OPENJ9_%ARCH%_Windows_jdk-%JDK_VERSION%_openj9-%OPENJ9_VERSION%.zip" -o"%JDK_NAME%\%PACKAGE_TYPE%\%ARCH%" "*" -r
 
