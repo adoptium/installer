@@ -72,11 +72,11 @@
       </Component>
       <Component Id="AddToEnvironmentPath" Guid="{3C49B8C7-DCF0-4CA4-A1BE-65234815182E}">
         <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="EnvironmentPath" Type="integer" Value="1" />
-        <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="yes" Part="last" Action="set" System="yes" />
+        <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
       <Component Id="SetJavaHomeVariable" Guid="{AD7A595B-C512-4017-9598-1A7AA4CC2F9F}">
         <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" />
-        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]bin" Permanent="yes" Part="last" Action="set" System="yes" />
+        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]bin" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
     </DirectoryRef>
 
