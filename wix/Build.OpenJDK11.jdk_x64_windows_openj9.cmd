@@ -74,12 +74,12 @@ FOR %%G IN (x64) DO (
     CALL BuildSetupTranslationTransform.cmd zh-tw 1028
 
     REM Add all supported languages to MSI Package attribute
-    CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
+    CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
 
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
-    REM "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign     -sha1 FingerPint-SHA1-Zertifikat   -fd sha1   -tr http://timestamp.geotrust.com -td sha1   "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    REM "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -as -sha1 FingerPint-SHA256-Zertifikat -fd sha256 -tr http://timestamp.geotrust.com -td sha256 "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    REM "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign     -sha1 FingerPint-SHA1-Zertifikat   -fd sha1   -tr http://timestamp.geotrust.com -td sha1   "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    REM "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -as -sha1 FingerPint-SHA256-Zertifikat -fd sha256 -tr http://timestamp.geotrust.com -td sha256 "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
