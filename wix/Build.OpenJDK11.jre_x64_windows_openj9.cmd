@@ -32,10 +32,10 @@ FOR %%G IN (x64) DO (
     SET PLATFORM=%%G
     SET PACKAGE_TYPE=%%H
     REM Allowed values: jdk/jre
-    SET PRODUCT_CATEGORY=jdk
+    SET PRODUCT_CATEGORY=jre
     SET SETUP_RESOURCES_DIR=.\Resources
-    SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\!PRODUCT_CATEGORY!-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
-    REM OpenJDK11-jdk_x64_windows_openj9-[version].msi
+    SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%-!PRODUCT_CATEGORY!
+    REM OpenJDK11-jre_x64_windows_openj9-[version].msi
     SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!PLATFORM!_windows_openj9-!PRODUCT_VERSION!
 
     REM Generate one ID per release. But do NOT use * as we need to keep the same number for all languages, but not platforms.

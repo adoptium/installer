@@ -12,15 +12,25 @@
   <?endif?>
 
   <?define ProductVersion="$(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion).$(var.ProductPatchVersion)" ?>
-  <?define ProductName="!(loc.ProductName)" ?>
-  <?define ProductNameWithVersion="!(loc.ProductName) $(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion) $(var.Arch)" ?>
   <?define ProductLanguage="!(loc.ProductLanguage)" ?>
   <?define ProductManufacturer="AdoptOpenJDK" ?>
 
   <?if $(env.PRODUCT_CATEGORY)="jre"?>
+    <?define ProductName="!(loc.JREProductName)" ?>
+    <?define ProductNameWithVersion="!(loc.JREProductName) $(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion) $(var.Arch)" ?>
+    <?define PackageDescription="!(loc.JREPackageDescription)" ?>
+    <?define FeatureMainName="!(loc.JREFeatureMainName)" ?>
+    <?define FeatureMainDescription="!(loc.JREFeatureMainDescription)" ?>
+
     <?define ProductCategory="Java Runtime Environment" ?>
     <?define AppFolder="jre-$(var.ProductVersion)" ?>
   <?else?>
+    <?define ProductName="!(loc.JDKProductName)" ?>
+    <?define ProductNameWithVersion="!(loc.JDKProductName) $(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion) $(var.Arch)" ?>
+    <?define PackageDescription="!(loc.JDKPackageDescription)" ?>
+    <?define FeatureMainName="!(loc.JDKFeatureMainName)" ?>
+    <?define FeatureMainDescription="!(loc.JDKFeatureMainDescription)" ?>
+
     <?define ProductCategory="Java Development Kit" ?>
     <?define AppFolder="jdk-$(var.ProductVersion)" ?>
   <?endif?>

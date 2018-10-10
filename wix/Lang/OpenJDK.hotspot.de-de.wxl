@@ -1,5 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="de-de" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
-	<String Id="ProductName">OpenJDK mit Hotspot</String>
-	<String Id="PackageDescription">OpenJDK mit Hotspot</String>
+	<String Id="JREFeatureMainName">JRE mit Hotspot</String>
+	<String Id="JREFeatureMainDescription">Java Runtime Environment mit Hotspot</String>
+  <String Id="JREProductName">OpenJDK JRE mit Hotspot</String>
+	<String Id="JREPackageDescription">OpenJDK Runtime Environment mit Hotspot</String>
+
+	<String Id="JDKFeatureMainName">JDK mit Hotspot</String>
+	<String Id="JDKFeatureMainDescription">Java Development Kit mit Hotspot</String>
+  <String Id="JDKProductName">OpenJDK JDK mit Hotspot</String>
+	<String Id="JDKPackageDescription">OpenJDK Development Kit mit Hotspot</String>
 </WixLocalization>

@@ -7,9 +7,9 @@
 	<String Id="OSVersionRequired">Windows 7 oder höher ist erforderlich.</String>
   <String Id="ProductIsNotSupportedOnItanium">Dieses Produkt wird auf Itanium 64-Bit-Systemen nicht unterstützt.</String>
 	<String Id="FeatureEnvironmentTitle">Zum PATH hinzufügen</String>
-	<String Id="FeatureEnvironmentDescription">Das OpenJDK in die PATH-Umgebungsvariable einfügen.</String>
-	<String Id="FeatureJavaHomeTitle">JAVA_HOME Variable konfigurieren</String>
-	<String Id="FeatureJavaHomeDescription">Das OpenJDK als JAVA_HOME-Umgebungsvariable verwenden.</String>
+	<String Id="FeatureEnvironmentDescription">In die PATH-Umgebungsvariable einfügen.</String>
+	<String Id="FeatureJavaHomeTitle">JAVA_HOME-Variable konfigurieren</String>
+	<String Id="FeatureJavaHomeDescription">Als JAVA_HOME-Umgebungsvariable verwenden.</String>
 	<String Id="FeatureSourceTitle">Quellcode</String>
 	<String Id="FeatureSourceDescription">Quellcode für Klassen, welche die öffentliche API von Java enthalten.</String>
 </WixLocalization>

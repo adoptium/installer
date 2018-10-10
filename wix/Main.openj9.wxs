@@ -3,7 +3,7 @@
   <?include $(sys.CURRENTDIR)Includes\$(var.ProductSku).Variables.wxi ?>
 
   <Product Id="$(var.ProductId)" Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)">
-    <Package Description="!(loc.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" InstallerVersion="200" Compressed="yes" />
+    <Package Description="$(var.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" InstallerVersion="200" Compressed="yes" />
     <Media Id="1" Cabinet="Data1.cab" EmbedCab="yes" CompressionLevel="high" />
     <Property Id="ARPHELPLINK" Value="!(loc.ProductHelpLink)" />
     <Property Id="ARPURLINFOABOUT" Value="!(loc.ProductUrlInfoAbout)" />
@@ -81,7 +81,7 @@
     </DirectoryRef>
 
     <!-- List of features to install -->
-    <Feature Id="FeatureTools" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.ProductName)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
+    <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
       <ComponentRef Id="CleanupMainInstallDir" />
       <ComponentGroupRef Id="AppFiles" />
 
