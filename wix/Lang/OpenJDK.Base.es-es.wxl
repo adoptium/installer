@@ -4,12 +4,12 @@
 	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build</String>
   <String Id="ProductUrlInfoAbout">https://adoptopenjdk.net</String>
   <String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
-	<String Id="OSVersionRequired">Windows 7 or later is required.</String>
-  <String Id="ProductIsNotSupportedOnItanium">This product is not supported on Itanium 64-bit systems.</String>
-	<String Id="FeatureEnvironmentTitle">Add to PATH</String>
-	<String Id="FeatureEnvironmentDescription">Add to PATH environment variable.</String>
-	<String Id="FeatureJavaHomeTitle">Set JAVA_HOME variable</String>
-	<String Id="FeatureJavaHomeDescription">Set JAVA_HOME environment variable.</String>
-	<String Id="FeatureSourceTitle">Source Code</String>
-	<String Id="FeatureSourceDescription">Source code for classes that comprise the public API of Java.</String>
+	<String Id="OSVersionRequired">Se requiere Windows 7 o superior.</String>
+  <String Id="ProductIsNotSupportedOnItanium">Este producto no es compatible con sistemas Itanium de 64 bits.</String>
+	<String Id="FeatureEnvironmentTitle">Añadir al PATH</String>
+	<String Id="FeatureEnvironmentDescription">Añadir a la variable de entorno PATH.</String>
+	<String Id="FeatureJavaHomeTitle">Establecer la variable JAVA_HOME</String>
+	<String Id="FeatureJavaHomeDescription">Establecer la variable de entorno JAVA_HOME.</String>
+	<String Id="FeatureSourceTitle">Código fuente</String>
+	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
 </WixLocalization>
