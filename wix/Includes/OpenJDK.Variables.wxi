@@ -22,7 +22,7 @@
     <?define FeatureMainName="!(loc.JREFeatureMainName)" ?>
     <?define FeatureMainDescription="!(loc.JREFeatureMainDescription)" ?>
 
-    <?define ProductCategory="Java Runtime Environment" ?>
+    <?define ProductCategory="JRE" ?>
     <?define AppFolder="jre-$(var.ProductVersion)" ?>
   <?else?>
     <?define ProductName="!(loc.JDKProductName)" ?>
@@ -31,7 +31,7 @@
     <?define FeatureMainName="!(loc.JDKFeatureMainName)" ?>
     <?define FeatureMainDescription="!(loc.JDKFeatureMainDescription)" ?>
 
-    <?define ProductCategory="Java Development Kit" ?>
+    <?define ProductCategory="JDK" ?>
     <?define AppFolder="jdk-$(var.ProductVersion)" ?>
   <?endif?>
 
