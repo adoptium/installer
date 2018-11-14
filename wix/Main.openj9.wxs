@@ -76,7 +76,7 @@
       </Component>
       <Component Id="SetJavaHomeVariable" Guid="*">
         <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
-        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]bin" Permanent="no" Part="last" Action="set" System="yes" />
+        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
     </DirectoryRef>
 
