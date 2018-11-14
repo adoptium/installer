@@ -74,10 +74,17 @@
         <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="EnvironmentPath" Type="integer" Value="1" KeyPath="yes" />
         <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="last" Action="set" System="yes" />
       </Component>
-      <Component Id="SetJavaHomeVariable" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
-        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Part="last" Action="set" System="yes" />
-      </Component>
+      <?if $(env.PRODUCT_CATEGORY)="jre"?>
+        <Component Id="SetJreHomeVariable" Guid="*">
+          <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JreHome" Type="integer" Value="1" KeyPath="yes" />
+          <Environment Id="JRE_HOME" Name="JRE_HOME" Value="[INSTALLDIR]" Permanent="no" Part="last" Action="set" System="yes" />
+        </Component>
+      <?else?>
+        <Component Id="SetJavaHomeVariable" Guid="*">
+          <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
+          <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Part="last" Action="set" System="yes" />
+        </Component>
+      <?endif?>
     </DirectoryRef>
 
     <!-- List of features to install -->
@@ -88,9 +95,15 @@
 			<Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
 				<ComponentRef Id="AddToEnvironmentPath" />
 			</Feature>
-			<Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-				<ComponentRef Id="SetJavaHomeVariable" />
-			</Feature>
+      <?if $(env.PRODUCT_CATEGORY)="jre"?>
+        <Feature Id="FeatureJreHome" Level="2" Title="!(loc.FeatureJreHomeTitle)" Description="!(loc.FeatureJreHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+          <ComponentRef Id="SetJreHomeVariable" />
+        </Feature>
+      <?else?>
+        <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+          <ComponentRef Id="SetJavaHomeVariable" />
+        </Feature>
+      <?endif?>
     </Feature>
     <!-- <Feature Id="FeatureSource" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.FeatureSourceTitle)" Description="!(loc.FeatureSourceDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
       <ComponentGroupRef Id="SrcFiles" />
