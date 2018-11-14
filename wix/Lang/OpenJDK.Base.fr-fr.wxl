@@ -10,6 +10,8 @@
 	<String Id="FeatureEnvironmentDescription">Ajouter à la variable d'environnement PATH.</String>
 	<String Id="FeatureJavaHomeTitle">Définir la variable JAVA_HOME</String>
 	<String Id="FeatureJavaHomeDescription">Définir la variable d'environnement JAVA_HOME.</String>
+	<String Id="FeatureJreHomeTitle">Définir la variable JRE_HOME</String>
+	<String Id="FeatureJreHomeDescription">Définir la variable d'environnement JRE_HOME.</String>
 	<String Id="FeatureSourceTitle">Code source</String>
 	<String Id="FeatureSourceDescription">Code source des classes qui composent l'API publique de Java.</String>
 </WixLocalization>
