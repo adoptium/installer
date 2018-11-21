@@ -41,7 +41,7 @@ while test $# -gt 0; do
   esac
 done
 
-rm -rf *.pkg distribution.xml
+rm -rf *.pkg distribution.xml Resources/en.lproj/welcome.html Resources/en.lproj/conclusion.html
 mkdir -p "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries"
 ln -nsf "${INPUT_DIRECTORY}/Contents/Home/lib/server/libjvm.dylib" "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries/libserver.dylib"
 
