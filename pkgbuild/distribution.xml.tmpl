@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <installer-gui-script minSpecVersion="1">
-  <background file="background.png" alignment="topleft" mime-type="image/png"/>
-  <pkg-ref id="net.adoptopenjdk.{major_version}.jdk"/>
-  <options customize="never" require-scripts="false"/>
+  <title>AdoptOpenJDK</title>
+  <welcome file="welcome.html" />
+  <conclusion file="conclusion.html" />
+  <background file="background.png" alignment="topleft" mime-type="image/png" />
+  <pkg-ref id="net.adoptopenjdk.{major_version}.jdk" />
+  <options customize="never" require-scripts="false" />
   <choices-outline>
     <line choice="default">
-      <line choice="net.adoptopenjdk.{major_version}.jdk"/>
+      <line choice="net.adoptopenjdk.{major_version}.jdk" />
     </line>
   </choices-outline>
-  <choice id="default"/>
+  <choice id="default" />
   <choice id="net.adoptopenjdk.{major_version}.jdk" visible="false">
-    <pkg-ref id="net.adoptopenjdk.{major_version}.jdk"/>
+    <pkg-ref id="net.adoptopenjdk.{major_version}.jdk" />
   </choice>
   <pkg-ref id="net.adoptopenjdk.{major_version}.jdk" version="{full_version}" onConclusion="none">{file}</pkg-ref>
 </installer-gui-script>
