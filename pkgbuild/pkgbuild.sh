@@ -1,3 +1,21 @@
+#!/bin/bash
+
+################################################################################
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+################################################################################
+
+set -eu
+
 while test $# -gt 0; do
   case "$1" in
     -h|--help)
@@ -68,8 +86,7 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   >Resources/en.lproj/conclusion.html ; \
 
-  /usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/adoptopenjdk-${MAJOR_VERSION}.jdk --identifier net.adoptopenjdk.${MAJOR_VERSION}.jdk --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
+/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/adoptopenjdk-${MAJOR_VERSION}.jdk --identifier net.adoptopenjdk.${MAJOR_VERSION}.jdk --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
 /usr/bin/productbuild --distribution distribution.xml --resources Resources  --sign "${SIGN}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
-
 
 rm -rf OpenJDK.pkg
