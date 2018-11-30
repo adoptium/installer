@@ -4,8 +4,8 @@ Repository for creating installable packages for AdoptOpenJDK releases.
 The packages are created using:
 1. The Wix Toolset http://wixtoolset.org (Windows only)
 2. pkgbuild (Mac OS)
-3. ??? (Lunix .deb)
-4. ??? (Lunix .rpm)
+3. ??? (Linux .deb)
+4. ??? (Linux .rpm)
 
 The available packages can be seen from the AdoptOpenJDK download pages: https://adoptopenjdk.net/releases.html.
 
