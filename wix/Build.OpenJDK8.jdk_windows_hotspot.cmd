@@ -22,7 +22,7 @@ SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAI
 
 REM Generate platform specific builds (x86,x64)
 SETLOCAL ENABLEDELAYEDEXPANSION
-FOR %%G IN (x86,x64) DO (
+FOR %%G IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
   FOR %%H IN (hotspot) DO (
     ECHO Generate OpenJDK setup "%%H" for "%%G" platform

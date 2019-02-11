@@ -5,6 +5,7 @@ REM PRODUCT_MAJOR_VERSION=11
 REM PRODUCT_MINOR_VERSION=0
 REM PRODUCT_MAINTENANCE_VERSION=0
 REM PRODUCT_PATCH_VERSION=28
+REM ARCH=x64
 
 REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
@@ -22,9 +23,9 @@ SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAI
 
 REM Generate platform specific builds (x86,x64)
 SETLOCAL ENABLEDELAYEDEXPANSION
-FOR %%G IN (x64) DO (
+FOR %%G IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
-  FOR %%H IN (hotspot) DO (
+  FOR %%H IN (openj9) DO (
     ECHO Generate OpenJDK setup "%%H" for "%%G" platform
     ECHO ****************************************************
     SET CULTURE=en-us
@@ -32,11 +33,11 @@ FOR %%G IN (x64) DO (
     SET PLATFORM=%%G
     SET PACKAGE_TYPE=%%H
     REM Allowed values: jdk/jre
-    SET PRODUCT_CATEGORY=jre
+    SET PRODUCT_CATEGORY=jdk
     SET SETUP_RESOURCES_DIR=.\Resources
-    SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%-!PRODUCT_CATEGORY!
-    REM OpenJDK11-jre_x64_windows_hotspot-[version].msi
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!PLATFORM!_windows_hotspot-!PRODUCT_VERSION!
+    SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\!PRODUCT_CATEGORY!-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
+    REM OpenJDK11-jdk_x64_windows_openj9-[version].msi
+    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!PLATFORM!_windows_openj9-!PRODUCT_VERSION!
 
     REM Generate one ID per release. But do NOT use * as we need to keep the same number for all languages, but not platforms.
     FOR /F %%I IN ('POWERSHELL -COMMAND "$([guid]::NewGuid().ToString('b').ToUpper())"') DO (
