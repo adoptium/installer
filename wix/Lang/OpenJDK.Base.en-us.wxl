@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="en-us" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="ProductLanguage">1033</String>
-	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build</String>
-  <String Id="ProductUrlInfoAbout">https://adoptopenjdk.net</String>
+	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose</String>
+  <String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
   <String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
 	<String Id="OSVersionRequired">Windows 7 or later is required.</String>
 	<!-- <String Id="NewerVersionInstalled">Newer version of OpenJDK is already installed.</String> -->
