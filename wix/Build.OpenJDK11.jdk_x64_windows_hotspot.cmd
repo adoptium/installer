@@ -1,5 +1,3 @@
-@ECHO OFF
-
 REM Change version numbers here:
 SET PRODUCT_MAJOR_VERSION=11
 SET PRODUCT_MINOR_VERSION=0
@@ -49,7 +47,6 @@ FOR %%G IN (x64) DO (
     )
 
     REM Prevent concurrency issues if multiple builds are running in parallel.
-    ECHO Copying "Main.!PACKAGE_TYPE!.wxs" "Main-!OUTPUT_BASE_FILENAME!.wxs"
     COPY /Y "Main.!PACKAGE_TYPE!.wxs" "Main-!OUTPUT_BASE_FILENAME!.wxs"
 
     REM Build with extra Source Code feature (needs work)
