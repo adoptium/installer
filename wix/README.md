@@ -40,3 +40,21 @@
       If Java Runtime Environment need to be build with Eclipse OpenJ9 only.
 
 5. Deploy via Active Directory GPO.
+
+
+5a. Installation optional parameters:
+	INSTALLLEVEL
+		1 = (Add to PATH + Associate jar)
+		2 = (Add to PATH + Associate jar) + define JAVA_HOME
+		usage sample: 
+		msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=1
+		msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
+		
+	Features available:
+		FeatureEnvironment ( PATH )
+		FeatureJavaHome (JAVA_HOME)
+		FeatureJarFileRunWith (associate .jar)
+		
+		usage sample:
+		msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
+		

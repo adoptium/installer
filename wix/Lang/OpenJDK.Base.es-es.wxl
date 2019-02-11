@@ -14,4 +14,6 @@
 	<String Id="FeatureJreHomeDescription">Establecer la variable de entorno JRE_HOME.</String>
 	<String Id="FeatureSourceTitle">Código fuente</String>
 	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
+	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
+	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with AdoptOpenJDK</String>
 </WixLocalization>
