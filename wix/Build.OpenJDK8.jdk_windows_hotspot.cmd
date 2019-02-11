@@ -5,6 +5,7 @@ REM PRODUCT_MAJOR_VERSION=8
 REM PRODUCT_MINOR_VERSION=0
 REM PRODUCT_MAINTENANCE_VERSION=181
 REM PRODUCT_PATCH_VERSION=13
+REM ARCH=x64
 
 REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
@@ -79,8 +80,7 @@ FOR %%G IN (%ARCH%) DO (
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
     "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -as -fd sha256 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-
+    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
     REM Remove files we do not need any longer
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
     DEL "Files-!OUTPUT_BASE_FILENAME!.wixobj"
