@@ -5,6 +5,7 @@ REM PRODUCT_MAJOR_VERSION=8
 REM PRODUCT_MINOR_VERSION=0
 REM PRODUCT_MAINTENANCE_VERSION=181
 REM PRODUCT_PATCH_VERSION=13
+REM ARCH=x64
 
 REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
@@ -22,7 +23,7 @@ SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAI
 
 REM Generate platform specific builds (x86,x64)
 SETLOCAL ENABLEDELAYEDEXPANSION
-FOR %%G IN (x86,x64) DO (
+FOR %%G IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
   FOR %%H IN (hotspot) DO (
     ECHO Generate OpenJDK setup "%%H" for "%%G" platform
