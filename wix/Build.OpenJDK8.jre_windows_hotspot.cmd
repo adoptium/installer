@@ -1,10 +1,10 @@
 @ECHO OFF
 
-REM Change version numbers here:
-SET PRODUCT_MAJOR_VERSION=8
-SET PRODUCT_MINOR_VERSION=0
-SET PRODUCT_MAINTENANCE_VERSION=181
-SET PRODUCT_PATCH_VERSION=13
+REM Set version numbers here if being run manually:
+REM PRODUCT_MAJOR_VERSION=8
+REM PRODUCT_MINOR_VERSION=0
+REM PRODUCT_MAINTENANCE_VERSION=181
+REM PRODUCT_PATCH_VERSION=13
 
 REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
@@ -78,8 +78,8 @@ FOR %%G IN (x86,x64) DO (
 
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
-    REM "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign     -sha1 FingerPint-SHA1-Zertifikat   -fd sha1   -tr http://timestamp.geotrust.com -td sha1   "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    REM "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -as -sha1 FingerPint-SHA256-Zertifikat -fd sha256 -tr http://timestamp.geotrust.com -td sha256 "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -as -fd sha256 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
