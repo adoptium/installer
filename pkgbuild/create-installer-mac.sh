@@ -21,11 +21,16 @@ cd pkgbuild
 for f in $WORKSPACE/workspace/target/*.tar.gz;
 do tar -xf "$f";
   rm -rf Resources/license.rtf
-  if [ $f=*hotspot* ]; then
-    cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
-  elif [ $f=*openj9* ]; then
-    cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
-  fi
+
+  case $f in
+    *hotspot*)
+      cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
+    ;;
+    *openj9*)
+      cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
+    ;;
+  esac
+
   directory=$(ls -d jdk*)
   file=${f%%.*}
   ./pkgbuild.sh --sign "${CERTIFICATE}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
