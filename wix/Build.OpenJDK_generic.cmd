@@ -1,11 +1,55 @@
-@ECHO OFF
+REM @ECHO OFF
 
-REM Set version numbers here if being run manually:
-REM PRODUCT_MAJOR_VERSION=8
+REM Set version numbers and build option here if being run manually:
+REM PRODUCT_MAJOR_VERSION=11
 REM PRODUCT_MINOR_VERSION=0
-REM PRODUCT_MAINTENANCE_VERSION=192
-REM PRODUCT_PATCH_VERSION=12
-REM ARCH=x64
+REM PRODUCT_MAINTENANCE_VERSION=0
+REM PRODUCT_PATCH_VERSION=28
+REM ARCH=x64|x86 or both "x64,x86"
+REM JVM=hotspot|openj9 or both JVM=hotspot openj9
+REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
+
+SETLOCAL ENABLEEXTENSIONS
+SET ERR=0
+IF NOT DEFINED PRODUCT_MAJOR_VERSION SET ERR=1
+IF NOT DEFINED PRODUCT_MINOR_VERSION SET ERR=2
+IF NOT DEFINED PRODUCT_MAINTENANCE_VERSION SET ERR=3
+IF NOT DEFINED PRODUCT_PATCH_VERSION SET ERR=4
+IF NOT DEFINED ARCH SET ERR=5
+IF NOT DEFINED JVM SET ERR=6
+IF NOT DEFINED PRODUCT_CATEGORY SET ERR=7
+IF NOT %ERR% == 0 ( echo Missing args/variable ERR:%ERR% && GOTO FAILED )
+
+IF NOT "%ARCH%" == "x64" (
+	IF NOT "%ARCH%" == "x86" (
+		IF NOT "%ARCH%" == "x86 x64" (
+			IF NOT "%ARCH%" == "x64 x86" (
+				ECHO ARCH %ARCH% not supported : valid values : x86, x64, x86 x64, x64 x86
+				GOTO FAILED
+			)
+		)
+	)
+)
+
+IF NOT "%JVM%" == "hotspot" (
+	IF NOT "%JVM%" == "openj9" (
+		IF NOT "%JVM%" == "openj9 hotspot" (
+			IF NOT "%JVM%" == "hotspot openj9" (
+				ECHO JVM "%JVM%" not supported : valid values : hotspot, openj9, hotspot openj9, openj9 hotspot
+				GOTO FAILED
+			)
+		)
+	)
+)
+
+IF NOT "%PRODUCT_CATEGORY%" == "jre" (
+	IF NOT "%PRODUCT_CATEGORY%" == "jdk" (
+		ECHO PRODUCT_CATEGORY "%PRODUCT_CATEGORY%" not supported : valid values : jre, jdk
+		GOTO FAILED
+	)
+)
+
+
 
 REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
@@ -25,19 +69,27 @@ REM Generate platform specific builds (x86,x64)
 SETLOCAL ENABLEDELAYEDEXPANSION
 FOR %%G IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
-  FOR %%H IN (openj9) DO (
+  FOR %%H IN (%JVM%) DO (
     ECHO Generate OpenJDK setup "%%H" for "%%G" platform
     ECHO ****************************************************
     SET CULTURE=en-us
     SET LANGIDS=1033
     SET PLATFORM=%%G
     SET PACKAGE_TYPE=%%H
-    REM Allowed values: jdk/jre
-    SET PRODUCT_CATEGORY=jre
     SET SETUP_RESOURCES_DIR=.\Resources
-    SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_PATCH_VERSION%-!PRODUCT_CATEGORY!
-    REM OpenJDK8-jdk_x64_windows_openj9-[version].msi
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!PLATFORM!_windows_openj9-!PRODUCT_VERSION!
+	IF !PRODUCT_MAJOR_VERSION! == 11 (
+			SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
+		)
+	IF !PRODUCT_MAJOR_VERSION! == 8 (
+		SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_PATCH_VERSION%
+	)
+	IF !PRODUCT_CATEGORY! == jre (
+	    SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
+	)
+    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_VERSION!
+    SET CACHE_BASE_FOLDER=Cache
+    REM Each build his own cache for concurrent build
+    SET CACHE_FOLDER=!CACHE_BASE_FOLDER!\!OUTPUT_BASE_FILENAME!
 
     REM Generate one ID per release. But do NOT use * as we need to keep the same number for all languages, but not platforms.
     FOR /F %%I IN ('POWERSHELL -COMMAND "$([guid]::NewGuid().ToString('b').ToUpper())"') DO (
@@ -50,42 +102,114 @@ FOR %%G IN (%ARCH%) DO (
     )
 
     REM Prevent concurrency issues if multiple builds are running in parallel.
+	ECHO copy "Main.!PACKAGE_TYPE!.wxs"
     COPY /Y "Main.!PACKAGE_TYPE!.wxs" "Main-!OUTPUT_BASE_FILENAME!.wxs"
 
     REM Build with extra Source Code feature (needs work)
-    REM "!WIX!bin\heat.exe" file "!REPRO_DIR!\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    REM "!WIX!bin\heat.exe" file "!REPRO_DIR!\lib\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
-    REM "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    REM "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+
+    REM Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
+    IF EXIST !CACHE_FOLDER! rmdir /S /Q !CACHE_FOLDER!
+    MKDIR !CACHE_FOLDER!
+	IF ERRORLEVEL 1 (
+		echo "Unable to create cache folder : !CACHE_FOLDER!"
+	    GOTO FAILED
+	)
 
     REM Build without extra Source Code feature
+	ECHO HEAT
     "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+	IF ERRORLEVEL 1 (
+		ECHO "Failed to generating Windows Installer XML Source files (.wxs)"
+	    GOTO FAILED
+	)
+	ECHO CANDLE
     "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
-    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+	IF ERRORLEVEL 1 (
+	    ECHO "Failed to preprocesses and compiles WiX source files into object files (.wixobj)"
+	    GOTO FAILED
+	)
+	ECHO "LIGHT"
+    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -sval -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+	IF ERRORLEVEL 1 (
+	    ECHO "Failed to links and binds one or more .wixobj files and creates a Windows Installer database (.msi or .msm)"
+	    GOTO FAILED
+	)
 
     REM Generate setup translations
     CALL BuildSetupTranslationTransform.cmd de-de 1031
+	IF ERRORLEVEL 1 (
+	    GOTO FAILED
+	)
     CALL BuildSetupTranslationTransform.cmd es-es 3082
+	IF ERRORLEVEL 1 (
+	    GOTO FAILED
+	)
     CALL BuildSetupTranslationTransform.cmd fr-fr 1036
+	IF ERRORLEVEL 1 (
+	    GOTO FAILED
+	)
     REM CALL BuildSetupTranslationTransform.cmd it-it 1040
+	REM IF ERRORLEVEL 1 (
+	REM     GOTO FAILED
+	REM )
     CALL BuildSetupTranslationTransform.cmd ja-jp 1041
+	IF ERRORLEVEL 1 (
+	    GOTO FAILED
+	)
     REM CALL BuildSetupTranslationTransform.cmd ko-kr 1042
+	REM IF ERRORLEVEL 1 (
+	REM     GOTO FAILED
+	REM )
     REM CALL BuildSetupTranslationTransform.cmd ru-ru 1049
+	REM IF ERRORLEVEL 1 (
+	REM     GOTO FAILED
+	REM )
     CALL BuildSetupTranslationTransform.cmd zh-cn 2052
+	IF ERRORLEVEL 1 (
+	    GOTO FAILED
+	)
     CALL BuildSetupTranslationTransform.cmd zh-tw 1028
+	IF ERRORLEVEL 1 (
+	    GOTO FAILED
+	)
 
+
+    REM To validate MSI only once at the end
+    "!WIX!bin\smoke.exe" "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    IF ERRORLEVEL 1 (
+		ECHO Failed to validate MSI
+	    GOTO FAILED
+	)
     REM Add all supported languages to MSI Package attribute
     CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
+    IF ERRORLEVEL 1 (
+		ECHO Failed to pack all languages into MSI : !LANGIDS!
+	    GOTO FAILED
+	)
 
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
     "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    IF ERRORLEVEL 1 (
+	    ECHO Failed to sign with SHA1
+	    GOTO FAILED
+	)
     "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    IF ERRORLEVEL 1 (
+        ECHO Failed to sign with SHA256
+	    GOTO FAILED
+	)
+	
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
     DEL "Files-!OUTPUT_BASE_FILENAME!.wixobj"
     DEL "Main-!OUTPUT_BASE_FILENAME!.wxs"
     DEL "Main-!OUTPUT_BASE_FILENAME!.wixobj"
+    RMDIR /S /Q !CACHE_FOLDER!
   )
 )
 ENDLOCAL
@@ -108,3 +232,10 @@ SET REPRO_DIR=
 SET SETUP_RESOURCES_DIR=
 SET WIN_SDK_FULL_VERSION=
 SET WIN_SDK_MAJOR_VERSION=
+
+EXIT /b 0
+
+:FAILED
+EXIT /b 2
+
+
