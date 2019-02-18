@@ -93,19 +93,19 @@ esac
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMVendor AdoptOpenJDK" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
 cat distribution.xml.tmpl  \
-  | sed -E "s/\\{major_version\\}/$MAJOR_VERSION/g" \
+  | sed -E "s/\\{identifier\\}/$IDENTIFIER/g" \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{file\\}/OpenJDK.pkg/g" \
   >distribution.xml ; \
 
   cat Resources/en.lproj/welcome.html.tmpl  \
-  | sed -E "s/\\{major_version\\}/$MAJOR_VERSION/g" \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
+  | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/welcome.html ; \
 
   cat Resources/en.lproj/conclusion.html.tmpl  \
-  | sed -E "s/\\{major_version\\}/$MAJOR_VERSION/g" \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
+  | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/conclusion.html ; \
 
 /usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
