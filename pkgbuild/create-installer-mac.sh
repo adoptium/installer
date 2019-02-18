@@ -24,9 +24,11 @@ do tar -xf "$f";
 
   case $f in
     *hotspot*)
+      export JVM="hotspot"
       cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
     ;;
     *openj9*)
+      export JVM="openj9"
       cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
     ;;
   esac
