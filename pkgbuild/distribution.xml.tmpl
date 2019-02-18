@@ -4,17 +4,17 @@
   <welcome file="welcome.html" />
   <conclusion file="conclusion.html" />
   <background file="background.png" alignment="topleft" mime-type="image/png" />
-  <pkg-ref id="net.adoptopenjdk.{major_version}.jdk" />
+  <pkg-ref id="{identifier}" />
   <options customize="never" require-scripts="false" />
   <license file="license.rtf"/>
   <choices-outline>
     <line choice="default">
-      <line choice="net.adoptopenjdk.{major_version}.jdk" />
+      <line choice="{identifier}" />
     </line>
   </choices-outline>
   <choice id="default" />
-  <choice id="net.adoptopenjdk.{major_version}.jdk" visible="false">
-    <pkg-ref id="net.adoptopenjdk.{major_version}.jdk" />
+  <choice id="{identifier}" visible="false">
+    <pkg-ref id="{identifier}" />
   </choice>
-  <pkg-ref id="net.adoptopenjdk.{major_version}.jdk" version="{full_version}" onConclusion="none">{file}</pkg-ref>
+  <pkg-ref id="{identifier}" version="{full_version}" onConclusion="none">{file}</pkg-ref>
 </installer-gui-script>
