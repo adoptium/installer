@@ -63,10 +63,32 @@ rm -rf *.pkg distribution.xml Resources/en.lproj/welcome.html Resources/en.lproj
 mkdir -p "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries"
 ln -nsf "${INPUT_DIRECTORY}/Contents/Home/lib/server/libjvm.dylib" "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries/libserver.dylib"
 
+# Detect if JRE or JDK
+case $INPUT_DIRECTORY in
+  *-jre)
+    TYPE="jre"
+    ;;
+  *)
+    TYPE="jdk"
+    ;;
+esac
+    
 # Plist commands:
-/usr/libexec/PlistBuddy -c "Set :CFBundleGetInfoString AdoptOpenJDK ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier net.adoptopenjdk.${MAJOR_VERSION}.jdk" "${INPUT_DIRECTORY}/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c "Set :CFBundleName AdoptOpenJDK ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+case $JVM in
+  openj9)
+    IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}-openj9.${TYPE}"
+    DIRECTORY="adoptopenjdk-${MAJOR_VERSION}-openj9.${TYPE}"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleGetInfoString AdoptOpenJDK (OpenJ9) ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleName AdoptOpenJDK (OpenJ9) ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    ;;
+  *)
+    IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}.${TYPE}"
+    DIRECTORY="adoptopenjdk-${MAJOR_VERSION}.${TYPE}"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleGetInfoString AdoptOpenJDK ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Set :CFBundleName AdoptOpenJDK ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    ;;
+esac
+/usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier ${IDENTIFIER}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMPlatformVersion ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMVendor AdoptOpenJDK" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
@@ -86,7 +108,7 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   >Resources/en.lproj/conclusion.html ; \
 
-/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/adoptopenjdk-${MAJOR_VERSION}.jdk --identifier net.adoptopenjdk.${MAJOR_VERSION}.jdk --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
-/usr/bin/productbuild --distribution distribution.xml --resources Resources  --sign "${SIGN}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
+/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
+/usr/bin/productbuild --distribution distribution.xml --resources Resources --sign "${SIGN}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
 
 rm -rf OpenJDK.pkg
