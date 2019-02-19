@@ -67,6 +67,8 @@ ln -nsf "${INPUT_DIRECTORY}/Contents/Home/lib/server/libjvm.dylib" "${INPUT_DIRE
 case $INPUT_DIRECTORY in
   *-jre)
     TYPE="jre"
+    /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities array" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:0 string CommandLine" "${INPUT_DIRECTORY}/Contents/Info.plist"
     ;;
   *)
     TYPE="jdk"
