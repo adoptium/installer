@@ -34,7 +34,7 @@ do tar -xf "$f";
   esac
 
   directory=$(ls -d jdk*)
-  file=${f%%.*}
+  file=${f%%.tar.gz*}
   ./pkgbuild.sh --sign "${CERTIFICATE}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
   rm -rf ${directory}
 done
