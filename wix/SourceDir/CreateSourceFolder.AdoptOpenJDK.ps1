@@ -1,6 +1,6 @@
 Get-ChildItem -Path .\ -Filter *.zip -Recurse -File -Name| ForEach-Object {
   $filename = [System.IO.Path]::GetFileName($_)
-	$jdk_version_found = $filename -match "(?<jdk>OpenJDK\d+)"
+  $jdk_version_found = $filename -match "(?<jdk>OpenJDK\d+)"
   $jdk_version = $Matches.jdk
   $package_type_found = $filename -match "(?<package_type>hotspot|openj9)"
   $package_type = $Matches.package_type
