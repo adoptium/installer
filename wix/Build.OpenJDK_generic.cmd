@@ -193,12 +193,12 @@ FOR %%G IN (%ARCH%) DO (
 
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
-    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
     IF ERRORLEVEL 1 (
 	    ECHO Failed to sign with SHA1
 	    GOTO FAILED
 	)
-    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
     IF ERRORLEVEL 1 (
         ECHO Failed to sign with SHA256
 	    GOTO FAILED
