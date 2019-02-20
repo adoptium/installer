@@ -80,16 +80,24 @@ case $JVM in
   openj9)
     IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}-openj9.${TYPE}"
     DIRECTORY="adoptopenjdk-${MAJOR_VERSION}-openj9.${TYPE}"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleGetInfoString AdoptOpenJDK (OpenJ9) ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleName AdoptOpenJDK (OpenJ9) ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    BUNDLE="AdoptOpenJDK (OpenJ9)"
+    case $TYPE in
+      jre) BUNDLE="AdoptOpenJDK (OpenJ9, JRE)" ;;
+      jdk) BUNDLE="AdoptOpenJDK (OpenJ9)" ;;
+    esac
     ;;
   *)
     IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}.${TYPE}"
     DIRECTORY="adoptopenjdk-${MAJOR_VERSION}.${TYPE}"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleGetInfoString AdoptOpenJDK ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
-    /usr/libexec/PlistBuddy -c "Set :CFBundleName AdoptOpenJDK ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+    case $TYPE in
+      jre) BUNDLE="AdoptOpenJDK (JRE)" ;;
+      jdk) BUNDLE="AdoptOpenJDK" ;;
+    esac
     ;;
 esac
+
+/usr/libexec/PlistBuddy -c "Set :CFBundleGetInfoString ${BUNDLE} ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :CFBundleName ${BUNDLE} ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier ${IDENTIFIER}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMPlatformVersion ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMVendor AdoptOpenJDK" "${INPUT_DIRECTORY}/Contents/Info.plist"
