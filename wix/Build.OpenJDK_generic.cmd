@@ -1,4 +1,4 @@
-REM @ECHO OFF
+@ECHO OFF
 
 REM Set version numbers and build option here if being run manually:
 REM PRODUCT_MAJOR_VERSION=11
