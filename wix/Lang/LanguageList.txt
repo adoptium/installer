@@ -1,0 +1,10 @@
+;no blank line please
+de-de 1031
+es-es 3082
+fr-fr 1036
+;it-it 1040
+ja-jp 1041
+;ko-kr 1042
+;ru-ru 1049
+zh-cn 2052
+zh-tw 1028

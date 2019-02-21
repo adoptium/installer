@@ -145,52 +145,13 @@ FOR %%G IN (%ARCH%) DO (
 	)
 
     REM Generate setup translations
-    CALL BuildSetupTranslationTransform.cmd de-de 1031
-	IF ERRORLEVEL 1 (
-        ECHO failed to build translation de-de
-	    GOTO FAILED
-	)
-    CALL BuildSetupTranslationTransform.cmd es-es 3082
-	IF ERRORLEVEL 1 (
-		ECHO failed to build translation es-es
-	    GOTO FAILED
-	)
-    CALL BuildSetupTranslationTransform.cmd fr-fr 1036
-	IF ERRORLEVEL 1 (
-		ECHO failed to build translation fr-fr
-	    GOTO FAILED
-	)
-    REM CALL BuildSetupTranslationTransform.cmd it-it 1040
-	REM IF ERRORLEVEL 1 (
-	REM 	ECHO failed to build translation it-it
-	REM     GOTO FAILED
-	REM )
-    CALL BuildSetupTranslationTransform.cmd ja-jp 1041
-	IF ERRORLEVEL 1 (
-		ECHO failed to build translation ja-jp
-	    GOTO FAILED
-	)
-    REM CALL BuildSetupTranslationTransform.cmd ko-kr 1042
-	REM IF ERRORLEVEL 1 (
-	REM		ECHO failed to build translation ko-kr
-	REM     GOTO FAILED
-	REM )
-    REM CALL BuildSetupTranslationTransform.cmd ru-ru 1049
-	REM IF ERRORLEVEL 1 (
-	REM 	ECHO failed to build translation ru-ru
-	REM     GOTO FAILED
-	REM )
-    CALL BuildSetupTranslationTransform.cmd zh-cn 2052
-	IF ERRORLEVEL 1 (
-		ECHO failed to build translation zh-cn
-	    GOTO FAILED
-	)
-    CALL BuildSetupTranslationTransform.cmd zh-tw 1028
-	IF ERRORLEVEL 1 (
-		ECHO failed to build translation zh-tw
-	    GOTO FAILED
-	)
-
+    FOR /F "tokens=1-2" %%G IN (Lang\LanguageList.txt) do (
+        CALL BuildSetupTranslationTransform.cmd %%G %%H
+        IF ERRORLEVEL 1 (
+            ECHO failed to build translation %%G %%H
+            GOTO FAILED
+        )
+    )
 
     REM To validate MSI only once at the end
     "!WIX!bin\smoke.exe" "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
