@@ -32,6 +32,7 @@ IF ERRORLEVEL 1 (
     ECHO msitran failed with : %ERRORLEVEL%
     GOTO FAILED
 )
+echo.
 cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\wisubstg.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst %LANGID%
 IF ERRORLEVEL 1 (
     ECHO wisubstg failed with : %ERRORLEVEL%
