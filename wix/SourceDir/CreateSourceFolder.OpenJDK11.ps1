@@ -16,6 +16,24 @@ ForEach ($url in $urls) {
   $platform = $Matches.platform
 
   Invoke-WebRequest -Uri $url -outfile $filename
-  Expand-Archive -Path $filename -DestinationPath ".\$jdk_version\$package_type\$platform"
+  Expand-Archive -Force -Path $filename -DestinationPath ".\$jdk_version\$package_type\$platform"
+  Get-ChildItem -Directory ".\$jdk_version\$package_type\$platform" | where {$_ -match ".*_.*"} | ForEach {
+    $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
+    #echo "SourcePath: " $SourcePath
+    #echo "fullname: "$_.FullName
+    #echo "Name: " $_.Name
+    if ( $_.Name -Match "(.*)_(.*)-jre$" ) {
+        $NewName = $_.Name -replace "(.*)_(.*)$",'$1-jre'
+    } elseif ( $_.Name -Match "(.*)_(.*)$" ) {
+        $NewName = $_.Name -replace "(.*)_(.*)$",'$1'
+    }
+    
+    #echo "NewName: " $NewName
+    $Destination = Join-Path -Path $SourcePath -ChildPath $NewName
+    #echo "Destination: "$Destination
+    
+    echo Moving $_.FullName to $Destination
+    if (Test-Path $Destination) { Remove-Item $Destination -Recurse; }
+    Move-Item -Path $_.FullName -Destination $Destination -Force
+    }
 }
-
