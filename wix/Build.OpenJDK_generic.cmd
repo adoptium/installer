@@ -70,7 +70,7 @@ SETLOCAL ENABLEDELAYEDEXPANSION
 FOR %%G IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
   FOR %%H IN (%JVM%) DO (
-    ECHO Generate OpenJDK setup "%%H" for "%%G" platform
+    ECHO Generate OpenJDK setup "%%H" for "%%G" platform "!PRODUCT_CATEGORY!"
     ECHO ****************************************************
     SET CULTURE=en-us
     SET LANGIDS=1033
