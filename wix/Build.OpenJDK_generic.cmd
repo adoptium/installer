@@ -145,7 +145,7 @@ FOR %%G IN (%ARCH%) DO (
 	)
 
     REM Generate setup translations
-    FOR /F "tokens=1-2" %%G IN (Lang\LanguageList.txt) do (
+    FOR /F "tokens=1-2" %%G IN (Lang\LanguageList.config) do (
         CALL BuildSetupTranslationTransform.cmd %%G %%H
         IF ERRORLEVEL 1 (
             ECHO failed to build translation %%G %%H
