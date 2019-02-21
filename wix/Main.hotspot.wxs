@@ -35,22 +35,24 @@
 			<Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
 		</InstallUISequence>
     -->
-    
+
     <!-- Define the directory structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <?if $(env.Platform)=x86?>
-				<Directory Id="ProgramFilesFolder">
-          <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-            <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-          </Directory>
-				</Directory>
-			<?else?>
-				<Directory Id="ProgramFiles64Folder">
-          <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-            <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-          </Directory>
-				</Directory>
-			<?endif?>
+    <?if $(env.Platform)=x86?>
+        <Directory Id="ProgramFilesFolder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+        </Directory>
+    <?elseif $(env.Platform)=x64?>
+        <Directory Id="ProgramFiles64Folder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+         </Directory>
+    <?else?>
+        <!-- unknown arch > build must failed without directory-->
+    <?endif?>
     </Directory>
 
     <!--
@@ -58,7 +60,7 @@
       This workaround is only required for the uninstall.
     -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="raw" Win64="$(var.Win64)" />
+      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="raw" />
     </Property>
 
     <!-- Add the shortcuts to your installer package -->
@@ -91,13 +93,13 @@
         https://support.microsoft.com/en-us/help/256986/windows-registry-information-for-advanced-users
             If you write keys to a key under HKEY_CLASSES_ROOT, the system stores the information under HKEY_LOCAL_MACHINE\Software\Classes.
             If you write values to a key under HKEY_CLASSES_ROOT, and the key already exists under HKEY_CURRENT_USER\Software\Classes, the system will store the information there instead of under HKEY_LOCAL_MACHINE\Software\Classes.
-         
+
         HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jar\OpenWithProgids
         is automatically created by Windows when running jar file for the first time
         -->
         <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\.jar" Type="string" Value="AdoptOpenJDK.jarfile" KeyPath="yes" />
         <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\.jar" Type="string" Name="Content Type" Value="application/jar" KeyPath="no" />
-        
+
         <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\AdoptOpenJDK.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
     </DirectoryRef>

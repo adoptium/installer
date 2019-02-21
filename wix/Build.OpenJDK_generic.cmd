@@ -5,7 +5,7 @@ REM PRODUCT_MAJOR_VERSION=11
 REM PRODUCT_MINOR_VERSION=0
 REM PRODUCT_MAINTENANCE_VERSION=0
 REM PRODUCT_PATCH_VERSION=28
-REM ARCH=x64|x86 or both "x64,x86"
+REM ARCH=x64|x86-32 or both "x64 x86-32"
 REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 
@@ -21,10 +21,10 @@ IF NOT DEFINED PRODUCT_CATEGORY SET ERR=7
 IF NOT %ERR% == 0 ( echo Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 IF NOT "%ARCH%" == "x64" (
-	IF NOT "%ARCH%" == "x86" (
-		IF NOT "%ARCH%" == "x86 x64" (
-			IF NOT "%ARCH%" == "x64 x86" (
-				ECHO ARCH %ARCH% not supported : valid values : x86, x64, x86 x64, x64 x86
+	IF NOT "%ARCH%" == "x86-32" (
+		IF NOT "%ARCH%" == "x86-32 x64" (
+			IF NOT "%ARCH%" == "x64 x86-32" (
+				ECHO ARCH %ARCH% not supported : valid values : x86-32, x64, x86-32 x64, x64 x86-32
 				GOTO FAILED
 			)
 		)
@@ -65,7 +65,7 @@ SET PRODUCT_SKU=OpenJDK
 SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
 
 
-REM Generate platform specific builds (x86,x64)
+REM Generate platform specific builds (x86-32,x64)
 SETLOCAL ENABLEDELAYEDEXPANSION
 FOR %%G IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
@@ -75,18 +75,23 @@ FOR %%G IN (%ARCH%) DO (
     SET CULTURE=en-us
     SET LANGIDS=1033
     SET PLATFORM=%%G
+    SET FOLDER_PLATFORM=%%G
+    IF %%G == x86-32 (
+        SET PLATFORM=x86
+    )
+
     SET PACKAGE_TYPE=%%H
     SET SETUP_RESOURCES_DIR=.\Resources
 	IF !PRODUCT_MAJOR_VERSION! == 11 (
-			SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
+			SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
 		)
 	IF !PRODUCT_MAJOR_VERSION! == 8 (
-		SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_PATCH_VERSION%
+		SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_PATCH_VERSION%
 	)
 	IF !PRODUCT_CATEGORY! == jre (
 	    SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
 	)
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_VERSION!
+    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_VERSION!
     SET CACHE_BASE_FOLDER=Cache
     REM Each build his own cache for concurrent build
     SET CACHE_FOLDER=!CACHE_BASE_FOLDER!\!OUTPUT_BASE_FILENAME!
@@ -142,38 +147,47 @@ FOR %%G IN (%ARCH%) DO (
     REM Generate setup translations
     CALL BuildSetupTranslationTransform.cmd de-de 1031
 	IF ERRORLEVEL 1 (
+        ECHO failed to build translation de-de
 	    GOTO FAILED
 	)
     CALL BuildSetupTranslationTransform.cmd es-es 3082
 	IF ERRORLEVEL 1 (
+		ECHO failed to build translation es-es
 	    GOTO FAILED
 	)
     CALL BuildSetupTranslationTransform.cmd fr-fr 1036
 	IF ERRORLEVEL 1 (
+		ECHO failed to build translation fr-fr
 	    GOTO FAILED
 	)
     REM CALL BuildSetupTranslationTransform.cmd it-it 1040
 	REM IF ERRORLEVEL 1 (
+	REM 	ECHO failed to build translation it-it
 	REM     GOTO FAILED
 	REM )
     CALL BuildSetupTranslationTransform.cmd ja-jp 1041
 	IF ERRORLEVEL 1 (
+		ECHO failed to build translation ja-jp
 	    GOTO FAILED
 	)
     REM CALL BuildSetupTranslationTransform.cmd ko-kr 1042
 	REM IF ERRORLEVEL 1 (
+	REM		ECHO failed to build translation ko-kr
 	REM     GOTO FAILED
 	REM )
     REM CALL BuildSetupTranslationTransform.cmd ru-ru 1049
 	REM IF ERRORLEVEL 1 (
+	REM 	ECHO failed to build translation ru-ru
 	REM     GOTO FAILED
 	REM )
     CALL BuildSetupTranslationTransform.cmd zh-cn 2052
 	IF ERRORLEVEL 1 (
+		ECHO failed to build translation zh-cn
 	    GOTO FAILED
 	)
     CALL BuildSetupTranslationTransform.cmd zh-tw 1028
 	IF ERRORLEVEL 1 (
+		ECHO failed to build translation zh-tw
 	    GOTO FAILED
 	)
 
@@ -185,7 +199,7 @@ FOR %%G IN (%ARCH%) DO (
 	    GOTO FAILED
 	)
     REM Add all supported languages to MSI Package attribute
-    CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
+    CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
     IF ERRORLEVEL 1 (
 		ECHO Failed to pack all languages into MSI : !LANGIDS!
 	    GOTO FAILED
@@ -228,6 +242,7 @@ SET PRODUCT_PATCH_VERSION=
 SET PRODUCT_ID=
 SET PRODUCT_VERSION=
 SET PLATFORM=
+SET FOLDER_PLATFORM=
 SET REPRO_DIR=
 SET SETUP_RESOURCES_DIR=
 SET WIN_SDK_FULL_VERSION=
