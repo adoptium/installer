@@ -10,8 +10,6 @@
 	<String Id="FeatureEnvironmentDescription">Añadir a la variable de entorno PATH.</String>
 	<String Id="FeatureJavaHomeTitle">Establecer la variable JAVA_HOME</String>
 	<String Id="FeatureJavaHomeDescription">Establecer la variable de entorno JAVA_HOME.</String>
-	<String Id="FeatureJreHomeTitle">Establecer la variable JRE_HOME.</String>
-	<String Id="FeatureJreHomeDescription">Establecer la variable de entorno JRE_HOME.</String>
 	<String Id="FeatureSourceTitle">Código fuente</String>
 	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>

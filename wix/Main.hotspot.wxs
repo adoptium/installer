@@ -76,17 +76,10 @@
         <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="EnvironmentPath" Type="integer" Value="1" KeyPath="yes" />
         <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="first" Action="set" System="yes" />
       </Component>
-      <?if $(env.PRODUCT_CATEGORY)="jre"?>
-        <Component Id="SetJreHomeVariable" Guid="*">
-          <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JreHome" Type="integer" Value="1" KeyPath="yes" />
-          <Environment Id="JRE_HOME" Name="JRE_HOME" Value="[INSTALLDIR]" Permanent="no" Action="set" System="yes" />
-        </Component>
-      <?else?>
-        <Component Id="SetJavaHomeVariable" Guid="*">
-          <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
-          <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Action="set" System="yes" />
-        </Component>
-      <?endif?>
+      <Component Id="SetJavaHomeVariable" Guid="*">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
+        <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Action="set" System="yes" />
+      </Component>
       <!-- Add jar launch by double click -->
       <Component Id="SetJarFileRunWith" Guid="*">
         <!--
