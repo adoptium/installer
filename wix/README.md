@@ -41,21 +41,27 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
 call Build.OpenJDK_generic.cmd
 ```
 
-5. Deploy via Active Directory GPO.
+## Deploy via Active Directory GPO.
 
-5a. Installation optional parameters:
-	INSTALLLEVEL
-		1 = (Add to PATH + Associate jar)
-		2 = (Add to PATH + Associate jar) + define JAVA_HOME
-		usage sample: 
-		msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=1
-		msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
+Installation optional parameters:
+
+#### `INSTALLLEVEL`
+- 1 = (Add to PATH + Associate jar)
+- 2 = (Add to PATH + Associate jar) + define JAVA_HOME
+
+usage sample: 
+```batch
+msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=1
+msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
+```
 		
-	Features available:
-		FeatureEnvironment ( PATH )
-		FeatureJavaHome (JAVA_HOME)
-		FeatureJarFileRunWith (associate .jar)
+#### Features available:
+- FeatureEnvironment ( PATH )
+- FeatureJavaHome (JAVA_HOME)
+- FeatureJarFileRunWith (associate .jar)
 		
-		usage sample:
-		msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
+usage sample:
+```batch
+msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
+```
 		
