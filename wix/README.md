@@ -8,11 +8,15 @@
 
 ## How to upgrade to a new OpenJDK version:
 
-1. Download latest OpenJDK zip.
+1. Download latest OpenJDK zip to the SourceDir directory.
 
-2. Extract the content.
+2. Extract the content and setup the expected file structure:
 
-3. Edit `Build.*.cmd` and change below version lines:
+```batch
+call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
+```
+
+3. Export the following environment variables:
 
   Example:
   ```batch
@@ -20,6 +24,9 @@
   SET PRODUCT_MINOR_VERSION=0
   SET PRODUCT_MAINTENANCE_VERSION=0
   SET PRODUCT_PATCH_VERSION=28
+  SET ARCH=x64|x86 or both "x64,x86"
+  SET JVM=hotspot|openj9 or both JVM=hotspot openj9
+  SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
   ```
 
   Depends on usage:
@@ -28,33 +35,33 @@
   SET WIN_SDK_FULL_VERSION=10.0.17763.0
   ```
  
-4. Run "Build*.cmd" to create the MSI setup in "ReleaseDir".
+4. Run `Build.OpenJDK_generic.cmd` to create the MSI setup in "ReleaseDir":
 
-  - `Build.OpenJDKxx.jdk_x64_windows_hotspot.cmd`
-      If Java Development Kit need to be build with Hotspot only.
-  - `Build.OpenJDKxx.jdk_x64_windows_openj9.cmd`
-      If Java Development Kit need to be build with Eclipse OpenJ9 only.
-  - `Build.OpenJDKxx.jre_x64_windows_hotspot.cmd`
-      If Java Runtime Environment need to be build with Hotspot only.
-  - `Build.OpenJDKxx.jre_x64_windows_openj9.cmd`
-      If Java Runtime Environment need to be build with Eclipse OpenJ9 only.
+```batch
+call Build.OpenJDK_generic.cmd
+```
 
-5. Deploy via Active Directory GPO.
+## Deploy via Active Directory GPO.
 
+Installation optional parameters:
 
-5a. Installation optional parameters:
-	INSTALLLEVEL
-		1 = (Add to PATH + Associate jar)
-		2 = (Add to PATH + Associate jar) + define JAVA_HOME
-		usage sample: 
-		msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=1
-		msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
+#### `INSTALLLEVEL`
+- 1 = (Add to PATH + Associate jar)
+- 2 = (Add to PATH + Associate jar) + define JAVA_HOME
+
+usage sample: 
+```batch
+msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=1
+msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
+```
 		
-	Features available:
-		FeatureEnvironment ( PATH )
-		FeatureJavaHome (JAVA_HOME)
-		FeatureJarFileRunWith (associate .jar)
+#### Features available:
+- FeatureEnvironment ( PATH )
+- FeatureJavaHome (JAVA_HOME)
+- FeatureJarFileRunWith (associate .jar)
 		
-		usage sample:
-		msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
+usage sample:
+```batch
+msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
+```
 		
