@@ -10,8 +10,6 @@
 	<String Id="FeatureEnvironmentDescription">In die PATH-Umgebungsvariable einfügen.</String>
 	<String Id="FeatureJavaHomeTitle">JAVA_HOME-Variable konfigurieren</String>
 	<String Id="FeatureJavaHomeDescription">Als JAVA_HOME-Umgebungsvariable verwenden.</String>
-	<String Id="FeatureJreHomeTitle">JRE_HOME-Variable konfigurieren</String>
-	<String Id="FeatureJreHomeDescription">Als JRE_HOME-Umgebungsvariable verwenden.</String>
 	<String Id="FeatureSourceTitle">Quellcode</String>
 	<String Id="FeatureSourceDescription">Quellcode für Klassen, welche die öffentliche API von Java enthalten.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
