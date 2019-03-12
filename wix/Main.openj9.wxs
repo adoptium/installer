@@ -38,19 +38,21 @@
 
     <!-- Define the directory structure -->
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <?if $(env.Platform)=x86?>
-				<Directory Id="ProgramFilesFolder">
-          <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-            <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-          </Directory>
-				</Directory>
-			<?else?>
-				<Directory Id="ProgramFiles64Folder">
-          <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-            <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-          </Directory>
-				</Directory>
-			<?endif?>
+    <?if $(env.Platform)=x86?>
+        <Directory Id="ProgramFilesFolder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+        </Directory>
+    <?elseif $(env.Platform)=x64?>
+        <Directory Id="ProgramFiles64Folder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+         </Directory>
+    <?else?>
+        <!-- unknown arch > build must failed without directory-->
+    <?endif?>
     </Directory>
 
     <!--
@@ -58,7 +60,7 @@
       This workaround is only required for the uninstall.
     -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="raw" Win64="$(var.Win64)" />
+      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="raw" />
     </Property>
 
     <!-- Add the shortcuts to your installer package -->

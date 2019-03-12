@@ -22,19 +22,20 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   ```batch
   SET PRODUCT_MAJOR_VERSION=11
   SET PRODUCT_MINOR_VERSION=0
-  SET PRODUCT_MAINTENANCE_VERSION=0
-  SET PRODUCT_PATCH_VERSION=28
+  SET PRODUCT_MAINTENANCE_VERSION=2
+  SET PRODUCT_PATCH_VERSION=8
   SET ARCH=x64|x86 or both "x64,x86"
   SET JVM=hotspot|openj9 or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
+  cmd /c Build.OpenJDK_generic.cmd
   ```
 
-  Depends on usage:
+ `Build.OpenJDK_generic.cmd` statically depend on this SDK version (edit if needed ):
   ```batch
   SET WIN_SDK_MAJOR_VERSION=10
   SET WIN_SDK_FULL_VERSION=10.0.17763.0
   ```
- 
+
 4. Run `Build.OpenJDK_generic.cmd` to create the MSI setup in "ReleaseDir":
 
 ```batch
@@ -64,4 +65,3 @@ usage sample:
 ```batch
 msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
 ```
-		
