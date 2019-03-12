@@ -108,15 +108,9 @@
 			<Feature Id="FeatureJarFileRunWith" Level="1" Title="!(loc.FeatureJarFileRunWithTitle)" Description="!(loc.FeatureJarFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
 				<ComponentRef Id="SetJarFileRunWith" />
 			</Feature>
-      <?if $(env.PRODUCT_CATEGORY)="jre"?>
-        <Feature Id="FeatureJreHome" Level="2" Title="!(loc.FeatureJreHomeTitle)" Description="!(loc.FeatureJreHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-          <ComponentRef Id="SetJreHomeVariable" />
-        </Feature>
-      <?else?>
-        <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-          <ComponentRef Id="SetJavaHomeVariable" />
-        </Feature>
-      <?endif?>
+      <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+        <ComponentRef Id="SetJavaHomeVariable" />
+      </Feature>
     </Feature>
     <!-- <Feature Id="FeatureSource" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.FeatureSourceTitle)" Description="!(loc.FeatureSourceDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
       <ComponentGroupRef Id="SrcFiles" />

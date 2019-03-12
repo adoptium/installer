@@ -152,7 +152,7 @@ FOR %%G IN (%ARCH%) DO (
 	    GOTO FAILED
 	)
 	ECHO "LIGHT"
-    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -sval -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 	IF ERRORLEVEL 1 (
 	    ECHO "Failed to links and binds one or more .wixobj files and creates a Windows Installer database (.msi or .msm)"
 	    GOTO FAILED
@@ -167,14 +167,6 @@ FOR %%G IN (%ARCH%) DO (
         )
     )
 
-    REM Temporarily disable the smoke test - further investigation will take place
-    REM To validate MSI only once at the end
-    REM "!WIX!bin\smoke.exe" "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    REM IF ERRORLEVEL 1 (
-    REM		ECHO Failed to validate MSI
-    REM	    GOTO FAILED
-    REM	)
-    
     REM Add all supported languages to MSI Package attribute
     CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
     IF ERRORLEVEL 1 (
@@ -194,7 +186,7 @@ FOR %%G IN (%ARCH%) DO (
         ECHO Failed to sign with SHA256
 	    GOTO FAILED
 	)
-	
+
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
     DEL "Files-!OUTPUT_BASE_FILENAME!.wixobj"
@@ -229,5 +221,3 @@ EXIT /b 0
 
 :FAILED
 EXIT /b 2
-
-
