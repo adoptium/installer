@@ -8,6 +8,7 @@ REM PRODUCT_PATCH_VERSION=28
 REM ARCH=x64|x86-32 or both "x64 x86-32"
 REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
+REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
@@ -18,7 +19,7 @@ IF NOT DEFINED PRODUCT_PATCH_VERSION SET ERR=4
 IF NOT DEFINED ARCH SET ERR=5
 IF NOT DEFINED JVM SET ERR=6
 IF NOT DEFINED PRODUCT_CATEGORY SET ERR=7
-IF NOT %ERR% == 0 ( echo Missing args/variable ERR:%ERR% && GOTO FAILED )
+IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 IF NOT "%ARCH%" == "x64" (
 	IF NOT "%ARCH%" == "x86-32" (
@@ -50,6 +51,9 @@ IF NOT "%PRODUCT_CATEGORY%" == "jre" (
 )
 
 
+IF "%SKIP_MSI_VALIDATION%" == "true" (
+	SET "MSI_VALIDATION_OPTION= -sval " 
+)
 
 REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
@@ -128,13 +132,13 @@ FOR %%G IN (%ARCH%) DO (
     REM "!WIX!bin\heat.exe" file "!REPRO_DIR!\lib\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
-    REM "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    REM "!WIX!bin\light.exe" !MSI_VALIDATION_OPTION! Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 
     REM Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
     IF EXIST !CACHE_FOLDER! rmdir /S /Q !CACHE_FOLDER!
     MKDIR !CACHE_FOLDER!
 	IF ERRORLEVEL 1 (
-		echo "Unable to create cache folder : !CACHE_FOLDER!"
+		ECHO Unable to create cache folder : !CACHE_FOLDER!
 	    GOTO FAILED
 	)
 
@@ -144,7 +148,7 @@ FOR %%G IN (%ARCH%) DO (
 	@ECHO ON
     "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
 	IF ERRORLEVEL 1 (
-		ECHO "Failed to generating Windows Installer XML Source files (.wxs)"
+		ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
 	    GOTO FAILED
 	)
 	@ECHO OFF
@@ -153,16 +157,16 @@ FOR %%G IN (%ARCH%) DO (
 	@ECHO ON
     "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
 	IF ERRORLEVEL 1 (
-	    ECHO "Failed to preprocesses and compiles WiX source files into object files (.wixobj)"
+	    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
 	    GOTO FAILED
 	)
 	@ECHO OFF
 	
-	ECHO "LIGHT"
+	ECHO LIGHT
 	@ECHO ON
-    "!WIX!bin\light.exe" -sval Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 	IF ERRORLEVEL 1 (
-	    ECHO "Failed to links and binds one or more .wixobj files and creates a Windows Installer database (.msi or .msm)"
+	    ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
 	    GOTO FAILED
 	)
 	@ECHO OFF
@@ -183,18 +187,38 @@ FOR %%G IN (%ARCH%) DO (
 	    GOTO FAILED
 	)
 
+	REM For temporarily disable the smoke test - use OPTION SKIP_MSI_VALIDATION=true 
+	REM To validate MSI only once at the end
+	IF NOT "%SKIP_MSI_VALIDATION%" == "true" (
+		ECHO SMOKE
+		@ECHO ON
+		"!WIX!bin\smoke.exe" "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+		IF ERRORLEVEL 1 (
+			ECHO Failed to validate MSI
+		    GOTO FAILED
+		)
+		@ECHO OFF
+	) ELSE (
+        ECHO MSI validation was skipped by option SKIP_MSI_VALIDATION=true
+    )
+
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
-    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    IF ERRORLEVEL 1 (
-	    ECHO Failed to sign with SHA1
-	    GOTO FAILED
-	)
-    "%ProgramFiles(x86)%\Windows Kits\8.1\bin\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    IF ERRORLEVEL 1 (
-        ECHO Failed to sign with SHA256
-	    GOTO FAILED
-	)
+    IF DEFINED SIGNING_CERTIFICATE (
+        "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+        IF ERRORLEVEL 1 (
+            ECHO Failed to sign with SHA1
+            GOTO FAILED
+        )
+        "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+        IF ERRORLEVEL 1 (
+            ECHO Failed to sign with SHA256
+            GOTO FAILED
+        )
+    ) ELSE (
+        ECHO Ignoring signing step : not certificate configured
+    )
+    
 
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
