@@ -19,7 +19,7 @@ IF NOT DEFINED PRODUCT_PATCH_VERSION SET ERR=4
 IF NOT DEFINED ARCH SET ERR=5
 IF NOT DEFINED JVM SET ERR=6
 IF NOT DEFINED PRODUCT_CATEGORY SET ERR=7
-IF NOT %ERR% == 0 ( echo Missing args/variable ERR:%ERR% && GOTO FAILED )
+IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 IF NOT "%ARCH%" == "x64" (
 	IF NOT "%ARCH%" == "x86-32" (
@@ -138,7 +138,7 @@ FOR %%G IN (%ARCH%) DO (
     IF EXIST !CACHE_FOLDER! rmdir /S /Q !CACHE_FOLDER!
     MKDIR !CACHE_FOLDER!
 	IF ERRORLEVEL 1 (
-		echo "Unable to create cache folder : !CACHE_FOLDER!"
+		ECHO Unable to create cache folder : !CACHE_FOLDER!
 	    GOTO FAILED
 	)
 
@@ -148,7 +148,7 @@ FOR %%G IN (%ARCH%) DO (
 	@ECHO ON
     "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
 	IF ERRORLEVEL 1 (
-		ECHO "Failed to generating Windows Installer XML Source files (.wxs)"
+		ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
 	    GOTO FAILED
 	)
 	@ECHO OFF
@@ -157,16 +157,16 @@ FOR %%G IN (%ARCH%) DO (
 	@ECHO ON
     "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
 	IF ERRORLEVEL 1 (
-	    ECHO "Failed to preprocesses and compiles WiX source files into object files (.wixobj)"
+	    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
 	    GOTO FAILED
 	)
 	@ECHO OFF
 	
-	ECHO "LIGHT"
+	ECHO LIGHT
 	@ECHO ON
     "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 	IF ERRORLEVEL 1 (
-	    ECHO "Failed to links and binds one or more .wixobj files and creates a Windows Installer database (.msi or .msm)"
+	    ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
 	    GOTO FAILED
 	)
 	@ECHO OFF
@@ -190,7 +190,7 @@ FOR %%G IN (%ARCH%) DO (
 	REM For temporarily disable the smoke test - use OPTION SKIP_MSI_VALIDATION=true 
 	REM To validate MSI only once at the end
 	IF NOT "%SKIP_MSI_VALIDATION%" == "true" (
-		ECHO "SMOKE"
+		ECHO SMOKE
 		@ECHO ON
 		"!WIX!bin\smoke.exe" "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 		IF ERRORLEVEL 1 (
@@ -199,7 +199,7 @@ FOR %%G IN (%ARCH%) DO (
 		)
 		@ECHO OFF
 	) ELSE (
-        ECHO "MSI validation was skipped by option SKIP_MSI_VALIDATION=true"
+        ECHO MSI validation was skipped by option SKIP_MSI_VALIDATION=true
     )
 
     REM SIGN the MSIs with digital signature.
@@ -216,7 +216,7 @@ FOR %%G IN (%ARCH%) DO (
             GOTO FAILED
         )
     ) ELSE (
-        ECHO "Ignoring signing step : not certificate configured"
+        ECHO Ignoring signing step : not certificate configured
     )
     
 
