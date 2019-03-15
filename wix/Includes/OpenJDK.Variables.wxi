@@ -23,7 +23,7 @@
     <?define FeatureMainDescription="!(loc.JREFeatureMainDescription)" ?>
 
     <?define ProductCategory="JRE" ?>
-    <?define AppFolder="jre-$(var.ProductVersion)" ?>
+    <?define AppFolder="jre-$(var.ProductVersion)-$(var.JVM)" ?>
   <?else?>
     <?define ProductName="!(loc.JDKProductName)" ?>
     <?define ProductNameWithVersion="!(loc.JDKProductName) $(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion).$(var.ProductPatchVersion) $(var.Arch)" ?>
@@ -32,7 +32,7 @@
     <?define FeatureMainDescription="!(loc.JDKFeatureMainDescription)" ?>
 
     <?define ProductCategory="JDK" ?>
-    <?define AppFolder="jdk-$(var.ProductVersion)" ?>
+    <?define AppFolder="jdk-$(var.ProductVersion)-$(var.JVM)" ?>
   <?endif?>
 
 	<!-- Static settings, DO NOT TOUCH or upgrades will break! -->

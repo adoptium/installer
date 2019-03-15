@@ -71,20 +71,20 @@ SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAI
 
 REM Generate platform specific builds (x86-32,x64)
 SETLOCAL ENABLEDELAYEDEXPANSION
-FOR %%G IN (%ARCH%) DO (
+FOR %%A IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
-  FOR %%H IN (%JVM%) DO (
-    ECHO Generate OpenJDK setup "%%H" for "%%G" platform "!PRODUCT_CATEGORY!"
+  FOR %%J IN (%JVM%) DO (
+    SET PACKAGE_TYPE=%%J
+    SET PLATFORM=%%A
+    ECHO Generate OpenJDK setup "!PACKAGE_TYPE!" for "!PLATFORM!" platform "!PRODUCT_CATEGORY!"
     ECHO ****************************************************
     SET CULTURE=en-us
     SET LANGIDS=1033
-    SET PLATFORM=%%G
-    SET FOLDER_PLATFORM=%%G
-    IF %%G == x86-32 (
+    SET FOLDER_PLATFORM=!PLATFORM!
+    IF !PLATFORM! == x86-32 (
         SET PLATFORM=x86
     )
 
-    SET PACKAGE_TYPE=%%H
     SET SETUP_RESOURCES_DIR=.\Resources
     IF !PRODUCT_MAJOR_VERSION! == 8 (
         SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_PATCH_VERSION%
@@ -155,7 +155,7 @@ FOR %%G IN (%ARCH%) DO (
 	
 	ECHO CANDLE
 	@ECHO ON
-    "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
+    "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
 	IF ERRORLEVEL 1 (
 	    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
 	    GOTO FAILED
@@ -172,10 +172,10 @@ FOR %%G IN (%ARCH%) DO (
 	@ECHO OFF
 
     REM Generate setup translations
-    FOR /F "tokens=1-2" %%G IN (Lang\LanguageList.config) do (
-        CALL BuildSetupTranslationTransform.cmd %%G %%H
+    FOR /F "tokens=1-2" %%L IN (Lang\LanguageList.config) do (
+        CALL BuildSetupTranslationTransform.cmd %%L %%M
         IF ERRORLEVEL 1 (
-            ECHO failed to build translation %%G %%H
+            ECHO failed to build translation %%L %%M
             GOTO FAILED
         )
     )

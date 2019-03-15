@@ -60,24 +60,24 @@
       This workaround is only required for the uninstall.
     -->
     <Property Id="INSTALLDIR">
-      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="raw" />
+      <RegistrySearch Id="INSTALLDIR_REGSEARCH" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Path" Type="raw" />
     </Property>
 
     <!-- Add the shortcuts to your installer package -->
     <DirectoryRef Id="INSTALLDIR">
       <Component Id="CleanupMainInstallDir" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Path" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
-        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="Main" Type="integer" Value="1" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Path" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Main" Type="integer" Value="1" />
         <!-- We need to use INSTALLDIR variable here or RemoveFolderEx will not remove on "install". -->
         <util:RemoveFolderEx On="uninstall" Property="INSTALLDIR" />
         <RemoveFolder Id="PRODUCTMANUFACTURER_REMOVE" Directory="PRODUCTMANUFACTURER" On="uninstall" />
       </Component>
       <Component Id="AddToEnvironmentPath" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="EnvironmentPath" Type="integer" Value="1" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="EnvironmentPath" Type="integer" Value="1" KeyPath="yes" />
         <Environment Id="PATH" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="first" Action="set" System="yes" />
       </Component>
       <Component Id="SetJavaHomeVariable" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
         <Environment Id="JAVA_HOME" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Action="set" System="yes" />
       </Component>
       <!-- Add jar launch by double click -->
