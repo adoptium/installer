@@ -14,4 +14,5 @@
 	<String Id="FeatureSourceDescription">Quellcode für Klassen, welche die öffentliche API von Java enthalten.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
 	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with AdoptOpenJDK</String>
+    <String Id="DowngradeDenied">"Eine neuere Version von [ProductName] ist bereits installiert. Das Setup wird jetzt beendet."</String>
 </WixLocalization>

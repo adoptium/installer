@@ -65,3 +65,21 @@ usage sample:
 ```batch
 msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
 ```
+
+#### Reinstall option :
+CF https://docs.microsoft.com/en-us/windows/desktop/msi/reinstallmode
+
+usage sample:
+```batch
+msiexec /i OpenJDK11-jdk_x64_windows_hotspot-11.0.3.9.msi REINSTALL=ALL /quiet
+msiexec /i OpenJDK11-jdk_x64_windows_hotspot-11.0.3.9.msi REINSTALL=ALL REINSTALLMODE=amus /quiet
+```
+
+## MSI upgrade limitation :
+Upgradable MSI work only for first 3 digit from the build number (due to MSI limitation ) :  (https://docs.microsoft.com/fr-fr/windows/desktop/Msi/productversion )
+
+* Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
+* Upgradable : 8.0.2.1 -> 8.0.2.2 No ( You must uninstall previous msi and install new one )
+* Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
+* Upgradable : 8.0.2.1 -> 8.1.2.1 Yes
+* Upgradable : 8.0.2.1 -> 11.0.2.1 No  ( AdoptOpenJDK dont provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )

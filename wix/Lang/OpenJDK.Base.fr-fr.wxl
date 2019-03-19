@@ -14,4 +14,5 @@
 	<String Id="FeatureSourceDescription">Code source des classes qui composent l'API publique de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associer les .jar</String>
 	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec AdoptOpenJDK pour execution par double-click</String>
+    <String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
 </WixLocalization>
