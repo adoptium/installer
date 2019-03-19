@@ -9,7 +9,7 @@ REM ARCH=x64|x86-32 or both "x64 x86-32"
 REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
-REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optionnal ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
+REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
