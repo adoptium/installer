@@ -9,6 +9,7 @@ REM ARCH=x64|x86-32 or both "x64 x86-32"
 REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
+REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
@@ -108,6 +109,7 @@ FOR %%A IN (%ARCH%) DO (
             )
         )
     )
+    ECHO Source dir used : !REPRO_DIR!
 
     SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_VERSION!
     SET CACHE_BASE_FOLDER=Cache
@@ -119,9 +121,25 @@ FOR %%A IN (%ARCH%) DO (
       SET PRODUCT_ID=%%I
       ECHO PRODUCT_ID: !PRODUCT_ID!
     )
-    FOR /F %%F IN ('POWERSHELL -COMMAND "$([guid]::NewGuid().ToString('b').ToUpper())"') DO (
-      SET PRODUCT_UPGRADE_CODE=%%F
-      ECHO PRODUCT_UPGRADE_CODE: !PRODUCT_UPGRADE_CODE!
+
+    IF NOT DEFINED UPGRADE_CODE_SEED (
+        REM If no UPGRADE_CODE_SEED given .. we are not trying to build upgradable MSI and generate always a new PRODUCT_UPGRADE_CODE
+        FOR /F %%F IN ('POWERSHELL -COMMAND "$([guid]::NewGuid().ToString('b').ToUpper())"') DO (
+          SET PRODUCT_UPGRADE_CODE=%%F
+          ECHO Uniq PRODUCT_UPGRADE_CODE: !PRODUCT_UPGRADE_CODE!
+        )
+    ) ELSE (
+        REM It will be better if we can generate "Name-based UUID" as specified here https://tools.ietf.org/html/rfc4122#section-4.3
+        REM but it's too difficult so fallback to random like guid based on md5 hash with getGuid.ps1
+        REM We use md5 hash to always get the same PRODUCT_UPGRADE_CODE(GUID) for each MSI build with same GUID_SSED to allow upgrade from AdoptOpenJDK
+        REM IF PRODUCT_UPGRADE_CODE change from build to build, upgrade is not proposed by Windows Installer
+        REM Never change what compose SOURCE_TEXT_GUID and args0 for getGuid.ps1 or you will never get the same GUID as previous build and MSI upgradable feature wont work
+        SET SOURCE_TEXT_GUID=!PRODUCT_CATEGORY!-!PRODUCT_MAJOR_VERSION!-!PLATFORM!-!PACKAGE_TYPE!
+        ECHO SOURCE_TEXT_GUID ^(without displaying secret UPGRADE_CODE_SEED^) : !SOURCE_TEXT_GUID!
+        FOR /F %%F IN ('powershell -File getGuid.ps1 !SOURCE_TEXT_GUID!-%UPGRADE_CODE_SEED%') DO (
+          SET PRODUCT_UPGRADE_CODE=%%F
+          ECHO Constant PRODUCT_UPGRADE_CODE: !PRODUCT_UPGRADE_CODE!
+        )
     )
 
     REM Prevent concurrency issues if multiple builds are running in parallel.

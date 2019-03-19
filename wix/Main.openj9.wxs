@@ -4,6 +4,7 @@
 
   <Product Id="$(var.ProductId)" Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)">
     <Package Description="$(var.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" InstallerVersion="200" Compressed="yes" />
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeDenied)"/>
     <Media Id="1" Cabinet="Data1.cab" EmbedCab="yes" CompressionLevel="high" />
     <Property Id="ARPHELPLINK" Value="!(loc.ProductHelpLink)" />
     <Property Id="ARPURLINFOABOUT" Value="!(loc.ProductUrlInfoAbout)" />
