@@ -1,0 +1,82 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id "base"
+}
+
+allprojects {
+    apply plugin: "base"
+
+    version = 1
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+tasks.wrapper {
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+ext {
+    jdkMajorVersion = getJdkMajorVersion()
+    jdkVersion = JDK_VERSION
+    pkgMetadata = [
+        architecture: getJdkArchitecture().qualifier(),
+        vm          : getJdkVirtualMachine(),
+        description : "OpenJDK Development Kit ${jdkMajorVersion} (JDK) by AdoptOpenJDK\n" +
+            " OpenJDK is a development environment for building applications,\n" +
+            " applets, and components using the Java programming language.",
+        homepage    : "https://adoptopenjdk.net/",
+        iteration   : version,
+        license     : "GPLv2+CE",
+        maintainer  : "AdoptOpenJDK",
+        vendor      : "AdoptOpenJDK"
+    ]
+    jdkDistributionDir = JDK_DISTRIBUTION_DIR
+}
+
+def getJdkVirtualMachine() {
+    def valid_vms = ["hotspot", "openj9"]
+    def key = hasProperty("JDK_VM") ? JDK_VM : ""
+
+    if (!valid_vms.contains(key.toLowerCase(Locale.US))) {
+        throw new IllegalArgumentException("Unknown JDK VM '$key'")
+    }
+
+    return JDK_VM.toLowerCase(Locale.US)
+}
+
+def getJdkArchitecture() {
+    return hasProperty("JDK_ARCHITECTURE") ?
+        Architecture.valueOf(JDK_ARCHITECTURE.toUpperCase(Locale.US)) :
+        Architecture.AMD64
+}
+
+def getJdkMajorVersion() {
+    def versionString = hasProperty("JDK_MAJOR_VERSION") ? JDK_MAJOR_VERSION : ""
+    if (!versionString.matches("^[0-9]+\$")) {
+        throw new IllegalArgumentException("Unparsable JDK major version '$versionString'")
+    }
+    int version = Integer.valueOf(versionString)
+    if (version < 8 || version > 12) {
+        throw new IllegalArgumentException("JDK major version '$version' out of range")
+    }
+    return version
+}
+
+enum Architecture {
+    AMD64,
+    S390X,
+    PPC64EL,
+    ARM64
+
+    String qualifier() {
+        return this.name().toLowerCase(Locale.US)
+    }
+}
