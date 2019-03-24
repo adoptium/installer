@@ -1,0 +1,13 @@
+java-compiler
+java-sdk-headless
+java2-sdk-headless
+java5-sdk-headless
+java6-sdk-headless
+java7-sdk-headless
+java8-sdk-headless
+java-runtime-headless
+java2-runtime-headless
+java5-runtime-headless
+java6-runtime-headless
+java7-runtime-headless
+java8-runtime-headless
