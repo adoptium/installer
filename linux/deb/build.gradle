@@ -18,7 +18,7 @@ tasks.register("buildDebianPackage", net.adoptopenjdk.installer.BuildDebianPacka
     afterInstallScript = file("config/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
     jinfoFile = file("config/jinfo")
-    prebuildJdkDirectory = jdkDistributionDir
+    prebuiltJdkDirectory = jdkDistributionDir
 }
 
 build.dependsOn(buildDebianPackage)

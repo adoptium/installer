@@ -98,7 +98,7 @@ public class BuildDebianPackage extends DefaultTask {
     /**
      * Path to the directory that should be packaged
      */
-    private File prebuildJdkDirectory;
+    private File prebuiltJdkDirectory;
 
     public BuildDebianPackage() {
         setGroup("Build");
@@ -110,7 +110,7 @@ public class BuildDebianPackage extends DefaultTask {
         cleanTemporaryDirectory();
 
         getProject().copy(copySpec -> {
-            copySpec.from(getPrebuildJdkDirectory());
+            copySpec.from(getPrebuiltJdkDirectory());
             copySpec.into(new File(getTemporaryDir(), getJdkDirectoryName()));
         });
 
@@ -346,16 +346,16 @@ public class BuildDebianPackage extends DefaultTask {
     }
 
     @InputDirectory
-    public File getPrebuildJdkDirectory() {
-        return prebuildJdkDirectory;
+    public File getPrebuiltJdkDirectory() {
+        return prebuiltJdkDirectory;
     }
 
-    public void setPrebuildJdkDirectory(String prebuildJdkDirectory) {
-        setDistributionDirectory(new File(prebuildJdkDirectory));
+    public void setPrebuiltJdkDirectory(String prebuiltJdkDirectory) {
+        setDistributionDirectory(new File(prebuiltJdkDirectory));
     }
 
     public void setDistributionDirectory(File distributionDirectory) {
-        this.prebuildJdkDirectory = distributionDirectory;
+        this.prebuiltJdkDirectory = distributionDirectory;
     }
 
     @OutputFile
