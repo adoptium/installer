@@ -17,4 +17,3 @@ java6-runtime-headless
 java7-runtime-headless
 java8-runtime-headless
 java9-runtime-headless
-java-compiler, java-sdk, java10-sdk, java11-sdk, java2-sdk, java5-sdk, java6-sdk, java7-sdk, java8-sdk, java9-sdk
