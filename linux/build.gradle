@@ -27,14 +27,14 @@ ext {
     jdkMajorVersion = getJdkMajorVersion()
     jdkVersion = JDK_VERSION
     pkgMetadata = [
-        architecture: getJdkArchitecture().qualifier(),
+        architecture: getJdkArchitecture(),
         vm          : getJdkVirtualMachine(),
         description : "OpenJDK Development Kit ${jdkMajorVersion} (JDK) by AdoptOpenJDK\n" +
             " OpenJDK is a development environment for building applications,\n" +
             " applets, and components using the Java programming language.",
         homepage    : "https://adoptopenjdk.net/",
         iteration   : version,
-        license     : "GPLv2+CE",
+        license     : "GPL-2.0+CE",
         maintainer  : "AdoptOpenJDK",
         vendor      : "AdoptOpenJDK"
     ]
@@ -71,12 +71,24 @@ def getJdkMajorVersion() {
 }
 
 enum Architecture {
-    AMD64,
-    S390X,
-    PPC64EL,
-    ARM64
+    AMD64("amd64", "x86_64"),
+    S390X("s390x", "s390x"),
+    PPC64EL("ppc64el", "ppc64le"),
+    ARM64("arm64", "aarch64")
 
-    String qualifier() {
-        return this.name().toLowerCase(Locale.US)
+    private final String debQualifier
+    private final String rpmQualifier
+
+    Architecture(debQualifier, rpmQualifier) {
+        this.debQualifier = debQualifier
+        this.rpmQualifier = rpmQualifier
+    }
+
+    String debQualifier() {
+        return this.debQualifier
+    }
+
+    String rpmQualifier() {
+        return this.rpmQualifier
     }
 }

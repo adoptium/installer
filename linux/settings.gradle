@@ -1,1 +1,1 @@
-include ":deb"
+include ":deb", ":rpm"

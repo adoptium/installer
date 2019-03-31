@@ -1,0 +1,15 @@
+/bin/sh
+/usr/sbin/alternatives
+ca-certificates
+libX11.so.6
+libXext.so.6
+libXi.so.6
+libXrender.so.1
+libXtst.so.6
+libasound.so.2
+libc.so.6
+libdl.so.2
+libm.so.6
+libpthread.so.0
+librt.so.1
+libz.so.1

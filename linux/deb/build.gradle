@@ -2,8 +2,8 @@ tasks.register("buildDebianPackage", net.adoptopenjdk.installer.BuildDebianPacka
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
     packageVersion = jdkVersion
     iteration = version
-    priority = Integer.valueOf(DEB_JINFO_PRIORITY)
-    architecture = pkgMetadata.architecture
+    priority = getJinfoPriority()
+    architecture = pkgMetadata.architecture.debQualifier()
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
