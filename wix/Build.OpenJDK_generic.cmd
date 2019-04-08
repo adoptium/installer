@@ -95,9 +95,9 @@ FOR %%A IN (%ARCH%) DO (
     ) ELSE (
         REM NEW REPRO_DIR format for JDK version 11 12 etc ..
         SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
-	IF !PRODUCT_CATEGORY! == jre (
-	    SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
-	)
+        IF !PRODUCT_CATEGORY! == jre (
+            SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
+        )
         IF NOT EXIST "!REPRO_DIR!" (
             ECHO First !REPRO_DIR! not exists
             SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%+%PRODUCT_PATCH_VERSION%
@@ -106,8 +106,15 @@ FOR %%A IN (%ARCH%) DO (
             )
             IF NOT EXIST "!REPRO_DIR!" (
                 ECHO Second !REPRO_DIR! not exists
-                ECHO SOURCE Dir not found / failed
-                GOTO FAILED
+                SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%
+                IF !PRODUCT_CATEGORY! == jre (
+                    SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
+                )
+                IF NOT EXIST "!REPRO_DIR!" (
+                    ECHO Third !REPRO_DIR! not exists
+                    ECHO SOURCE Dir not found / failed
+                    GOTO FAILED
+                )
             )
         )
     )
