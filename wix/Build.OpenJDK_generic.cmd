@@ -68,6 +68,7 @@ REM
 REM Cultures: https://msdn.microsoft.com/de-de/library/ee825488(v=cs.20).aspx
 SET PRODUCT_SKU=OpenJDK
 SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
+SET ICEDTEAWEB_DIR=.\SourceDir\icedtea-web-image
 
 
 REM Generate platform specific builds (x86-32,x64)
@@ -175,7 +176,14 @@ FOR %%A IN (%ARCH%) DO (
 	    GOTO FAILED
 	)
 
-    REM Build without extra Source Code feature
+	REM Build without extra Source Code feature
+
+	ECHO HEAT
+	"!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out Files-IcedTeaWeb.wxs -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
+	IF ERRORLEVEL 1 (
+		ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
+		GOTO FAILED
+	)
 
 	ECHO HEAT
 	@ECHO ON
@@ -188,7 +196,7 @@ FOR %%A IN (%ARCH%) DO (
 
 	ECHO CANDLE
 	@ECHO ON
-    "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
+    "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Files-IcedTeaWeb.wxs -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
 	IF ERRORLEVEL 1 (
 	    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
 	    GOTO FAILED
@@ -197,7 +205,7 @@ FOR %%A IN (%ARCH%) DO (
 
 	ECHO LIGHT
 	@ECHO ON
-    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Files-IcedTeaWeb.wixobj !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 	IF ERRORLEVEL 1 (
 	    ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
 	    GOTO FAILED
@@ -258,6 +266,8 @@ FOR %%A IN (%ARCH%) DO (
     DEL "Files-!OUTPUT_BASE_FILENAME!.wixobj"
     DEL "Main-!OUTPUT_BASE_FILENAME!.wxs"
     DEL "Main-!OUTPUT_BASE_FILENAME!.wixobj"
+    DEL "Files-IcedTeaWeb.wxs"
+    DEL "Files-IcedTeaWeb.wixobj"
     RMDIR /S /Q !CACHE_FOLDER!
   )
 )
@@ -279,6 +289,7 @@ SET PRODUCT_VERSION=
 SET PLATFORM=
 SET FOLDER_PLATFORM=
 SET REPRO_DIR=
+SET ICEDTEAWEB_DIR=
 SET SETUP_RESOURCES_DIR=
 SET WIN_SDK_FULL_VERSION=
 SET WIN_SDK_MAJOR_VERSION=
