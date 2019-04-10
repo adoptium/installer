@@ -2,10 +2,10 @@
 <WixLocalization Culture="es-es" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="ProductLanguage">3082</String>
 	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose</String>
-  <String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
-  <String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
+	<String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
+	<String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
 	<String Id="OSVersionRequired">Se requiere Windows 7 o superior.</String>
-  <String Id="ProductIsNotSupportedOnItanium">Este producto no es compatible con sistemas Itanium de 64 bits.</String>
+	<String Id="ProductIsNotSupportedOnItanium">Este producto no es compatible con sistemas Itanium de 64 bits.</String>
 	<String Id="FeatureEnvironmentTitle">Añadir al PATH</String>
 	<String Id="FeatureEnvironmentDescription">Añadir a la variable de entorno PATH.</String>
 	<String Id="FeatureJavaHomeTitle">Establecer la variable JAVA_HOME</String>
@@ -14,5 +14,5 @@
 	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
 	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with AdoptOpenJDK</String>
-    <String Id="DowngradeDenied">"Una versión posterior de [ProductName] ya está instalada. La configuración se cerrará ahora."</String>
+	<String Id="DowngradeDenied">"Una versión posterior de [ProductName] ya está instalada. La configuración se cerrará ahora."</String>
 </WixLocalization>

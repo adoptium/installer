@@ -2,11 +2,11 @@
 <WixLocalization Culture="zh-tw" Codepage="950" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="JREFeatureMainName">JRE with Eclipse OpenJ9</String>
 	<String Id="JREFeatureMainDescription">AdoptOpenJDK Runtime Environment with Eclipse OpenJ9</String>
-  <String Id="JREProductName">AdoptOpenJDK JRE with Eclipse OpenJ9</String>
+	<String Id="JREProductName">AdoptOpenJDK JRE with Eclipse OpenJ9</String>
 	<String Id="JREPackageDescription">AdoptOpenJDK Runtime Environment with Eclipse OpenJ9</String>
 
 	<String Id="JDKFeatureMainName">JDK with Eclipse OpenJ9</String>
 	<String Id="JDKFeatureMainDescription">AdoptOpenJDK Development Kit with Eclipse OpenJ9</String>
-  <String Id="JDKProductName">AdoptOpenJDK JDK with Eclipse OpenJ9</String>
+	<String Id="JDKProductName">AdoptOpenJDK JDK with Eclipse OpenJ9</String>
 	<String Id="JDKPackageDescription">AdoptOpenJDK Development Kit with Eclipse OpenJ9</String>
 </WixLocalization>

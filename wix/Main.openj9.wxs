@@ -22,19 +22,19 @@
       We may need to be able to install JDK in parallel. Therefore an in-place
       upgrade need to be disabled. Keep the code as reference in case we allow
       this in future or with JRE.
-		<Upgrade Id="$(var.ProductUpgradeCode)">
-			<UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWPRODUCTFOUND" IncludeMinimum="no" />
-			<UpgradeVersion Minimum="$(var.RTMProductVersion)" IncludeMinimum="yes" Maximum="$(var.ProductVersion)" Property="UPGRADEFOUND" IncludeMaximum="no" MigrateFeatures="yes" />
-		</Upgrade>
-		<CustomAction Id="PreventDowngrading" Error="!(loc.NewerVersionInstalled)" />
+      <Upgrade Id="$(var.ProductUpgradeCode)">
+        <UpgradeVersion OnlyDetect="yes" Minimum="$(var.ProductVersion)" Property="NEWPRODUCTFOUND" IncludeMinimum="no" />
+        <UpgradeVersion Minimum="$(var.RTMProductVersion)" IncludeMinimum="yes" Maximum="$(var.ProductVersion)" Property="UPGRADEFOUND" IncludeMaximum="no" MigrateFeatures="yes" />
+      </Upgrade>
+      <CustomAction Id="PreventDowngrading" Error="!(loc.NewerVersionInstalled)" />
 
-		<InstallExecuteSequence>
-			<Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
-			<RemoveExistingProducts After="InstallFinalize" />
-		</InstallExecuteSequence>
-		<InstallUISequence>
-			<Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
-		</InstallUISequence>
+      <InstallExecuteSequence>
+         <Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
+         <RemoveExistingProducts After="InstallFinalize" />
+      </InstallExecuteSequence>
+      <InstallUISequence>
+        <Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
+      </InstallUISequence>
     -->
 
     <!-- Define the directory structure -->
@@ -102,13 +102,12 @@
     <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
       <ComponentRef Id="CleanupMainInstallDir" />
       <ComponentGroupRef Id="AppFiles" />
-
-			<Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-				<ComponentRef Id="AddToEnvironmentPath" />
-			</Feature>
-			<Feature Id="FeatureJarFileRunWith" Level="1" Title="!(loc.FeatureJarFileRunWithTitle)" Description="!(loc.FeatureJarFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-				<ComponentRef Id="SetJarFileRunWith" />
-			</Feature>
+        <Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+          <ComponentRef Id="AddToEnvironmentPath" />
+        </Feature>
+        <Feature Id="FeatureJarFileRunWith" Level="1" Title="!(loc.FeatureJarFileRunWithTitle)" Description="!(loc.FeatureJarFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+          <ComponentRef Id="SetJarFileRunWith" />
+        </Feature>
       <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
         <ComponentRef Id="SetJavaHomeVariable" />
       </Feature>

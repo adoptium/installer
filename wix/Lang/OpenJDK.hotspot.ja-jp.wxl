@@ -2,11 +2,11 @@
 <WixLocalization Culture="ja-jp" Codepage="932" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="JREFeatureMainName">JRE with Hotspot</String>
 	<String Id="JREFeatureMainDescription">AdoptOpenJDK Runtime Environment with Hotspot</String>
-  <String Id="JREProductName">AdoptOpenJDK JRE with Hotspot</String>
+	<String Id="JREProductName">AdoptOpenJDK JRE with Hotspot</String>
 	<String Id="JREPackageDescription">AdoptOpenJDK Runtime Environment with Hotspot</String>
 
 	<String Id="JDKFeatureMainName">JDK with Hotspot</String>
 	<String Id="JDKFeatureMainDescription">AdoptOpenJDK Development Kit with Hotspot</String>
-  <String Id="JDKProductName">AdoptOpenJDK JDK with Hotspot</String>
+	<String Id="JDKProductName">AdoptOpenJDK JDK with Hotspot</String>
 	<String Id="JDKPackageDescription">AdoptOpenJDK Development Kit with Hotspot</String>
 </WixLocalization>

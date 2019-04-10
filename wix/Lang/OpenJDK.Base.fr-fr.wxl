@@ -2,10 +2,10 @@
 <WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="ProductLanguage">1036</String>
 	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose</String>
-  <String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
-  <String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
+	<String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
+	<String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
 	<String Id="OSVersionRequired">Windows 7 ou ultérieur est requis.</String>
-  <String Id="ProductIsNotSupportedOnItanium">Ce produit n'est pas pris en charge sur les systèmes Itanium 64 bits.</String>
+	<String Id="ProductIsNotSupportedOnItanium">Ce produit n'est pas pris en charge sur les systèmes Itanium 64 bits.</String>
 	<String Id="FeatureEnvironmentTitle">Ajouter au PATH</String>
 	<String Id="FeatureEnvironmentDescription">Ajouter à la variable d'environnement PATH.</String>
 	<String Id="FeatureJavaHomeTitle">Définir la variable JAVA_HOME</String>
@@ -14,5 +14,5 @@
 	<String Id="FeatureSourceDescription">Code source des classes qui composent l'API publique de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associer les .jar</String>
 	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec AdoptOpenJDK pour execution par double-click</String>
-    <String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
+	<String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
 </WixLocalization>
