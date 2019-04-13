@@ -1,11 +1,16 @@
 package net.adoptopenjdk.installer;
 
+import org.gradle.api.UncheckedIOException;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -133,6 +138,22 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
                 new File(getTemporaryDir(), getJinfoName()),
                 templateContext
         );
+
+        // The upstream packages provided by Debian and Ubuntu place a symlink to src.zip in the root directory of the
+        // Java distribution. Some of the AdoptOpenJDK releases already have the src.zip in the root directory, others
+        // have it in lib/. If there's already a src.zip, do nothing, otherwise we create a symlink to lib/src.zip.
+        Path link = Paths.get(getTemporaryDir().toString(), getJdkDirectoryName(), "src.zip");
+
+        // The target path must be relative, otherwise it contains the full path to the build
+        // directory which usually does not correspond to the installation directory on the target machine.
+        Path target = Paths.get("lib", "src.zip");
+        if (!link.toFile().exists()) {
+            try {
+                Files.createSymbolicLink(link, target);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
     }
 
     @Override
