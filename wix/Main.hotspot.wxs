@@ -11,6 +11,8 @@
     <Property Id="ARPURLUPDATEINFO" Value="!(loc.ProductUrlUpdateInfo)" />
     <Property Id="ALLUSERS" Value="1" />
     <Property Id="ARPPRODUCTICON" Value="logo.ico" />
+    <Property Id="ORACLE_VERSION_KEY" Value="$(var.OracleVersionKey)" />
+    <Property Id="ORACLE_JAVASOFT_BASE_KEY" Value="$(var.OracleJavasoftBaseKey)" />
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
     <Icon Id="logo.ico" SourceFile="$(var.SetupResourcesDir)\logo.ico" />
 
@@ -96,13 +98,31 @@
 
         <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\AdoptOpenJDK.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
+      <Component Id="SetOracleJavaSoftKeys" Guid="*">
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="CurrentVersion" Type="string" Value="$(var.ProductVersion)" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
+        <?if $(env.PRODUCT_CATEGORY)="jre"?>
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]\bin\server\jvm.dll" KeyPath="no" />
+        <!-- Oracle dont set RuntimeLib for JDK .. because JRE is "private" JRE
+        <?else?>
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]\jre\bin\server\jvm.dll" KeyPath="no" />
+        -->
+        <?endif?>
+      </Component>
     </DirectoryRef>
 
+    <Property Id="JAVASOFT_CURRENTVERSION">
+        <RegistrySearch Id="JAVASOFT_CURRENTVERSION"
+                        Root="HKLM"
+                        Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]"
+                        Name="CurrentVersion"
+                        Type="raw" />
+    </Property>
+     
     <!-- List of features to install -->
     <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
       <ComponentRef Id="CleanupMainInstallDir" />
       <ComponentGroupRef Id="AppFiles" />
-
         <Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
           <ComponentRef Id="AddToEnvironmentPath" />
         </Feature>
@@ -111,6 +131,15 @@
         </Feature>
       <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
         <ComponentRef Id="SetJavaHomeVariable" />
+      </Feature>
+      
+      <Feature Id="FeatureOracleJavaSoft" Level="2" Title="!(loc.FeatureOracleJavaSoftName)" Description="!(loc.FeatureOracleJavaSoftDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent" >
+        <!-- See https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB -->
+        <!-- As Oracle, don't override if current value is already bigger ( newer java ): "a value that is the highest installed version on the system" 
+        Note !! : the reg key is not removed during uninstall if any other installer reference it
+        -->
+        <Condition Level="0"><![CDATA["$(var.ProductVersion)" ~< JAVASOFT_CURRENTVERSION]]></Condition>
+        <ComponentRef Id="SetOracleJavaSoftKeys" />
       </Feature>
     </Feature>
     <!-- <Feature Id="FeatureSource" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.FeatureSourceTitle)" Description="!(loc.FeatureSourceDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">

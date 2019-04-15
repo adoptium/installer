@@ -15,4 +15,7 @@
 	<String Id="FeatureJarFileRunWithTitle">Associer les .jar</String>
 	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec AdoptOpenJDK pour execution par double-click</String>
 	<String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
+	<String Id="FeatureOracleJavaSoftName">Clés de registre JavaSoft (Oracle)</String>
+	<!-- ! Description limité à 255 charactères -->
+	<String Id="FeatureOracleJavaSoftDescription">Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'AdoptOpenJDK, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin</String>
 </WixLocalization>

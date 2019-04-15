@@ -35,6 +35,22 @@
     <?define AppFolder="jdk-$(var.ProductVersion)-$(var.JVM)" ?>
   <?endif?>
 
-	<!-- Static settings, DO NOT TOUCH or upgrades will break! -->
-	<?define RTMProductVersion="1.0.0" ?>
+  <!-- Registry key change with new numbering format since Java 9 -->
+  <?if $(var.ProductMajorVersion)>=9?>
+    <?define OracleVersionKey="$(var.ProductMajorVersion)" ?>
+    <?if $(env.PRODUCT_CATEGORY)="jre"?>
+      <?define OracleJavasoftBaseKey="JRE" ?>
+    <?else?>
+      <?define OracleJavasoftBaseKey="JDK" ?>
+    <?endif?>            
+  <?else?>
+    <?define OracleVersionKey="1.8" ?>
+    <?if $(env.PRODUCT_CATEGORY)="jre"?>
+      <?define OracleJavasoftBaseKey="Java Runtime Environment" ?>
+    <?else?>
+      <?define OracleJavasoftBaseKey="Java Development Kit" ?>
+    <?endif?>    
+  <?endif?>
+  <!-- Static settings, DO NOT TOUCH or upgrades will break! -->
+  <?define RTMProductVersion="1.0.0" ?>
 </Include>
