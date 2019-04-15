@@ -4,7 +4,7 @@
 	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose</String>
 	<String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
 	<String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
-	<String Id="OSVersionRequired">Se requiere Windows 7 o superior.</String>
+	<String Id="OSVersionRequired">Requerido Windows 7 o superior.</String>
 	<String Id="ProductIsNotSupportedOnItanium">Este producto no es compatible con sistemas Itanium de 64 bits.</String>
 	<String Id="FeatureEnvironmentTitle">Añadir al PATH</String>
 	<String Id="FeatureEnvironmentDescription">Añadir a la variable de entorno PATH.</String>
@@ -12,9 +12,9 @@
 	<String Id="FeatureJavaHomeDescription">Establecer la variable de entorno JAVA_HOME.</String>
 	<String Id="FeatureSourceTitle">Código fuente</String>
 	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
-	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with AdoptOpenJDK</String>
+	<String Id="FeatureJarFileRunWithTitle">Asociar .jar</String>
+	<String Id="FeatureJarFileRunWithDescription">Asociar la extensión de fichero .jar con AdoptOpenJDKAdoptOpenJDK</String>
 	<String Id="DowngradeDenied">"Una versión posterior de [ProductName] ya está instalada. La configuración se cerrará ahora."</String>
-	<String Id="FeatureOracleJavaSoftName">JavaSoft (Oracle) registry keys</String>
-	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of AdoptOpenJDK, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
+	<String Id="FeatureOracleJavaSoftName">Claves de registro JavaSoft (Oracle)</String>
+	<String Id="FeatureOracleJavaSoftDescription">Sobreescribe las claves de registro HKLM\Software\JavaSoft (Oracle). Si se desinstala AdoptOpenJDK, la ejecución de Oracle Java desde la ruta "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" no funcionará. Será necesario reinstalarlo para regenerar las correspondientes claves del registro.</String>
 </WixLocalization>
