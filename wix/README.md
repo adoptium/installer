@@ -60,6 +60,7 @@ msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
 - FeatureEnvironment ( PATH )
 - FeatureJavaHome (JAVA_HOME)
 - FeatureJarFileRunWith (associate .jar)
+- FeatureOracleJavaSoft ( Registry keys HKLM\SOFTWARE\JavaSoft\ ) (break Oracle java start launch from PATH when AdoptOpenJDK is uninstalled, reinstall Oracle if needed to restore Oracle registry keys)
 		
 usage sample:
 ```batch

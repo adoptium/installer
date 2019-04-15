@@ -16,4 +16,6 @@
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
 	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with AdoptOpenJDK</String>
 	<String Id="DowngradeDenied">"A later version of [ProductName] is already installed. Setup will now exit."</String>
+	<String Id="FeatureOracleJavaSoftName">JavaSoft (Oracle) registry keys</String>
+	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of AdoptOpenJDK, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
 </WixLocalization>
