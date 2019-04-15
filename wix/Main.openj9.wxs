@@ -99,13 +99,21 @@
         <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\AdoptOpenJDK.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
       <Component Id="SetOracleJavaSoftKeys" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="CurrentVersion" Type="string" Value="$(var.ProductVersion)" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="CurrentVersion" Type="string" Value="[ORACLE_VERSION_KEY]" KeyPath="yes" />
         <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
         <?if $(env.PRODUCT_CATEGORY)="jre"?>
-            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]\bin\jvm.dll" KeyPath="no" />
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]bin\jvm.dll" KeyPath="no" />
         <!-- Oracle dont set RuntimeLib for JDK .. because JRE is "private" JRE
         <?else?>
-            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]\jre\bin\jvm.dll" KeyPath="no" />
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]jre\bin\jvm.dll" KeyPath="no" />
+        -->
+        <?endif?>
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
+        <?if $(env.PRODUCT_CATEGORY)="jre"?>
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]bin\jvm.dll" KeyPath="no" />
+        <!-- Oracle dont set RuntimeLib for JDK .. because JRE is "private" JRE
+        <?else?>
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.ProductVersion)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]jre\bin\jvm.dll" KeyPath="no" />
         -->
         <?endif?>
       </Component>
