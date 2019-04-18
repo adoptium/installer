@@ -4,3 +4,17 @@ linux_x64/
 aix/
 linux_s390x/
 linux_ppc64le/
+
+# Ignore build outputs, temporary directories
+build
+.gradle
+
+# Ignore Finder, Explorer files
+Thumbs.db
+.DS_Store
+._*
+
+# Ignore IDE files
+.idea
+*.iml
+

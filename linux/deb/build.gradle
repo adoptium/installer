@@ -1,0 +1,28 @@
+tasks.register("buildDebianPackage", net.adoptopenjdk.installer.BuildDebianPackage) {
+    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
+    packageVersion = jdkVersion
+    iteration = version
+    priority = getJinfoPriority()
+    architecture = pkgMetadata.architecture.debQualifier()
+    vm = pkgMetadata.vm
+    maintainer = pkgMetadata.maintainer
+    vendor = pkgMetadata.vendor
+    homepage = pkgMetadata.homepage
+    license = pkgMetadata.license
+    packageDescription = pkgMetadata.description
+    category = "java"
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
+    toolsFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/tools.txt")
+    prefix = "/usr/lib/jvm"
+    afterInstallScript = file("config/postinst.sh")
+    beforeRemoveScript = file("config/prerm.sh")
+    jinfoFile = file("config/jinfo")
+    prebuiltJdkDirectory = jdkDistributionDir
+}
+
+build.dependsOn(buildDebianPackage)
+
+def getJinfoPriority() {
+    return hasProperty("DEB_JINFO_PRIORITY") ? Integer.parseInt(DEB_JINFO_PRIORITY): 0
+}

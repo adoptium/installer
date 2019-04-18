@@ -1,0 +1,52 @@
+tasks.register("buildRedHatRpmPackage", net.adoptopenjdk.installer.BuildRpmPackage) {
+    packageName = "java-${jdkMajorVersion}-adoptopenjdk-${pkgMetadata.vm}"
+    packageVersion = jdkVersion
+    iteration = version
+    architecture = pkgMetadata.architecture.rpmQualifier()
+    vm = pkgMetadata.vm
+    maintainer = pkgMetadata.maintainer
+    vendor = pkgMetadata.vendor
+    homepage = pkgMetadata.homepage
+    license = pkgMetadata.license
+    packageDescription = pkgMetadata.description
+    category = "java"
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
+    prefix = "/usr/lib/jvm"
+    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/postinst.sh")
+    beforeRemoveScript = file("config/prerm.sh")
+    prebuiltJdkDirectory = jdkDistributionDir
+    variant = "redhat"
+}
+
+tasks.register("buildSuseRpmPackage", net.adoptopenjdk.installer.BuildRpmPackage) {
+    packageName = "java-${jdkMajorVersion}-adoptopenjdk-${pkgMetadata.vm}"
+    packageVersion = jdkVersion
+    iteration = version
+    architecture = pkgMetadata.architecture.rpmQualifier()
+    vm = pkgMetadata.vm
+    maintainer = pkgMetadata.maintainer
+    vendor = pkgMetadata.vendor
+    homepage = pkgMetadata.homepage
+    license = pkgMetadata.license
+    packageDescription = pkgMetadata.description
+    category = "java"
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
+    prefix = "/usr/lib64/jvm"
+    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/postinst.sh")
+    beforeRemoveScript = file("config/prerm.sh")
+    prebuiltJdkDirectory = jdkDistributionDir
+    variant = "suse"
+    signPackage = getSignPackageProperty()
+}
+
+task buildRpmPackage {
+    dependsOn "buildRedHatRpmPackage", "buildSuseRpmPackage"
+}
+
+build.dependsOn(buildRpmPackage)
+
+def getSignPackageProperty() {
+    return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : false
+}
