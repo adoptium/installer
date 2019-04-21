@@ -29,16 +29,32 @@ ext {
     pkgMetadata = [
         architecture: getJdkArchitecture(),
         vm          : getJdkVirtualMachine(),
-        description : "OpenJDK Development Kit ${jdkMajorVersion} (JDK) by AdoptOpenJDK\n" +
-            " OpenJDK is a development environment for building applications,\n" +
-            " applets, and components using the Java programming language.",
+        description : "OpenJDK Development Kit ${jdkMajorVersion} (JDK) by AdoptOpenJDK",
         homepage    : "https://adoptopenjdk.net/",
+        vcsUrl      : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u",
         iteration   : version,
         license     : "GPL-2.0+CE",
         maintainer  : "AdoptOpenJDK",
         vendor      : "AdoptOpenJDK"
     ]
+    bintray = [
+        user             : BINTRAY_USER,
+        key              : BINTRAY_KEY,
+        subject          : BINTRAY_SUBJECT,
+        repository       : [
+            deb: BINTRAY_REPOSITORY_DEB,
+            rpm: BINTRAY_REPOSITORY_RPM
+        ],
+        autoPublish      : BINTRAY_AUTO_PUBLISH,
+        autoCreatePackage: true,
+        autoUpdatePackage: true
+    ]
     jdkDistributionDir = JDK_DISTRIBUTION_DIR
+}
+
+tasks.register("upload") {
+    group = "upload"
+    description = "Uploads all linux packages"
 }
 
 def getJdkVirtualMachine() {

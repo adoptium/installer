@@ -1,7 +1,80 @@
+// Plug-in order matters. The groovy plug-in must appear after java-gradle-plugin or some tests
+// won't be picked up.
+plugins {
+    id "checkstyle"
+    id "java-gradle-plugin"
+    id "groovy"
+}
+
+ext {
+    assertj_version = "3.11.1"
+    junit_version = "5.4.2"
+    okhttp_version = "3.14.1"
+}
+
 repositories {
     mavenCentral()
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+checkstyle {
+    configFile = file("checkstyle.xml")
+    ignoreFailures false
+    showViolations true
+    checkstyleMain.exclude "**/CreatePackageJson.java", "**/UpdatePackageJson.java"
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+sourceSets {
+    functionalTest {
+        groovy.srcDir file('src/functTest/groovy')
+        resources.srcDir file('src/functTest/resources')
+        compileClasspath += sourceSets.main.output + configurations.testRuntime
+        runtimeClasspath += output + compileClasspath
+    }
+}
+
+task functionalTest(type: Test) {
+    description = 'Runs the functional tests.'
+    group = 'verification'
+
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+
+    testClassesDirs = sourceSets.functionalTest.output.classesDirs
+    classpath = sourceSets.functionalTest.runtimeClasspath
+    mustRunAfter test
+}
+
+gradlePlugin {
+    testSourceSets sourceSets.functionalTest
+}
+
+check.dependsOn functionalTest
+
 dependencies {
     implementation "com.samskivert:jmustache:1.14"
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.moshi:moshi:1.8.0"
+    implementation "com.squareup.okio:okio:2.2.2"
+    implementation "org.jetbrains:annotations:17.0.0"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+
+    functionalTestImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
+    functionalTestImplementation "org.assertj:assertj-core:$assertj_version"
+    functionalTestImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+    functionalTestImplementation "com.jayway.jsonpath:json-path:2.4.0"
 }
