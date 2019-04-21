@@ -127,6 +127,8 @@ Gradle tasks are included to upload Debian and RPM packages to [Bintray](https:/
 
 By specifying all build properties (see above) building and uploading can be done at once. The `upload` tasks depends on the respective `build` tasks. Run `./gradlew tasks` for a full list of tasks.
 
+**Attention**: When setting up a Bintray repository for RPM packages, the *YUM metadata folder depth* must be set to 3.
+
 ## Support Matrix
 
 ### Deb packages
