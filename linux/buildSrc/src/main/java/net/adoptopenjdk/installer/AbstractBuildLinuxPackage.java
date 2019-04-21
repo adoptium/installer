@@ -6,6 +6,7 @@ import org.gradle.api.resources.ResourceException;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputDirectory;
 import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 import org.gradle.api.tasks.TaskAction;
@@ -148,6 +149,7 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
         this.architecture = architecture;
     }
 
+    @Input
     public String getVm() {
         return vm;
     }
@@ -304,10 +306,13 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
     @OutputFile
     public abstract File getOutputFile();
 
+    @Internal
     public abstract String getPackageType();
 
+    @Internal
     public abstract String getJdkDirectoryName();
 
+    @Input
     @Optional
     public String getVariant() {
         return variant;
@@ -412,8 +417,10 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
     /**
      * Returns the names of distribution specific package contents.
      */
+    @Internal
     abstract Set<String> getDistributionSpecificPackageContents();
 
+    @Internal
     File getOutputDirectory() {
         File outputDirectory = getProject().getBuildDir();
         if (getVariant() != null && !getVariant().trim().isEmpty()) {
