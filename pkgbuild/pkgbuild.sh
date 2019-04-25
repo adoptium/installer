@@ -102,6 +102,10 @@ esac
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMPlatformVersion ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMVendor AdoptOpenJDK" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
+# Fix comes from https://apple.stackexchange.com/a/211033 to associate JAR files
+/usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:1 string JNI" "${INPUT_DIRECTORY}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:2 string BundledApp" "${INPUT_DIRECTORY}/Contents/Info.plist"
+
 cat distribution.xml.tmpl  \
   | sed -E "s/\\{identifier\\}/$IDENTIFIER/g" \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
