@@ -36,8 +36,7 @@ Deb packages for Debian and Ubuntu (see section *Support Matrix* below for suppo
     -PJDK_MAJOR_VERSION=<majorversion> \
     -PJDK_VERSION=<versionstring> \
     -PJDK_VM=<vm> \
-    -PJDK_ARCHITECTURE=<architecture> \
-    -PDEB_JINFO_PRIORITY=<jinfo>
+    -PJDK_ARCHITECTURE=<architecture>
 ```
 
 `JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
@@ -51,19 +50,18 @@ Example:
     -PJDK_MAJOR_VERSION=11 \
     -PJDK_VERSION="11.0.2+9" \
     -PJDK_VM=hotspot \
-    -PJDK_ARCHITECTURE=amd64 \
-    -PDEB_JINFO_PRIORITY=1101
+    -PJDK_ARCHITECTURE=amd64
 ```
 
 Table with arguments:
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                    | DEB\_JINFO\_PRIORITY |
-|--------|---------------------|------------------|---------------------|--------------------------------------|----------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` | `1081`               |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` | `1091`               |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` | `1101`               |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` | `1111`               |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` | `1121`               |
+|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                    |
+|--------|---------------------|------------------|---------------------|--------------------------------------|
+| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
+| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
+| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
+| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
+| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
 
 ### RPM packages
 

@@ -1,12 +1,20 @@
 import net.adoptopenjdk.installer.BuildDebianPackage
 import net.adoptopenjdk.installer.UploadDebianPackage
 
+ext.jinfoPriorities = [
+    8 : 1081,
+    9 : 1091,
+    10: 1101,
+    11: 1111,
+    12: 1121
+]
+
 tasks.register("buildDebianPackage", BuildDebianPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}"
     packageVersion = jdkVersion
     iteration = version
-    priority = getJinfoPriority()
-    architecture = pkgMetadata.architecture
+    priority = jinfoPriorities[jdkMajorVersion]
+    architecture = pkgMetadata.architecture.debQualifier()
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
@@ -55,7 +63,3 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
 }
 
 rootProject.tasks.getByName("upload").dependsOn(uploadDebianPackage)
-
-def getJinfoPriority() {
-    return hasProperty("DEB_JINFO_PRIORITY") ? Integer.parseInt(DEB_JINFO_PRIORITY) : 0
-}
