@@ -2,7 +2,7 @@ import net.adoptopenjdk.installer.BuildRpmPackage
 import net.adoptopenjdk.installer.UploadRpmPackage
 
 tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
+    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}"
     packageVersion = jdkVersion
     iteration = version
     architecture = pkgMetadata.architecture
@@ -13,10 +13,10 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     license = pkgMetadata.license
     packageDescription = pkgMetadata.description
     category = "java"
-    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
-    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/provides.txt")
     prefix = "/usr/lib/jvm"
-    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/postinst.sh")
+    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
     prebuiltJdkDirectory = jdkDistributionDir
     variant = "redhat"
@@ -24,7 +24,7 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
 }
 
 tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
+    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}"
     packageVersion = jdkVersion
     iteration = version
     architecture = pkgMetadata.architecture
@@ -35,10 +35,10 @@ tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     license = pkgMetadata.license
     packageDescription = pkgMetadata.description
     category = "java"
-    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
-    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/provides.txt")
     prefix = pkgMetadata.architecture.isaBits() == 64 ? "/usr/lib64/jvm" : "/usr/lib/jvm"
-    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/postinst.sh")
+    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
     prebuiltJdkDirectory = jdkDistributionDir
     variant = "suse"
