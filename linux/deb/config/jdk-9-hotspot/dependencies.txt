@@ -2,7 +2,6 @@ ca-certificates-java
 java-common
 libasound2
 libc6
-libfreetype6-dev
 libx11-6
 libxext6
 libxi6
