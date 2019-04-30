@@ -1,5 +1,6 @@
 package net.adoptopenjdk.installer;
 
+import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
 
 import java.io.File;
@@ -19,6 +20,7 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
         setDescription("Builds a rpm package");
     }
 
+    @Input
     @Optional
     public boolean isSignPackage() {
         return signPackage;

@@ -108,6 +108,27 @@ RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requir
 %__gpg /usr/bin/gpg
 ```
 
+## Upload to Package Repositories
+
+Gradle tasks are included to upload Debian and RPM packages to [Bintray](https://www.bintray.com/) and compatible services. To upload all package formats, run:
+
+```
+./gradlew upload \
+    -PJDK_MAJOR_VERSION=<majorversion> \
+    -PJDK_VERSION=<versionstring> \
+    -PJDK_ARCHITECTURE=<architecture> \
+    -PBINTRAY_USER=<user> \
+    -PBINTRAY_KEY=<apikey> \
+    -PBINTRAY_SUBJECT=<organisation> \
+    -PBINTRAY_REPOSITORY_DEB=<name-of-debian-repository> \
+    -PBINTRAY_REPOSITORY_RPM=<name-of-rpm-repository> \
+    -PBINTRAY_AUTO_PUBLISH=<true|false> \
+```
+
+By specifying all build properties (see above) building and uploading can be done at once. The `upload` tasks depends on the respective `build` tasks. Run `./gradlew tasks` for a full list of tasks.
+
+**Attention**: When setting up a Bintray repository for RPM packages, the *YUM metadata folder depth* must be set to 3.
+
 ## Support Matrix
 
 ### Deb packages
@@ -135,4 +156,3 @@ All packages can be installed on CentOS, Fedora, Red Hat Enterprise Linux (RHEL)
 | JDK 10 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
 | JDK 11 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
 | JDK 12 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-

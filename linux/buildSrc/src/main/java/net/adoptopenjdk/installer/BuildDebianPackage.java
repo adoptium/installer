@@ -80,7 +80,7 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
         return new File(getOutputDirectory(), outputFileName);
     }
 
-    public String getJinfoName() {
+    private String getJinfoName() {
         return String.format(".%s.jinfo", getJdkDirectoryName());
     }
 

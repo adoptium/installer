@@ -1,4 +1,7 @@
-tasks.register("buildDebianPackage", net.adoptopenjdk.installer.BuildDebianPackage) {
+import net.adoptopenjdk.installer.BuildDebianPackage
+import net.adoptopenjdk.installer.UploadDebianPackage
+
+tasks.register("buildDebianPackage", BuildDebianPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
     packageVersion = jdkVersion
     iteration = version
@@ -23,6 +26,44 @@ tasks.register("buildDebianPackage", net.adoptopenjdk.installer.BuildDebianPacka
 
 build.dependsOn(buildDebianPackage)
 
+tasks.register("uploadDebianPackage", UploadDebianPackage) {
+    dependsOn buildDebianPackage
+
+    packageToPublish = buildDebianPackage.getOutputFile()
+    user = bintray.user
+    key = bintray.key
+    subject = bintray.subject
+    repository = bintray.repository.deb
+    packageName = buildDebianPackage.getPackageName()
+    packageVersion = buildDebianPackage.getPackageVersion()
+    packageDescription = pkgMetadata.description
+    licenses = [pkgMetadata.license]
+    websiteUrl = pkgMetadata.homepage
+    vcsUrl = pkgMetadata.vcsUrl
+    architecture = buildDebianPackage.getArchitecture()
+    releaseArchitecture amd64: [
+        debian: ["jessie", "stretch", "buster"],
+        ubuntu: ["trusty", "xenial", "bionic", "cosmic", "disco"]
+    ]
+    releaseArchitecture s390x: [
+        debian: ["jessie", "stretch", "buster"],
+        ubuntu: ["xenial", "bionic", "cosmic", "disco"]
+    ]
+    releaseArchitecture ppc64el: [
+        debian: ["jessie", "stretch", "buster"],
+        ubuntu: ["trusty", "xenial", "bionic", "cosmic", "disco"]
+    ]
+    releaseArchitecture arm64: [
+        debian: ["jessie", "stretch", "buster"],
+        ubuntu: ["trusty", "xenial", "bionic", "cosmic", "disco"]
+    ]
+    autoPublish = BINTRAY_AUTO_PUBLISH
+    autoCreatePackage = true
+    autoUpdatePackage = true
+}
+
+rootProject.tasks.getByName("upload").dependsOn(uploadDebianPackage)
+
 def getJinfoPriority() {
-    return hasProperty("DEB_JINFO_PRIORITY") ? Integer.parseInt(DEB_JINFO_PRIORITY): 0
+    return hasProperty("DEB_JINFO_PRIORITY") ? Integer.parseInt(DEB_JINFO_PRIORITY) : 0
 }

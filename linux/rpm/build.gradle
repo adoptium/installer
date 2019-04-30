@@ -1,4 +1,7 @@
-tasks.register("buildRedHatRpmPackage", net.adoptopenjdk.installer.BuildRpmPackage) {
+import net.adoptopenjdk.installer.BuildRpmPackage
+import net.adoptopenjdk.installer.UploadRpmPackage
+
+tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     packageName = "java-${jdkMajorVersion}-adoptopenjdk-${pkgMetadata.vm}"
     packageVersion = jdkVersion
     iteration = version
@@ -19,7 +22,7 @@ tasks.register("buildRedHatRpmPackage", net.adoptopenjdk.installer.BuildRpmPacka
     variant = "redhat"
 }
 
-tasks.register("buildSuseRpmPackage", net.adoptopenjdk.installer.BuildRpmPackage) {
+tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     packageName = "java-${jdkMajorVersion}-adoptopenjdk-${pkgMetadata.vm}"
     packageVersion = jdkVersion
     iteration = version
@@ -42,10 +45,88 @@ tasks.register("buildSuseRpmPackage", net.adoptopenjdk.installer.BuildRpmPackage
 }
 
 task buildRpmPackage {
-    dependsOn "buildRedHatRpmPackage", "buildSuseRpmPackage"
+    dependsOn buildRedHatRpmPackage, buildSuseRpmPackage
 }
 
 build.dependsOn(buildRpmPackage)
+
+tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
+    dependsOn buildRedHatRpmPackage
+
+    packageToPublish = buildRedHatRpmPackage.getOutputFile()
+    user = bintray.user
+    key = bintray.key
+    subject = bintray.subject
+    repository = bintray.repository.rpm
+    packageName = buildRedHatRpmPackage.getPackageName()
+    packageVersion = buildRedHatRpmPackage.getPackageVersion()
+    packageDescription = pkgMetadata.description
+    licenses = [pkgMetadata.license]
+    websiteUrl = pkgMetadata.homepage
+    vcsUrl = pkgMetadata.vcsUrl
+    architecture = buildRedHatRpmPackage.getArchitecture()
+    releaseArchitecture x86_64: [
+        centos: ["6", "7"],
+        rhel  : ["6", "7"],
+        fedora: ["28", "29"]
+    ]
+    releaseArchitecture s390x: [
+        centos: ["6", "7"],
+        rhel  : ["6", "7"]
+    ]
+    releaseArchitecture ppc64le: [
+        centos: ["6", "7"],
+        rhel  : ["6", "7"]
+    ]
+    releaseArchitecture aarch64: [
+        centos: ["6", "7"],
+        rhel  : ["6", "7"]
+    ]
+    autoPublish = BINTRAY_AUTO_PUBLISH
+    autoCreatePackage = true
+    autoUpdatePackage = true
+}
+
+tasks.register("uploadSuseRpmPackage", UploadRpmPackage) {
+    dependsOn buildSuseRpmPackage
+
+    packageToPublish = buildSuseRpmPackage.getOutputFile()
+    user = bintray.user
+    key = bintray.key
+    subject = bintray.subject
+    repository = bintray.repository.rpm
+    packageName = buildSuseRpmPackage.getPackageName()
+    packageVersion = buildSuseRpmPackage.getPackageVersion()
+    packageDescription = pkgMetadata.description
+    licenses = [pkgMetadata.license]
+    websiteUrl = pkgMetadata.homepage
+    vcsUrl = pkgMetadata.vcsUrl
+    architecture = buildSuseRpmPackage.getArchitecture()
+    releaseArchitecture x86_64: [
+        opensuse: ["15.0"],
+        sles    : ["12", "15"]
+    ]
+    releaseArchitecture s390x: [
+        sles: ["12", "15"]
+    ]
+    releaseArchitecture ppc64le: [
+        sles: ["12", "15"]
+    ]
+    releaseArchitecture aarch64: [
+        sles: ["12", "15"]
+    ]
+    autoPublish = BINTRAY_AUTO_PUBLISH
+    autoCreatePackage = true
+    autoUpdatePackage = true
+}
+
+tasks.register("uploadRpmPackage") {
+    group = "upload"
+    description = "Uploads all RPM packages"
+    dependsOn uploadRedHatRpmPackage, uploadSuseRpmPackage
+}
+
+rootProject.tasks.getByName("upload").dependsOn(uploadRpmPackage)
 
 def getSignPackageProperty() {
     return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : false
