@@ -43,7 +43,7 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
     architecture = buildDebianPackage.getArchitecture()
     releaseArchitecture amd64: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["trusty", "xenial", "bionic", "cosmic", "disco"]
+        ubuntu: ["xenial", "bionic", "cosmic", "disco"]
     ]
     releaseArchitecture s390x: [
         debian: ["jessie", "stretch", "buster"],
@@ -51,11 +51,11 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
     ]
     releaseArchitecture ppc64el: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["trusty", "xenial", "bionic", "cosmic", "disco"]
+        ubuntu: ["xenial", "bionic", "cosmic", "disco"]
     ]
     releaseArchitecture arm64: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["trusty", "xenial", "bionic", "cosmic", "disco"]
+        ubuntu: ["xenial", "bionic", "cosmic", "disco"]
     ]
     autoPublish = BINTRAY_AUTO_PUBLISH
     autoCreatePackage = true
