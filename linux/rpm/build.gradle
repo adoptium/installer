@@ -68,7 +68,7 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     releaseArchitecture x86_64: [
         centos: ["6", "7"],
         rhel  : ["6", "7"],
-        fedora: ["28", "29"]
+        fedora: ["29", "30"]
     ]
     releaseArchitecture s390x: [
         centos: ["6", "7"],

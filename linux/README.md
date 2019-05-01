@@ -151,8 +151,8 @@ All packages can be installed on CentOS, Fedora, Red Hat Enterprise Linux (RHEL)
 
 | OpenJDK                  | CentOS | Fedora | RHEL | OpenSUSE | SLES   |
 |--------------------------|--------|--------|------|----------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
+| JDK 8 (Hotspot, OpenJ9)  | 6, 7   | 29, 30 | 6, 7 | 15.0     | 12, 15 |
+| JDK 9 (Hotspot, OpenJ9)  | 6, 7   | 29, 30 | 6, 7 | 15.0     | 12, 15 |
+| JDK 10 (Hotspot, OpenJ9) | 6, 7   | 29, 30 | 6, 7 | 15.0     | 12, 15 |
+| JDK 11 (Hotspot, OpenJ9) | 6, 7   | 29, 30 | 6, 7 | 15.0     | 12, 15 |
+| JDK 12 (Hotspot, OpenJ9) | 6, 7   | 29, 30 | 6, 7 | 15.0     | 12, 15 |
