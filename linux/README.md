@@ -23,7 +23,7 @@ Note: Linux packages can be created on any Linux distribution and macOS and on a
 
 ## Packaging
 
-It is possible to simultaneously build Debian and RPM packages by using `./gradlew build` and specifying all properties (`-P`) that required by all package formats.
+It is possible to simultaneously build Debian and RPM packages by using `./gradlew build` and specifying all properties (`-P`) that are required by the various package formats.
 
 ### Deb packages
 
@@ -101,7 +101,7 @@ Example:
 | JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
 | JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
 
-RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires a file `~/.rpmmacros` to be present that contains the signing config (change values as necessary):
+RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
 
 ```
 %_signature gpg
