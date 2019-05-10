@@ -24,7 +24,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   SET PRODUCT_MINOR_VERSION=0
   SET PRODUCT_MAINTENANCE_VERSION=2
   SET PRODUCT_PATCH_VERSION=8
-  SET ARCH=x64|x86 or both "x64 x86"
+  SET ARCH=x64|x86 or both "x64,x86"
   SET JVM=hotspot|openj9 or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
   cmd /c Build.OpenJDK_generic.cmd
@@ -48,54 +48,23 @@ Installation optional parameters:
 
 #### `INSTALLLEVEL`
 - 1 = (Add to PATH + Associate jar)
-- 2 = (Add to PATH + Associate jar) + define JAVA_HOME + JavaSoft reg keys
+- 2 = (Add to PATH + Associate jar) + define JAVA_HOME
 
 usage sample: 
 ```batch
 msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=1
 msiexec /i OpenJDK8-jdk_xxx.msi INSTALLLEVEL=2
 ```
-
+		
 #### Features available:
-- FeatureMain (Required) Install AdoptOpenJdk files ( To use with property : INSTALLDIR to set directory where to install for unattended install )
-- FeatureEnvironment (PATH)
+- FeatureEnvironment ( PATH )
 - FeatureJavaHome (JAVA_HOME)
 - FeatureJarFileRunWith (associate .jar)
-- FeatureOracleJavaSoft (Registry keys HKLM\SOFTWARE\JavaSoft\) (break Oracle java start launch from PATH when AdoptOpenJDK is uninstalled, reinstall Oracle if needed to restore Oracle registry keys) (Only available for admin users / machine setup ( normal users can't write to HKLM ))
-
+- FeatureOracleJavaSoft ( Registry keys HKLM\SOFTWARE\JavaSoft\ ) (break Oracle java start launch from PATH when AdoptOpenJDK is uninstalled, reinstall Oracle if needed to restore Oracle registry keys)
+		
 usage sample:
 ```batch
-msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureMain,FeatureJavaHome,FeatureJarFileRunWith INSTALLDIR=D:\testAdopt
-```
-
-#### Embeded transform for language :
-
-see list for full/partial language translation available here https://github.com/AdoptOpenJDK/openjdk-installer/blob/master/wix/Lang/LanguageList.config
-(Feel free to make pull request to add/complete translation)
-
-Set property `TRANSFORMS` with :<code> where <code> is the id available in LanguageList.config
-
-```batch
-msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureMain,FeatureJavaHome,FeatureJarFileRunWith INSTALLDIR=D:\testAdopt TRANSFORMS=:1036
-```
-
-##### Language with GPO :
- You must keep only the language you want use in the MSI.
- Use ORCA and remove all except one language : under view --> Summary Information go to the Languages input field and remove all but one. Okay and save.
-
-
-#### Per user install
-
-Note : 
-- FeatureOracleJavaSoft can't and must not be used per user install as it only write to HKLM. (see https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB)
-- Machine PATH is always loaded before User PATH (FeatureEnvironment) ( If another java is installed per machine it will be the default one when using the PATH )
-
-
-See https://docs.microsoft.com/fr-fr/windows/desktop/Msi/allusers
-
-Windows 7 and later : use MSIINSTALLPERUSER=1
-```batch
-msiexec /i OpenJDK8-jdk_xxx.msii INSTALLDIR=D:\testAdopt ADDLOCAL=FeatureMain,FeatureEnvironment,FeatureJavaHome,FeatureJarFileRunWith MSIINSTALLPERUSER=1
+msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureJavaHome,FeatureJarFileRunWith
 ```
 
 #### Reinstall option :
@@ -112,5 +81,6 @@ Upgradable MSI work only for first 3 digit from the build number (due to MSI lim
 
 * Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
 * Upgradable : 8.0.2.1 -> 8.0.2.2 No ( You must uninstall previous msi and install new one )
+* Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
 * Upgradable : 8.0.2.1 -> 8.1.2.1 Yes
 * Upgradable : 8.0.2.1 -> 11.0.2.1 No  ( AdoptOpenJDK dont provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )
