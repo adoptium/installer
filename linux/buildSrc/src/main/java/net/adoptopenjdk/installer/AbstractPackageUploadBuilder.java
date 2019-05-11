@@ -1,23 +1,19 @@
-package net.adoptopenjdk.installer.bintray;
+package net.adoptopenjdk.installer;
 
 import java.io.File;
 
-public abstract class AbstractPackageUploadBuilder<B extends AbstractPackageUploadBuilder<B>> {
+abstract class AbstractPackageUploadBuilder<B extends AbstractPackageUploadBuilder<B>> {
+
     File file;
-    String subject;
+
     String repository;
-    String name;
-    String version;
+
+    String packageName;
+
     String remotePath;
-    boolean autoPublish = false;
 
     public B file(File file) {
         this.file = file;
-        return self();
-    }
-
-    public B subject(String subject) {
-        this.subject = subject;
         return self();
     }
 
@@ -26,13 +22,8 @@ public abstract class AbstractPackageUploadBuilder<B extends AbstractPackageUplo
         return self();
     }
 
-    public B name(String name) {
-        this.name = name;
-        return self();
-    }
-
-    public B version(String version) {
-        this.version = version;
+    public B packageName(String name) {
+        this.packageName = name;
         return self();
     }
 
@@ -42,11 +33,6 @@ public abstract class AbstractPackageUploadBuilder<B extends AbstractPackageUplo
         }
 
         this.remotePath = remotePath;
-        return self();
-    }
-
-    public B autoPublish(boolean autoPublish) {
-        this.autoPublish = autoPublish;
         return self();
     }
 

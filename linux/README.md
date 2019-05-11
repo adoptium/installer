@@ -110,24 +110,22 @@ RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requir
 
 ## Upload to Package Repositories
 
-Gradle tasks are included to upload Debian and RPM packages to [Bintray](https://www.bintray.com/) and compatible services. To upload all package formats, run:
+Gradle tasks are included to upload Debian and RPM packages to Artifactory. To upload all package formats, run:
 
 ```
 ./gradlew upload \
     -PJDK_MAJOR_VERSION=<majorversion> \
     -PJDK_VERSION=<versionstring> \
     -PJDK_ARCHITECTURE=<architecture> \
-    -PBINTRAY_USER=<user> \
-    -PBINTRAY_KEY=<apikey> \
-    -PBINTRAY_SUBJECT=<organisation> \
-    -PBINTRAY_REPOSITORY_DEB=<name-of-debian-repository> \
-    -PBINTRAY_REPOSITORY_RPM=<name-of-rpm-repository> \
-    -PBINTRAY_AUTO_PUBLISH=<true|false> \
+    -PARTIFACTORY_USER=<user> \
+    -PARTIFACTORY_PASSWORD=<apikey> \
+    -PARTIFACTORY_REPOSITORY_DEB=<name-of-debian-repository> \
+    -PARTIFACTORY_REPOSITORY_RPM=<name-of-rpm-repository>
 ```
 
 By specifying all build properties (see above) building and uploading can be done at once. The `upload` tasks depends on the respective `build` tasks. Run `./gradlew tasks` for a full list of tasks.
 
-**Attention**: When setting up a Bintray repository for RPM packages, the *YUM metadata folder depth* must be set to 3.
+**Attention**: When setting up an Artifactory repository for RPM packages, the *YUM metadata folder depth* must be set to 3.
 
 ## Support Matrix
 

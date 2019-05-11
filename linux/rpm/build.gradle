@@ -54,16 +54,11 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     dependsOn buildRedHatRpmPackage
 
     packageToPublish = buildRedHatRpmPackage.getOutputFile()
-    user = bintray.user
-    key = bintray.key
-    subject = bintray.subject
-    repository = bintray.repository.rpm
+    apiEndpoint = artifactory.url
+    user = artifactory.user
+    password = artifactory.password
+    repository = artifactory.repository.rpm
     packageName = buildRedHatRpmPackage.getPackageName()
-    packageVersion = buildRedHatRpmPackage.getPackageVersion()
-    packageDescription = pkgMetadata.description
-    licenses = [pkgMetadata.license]
-    websiteUrl = pkgMetadata.homepage
-    vcsUrl = pkgMetadata.vcsUrl
     architecture = buildRedHatRpmPackage.getArchitecture()
     releaseArchitecture x86_64: [
         centos: ["6", "7"],
@@ -82,25 +77,17 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
         centos: ["6", "7"],
         rhel  : ["6", "7"]
     ]
-    autoPublish = BINTRAY_AUTO_PUBLISH
-    autoCreatePackage = true
-    autoUpdatePackage = true
 }
 
 tasks.register("uploadSuseRpmPackage", UploadRpmPackage) {
     dependsOn buildSuseRpmPackage
 
     packageToPublish = buildSuseRpmPackage.getOutputFile()
-    user = bintray.user
-    key = bintray.key
-    subject = bintray.subject
-    repository = bintray.repository.rpm
+    apiEndpoint = artifactory.url
+    user = artifactory.user
+    password = artifactory.password
+    repository = artifactory.repository.rpm
     packageName = buildSuseRpmPackage.getPackageName()
-    packageVersion = buildSuseRpmPackage.getPackageVersion()
-    packageDescription = pkgMetadata.description
-    licenses = [pkgMetadata.license]
-    websiteUrl = pkgMetadata.homepage
-    vcsUrl = pkgMetadata.vcsUrl
     architecture = buildSuseRpmPackage.getArchitecture()
     releaseArchitecture x86_64: [
         opensuse: ["15.0"],
@@ -115,9 +102,6 @@ tasks.register("uploadSuseRpmPackage", UploadRpmPackage) {
     releaseArchitecture aarch64: [
         sles: ["12", "15"]
     ]
-    autoPublish = BINTRAY_AUTO_PUBLISH
-    autoCreatePackage = true
-    autoUpdatePackage = true
 }
 
 tasks.register("uploadRpmPackage") {

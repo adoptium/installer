@@ -1,8 +1,5 @@
 package net.adoptopenjdk.installer;
 
-import net.adoptopenjdk.installer.bintray.BintrayClient;
-import net.adoptopenjdk.installer.bintray.BintrayCredentials;
-import net.adoptopenjdk.installer.bintray.PackageUpload;
 import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
@@ -23,7 +20,7 @@ public class UploadRpmPackage extends AbstractUploadLinuxPackage {
     }
 
     @Override
-    protected void uploadPackages(BintrayClient bintrayClient) {
+    protected void uploadPackages(ArtifactoryCredentials artifactoryCredentials) {
         if (!getReleaseArchitectures().containsKey(getArchitecture())) {
             return;
         }
@@ -40,21 +37,14 @@ public class UploadRpmPackage extends AbstractUploadLinuxPackage {
 
                 PackageUpload upload = new PackageUpload.Builder()
                         .file(getPackageToPublish())
-                        .subject(getSubject())
                         .repository(getRepository())
-                        .name(getPackageName())
-                        .version(getPackageVersion())
                         .remotePath(remotePath)
-                        .autoPublish(isAutoPublish())
                         .build();
 
                 getLogger().lifecycle(
-                        "Uploading {}, version {} to {}/{}/{} for {}:{} on {}",
+                        "Uploading {} to {} for {}:{} on {}",
                         getPackageToPublish().getName(),
-                        getPackageVersion(),
-                        getSubject(),
                         getRepository(),
-                        getPackageName(),
                         distribution.getKey(),
                         version,
                         getArchitecture()
@@ -62,7 +52,7 @@ public class UploadRpmPackage extends AbstractUploadLinuxPackage {
 
                 executor.submit(UploadPackageTask.class, workerConfig -> {
                     workerConfig.setIsolationMode(IsolationMode.NONE);
-                    workerConfig.setParams(getApiEndpoint(), new BintrayCredentials(getUser(), getKey()), upload);
+                    workerConfig.setParams(getApiEndpoint(), artifactoryCredentials, upload);
                 });
             }
         }
