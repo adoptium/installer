@@ -24,6 +24,10 @@ public enum Architecture {
         return this.rpmQualifier;
     }
 
+    int isaBits() {
+        return this.isaBits;
+    }
+
     String rpmIsaBits() {
         return String.format("%sbit", this.isaBits);
     }

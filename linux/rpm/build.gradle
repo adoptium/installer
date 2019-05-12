@@ -37,7 +37,7 @@ tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     category = "java"
     dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
     providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
-    prefix = "/usr/lib64/jvm"
+    prefix = pkgMetadata.architecture.isaBits() == 64 ? "/usr/lib64/jvm" : "/usr/lib/jvm"
     afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
     prebuiltJdkDirectory = jdkDistributionDir
