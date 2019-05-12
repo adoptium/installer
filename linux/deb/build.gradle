@@ -6,7 +6,7 @@ tasks.register("buildDebianPackage", BuildDebianPackage) {
     packageVersion = jdkVersion
     iteration = version
     priority = getJinfoPriority()
-    architecture = pkgMetadata.architecture.debQualifier()
+    architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
@@ -35,7 +35,7 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
     password = artifactory.password
     repository = artifactory.repository.deb
     packageName = buildDebianPackage.getPackageName()
-    architecture = buildDebianPackage.getArchitecture()
+    architecture = buildDebianPackage.getArchitecture().debQualifier()
     releaseArchitecture amd64: [
         debian: ["jessie", "stretch", "buster"],
         ubuntu: ["xenial", "bionic", "cosmic", "disco"]

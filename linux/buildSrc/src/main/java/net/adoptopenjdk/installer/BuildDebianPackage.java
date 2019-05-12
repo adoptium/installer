@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
@@ -75,7 +76,7 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
                 getPackageName(),
                 getPackageVersion(),
                 getIteration(),
-                getArchitecture()
+                getArchitecture().debQualifier()
         );
         return new File(getOutputDirectory(), outputFileName);
     }
@@ -91,7 +92,14 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
 
     @Override
     public String getJdkDirectoryName() {
-        return String.format("%s-%s", getPackageName(), getArchitecture());
+        return String.format("%s-%s", getPackageName(), getArchitecture().debQualifier());
+    }
+
+    @Override
+    List<String> fpmArguments() {
+        List<String> args = super.fpmArguments();
+        args.add(String.format("--architecture=%s", getArchitecture().debQualifier()));
+        return args;
     }
 
     @Override
@@ -102,7 +110,7 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
                 .collect(Collectors.joining(" "));
 
         Map<String, Object> context = new LinkedHashMap<>();
-        context.put("architecture", getArchitecture());
+        context.put("architecture", getArchitecture().debQualifier());
         context.put("jdkDirectoryName", getJdkDirectoryName());
         context.put("packageName", getPackageName());
         context.put("packageVersion", getPackageVersion());

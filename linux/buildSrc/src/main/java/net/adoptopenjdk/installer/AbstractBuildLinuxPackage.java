@@ -13,6 +13,7 @@ import org.gradle.api.tasks.TaskAction;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,6 +24,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -46,7 +48,7 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
     /**
      * Name of the platform which the package is for, e.g. "amd64".
      */
-    private String architecture;
+    private Architecture architecture;
 
     private String vm;
 
@@ -141,11 +143,11 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
     }
 
     @Input
-    public String getArchitecture() {
+    public Architecture getArchitecture() {
         return architecture;
     }
 
-    public void setArchitecture(String architecture) {
+    public void setArchitecture(Architecture architecture) {
         this.architecture = architecture;
     }
 
@@ -333,7 +335,6 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
         arguments.add("--input-type=dir");
         arguments.add(String.format("--output-type=%s", getPackageType()));
         arguments.add(String.format("--package=%s", getOutputFile()));
-        arguments.add(String.format("--architecture=%s", getArchitecture()));
         arguments.add(String.format("--name=%s", getPackageName()));
         arguments.add(String.format("--version=%s", getPackageVersion()));
         arguments.add(String.format("--iteration=%s", getIteration()));
@@ -372,7 +373,9 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
             collectedDependencies.addAll(getDependencies());
         }
         if (dependenciesFile != null) {
-            collectedDependencies.addAll(readSetFromFile(dependenciesFile));
+            String dependencies = readTemplate(dependenciesFile, this.templateContext());
+            InputStream inStream = new ByteArrayInputStream(dependencies.getBytes(StandardCharsets.UTF_8));
+            collectedDependencies.addAll(readSet(inStream));
         }
         return collectedDependencies;
     }
@@ -383,7 +386,7 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
             collectedProvides.addAll(getProvides());
         }
         if (providesFile != null) {
-            collectedProvides.addAll(readSetFromFile(providesFile));
+            collectedProvides.addAll(readSet(providesFile));
         }
         return collectedProvides;
     }
@@ -442,11 +445,27 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
         }
     }
 
-    Set<String> readSetFromFile(File inFile) {
+    String readTemplate(File inFile, Map<String, Object> context) {
         try (
                 InputStream inStream = new FileInputStream(inFile);
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inStream, UTF_8))
+                Reader reader = new BufferedReader(new InputStreamReader(inStream, UTF_8))
         ) {
+            return Mustache.compiler().escapeHTML(false).compile(reader).execute(context);
+        } catch (IOException e) {
+            throw new ResourceException("Could not read template: " + inFile.toPath(), e);
+        }
+    }
+
+    Set<String> readSet(File file) {
+        try (InputStream inStream = new FileInputStream(file)) {
+            return readSet(inStream);
+        } catch (IOException e) {
+            throw new ResourceException("Could not read entries from " + file.getPath(), e);
+        }
+    }
+
+    Set<String> readSet(InputStream inStream) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inStream, UTF_8))) {
             Set<String> readEntries = new LinkedHashSet<>();
 
             String line;
@@ -462,7 +481,7 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
 
             return readEntries;
         } catch (IOException e) {
-            throw new ResourceException("Could not read entries from " + inFile.toPath(), e);
+            throw new ResourceException("Could not read entries from stream", e);
         }
     }
 

@@ -38,7 +38,7 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
                 getPackageName(),
                 getPackageVersion(),
                 getIteration(),
-                getArchitecture()
+                getArchitecture().rpmQualifier()
         );
         return new File(getOutputDirectory(), outputFileName);
     }
@@ -56,6 +56,7 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
     @Override
     List<String> fpmArguments() {
         List<String> args = super.fpmArguments();
+        args.add(String.format("--architecture=%s", getArchitecture().rpmQualifier()));
         args.add("--rpm-os=linux");
         args.add(String.format("--directories=%s/%s", getPrefix(), getJdkDirectoryName()));
         return args;
@@ -64,7 +65,8 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
     @Override
     Map<String, Object> templateContext() {
         Map<String, Object> context = new LinkedHashMap<>();
-        context.put("architecture", getArchitecture());
+        context.put("architecture", getArchitecture().rpmQualifier());
+        context.put("rpmIsaBits", getArchitecture().rpmIsaBits());
         context.put("jdkDirectoryName", getJdkDirectoryName());
         context.put("packageName", getPackageName());
         context.put("packageVersion", getPackageVersion());
