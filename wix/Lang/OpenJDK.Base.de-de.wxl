@@ -17,4 +17,8 @@
 	<String Id="DowngradeDenied">"Eine neuere Version von [ProductName] ist bereits installiert. Das Setup wird jetzt beendet."</String>
 	<String Id="FeatureOracleJavaSoftName">JavaSoft (Oracle) registry keys</String>
 	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of AdoptOpenJDK, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
+	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
+	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
+	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>
+	<String Id="FeatureJNLPFileRunWithDescription">Associate .jnlp files to run with IcedTea-Web</String>
 </WixLocalization>
