@@ -135,24 +135,31 @@ By specifying all build properties (see above) building and uploading can be don
 
 All packages can be installed on Debian and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, arm64 unless otherwise noted. All major versions can be installed side by side. 
 
-| OpenJDK                  | Debian                               | Ubuntu                                                          |
-|--------------------------|--------------------------------------|-----------------------------------------------------------------|
-| JDK 8 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 14.04* (trusty), 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic) |
-| JDK 9 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 14.04* (trusty), 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic) |
-| JDK 10 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 14.04* (trusty), 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic) |
-| JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 14.04* (trusty), 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic) |
-| JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 14.04* (trusty), 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic) |
+| OpenJDK                  | Debian                               | Ubuntu                                                        |
+|--------------------------|--------------------------------------|---------------------------------------------------------------|
+| JDK 8 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
+| JDK 9 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
+| JDK 10 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
+| JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
+| JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
 
-\* amd64, ppc64el, arm64 only
+* [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
+* [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
 
 ### RPM packages
 
 All packages can be installed on CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions can be installed side by side. Packages for Fedora and OpenSUSE are only available for amd64, packages for all other distributions are available for amd64, s390x, ppc64el and arm64.
 
-| OpenJDK                  | CentOS | Fedora | RHEL | OpenSUSE | SLES   |
-|--------------------------|--------|--------|------|----------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 6, 7   | 28, 29 | 6, 7 | 15.0     | 12, 15 |
+| OpenJDK                  | CentOS  | Fedora | RHEL    | OpenSUSE | SLES   |
+|--------------------------|---------|--------|---------|----------|--------|
+| JDK 8 (Hotspot, OpenJ9)  | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 9 (Hotspot, OpenJ9)  | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 10 (Hotspot, OpenJ9) | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 11 (Hotspot, OpenJ9) | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 12 (Hotspot, OpenJ9) | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+
+* [CentOS releases and support timeframe](https://wiki.centos.org/Download)
+* [Fedora releases and support timeframe](https://fedoraproject.org/wiki/Releases)
+* [Red Hat Enterprise Linux releases and support timeframe](https://access.redhat.com/support/policy/updates/errata/)
+* [OpenSUSE releases and support timeframe](https://en.opensuse.org/Lifetime)
+* [Suse Linux Enterprise releases and support timeframe](https://www.suse.com/lifecycle/)

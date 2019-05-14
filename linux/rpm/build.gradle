@@ -66,21 +66,21 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     vcsUrl = pkgMetadata.vcsUrl
     architecture = buildRedHatRpmPackage.getArchitecture()
     releaseArchitecture x86_64: [
-        centos: ["6", "7"],
-        rhel  : ["6", "7"],
-        fedora: ["28", "29"]
+        centos: ["6", "7", "8"],
+        rhel  : ["6", "7", "8"],
+        fedora: ["29", "30"]
     ]
     releaseArchitecture s390x: [
-        centos: ["6", "7"],
-        rhel  : ["6", "7"]
+        centos: ["6", "7", "8"],
+        rhel  : ["6", "7", "8"]
     ]
     releaseArchitecture ppc64le: [
-        centos: ["6", "7"],
-        rhel  : ["6", "7"]
+        centos: ["6", "7", "8"],
+        rhel  : ["6", "7", "8"]
     ]
     releaseArchitecture aarch64: [
-        centos: ["6", "7"],
-        rhel  : ["6", "7"]
+        centos: ["6", "7", "8"],
+        rhel  : ["6", "7", "8"]
     ]
     autoPublish = BINTRAY_AUTO_PUBLISH
     autoCreatePackage = true
