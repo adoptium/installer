@@ -37,17 +37,14 @@ ext {
         maintainer  : "AdoptOpenJDK",
         vendor      : "AdoptOpenJDK"
     ]
-    bintray = [
-        user             : BINTRAY_USER,
-        key              : BINTRAY_KEY,
-        subject          : BINTRAY_SUBJECT,
-        repository       : [
-            deb: BINTRAY_REPOSITORY_DEB,
-            rpm: BINTRAY_REPOSITORY_RPM
+    artifactory = [
+        url       : "https://adoptopenjdk.jfrog.io/adoptopenjdk/",
+        user      : ARTIFACTORY_USER,
+        password  : ARTIFACTORY_PASSWORD,
+        repository: [
+            deb: ARTIFACTORY_REPOSITORY_DEB,
+            rpm: ARTIFACTORY_REPOSITORY_RPM
         ],
-        autoPublish      : BINTRAY_AUTO_PUBLISH,
-        autoCreatePackage: true,
-        autoUpdatePackage: true
     ]
     jdkDistributionDir = JDK_DISTRIBUTION_DIR
 }

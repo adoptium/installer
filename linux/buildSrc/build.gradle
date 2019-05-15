@@ -14,6 +14,11 @@ ext {
 
 repositories {
     mavenCentral()
+    jcenter {
+        content {
+            includeGroup "org.jfrog.artifactory.client"
+        }
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -64,10 +69,8 @@ check.dependsOn functionalTest
 
 dependencies {
     implementation "com.samskivert:jmustache:1.14"
-    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
-    implementation "com.squareup.moshi:moshi:1.8.0"
-    implementation "com.squareup.okio:okio:2.2.2"
     implementation "org.jetbrains:annotations:17.0.0"
+    implementation "org.jfrog.artifactory.client:artifactory-java-client-services:2.8.3"
 
     testImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
     testImplementation "org.assertj:assertj-core:$assertj_version"
@@ -76,5 +79,4 @@ dependencies {
     functionalTestImplementation "org.junit.jupiter:junit-jupiter:$junit_version"
     functionalTestImplementation "org.assertj:assertj-core:$assertj_version"
     functionalTestImplementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
-    functionalTestImplementation "com.jayway.jsonpath:json-path:2.4.0"
 }

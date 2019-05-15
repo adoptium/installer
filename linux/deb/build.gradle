@@ -30,16 +30,11 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
     dependsOn buildDebianPackage
 
     packageToPublish = buildDebianPackage.getOutputFile()
-    user = bintray.user
-    key = bintray.key
-    subject = bintray.subject
-    repository = bintray.repository.deb
+    apiEndpoint = artifactory.url
+    user = artifactory.user
+    password = artifactory.password
+    repository = artifactory.repository.deb
     packageName = buildDebianPackage.getPackageName()
-    packageVersion = buildDebianPackage.getPackageVersion()
-    packageDescription = pkgMetadata.description
-    licenses = [pkgMetadata.license]
-    websiteUrl = pkgMetadata.homepage
-    vcsUrl = pkgMetadata.vcsUrl
     architecture = buildDebianPackage.getArchitecture()
     releaseArchitecture amd64: [
         debian: ["jessie", "stretch", "buster"],
@@ -57,9 +52,6 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
         debian: ["jessie", "stretch", "buster"],
         ubuntu: ["xenial", "bionic", "cosmic", "disco"]
     ]
-    autoPublish = BINTRAY_AUTO_PUBLISH
-    autoCreatePackage = true
-    autoUpdatePackage = true
 }
 
 rootProject.tasks.getByName("upload").dependsOn(uploadDebianPackage)

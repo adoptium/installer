@@ -1,8 +1,5 @@
 package net.adoptopenjdk.installer;
 
-import net.adoptopenjdk.installer.bintray.BintrayClient;
-import net.adoptopenjdk.installer.bintray.BintrayCredentials;
-import net.adoptopenjdk.installer.bintray.DebianPackageUpload;
 import org.gradle.workers.IsolationMode;
 import org.gradle.workers.WorkerExecutor;
 
@@ -26,7 +23,7 @@ public class UploadDebianPackage extends AbstractUploadLinuxPackage {
     }
 
     @Override
-    protected void uploadPackages(BintrayClient bintrayClient) {
+    protected void uploadPackages(ArtifactoryCredentials artifactoryCredentials) {
         Set<String> distributionsToPublish = distributions();
         if (distributionsToPublish.isEmpty()) {
             return;
@@ -34,31 +31,24 @@ public class UploadDebianPackage extends AbstractUploadLinuxPackage {
 
         DebianPackageUpload upload = new DebianPackageUpload.Builder()
                 .file(getPackageToPublish())
-                .subject(getSubject())
                 .repository(getRepository())
-                .name(getPackageName())
-                .version(getPackageVersion())
                 .remotePath(targetFilePath())
                 .distributions(distributionsToPublish)
                 .components(Collections.singleton("main"))
                 .architectures(Collections.singleton(getArchitecture()))
-                .autoPublish(isAutoPublish())
                 .build();
 
         getLogger().lifecycle(
-                "Uploading {}, version {} to {}/{}/{} for {} on {}",
+                "Uploading {} to {} for {} on {}",
                 getPackageToPublish().getName(),
-                getPackageVersion(),
-                getSubject(),
                 getRepository(),
-                getPackageName(),
                 distributions(),
                 getArchitecture()
         );
 
         executor.submit(UploadPackageTask.class, workerConfiguration -> {
             workerConfiguration.setIsolationMode(IsolationMode.NONE);
-            workerConfiguration.setParams(getApiEndpoint(), new BintrayCredentials(getUser(), getKey()), upload);
+            workerConfiguration.setParams(getApiEndpoint(), artifactoryCredentials, upload);
         });
     }
 
