@@ -1,3 +1,4 @@
+ca-certificates
 libasound2
 libc6
 libx11-6

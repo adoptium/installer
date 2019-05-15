@@ -1,4 +1,4 @@
-ca-certificates-java
+ca-certificates
 java-common
 libasound2
 libc6
