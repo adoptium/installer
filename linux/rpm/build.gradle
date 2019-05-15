@@ -20,6 +20,7 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     beforeRemoveScript = file("config/prerm.sh")
     prebuiltJdkDirectory = jdkDistributionDir
     variant = "redhat"
+    signPackage = getSignPackageProperty()
 }
 
 tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
@@ -113,5 +114,5 @@ tasks.register("uploadRpmPackage") {
 rootProject.tasks.getByName("upload").dependsOn(uploadRpmPackage)
 
 def getSignPackageProperty() {
-    return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : false
+    return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : true
 }
