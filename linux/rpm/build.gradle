@@ -20,6 +20,7 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     beforeRemoveScript = file("config/prerm.sh")
     prebuiltJdkDirectory = jdkDistributionDir
     variant = "redhat"
+    signPackage = getSignPackageProperty()
 }
 
 tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
