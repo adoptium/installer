@@ -5,7 +5,7 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
     packageVersion = jdkVersion
     iteration = version
-    architecture = pkgMetadata.architecture.rpmQualifier()
+    architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
@@ -27,7 +27,7 @@ tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
     packageVersion = jdkVersion
     iteration = version
-    architecture = pkgMetadata.architecture.rpmQualifier()
+    architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
@@ -37,7 +37,7 @@ tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     category = "java"
     dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
     providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
-    prefix = "/usr/lib64/jvm"
+    prefix = pkgMetadata.architecture.isaBits() == 64 ? "/usr/lib64/jvm" : "/usr/lib/jvm"
     afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
     prebuiltJdkDirectory = jdkDistributionDir
@@ -60,7 +60,7 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     password = artifactory.password
     repository = artifactory.repository.rpm
     packageName = buildRedHatRpmPackage.getPackageName()
-    architecture = buildRedHatRpmPackage.getArchitecture()
+    architecture = buildRedHatRpmPackage.getArchitecture().rpmQualifier()
     releaseArchitecture x86_64: [
         centos: ["6", "7", "8"],
         rhel  : ["6", "7", "8"],
@@ -89,7 +89,7 @@ tasks.register("uploadSuseRpmPackage", UploadRpmPackage) {
     password = artifactory.password
     repository = artifactory.repository.rpm
     packageName = buildSuseRpmPackage.getPackageName()
-    architecture = buildSuseRpmPackage.getArchitecture()
+    architecture = buildSuseRpmPackage.getArchitecture().rpmQualifier()
     releaseArchitecture x86_64: [
         opensuse: ["15.0"],
         sles    : ["12", "15"]

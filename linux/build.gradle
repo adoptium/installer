@@ -1,3 +1,5 @@
+import net.adoptopenjdk.installer.Architecture
+
 buildscript {
     repositories {
         mavenCentral()
@@ -81,27 +83,4 @@ def getJdkMajorVersion() {
         throw new IllegalArgumentException("JDK major version '$version' out of range")
     }
     return version
-}
-
-enum Architecture {
-    AMD64("amd64", "x86_64"),
-    S390X("s390x", "s390x"),
-    PPC64EL("ppc64el", "ppc64le"),
-    ARM64("arm64", "aarch64")
-
-    private final String debQualifier
-    private final String rpmQualifier
-
-    Architecture(debQualifier, rpmQualifier) {
-        this.debQualifier = debQualifier
-        this.rpmQualifier = rpmQualifier
-    }
-
-    String debQualifier() {
-        return this.debQualifier
-    }
-
-    String rpmQualifier() {
-        return this.rpmQualifier
-    }
 }
