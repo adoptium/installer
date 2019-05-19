@@ -1,12 +1,20 @@
 import net.adoptopenjdk.installer.BuildDebianPackage
 import net.adoptopenjdk.installer.UploadDebianPackage
 
+ext.jinfoPriorities = [
+    8 : 1081,
+    9 : 1091,
+    10: 1101,
+    11: 1111,
+    12: 1121
+]
+
 tasks.register("buildDebianPackage", BuildDebianPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}"
+    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}"
     packageVersion = jdkVersion
     iteration = version
-    priority = getJinfoPriority()
-    architecture = pkgMetadata.architecture
+    priority = jinfoPriorities[jdkMajorVersion]
+    architecture = pkgMetadata.architecture.debQualifier()
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
@@ -14,9 +22,9 @@ tasks.register("buildDebianPackage", BuildDebianPackage) {
     license = pkgMetadata.license
     packageDescription = pkgMetadata.description
     category = "java"
-    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/dependencies.txt")
-    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/provides.txt")
-    toolsFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}/tools.txt")
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/provides.txt")
+    toolsFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/tools.txt")
     prefix = "/usr/lib/jvm"
     afterInstallScript = file("config/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
@@ -55,7 +63,3 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
 }
 
 rootProject.tasks.getByName("upload").dependsOn(uploadDebianPackage)
-
-def getJinfoPriority() {
-    return hasProperty("DEB_JINFO_PRIORITY") ? Integer.parseInt(DEB_JINFO_PRIORITY) : 0
-}

@@ -31,7 +31,7 @@ ext {
     pkgMetadata = [
         architecture: getJdkArchitecture(),
         vm          : getJdkVirtualMachine(),
-        description : "OpenJDK Development Kit ${jdkMajorVersion} (JDK) by AdoptOpenJDK",
+        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) by AdoptOpenJDK",
         homepage    : "https://adoptopenjdk.net/",
         vcsUrl      : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u",
         iteration   : version,
@@ -49,11 +49,18 @@ ext {
         ],
     ]
     jdkDistributionDir = JDK_DISTRIBUTION_DIR
+    jdkDistributionType = getJdkDistributionType()
 }
 
 tasks.register("upload") {
     group = "upload"
     description = "Uploads all linux packages"
+}
+
+def getJdkDistributionType() {
+    return hasProperty("JDK_DISTRIBUTION_TYPE") ?
+        DistributionType.valueOf(JDK_DISTRIBUTION_TYPE.toUpperCase(Locale.US)) :
+        DistributionType.JDK
 }
 
 def getJdkVirtualMachine() {
@@ -83,4 +90,34 @@ def getJdkMajorVersion() {
         throw new IllegalArgumentException("JDK major version '$version' out of range")
     }
     return version
+}
+
+enum DistributionType {
+    JDK("", "OpenJDK Development Kit"),
+    JRE("jre", "OpenJDK Runtime Environment")
+
+    private final String suffix
+
+    private final String description
+
+    DistributionType(suffix, description) {
+        this.suffix = suffix
+        this.description = description
+    }
+
+    String getSuffix() {
+        return suffix
+    }
+
+    String getPkgNameSuffix() {
+        if (suffix.empty) {
+            return ""
+        }
+
+        return "-${this.suffix}"
+    }
+
+    String getDescription() {
+        return description
+    }
 }

@@ -1,7 +1,13 @@
 java
 java-9
+java-9-devel
 java-9-openjdk
+java-9-openjdk-devel
+java-devel
 java-openjdk
+java-openjdk-devel
+java-sdk-9
+java-sdk-9-openjdk
 jre
 jre-9
 jre-9-openjdk

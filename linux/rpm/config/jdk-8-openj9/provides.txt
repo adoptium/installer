@@ -1,7 +1,13 @@
 java
 java-1.8.0
+java-1.8.0-devel
 java-1.8.0-openjdk
+java-1.8.0-openjdk-devel
+java-devel
 java-openjdk
+java-openjdk-devel
+java-sdk-1.8.0
+java-sdk-1.8.0-openjdk
 jre
 jre-1.8.0
 jre-1.8.0-openjdk
