@@ -179,7 +179,6 @@ FOR %%A IN (%ARCH%) DO (
 	REM Build without extra Source Code feature
 
     IF !PLATFORM! == x86 (
-        SET PLATFORM=x86
 
 		ECHO HEAT
 		"!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out Files-IcedTeaWeb.wxs -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
