@@ -178,39 +178,43 @@ FOR %%A IN (%ARCH%) DO (
 
 	REM Build without extra Source Code feature
 
-	ECHO HEAT
-	"!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out Files-IcedTeaWeb.wxs -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
-	IF ERRORLEVEL 1 (
-		ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
-		GOTO FAILED
-	)
+    IF !PLATFORM! == x86 (
+        SET PLATFORM=x86
 
-	ECHO HEAT
-	@ECHO ON
-    "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-	IF ERRORLEVEL 1 (
-		ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
-	    GOTO FAILED
-	)
-	@ECHO OFF
+		ECHO HEAT
+		"!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out Files-IcedTeaWeb.wxs -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
+		IF ERRORLEVEL 1 (
+			ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
+			GOTO FAILED
+		)
 
-	ECHO CANDLE
-	@ECHO ON
-    "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Files-IcedTeaWeb.wxs -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
-	IF ERRORLEVEL 1 (
-	    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
-	    GOTO FAILED
-	)
-	@ECHO OFF
+		ECHO HEAT
+		@ECHO ON
+        "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+		IF ERRORLEVEL 1 (
+			ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
+		    GOTO FAILED
+		)
+		@ECHO OFF
 
-	ECHO LIGHT
-	@ECHO ON
-    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Files-IcedTeaWeb.wixobj !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
-	IF ERRORLEVEL 1 (
-	    ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
-	    GOTO FAILED
+		ECHO CANDLE
+		@ECHO ON
+        "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Files-IcedTeaWeb.wxs -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
+		IF ERRORLEVEL 1 (
+		    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
+		    GOTO FAILED
+		)
+		@ECHO OFF
+
+		ECHO LIGHT
+		@ECHO ON
+        "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Files-IcedTeaWeb.wixobj !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+		IF ERRORLEVEL 1 (
+		    ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
+		    GOTO FAILED
+		)
+		@ECHO OFF
 	)
-	@ECHO OFF
 
     REM Generate setup translations
     FOR /F "tokens=1-2" %%L IN (Lang\LanguageList.config) do (
