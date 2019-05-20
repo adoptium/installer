@@ -199,12 +199,14 @@
         <Condition Level="0"><![CDATA["$(var.ProductVersion)" ~< JAVASOFT_CURRENTVERSION]]></Condition>
         <ComponentRef Id="SetOracleJavaSoftKeys" />
       </Feature>
-      <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
-        <ComponentGroupRef Id="IcedTeaWebFiles" />
-        <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-          <ComponentRef Id="SetJNLPFileRunWith" />
+      <?if $(env.Platform)=x64?>
+        <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
+          <ComponentGroupRef Id="IcedTeaWebFiles" />
+          <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+            <ComponentRef Id="SetJNLPFileRunWith" />
+          </Feature>
         </Feature>
-      </Feature>
+      <?endif?>
     </Feature>
     <!-- <Feature Id="FeatureSource" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.FeatureSourceTitle)" Description="!(loc.FeatureSourceDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
       <ComponentGroupRef Id="SrcFiles" />
