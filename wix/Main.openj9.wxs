@@ -148,20 +148,22 @@
         <?endif?>
       </Component>
       <!-- Add jnlp launch by double click -->
-      <Component Id="SetJNLPFileRunWith" Guid="*">
-        <!--
-        https://support.microsoft.com/en-us/help/256986/windows-registry-information-for-advanced-users
-            If you write keys to a key under HKEY_CLASSES_ROOT, the system stores the information under HKEY_LOCAL_MACHINE\Software\Classes.
-            If you write values to a key under HKEY_CLASSES_ROOT, and the key already exists under HKEY_CURRENT_USER\Software\Classes, the system will store the information there instead of under HKEY_LOCAL_MACHINE\Software\Classes.
+      <?if $(env.Platform)=x64?>
+        <Component Id="SetJNLPFileRunWith" Guid="*">
+          <!--
+          https://support.microsoft.com/en-us/help/256986/windows-registry-information-for-advanced-users
+              If you write keys to a key under HKEY_CLASSES_ROOT, the system stores the information under HKEY_LOCAL_MACHINE\Software\Classes.
+              If you write values to a key under HKEY_CLASSES_ROOT, and the key already exists under HKEY_CURRENT_USER\Software\Classes, the system will store the information there instead of under HKEY_LOCAL_MACHINE\Software\Classes.
 
-        HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jnlp\OpenWithProgids
-        is automatically created by Windows when running jnlp file for the first time
-        -->
-        <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jnlp" Type="string" Value="AdoptOpenJDK.jnlpfile" KeyPath="yes" />
-        <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jnlp" Type="string" Name="Content Type" Value="application/jnlp" KeyPath="no" />
+          HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jnlp\OpenWithProgids
+          is automatically created by Windows when running jnlp file for the first time
+          -->
+          <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jnlp" Type="string" Value="AdoptOpenJDK.jnlpfile" KeyPath="yes" />
+          <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jnlp" Type="string" Name="Content Type" Value="application/jnlp" KeyPath="no" />
 
-        <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\AdoptOpenJDK.jnlpfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaws.exe&quot; -jnlp &quot;%1&quot; %*" KeyPath="no" />
-      </Component>
+          <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\AdoptOpenJDK.jnlpfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaws.exe&quot; -jnlp &quot;%1&quot; %*" KeyPath="no" />
+        </Component>
+      <?endif?>
     </DirectoryRef>
 
     <Property Id="JAVASOFT_CURRENTVERSION">
@@ -176,7 +178,6 @@
     <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
       <ComponentRef Id="CleanupMainInstallDir" />
       <ComponentGroupRef Id="AppFiles" />
-
         <Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
           <ComponentRef Id="AddToEnvironmentPath" />
           <ComponentRef Id="AddToEnvironmentPathSystem" />
@@ -199,12 +200,14 @@
         <Condition Level="0"><![CDATA["$(var.ProductVersion)" ~< JAVASOFT_CURRENTVERSION]]></Condition>
         <ComponentRef Id="SetOracleJavaSoftKeys" />
       </Feature>
-      <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
-        <ComponentGroupRef Id="IcedTeaWebFiles" />
-        <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
-          <ComponentRef Id="SetJNLPFileRunWith" />
+      <?if $(env.Platform)=x64?>
+        <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
+          <ComponentGroupRef Id="IcedTeaWebFiles" />
+          <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+            <ComponentRef Id="SetJNLPFileRunWith" />
+          </Feature>
         </Feature>
-      </Feature>
+      <?endif?>
     </Feature>
     <!-- <Feature Id="FeatureSource" ConfigurableDirectory="INSTALLDIR" Level="1" Title="!(loc.FeatureSourceTitle)" Description="!(loc.FeatureSourceDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
       <ComponentGroupRef Id="SrcFiles" />
