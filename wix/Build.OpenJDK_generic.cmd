@@ -178,7 +178,7 @@ FOR %%A IN (%ARCH%) DO (
 
 	REM Build without extra Source Code feature
 
-    IF !PLATFORM! == x64 (
+    IF !PLATFORM! == x64 IF !PRODUCT_MAJOR_VERSION! == 8 (
         SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
         SET ITW_WIXOBJ="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj"
         ECHO HEAT
