@@ -178,14 +178,16 @@ FOR %%A IN (%ARCH%) DO (
 
 	REM Build without extra Source Code feature
 
-    IF !PLATFORM! == x64 IF !PRODUCT_MAJOR_VERSION! == 8 (
-        SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
-        SET ITW_WIXOBJ="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj"
-        ECHO HEAT
-        "!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
-        IF ERRORLEVEL 1 (
-            ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
-            GOTO FAILED
+    IF !PLATFORM! == x64 (
+        IF !PRODUCT_MAJOR_VERSION! == 8 (
+            SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
+            SET ITW_WIXOBJ="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj"
+            ECHO HEAT
+            "!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
+            IF ERRORLEVEL 1 (
+                ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
+                GOTO FAILED
+            )
         )
     )
     
