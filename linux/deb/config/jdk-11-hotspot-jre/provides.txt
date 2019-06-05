@@ -1,4 +1,13 @@
+java-runtime
 java-runtime-headless
+java10-runtime
+java11-runtime
+java2-runtime
+java5-runtime
+java6-runtime
+java7-runtime
+java8-runtime
+java9-runtime
 java10-runtime-headless
 java11-runtime-headless
 java2-runtime-headless
