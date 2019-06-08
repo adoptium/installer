@@ -57,6 +57,11 @@ tasks.register("upload") {
     description = "Uploads all linux packages"
 }
 
+tasks.register("cleanupNightlyBuilds") {
+    group = "upload"
+    description = "Removes all outdated nightly builds"
+}
+
 def getJdkDistributionType() {
     return hasProperty("JDK_DISTRIBUTION_TYPE") ?
         DistributionType.valueOf(JDK_DISTRIBUTION_TYPE.toUpperCase(Locale.US)) :

@@ -1,4 +1,5 @@
 import net.adoptopenjdk.installer.BuildRpmPackage
+import net.adoptopenjdk.installer.RemoveObsoletePackages
 import net.adoptopenjdk.installer.UploadRpmPackage
 
 tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
@@ -112,6 +113,16 @@ tasks.register("uploadRpmPackage") {
 }
 
 rootProject.tasks.getByName("upload").dependsOn(uploadRpmPackage)
+
+tasks.register("cleanupRpmNightlyBuilds", RemoveObsoletePackages) {
+    apiEndpoint = artifactory.url
+    user = artifactory.user
+    password = artifactory.password
+    repository = artifactory.repository.rpm
+    daysToKeep = 7
+}
+
+rootProject.tasks.getByName("cleanupNightlyBuilds").dependsOn(cleanupRpmNightlyBuilds)
 
 def getSignPackageProperty() {
     return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : true

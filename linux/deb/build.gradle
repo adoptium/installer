@@ -1,5 +1,6 @@
 import net.adoptopenjdk.installer.BuildDebianPackage
 import net.adoptopenjdk.installer.UploadDebianPackage
+import net.adoptopenjdk.installer.RemoveObsoletePackages
 
 ext.jinfoPriorities = [
     8 : 1081,
@@ -63,3 +64,13 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
 }
 
 rootProject.tasks.getByName("upload").dependsOn(uploadDebianPackage)
+
+tasks.register("cleanupDebianNightlyBuilds", RemoveObsoletePackages) {
+    apiEndpoint = artifactory.url
+    user = artifactory.user
+    password = artifactory.password
+    repository = artifactory.repository.deb
+    daysToKeep = 7
+}
+
+rootProject.tasks.getByName("cleanupNightlyBuilds").dependsOn(cleanupDebianNightlyBuilds)

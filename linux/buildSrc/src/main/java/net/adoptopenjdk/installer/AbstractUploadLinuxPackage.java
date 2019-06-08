@@ -15,7 +15,7 @@ public abstract class AbstractUploadLinuxPackage extends DefaultTask {
 
     private File packageToPublish;
 
-    private String apiEndpoint = "https://adoptopenjdk.jfrog.io/artifactory";
+    private String apiEndpoint = "https://adoptopenjdk.jfrog.io/adoptopenjdk";
 
     private String user;
 
