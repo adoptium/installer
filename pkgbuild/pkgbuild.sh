@@ -24,6 +24,7 @@ while test $# -gt 0; do
       echo "--major_version          <8,9,10,11>"
       echo "--full_version           1.8.0_192>"
       echo "-i, --input_directory    path to extracted jdk>"
+      echo "--jfx_input_directory    path to extracted OpenJFX"
       echo "-o, --output_directory   name of the pkg file>"
       echo "-s, --sign               sign the installer>"
       exit 0
@@ -41,6 +42,11 @@ while test $# -gt 0; do
     -i|--input_directory)
       shift
       INPUT_DIRECTORY=$1
+      shift
+      ;;
+    --jfx_input_directory)
+      shift
+      JFX_INPUT_DIRECTORY=$1
       shift
       ;;
     -o|--output_directory)
@@ -74,7 +80,7 @@ case $INPUT_DIRECTORY in
     TYPE="jdk"
     ;;
 esac
-    
+
 # Plist commands:
 case $JVM in
   openj9)
@@ -106,10 +112,12 @@ esac
 /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:1 string JNI" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:2 string BundledApp" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
+JFX_IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}.jfx"
+
 cat distribution.xml.tmpl  \
   | sed -E "s/\\{identifier\\}/$IDENTIFIER/g" \
+  | sed -E "s/\\{jfx_identifier\\}/$JFX_IDENTIFIER/g" \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
-  | sed -E "s/\\{file\\}/OpenJDK.pkg/g" \
   >distribution.xml ; \
 
   cat Resources/en.lproj/welcome.html.tmpl  \
@@ -122,7 +130,11 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/conclusion.html ; \
 
-/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
-/usr/bin/productbuild --distribution distribution.xml --resources Resources --sign "${SIGN}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
+mkdir pkgs
 
-rm -rf OpenJDK.pkg
+/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} --sign "${SIGN}" pkgs/OpenJDK.pkg
+/usr/bin/pkgbuild --root ${JFX_INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY}/Contents/Home --identifier ${JFX_IDENTIFIER} --sign "${SIGN}" pkgs/OpenJFX.pkg
+
+/usr/bin/productbuild --distribution distribution.xml --resources Resources --sign "${SIGN}" --package-path pkgs ${OUTPUT_DIRECTORY}
+
+rm -rf pkgs

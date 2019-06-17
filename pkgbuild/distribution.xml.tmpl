@@ -4,16 +4,19 @@
   <welcome file="welcome.html" />
   <conclusion file="conclusion.html" />
   <pkg-ref id="{identifier}" />
-  <options customize="never" require-scripts="false" />
+  <pkg-ref id="{jfx_identifier}" />
+  <options customize="always" require-scripts="false" />
   <license file="license.rtf"/>
   <choices-outline>
-    <line choice="default">
-      <line choice="{identifier}" />
-    </line>
+    <line choice="default"/>
+    <line choice="OpenJFX" />
   </choices-outline>
-  <choice id="default" />
-  <choice id="{identifier}" visible="false">
-    <pkg-ref id="{identifier}" />
+  <choice id="default" title="AdoptOpenJDK {full_version}" start_enabled="false" visible="true">
+      <pkg-ref id="{identifier}" />
   </choice>
-  <pkg-ref id="{identifier}" version="{full_version}" onConclusion="none">{file}</pkg-ref>
+  <pkg-ref id="{identifier}" version="{full_version}" onConclusion="none">OpenJDK.pkg</pkg-ref>
+  <choice id="OpenJFX" visible="true" start_selected="false" title="OpenJFX">
+    <pkg-ref id="{jfx_identifier}"/>
+  </choice>
+  <pkg-ref id="{jfx_identifier}" version="{full_version}" onConclusion="none">OpenJFX.pkg</pkg-ref>
 </installer-gui-script>

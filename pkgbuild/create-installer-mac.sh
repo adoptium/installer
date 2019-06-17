@@ -35,6 +35,23 @@ do tar -xf "$f";
 
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
-  ./pkgbuild.sh --sign "${CERTIFICATE}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
-  rm -rf ${directory}
+
+  # Download JavaFX
+  case ${MAJOR_VERSION} in
+    8)
+      JFX="https://chriswhocodes.com/downloads/openjfx-8u60-sdk-overlay-osx-x64.zip"
+    ;;
+    11)
+      JFX="http://gluonhq.com/download/javafx-11-0-2-sdk-mac"
+    ;;
+    12)
+      JFX="http://gluonhq.com/download/javafx-12-0-1-sdk-mac"
+    ;;
+  esac
+
+  wget -q $JFX -O javafx.zip
+  unzip -q javafx.zip -d javafx
+
+  ./pkgbuild.sh --sign "${CERTIFICATE}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --jfx_input_directory javafx --output_directory ${file}.pkg
+  rm -rf ${directory} javafx
 done
