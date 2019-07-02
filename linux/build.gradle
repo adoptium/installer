@@ -86,7 +86,7 @@ def getJdkMajorVersion() {
         throw new IllegalArgumentException("Unparsable JDK major version '$versionString'")
     }
     int version = Integer.valueOf(versionString)
-    if (version < 8 || version > 12) {
+    if (version < 8) {
         throw new IllegalArgumentException("JDK major version '$version' out of range")
     }
     return version
