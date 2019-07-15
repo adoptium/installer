@@ -124,7 +124,7 @@
         is automatically created by Windows when running jar file for the first time
         -->
         <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jar" Type="string" Value="AdoptOpenJDK.jarfile" KeyPath="yes" />
-        <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jar" Type="string" Name="Content Type" Value="application/jar" KeyPath="no" />
+        <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jar" Type="string" Name="Content Type" Value="application/java-archive" KeyPath="no" />
 
         <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\AdoptOpenJDK.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
