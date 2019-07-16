@@ -4,6 +4,7 @@ public enum Architecture {
     AMD64("amd64", "x86_64", 64),
     S390X("s390x", "s390x", 64),
     PPC64EL("ppc64el", "ppc64le", 64),
+    ARMHF("armhf", "armhfp", 32),
     ARM64("arm64", "aarch64", 64);
 
     private final String debQualifier;

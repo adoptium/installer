@@ -133,7 +133,7 @@ By specifying all build properties (see above) building and uploading can be don
 
 ### Deb packages
 
-All packages can be installed on Debian and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
+All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, armhf and arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
 
 | OpenJDK                  | Debian                               | Ubuntu                                                        |
 |--------------------------|--------------------------------------|---------------------------------------------------------------|
@@ -148,16 +148,17 @@ All packages can be installed on Debian and Ubuntu without further changes. They
 
 ### RPM packages
 
-All packages can be installed on CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Fedora and OpenSUSE are only available for amd64, packages for all other distributions are available for amd64, s390x, ppc64el and arm64.
+All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Amazon Linux 1, Fedora and OpenSUSE are only available for amd64. Amazon Linux 2 supports arm64, too. The packages for all other distributions are available for amd64, s390x, ppc64el and arm64.
 
-| OpenJDK                  | CentOS  | Fedora | RHEL    | OpenSUSE | SLES   |
-|--------------------------|---------|--------|---------|----------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| OpenJDK                  | Amazon  | CentOS  | Fedora | RHEL    | OpenSUSE | SLES   |
+|--------------------------|---------|---------|--------|---------|----------|--------|
+| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
 
+* Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support) 
 * [CentOS releases and support timeframe](https://wiki.centos.org/Download)
 * [Fedora releases and support timeframe](https://fedoraproject.org/wiki/Releases)
 * [Red Hat Enterprise Linux releases and support timeframe](https://access.redhat.com/support/policy/updates/errata/)
