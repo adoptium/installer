@@ -62,9 +62,10 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     packageName = buildRedHatRpmPackage.getPackageName()
     architecture = buildRedHatRpmPackage.getArchitecture().rpmQualifier()
     releaseArchitecture x86_64: [
-        centos: ["6", "7", "8"],
-        rhel  : ["6", "7", "8"],
-        fedora: ["29", "30"]
+        amazonlinux: ["1", "2"],
+        centos     : ["6", "7", "8"],
+        rhel       : ["6", "7", "8"],
+        fedora     : ["29", "30"]
     ]
     releaseArchitecture s390x: [
         centos: ["6", "7", "8"],
@@ -75,8 +76,9 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
         rhel  : ["6", "7", "8"]
     ]
     releaseArchitecture aarch64: [
-        centos: ["6", "7", "8"],
-        rhel  : ["6", "7", "8"]
+        amazonlinux: ["2"],
+        centos     : ["6", "7", "8"],
+        rhel       : ["6", "7", "8"]
     ]
 }
 
