@@ -133,7 +133,7 @@ By specifying all build properties (see above) building and uploading can be don
 
 ### Deb packages
 
-All packages can be installed on Debian and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
+All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, armhf and arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
 
 | OpenJDK                  | Debian                               | Ubuntu                                                        |
 |--------------------------|--------------------------------------|---------------------------------------------------------------|

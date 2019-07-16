@@ -56,6 +56,10 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
         debian: ["jessie", "stretch", "buster"],
         ubuntu: ["xenial", "bionic", "cosmic", "disco"]
     ]
+    releaseArchitecture armhf: [
+        debian  : ["jessie", "stretch", "buster"],
+        ubuntu  : ["xenial", "bionic", "cosmic", "disco"]
+    ]
     releaseArchitecture arm64: [
         debian: ["jessie", "stretch", "buster"],
         ubuntu: ["xenial", "bionic", "cosmic", "disco"]
