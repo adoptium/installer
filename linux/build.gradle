@@ -77,7 +77,7 @@ def getJdkVirtualMachine() {
 def getJdkArchitecture() {
     return hasProperty("JDK_ARCHITECTURE") ?
         Architecture.valueOf(JDK_ARCHITECTURE.toUpperCase(Locale.US)) :
-        Architecture.AMD64
+        Architecture.X64
 }
 
 def getJdkMajorVersion() {

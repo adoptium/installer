@@ -50,18 +50,18 @@ Example:
     -PJDK_MAJOR_VERSION=11 \
     -PJDK_VERSION="11.0.2+9" \
     -PJDK_VM=hotspot \
-    -PJDK_ARCHITECTURE=amd64
+    -PJDK_ARCHITECTURE=x64
 ```
 
 Table with arguments:
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                    |
-|--------|---------------------|------------------|---------------------|--------------------------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
+|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                           |
+|--------|---------------------|------------------|---------------------|---------------------------------------------|
+| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 ### RPM packages
 
@@ -93,13 +93,13 @@ Example:
     -PSIGN_PACKAGE=true
 ```
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                    |
-|--------|---------------------|------------------|---------------------|--------------------------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `amd64`, `s390x`, `ppc64el`, `arm64` |
+|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                           |
+|--------|---------------------|------------------|---------------------|---------------------------------------------|
+| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
 
@@ -148,7 +148,7 @@ All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu 
 
 ### RPM packages
 
-All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Amazon Linux 1, Fedora and OpenSUSE are only available for amd64. Amazon Linux 2 supports arm64, too. The packages for all other distributions are available for amd64, s390x, ppc64el and arm64.
+All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Amazon Linux 1, Fedora and OpenSUSE are only available for x86_64. Amazon Linux 2 supports aarch64, too. The packages for all other distributions are available for x86_64, s390x, ppc64le and aarch64.
 
 | OpenJDK                  | Amazon  | CentOS  | Fedora | RHEL    | OpenSUSE | SLES   |
 |--------------------------|---------|---------|--------|---------|----------|--------|

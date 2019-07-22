@@ -14,7 +14,7 @@ tasks.register("buildDebianPackage", BuildDebianPackage) {
     packageVersion = jdkVersion
     iteration = 2
     priority = jinfoPriorities[jdkMajorVersion]
-    architecture = pkgMetadata.architecture.debQualifier()
+    architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
     vendor = pkgMetadata.vendor
