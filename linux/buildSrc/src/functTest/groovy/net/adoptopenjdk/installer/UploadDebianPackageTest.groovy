@@ -39,7 +39,13 @@ class UploadDebianPackageTest {
 
     @Test
     void debianPackageUploadedForXenialAndJessie() {
-        String responseBody = """
+        String searchResponseBody = """
+            {
+              "results": []
+            }
+        """
+
+        String uploadResponseBody = """
             {
               "repo" : "aRepsitory",
               "path" : "/aRepository/pool/main/a/aPackage/upload.deb",
@@ -60,6 +66,13 @@ class UploadDebianPackageTest {
               "uri" : "https://example.com/artifactory/aRepository/pool/main/a/aPackage/upload.deb"
             }
         """
+
+        MockResponse searchResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(searchResponseBody)
+
+        this.mws.enqueue(searchResponse)
+
         MockResponse checksumResponse = new MockResponse()
                 .setResponseCode(404)
 
@@ -67,7 +80,7 @@ class UploadDebianPackageTest {
 
         MockResponse uploadResponse = new MockResponse()
                 .setResponseCode(201)
-                .setBody(responseBody)
+                .setBody(uploadResponseBody)
 
         this.mws.enqueue(uploadResponse)
 
@@ -102,7 +115,11 @@ class UploadDebianPackageTest {
                 .withPluginClasspath()
                 .build()
 
-        assertThat(this.mws.requestCount).isEqualTo(2)
+        assertThat(this.mws.requestCount).isEqualTo(3)
+
+        RecordedRequest searchRequest = this.mws.takeRequest()
+        assertThat(searchRequest.path)
+                .isEqualTo("/api/search/artifact?name=upload.deb&repos=aRepository")
 
         RecordedRequest checksumRequest = this.mws.takeRequest()
 
@@ -119,6 +136,74 @@ class UploadDebianPackageTest {
                 .isEqualTo("/aRepository/pool/main/a/aPackage/upload.deb;deb.component=main;deb.distribution=jessie;deb.distribution=xenial;deb.architecture=amd64")
         assertThat(uploadRequest.getBody().readUtf8())
                 .isEqualTo("I'm not a real Debian package.")
+
+        assertThat(result.task(":uploadPackage").outcome).isEqualTo(TaskOutcome.SUCCESS)
+    }
+
+    @Test
+    void onlyDistributionsUpdatedIfArtifactExists() {
+        String searchResponseBody = """
+            {
+              "results": [{
+                "uri": "https://example.com/artifactory/api/storage/aRepository/pool/main/a/aPackage/upload.deb"
+              }]
+            }
+        """
+
+        MockResponse searchResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(searchResponseBody)
+
+        this.mws.enqueue(searchResponse)
+
+        MockResponse updateResponse = new MockResponse()
+                .setResponseCode(204)
+
+        this.mws.enqueue(updateResponse)
+
+        settingsFile << "rootProject.name = 'deb'"
+        buildFile << """
+            plugins {
+                id "net.adoptopenjdk.installer"
+            }
+
+            tasks.register("uploadPackage", net.adoptopenjdk.installer.UploadDebianPackage) {
+                packageToPublish = file('${this.fileToUpload.getAbsolutePath()}')
+                apiEndpoint = "${this.mws.url("/")}"
+                user = "aUser"
+                password = "aKey"
+                repository = "aRepository"
+                packageName = "aPackage"
+                architecture = "amd64"
+                releaseArchitecture amd64: [
+                    debian: ["jessie"],
+                    ubuntu: ["xenial"]
+                ]
+                releaseArchitecture s390x: [
+                    debian: ["jessie"],
+                    ubuntu: ["xenial"]
+                ]
+            }
+        """
+
+        def result = GradleRunner.create()
+                .withProjectDir(tempProjectDir)
+                .withArguments("uploadPackage")
+                .withPluginClasspath()
+                .build()
+
+        assertThat(this.mws.requestCount).isEqualTo(2)
+
+        RecordedRequest searchRequest = this.mws.takeRequest()
+        assertThat(searchRequest.path)
+                .isEqualTo("/api/search/artifact?name=upload.deb&repos=aRepository")
+
+        RecordedRequest uploadRequest = this.mws.takeRequest()
+
+        assertThat(uploadRequest.path)
+                .isEqualTo("/api/storage/aRepository/pool/main/a/aPackage/upload.deb?properties=deb.distribution=jessie,xenial;&recursive=0")
+        assertThat(uploadRequest.getBody().readUtf8())
+                .isEmpty()
 
         assertThat(result.task(":uploadPackage").outcome).isEqualTo(TaskOutcome.SUCCESS)
     }

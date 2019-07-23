@@ -1,31 +1,42 @@
 package net.adoptopenjdk.installer;
 
-import org.gradle.workers.IsolationMode;
-import org.gradle.workers.WorkerExecutor;
+import org.jfrog.artifactory.client.model.RepoPath;
 
-import javax.inject.Inject;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 public class UploadDebianPackage extends AbstractUploadLinuxPackage {
 
-    private final WorkerExecutor executor;
-
-    @Inject
-    public UploadDebianPackage(WorkerExecutor executor) {
-        this.executor = executor;
-
+    public UploadDebianPackage() {
         setGroup("upload");
         setDescription("Uploads a Debian package");
     }
 
     @Override
-    protected void uploadPackages(ArtifactoryCredentials artifactoryCredentials) {
+    protected void uploadPackages() {
         Set<String> distributionsToPublish = distributions();
         if (distributionsToPublish.isEmpty()) {
+            return;
+        }
+
+        // We must not overwrite an existing artifact. But because all
+        // distributions share the same file in Artifactory, we might need to
+        // update the package's metadata with a new set of supported
+        // distributions.
+        if (this.artifactExists()) {
+            getLogger().lifecycle(
+                    "Setting supported distributions of {} in {} to {} on {}",
+                    getPackageToPublish().getName(),
+                    getRepository(),
+                    distributions(),
+                    getArchitecture()
+            );
+
+            this.updateSupportedDistributions();
             return;
         }
 
@@ -46,10 +57,44 @@ public class UploadDebianPackage extends AbstractUploadLinuxPackage {
                 getArchitecture()
         );
 
-        executor.submit(UploadPackageTask.class, workerConfiguration -> {
-            workerConfiguration.setIsolationMode(IsolationMode.NONE);
-            workerConfiguration.setParams(getApiEndpoint(), artifactoryCredentials, upload);
-        });
+        this.getArtifactoryClient()
+                .repository(upload.getRepository())
+                .upload(upload.getRemotePath(), upload.getFile())
+                .withProperty("deb.distribution", upload.getDistributions().toArray())
+                .withProperty("deb.component", upload.getComponents().toArray())
+                .withProperty("deb.architecture", upload.getArchitectures().toArray())
+                .bySha1Checksum()
+                .doUpload();
+    }
+
+    private boolean artifactExists() {
+        List<RepoPath> searchResults = this.getArtifactoryClient()
+                .searches()
+                .repositories(getRepository())
+                .artifactsByName(getPackageToPublish().getName())
+                .doSearch();
+
+        if (searchResults.isEmpty()) {
+            return false;
+        }
+
+        for (RepoPath searchResult : searchResults) {
+            if (Objects.equals(getRepository(), searchResult.getRepoKey())
+                    && Objects.equals(this.targetFilePath(), searchResult.getItemPath())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void updateSupportedDistributions() {
+        this.getArtifactoryClient()
+                .repository(this.getRepository())
+                .file(targetFilePath())
+                .properties()
+                .addProperty("deb.distribution", distributions().toArray(new String[0]))
+                .doSet();
     }
 
     private String targetFilePath() {
