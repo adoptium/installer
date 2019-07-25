@@ -56,15 +56,15 @@
   <?if $(env.PRODUCT_CATEGORY)="jre"?>
     <?if $(var.ProductMajorVersion)>=9?>
         <!-- Prefere Server JVM in Java 9+ x64 -->
-        <?define DllPath="bin/server/jvm.dll" ?>
+        <?define DllPath="bin\server\jvm.dll" ?>
     <?else?>
         <!-- Java 1.8 -->
         <?if $(env.PLATFORM)="x86"?>
           <!-- if x86 then client jvm -->
-          <?define DllPath="bin/client/jvm.dll" ?>
+          <?define DllPath="bin\client\jvm.dll" ?>
         <?else?>
           <!-- if x64 then server jvm -->
-          <?define DllPath="bin/server/jvm.dll" ?>
+          <?define DllPath="bin\server\jvm.dll" ?>
         <?endif?>
     <?endif?>
   <?endif?>
