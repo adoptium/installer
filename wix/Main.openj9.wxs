@@ -199,7 +199,7 @@
         <!-- As Oracle, don't override if current value is already bigger ( newer java ): "a value that is the highest installed version on the system" 
         Note !! : the reg key is not removed during uninstall if any other installer reference it
         -->
-        <Condition Level="0"><![CDATA["$(var.ProductVersion)" ~< JAVASOFT_CURRENTVERSION]]></Condition>
+        <Condition Level="0"><![CDATA[JAVASOFT_CURRENTVERSION <> "1.8" AND JAVASOFT_CURRENTVERSION > $(var.ProductMajorVersion)]]></Condition>
         <ComponentRef Id="SetOracleJavaSoftKeys" />
       </Feature>
       <?if $(env.Platform)=x64?>
