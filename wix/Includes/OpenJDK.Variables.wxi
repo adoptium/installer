@@ -67,6 +67,8 @@
           <?define DllPath="bin\server\jvm.dll" ?>
         <?endif?>
     <?endif?>
+  <?else?>
+    <?define DllPath="no RuntimeLib jvm.dll for JDK since Oracle does not define it" ?>
   <?endif?>
   
   <!-- Static settings, DO NOT TOUCH or upgrades will break! -->
