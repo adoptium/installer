@@ -18,7 +18,7 @@
 	<String Id="FeatureOracleJavaSoftName">Claves de registro JavaSoft (Oracle)</String>
 	<String Id="FeatureOracleJavaSoftDescription">Sobrescribir las claves de registro HKLM\Software\JavaSoft (Oracle). Si se desinstala AdoptOpenJDK, la ejecución de Oracle Java desde la ruta "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" no funcionará. Será necesario reinstalarlo.</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
-	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
-	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>
-	<String Id="FeatureJNLPFileRunWithDescription">Associate .jnlp files to run with IcedTea-Web</String>
+	<String Id="FeatureIcedTeaWebDescription">Instalar el paquete IcedTea-Web</String>
+	<String Id="FeatureJNLPFileRunWithTitle">Asociar .jnlp</String>
+	<String Id="FeatureJNLPFileRunWithDescription">Asociar la extensión de fichero .jnlp con IcedTea-Web</String>
 </WixLocalization>
