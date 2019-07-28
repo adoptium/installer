@@ -110,8 +110,7 @@ for JDK_TARBALL in ${JDK_TARBALLS[*]} ; do
     # Determine the type of Java VM by looking at the filename.
     case "$JDK_TARBALL" in
         *openj9*XL*)
-            echoerr "OpenJ9 XL is unsupported"
-            continue
+            JVM="openj9_xl"
             ;;
         *openj9*)
             JVM="openj9"

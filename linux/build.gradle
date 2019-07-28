@@ -1,4 +1,5 @@
 import net.adoptopenjdk.installer.Architecture
+import net.adoptopenjdk.installer.VirtualMachine
 
 buildscript {
     repositories {
@@ -31,7 +32,7 @@ ext {
     pkgMetadata = [
         architecture: getJdkArchitecture(),
         vm          : getJdkVirtualMachine(),
-        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) by AdoptOpenJDK",
+        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by AdoptOpenJDK",
         homepage    : "https://adoptopenjdk.net/",
         vcsUrl      : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u",
         iteration   : version,
@@ -64,14 +65,7 @@ def getJdkDistributionType() {
 }
 
 def getJdkVirtualMachine() {
-    def valid_vms = ["hotspot", "openj9"]
-    def key = hasProperty("JDK_VM") ? JDK_VM : ""
-
-    if (!valid_vms.contains(key.toLowerCase(Locale.US))) {
-        throw new IllegalArgumentException("Unknown JDK VM '$key'")
-    }
-
-    return JDK_VM.toLowerCase(Locale.US)
+    return VirtualMachine.valueOf(JDK_VM.toUpperCase(Locale.US))
 }
 
 def getJdkArchitecture() {

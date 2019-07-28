@@ -55,13 +55,13 @@ Example:
 
 Table with arguments:
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                           |
-|--------|---------------------|------------------|---------------------|---------------------------------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM                          | JDK\_ARCHITECTURE                           |
+|--------|---------------------|------------------|----------------------------------|---------------------------------------------|
+| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 ### RPM packages
 
@@ -93,13 +93,13 @@ Example:
     -PSIGN_PACKAGE=true
 ```
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM             | JDK\_ARCHITECTURE                           |
-|--------|---------------------|------------------|---------------------|---------------------------------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM                          | JDK\_ARCHITECTURE                           |
+|--------|---------------------|------------------|----------------------------------|---------------------------------------------|
+| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
 

@@ -11,7 +11,7 @@ ext.jinfoPriorities = [
 ]
 
 tasks.register("buildDebianPackage", BuildDebianPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}"
+    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
     packageVersion = cleanPackageVersion(jdkVersion)
     iteration = 2
     priority = jinfoPriorities[jdkMajorVersion]
@@ -23,9 +23,9 @@ tasks.register("buildDebianPackage", BuildDebianPackage) {
     license = pkgMetadata.license
     packageDescription = pkgMetadata.description
     category = "java"
-    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/dependencies.txt")
-    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/provides.txt")
-    toolsFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm}${jdkDistributionType.pkgNameSuffix}/tools.txt")
+    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/dependencies.txt")
+    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/provides.txt")
+    toolsFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/tools.txt")
     prefix = "/usr/lib/jvm"
     afterInstallScript = file("config/postinst.sh")
     beforeRemoveScript = file("config/prerm.sh")
