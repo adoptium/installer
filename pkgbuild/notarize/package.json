@@ -1,0 +1,15 @@
+{
+  "name": "adoptopenjdk-notarize",
+  "version": "1.0.0",
+  "description": "",
+  "main": "notarize.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron-notarize": "^0.1.1",
+    "flags": "^0.1.3"
+  }
+}
