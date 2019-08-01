@@ -74,7 +74,7 @@ case $INPUT_DIRECTORY in
     TYPE="jdk"
     ;;
 esac
-    
+
 # Plist commands:
 case $JVM in
   openj9)
@@ -126,3 +126,15 @@ cat distribution.xml.tmpl  \
 /usr/bin/productbuild --distribution distribution.xml --resources Resources --sign "${SIGN}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
 
 rm -rf OpenJDK.pkg
+
+# Skip this on 8 until we can produce a hardened runtime
+if [ "$MAJOR_VERSION" != 8 ]; then
+  echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
+  sudo xcode-select --switch /Applications/Xcode.app
+  cd $WORKSPACE/pkgbuild/notarize
+  npm install
+  node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
+  # Validates that the app has been notarized
+  spctl -a -v --type install ${OUTPUT_DIRECTORY}
+  cd $WORKSPACE
+fi
