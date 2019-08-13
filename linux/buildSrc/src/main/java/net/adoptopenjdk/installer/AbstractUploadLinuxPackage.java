@@ -3,8 +3,11 @@ package net.adoptopenjdk.installer;
 import org.gradle.api.DefaultTask;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.TaskAction;
+import org.jfrog.artifactory.client.Artifactory;
+import org.jfrog.artifactory.client.ArtifactoryClientBuilder;
 
 import java.io.File;
 import java.util.LinkedHashMap;
@@ -28,6 +31,8 @@ public abstract class AbstractUploadLinuxPackage extends DefaultTask {
     private String architecture;
 
     private Map<String, Map<String, List<String>>> releaseArchitectures = new LinkedHashMap<>();
+
+    private Artifactory artifactoryClient;
 
     @Input
     @Optional
@@ -110,9 +115,21 @@ public abstract class AbstractUploadLinuxPackage extends DefaultTask {
 
     @TaskAction
     public final void exec() {
-        ArtifactoryCredentials credentials = new ArtifactoryCredentials(getUser(), getPassword());
-        uploadPackages(credentials);
+        uploadPackages();
     }
 
-    protected abstract void uploadPackages(ArtifactoryCredentials artifactoryCredentials);
+    protected abstract void uploadPackages();
+
+    @Internal
+    synchronized Artifactory getArtifactoryClient() {
+        if (this.artifactoryClient == null) {
+            this.artifactoryClient = ArtifactoryClientBuilder.create()
+                    .setUrl(getApiEndpoint())
+                    .setUsername(getUser())
+                    .setPassword(getPassword())
+                    .build();
+        }
+
+        return this.artifactoryClient;
+    }
 }

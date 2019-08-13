@@ -39,7 +39,15 @@ class UploadRpmPackageTest {
 
     @Test
     void rpmsUploadedForRedHat6() {
-        String responseBody = """
+        String searchResponseBody = """
+            {
+              "results": [{
+                "uri": "https://example.com/artifactory/api/storage/aRepository/rhel/7/x86_64/Packages/upload.rpm"
+              }]
+            }
+        """
+
+        String uploadResponseBody = """
             {
               "repo" : "aRepsitory",
               "path" : "/aRepository/rhel/6/x86_64/Packages/upload.rpm",
@@ -61,6 +69,12 @@ class UploadRpmPackageTest {
             }
         """
 
+        MockResponse searchResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(searchResponseBody)
+
+        this.mws.enqueue(searchResponse)
+
         MockResponse checksumResponse = new MockResponse()
                 .setResponseCode(404)
 
@@ -68,7 +82,7 @@ class UploadRpmPackageTest {
 
         MockResponse uploadResponse = new MockResponse()
                 .setResponseCode(201)
-                .setBody(responseBody)
+                .setBody(uploadResponseBody)
 
         this.mws.enqueue(uploadResponse)
 
@@ -98,7 +112,11 @@ class UploadRpmPackageTest {
                 .withPluginClasspath()
                 .build()
 
-        assertThat(this.mws.requestCount).isEqualTo(2)
+        assertThat(this.mws.requestCount).isEqualTo(3)
+
+        RecordedRequest searchRequest = this.mws.takeRequest()
+        assertThat(searchRequest.path)
+                .isEqualTo("/api/search/artifact?name=upload.rpm&repos=aRepository")
 
         RecordedRequest checksumRequest = this.mws.takeRequest()
 
@@ -115,6 +133,62 @@ class UploadRpmPackageTest {
                 .isEqualTo("/aRepository/rhel/6/x86_64/Packages/upload.rpm")
         assertThat(uploadRequest.getBody().readUtf8())
                 .isEqualTo("I'm not a real RPM.")
+
+        assertThat(result.task(":uploadPackage").outcome).isEqualTo(TaskOutcome.SUCCESS)
+    }
+
+    @Test
+    void rpmNotUploadedIfItAlreadyExists() {
+        String searchResponseBody = """
+            {
+              "results": [
+                {
+                  "uri": "https://example.com/artifactory/api/storage/aRepository/rhel/7/x86_64/Packages/upload.rpm"
+                },
+                {
+                  "uri": "https://example.com/artifactory/api/storage/aRepository/rhel/6/x86_64/Packages/upload.rpm"
+                }
+              ]
+            }
+        """
+
+        MockResponse searchResponse = new MockResponse()
+                .setResponseCode(200)
+                .setBody(searchResponseBody)
+
+        this.mws.enqueue(searchResponse)
+
+        settingsFile << "rootProject.name = 'rpm'"
+        buildFile << """
+            plugins {
+                id "net.adoptopenjdk.installer"
+            }
+
+            tasks.register("uploadPackage", net.adoptopenjdk.installer.UploadRpmPackage) {
+                packageToPublish = file('${this.fileToUpload.getAbsolutePath()}')
+                apiEndpoint = "${this.mws.url("/")}"
+                user = "aUser"
+                password = "aKey"
+                repository = "aRepository"
+                packageName = "aPackage"
+                architecture = "x86_64"
+                releaseArchitecture x86_64: [
+                    rhel  : ["6"]
+                ]
+            }
+        """
+
+        def result = GradleRunner.create()
+                .withProjectDir(tempProjectDir)
+                .withArguments("uploadPackage")
+                .withPluginClasspath()
+                .build()
+
+        assertThat(this.mws.requestCount).isEqualTo(1)
+
+        RecordedRequest searchRequest = this.mws.takeRequest()
+        assertThat(searchRequest.path)
+                .isEqualTo("/api/search/artifact?name=upload.rpm&repos=aRepository")
 
         assertThat(result.task(":uploadPackage").outcome).isEqualTo(TaskOutcome.SUCCESS)
     }
