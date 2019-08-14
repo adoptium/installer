@@ -42,6 +42,7 @@ if [ -z "${ARTIFACTORY_USER+x}" ]; then
     ARTIFACTORY_USER="adoptopenjdk-jenkins-bot"
 fi
 
+# Need the XXXXXX else the template complains it doesn't have them
 DISTRIBUTION_DIR=$(mktemp -d -t adoptjdkbuild.XXXXXX)
 
 finish() {
