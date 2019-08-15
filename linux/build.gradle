@@ -89,7 +89,7 @@ def getJdkMajorVersion() {
 
     // Do not change the numbers without updating the metadata declarations
     // (dependencies, jinfo priorities)!
-    if (version < 8 || version > 12) {
+    if (version < 8 || version > 13) {
         throw new IllegalArgumentException("Building packages for JDK $version is not supported")
     }
     return version

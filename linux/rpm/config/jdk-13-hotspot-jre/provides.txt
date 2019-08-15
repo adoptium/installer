@@ -1,0 +1,8 @@
+java
+java-13
+java-13-openjdk
+java-openjdk
+jre
+jre-13
+jre-13-openjdk
+jre-openjdk
