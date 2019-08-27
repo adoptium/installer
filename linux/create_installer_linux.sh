@@ -124,66 +124,6 @@ for JDK_TARBALL in ${JDK_TARBALLS[*]} ; do
             ;;
     esac
 
-    # Checks the format of the VERSION variable. A consistent formatting is
-    # crucial because accidental format changes might break package updates.
-    case $RELEASE_TYPE in
-        "Release")
-            if [ "$MAJOR_VERSION" -eq 8 ] ; then
-                if [ "$JVM" == "hotspot" ] ; then
-                    # Should look like: 8u222-b10
-                    VERSION_PATTERN='8u[0-9]+\-b[0-9]+'
-                elif [ "$JVM" == "openj9" ] || [ "$JVM" == "openj9_xl" ] ; then
-                    # Should look like: 8u222-b10_openj9-0.15.1
-                    VERSION_PATTERN='8u[0-9]+\-b[0-9]+_openj9\-[0-9]+\.[0-9]+.[0-9]+'
-                else
-                    echoerr "Unknown JVM type: $JVM"
-                    exit 1
-                fi
-            elif [ "$MAJOR_VERSION" -ge 9 ] ; then
-                if [ "$JVM" == "hotspot" ] ; then
-                    # Should look like: 12.0.2+10
-                    VERSION_PATTERN='[0-9]+\.[0-9]+.[0-9]+\+[0-9]+'
-                elif [ "$JVM" == "openj9" ] || [ "$JVM" == "openj9_xl" ] ; then
-                    # Should look like: 12.0.2+10_openj9-0.15.1
-                    VERSION_PATTERN='[0-9]+\.[0-9]+.[0-9]+\+[0-9]+_openj9\-[0-9]+\.[0-9]+.[0-9]+'
-                else
-                    echoerr "Unknown JVM type: $JVM"
-                    exit 1
-                fi
-            else
-                echoerr "Unknown unknown JDK major version: $MAJOR_VERSION"
-            fi
-
-            if [[ ! "$VERSION" =~ $VERSION_PATTERN ]] ; then
-                echoerr "Version is invalid for a release: $VERSION"
-                exit 1
-            fi
-            ;;
-        "Nightly")
-            if [ "$MAJOR_VERSION" -eq 8 ] ; then
-                # Should look like: 1.8.0-222-201908180341-b10
-                VERSION_PATTERN='1\.8\.0\.[0-9]+\-[0-9]{10}\-b[0-9]+'
-            elif [ "$MAJOR_VERSION" -ge 9 ] ; then
-                # Should look like: 11.0.3+7-201905151809
-                VERSION_PATTERN='[0-9]+\.[0-9]+.[0-9]+\+[0-9]+\-[0-9]{10}'
-            else
-                echoerr "Unknown unknown JDK major version: $MAJOR_VERSION"
-            fi
-
-            if [[ ! "$VERSION" =~ $VERSION_PATTERN ]] ; then
-                echoerr "Version is invalid for a nightly build: $VERSION"
-                exit 1
-            fi
-            ;;
-        "Nightly Without Publish")
-            # Packages are not uploaded, therefore the format of the version does not matter.
-            ;;
-        *)
-            echoerr "Unsupported release type"
-            exit 0
-            ;;
-    esac
-
     if [ -d "$DISTRIBUTION_DIR" ] ; then
         rm -rf "$DISTRIBUTION_DIR"
     fi
