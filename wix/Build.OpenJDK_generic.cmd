@@ -119,6 +119,8 @@ FOR %%A IN (%ARCH%) DO (
 				IF NOT EXIST "!REPRO_DIR!" (
 					ECHO Third !REPRO_DIR! not exists
 					ECHO SOURCE Dir not found / failed
+					ECHO Listing directory :
+					dir /a:d /s /b /o:n SourceDir
 					GOTO FAILED
 				)
 			)
