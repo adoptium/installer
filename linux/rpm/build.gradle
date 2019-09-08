@@ -93,7 +93,7 @@ tasks.register("uploadSuseRpmPackage", UploadRpmPackage) {
     packageName = buildSuseRpmPackage.getPackageName()
     architecture = buildSuseRpmPackage.getArchitecture().rpmQualifier()
     releaseArchitecture x86_64: [
-        opensuse: ["15.0"],
+        opensuse: ["15.0", "15.1"],
         sles    : ["12", "15"]
     ]
     releaseArchitecture s390x: [
