@@ -25,7 +25,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -329,41 +328,7 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
         this.variant = variant;
     }
 
-    List<String> fpmArguments() {
-        List<String> arguments = new ArrayList<>();
-
-        arguments.add("--input-type=dir");
-        arguments.add(String.format("--output-type=%s", getPackageType()));
-        arguments.add(String.format("--package=%s", getOutputFile()));
-        arguments.add(String.format("--name=%s", getPackageName()));
-        arguments.add(String.format("--version=%s", getPackageVersion()));
-        arguments.add(String.format("--iteration=%s", getIteration()));
-        arguments.add(String.format("--category=%s", getCategory()));
-        arguments.add(String.format("--prefix=%s", getPrefix()));
-        arguments.add(String.format("--maintainer=%s", getMaintainer()));
-        arguments.add(String.format("--license=%s", getLicense()));
-        arguments.add(String.format("--url=%s", getHomepage()));
-        arguments.add(String.format("--description=%s", getPackageDescription()));
-        arguments.add(String.format("--vendor=%s", getVendor()));
-        arguments.add(String.format("--chdir=%s", getTemporaryDir()));
-
-        if (getAfterInstallScript() != null) {
-            arguments.add(String.format("--after-install=%s",
-                    new File(getProject().getBuildDir(), getAfterInstallScript().getName())));
-        }
-        if (getBeforeRemoveScript() != null) {
-            arguments.add(String.format("--before-remove=%s",
-                    new File(getProject().getBuildDir(), getBeforeRemoveScript().getName())));
-        }
-        for (String dependency : collectDependencies()) {
-            arguments.add(String.format("--depends=%s", dependency));
-        }
-        for (String providesEntry : collectProvides()) {
-            arguments.add(String.format("--provides=%s", providesEntry));
-        }
-
-        return arguments;
-    }
+    abstract List<String> fpmArguments();
 
     abstract Map<String, Object> templateContext();
 

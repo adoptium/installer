@@ -3,7 +3,7 @@ import net.adoptopenjdk.installer.UploadRpmPackage
 
 tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
-    packageVersion = cleanPackageVersion(jdkVersion)
+    packageVersion = jdkVersion
     iteration = version
     architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
@@ -25,7 +25,7 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
 
 tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
-    packageVersion = cleanPackageVersion(jdkVersion)
+    packageVersion = jdkVersion
     iteration = version
     architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
@@ -117,9 +117,4 @@ rootProject.tasks.getByName("upload").dependsOn(uploadRpmPackage)
 
 def getSignPackageProperty() {
     return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : true
-}
-
-def cleanPackageVersion(String jdkVersion) {
-    // Dashes are reserved characters in RPMs
-    return jdkVersion.replaceAll("[\\-]", "_")
 }

@@ -12,7 +12,7 @@ ext.jinfoPriorities = [
 
 tasks.register("buildDebianPackage", BuildDebianPackage) {
     packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
-    packageVersion = cleanPackageVersion(jdkVersion)
+    packageVersion = jdkVersion
     iteration = 2
     priority = jinfoPriorities[jdkMajorVersion]
     architecture = pkgMetadata.architecture
@@ -68,8 +68,3 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
 }
 
 rootProject.tasks.getByName("upload").dependsOn(uploadDebianPackage)
-
-def cleanPackageVersion(String jdkVersion) {
-    // Underscores are reserved characters in Deb packages
-    return jdkVersion.replaceAll("[_]", "-")
-}
