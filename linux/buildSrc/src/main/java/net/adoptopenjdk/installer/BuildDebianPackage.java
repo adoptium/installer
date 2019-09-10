@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -21,6 +22,9 @@ import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 public class BuildDebianPackage extends AbstractBuildLinuxPackage {
+
+    // Underscores are illegal in DEB version numbers
+    private static final String ILLEGAL_DEB_VERSION_CHARS = "[_]";
 
     /**
      * Map of tools with their path relative to the root directory of the JDK (key, e.g.
@@ -97,9 +101,40 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
 
     @Override
     List<String> fpmArguments() {
-        List<String> args = super.fpmArguments();
-        args.add(String.format("--architecture=%s", getArchitecture().debQualifier()));
-        return args;
+        List<String> arguments = new ArrayList<>();
+
+        arguments.add("--input-type=dir");
+        arguments.add(String.format("--output-type=%s", getPackageType()));
+        arguments.add(String.format("--package=%s", getOutputFile()));
+        arguments.add(String.format("--name=%s", getPackageName()));
+        arguments.add(String.format("--version=%s", getDebVersion()));
+        arguments.add(String.format("--iteration=%s", getIteration()));
+        arguments.add(String.format("--architecture=%s", getArchitecture().debQualifier()));
+        arguments.add(String.format("--category=%s", getCategory()));
+        arguments.add(String.format("--prefix=%s", getPrefix()));
+        arguments.add(String.format("--maintainer=%s", getMaintainer()));
+        arguments.add(String.format("--license=%s", getLicense()));
+        arguments.add(String.format("--url=%s", getHomepage()));
+        arguments.add(String.format("--description=%s", getPackageDescription()));
+        arguments.add(String.format("--vendor=%s", getVendor()));
+        arguments.add(String.format("--chdir=%s", getTemporaryDir()));
+
+        if (getAfterInstallScript() != null) {
+            arguments.add(String.format("--after-install=%s",
+                    new File(getProject().getBuildDir(), getAfterInstallScript().getName())));
+        }
+        if (getBeforeRemoveScript() != null) {
+            arguments.add(String.format("--before-remove=%s",
+                    new File(getProject().getBuildDir(), getBeforeRemoveScript().getName())));
+        }
+        for (String dependency : collectDependencies()) {
+            arguments.add(String.format("--depends=%s", dependency));
+        }
+        for (String providesEntry : collectProvides()) {
+            arguments.add(String.format("--provides=%s", providesEntry));
+        }
+
+        return arguments;
     }
 
     @Override
@@ -114,6 +149,7 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
         context.put("jdkDirectoryName", getJdkDirectoryName());
         context.put("packageName", getPackageName());
         context.put("packageVersion", getPackageVersion());
+        context.put("debVersion", getDebVersion());
         context.put("prefix", getPrefix());
         context.put("priority", getPriority());
         context.put("tools", jdkTools);
@@ -181,6 +217,10 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    String getDebVersion() {
+        return getPackageVersion().replaceAll(ILLEGAL_DEB_VERSION_CHARS, "-");
     }
 
     static class JdkTool {

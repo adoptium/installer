@@ -1,6 +1,7 @@
 package net.adoptopenjdk.installer;
 
 import org.gradle.api.tasks.Input;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 
 import java.io.File;
@@ -12,6 +13,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class BuildRpmPackage extends AbstractBuildLinuxPackage {
+
+    // Dashes are reserved characters in RPMs
+    private static final String ILLEGAL_RPM_VERSION_CHARS = "[\\-]";
 
     private boolean signPackage;
 
@@ -55,11 +59,42 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
 
     @Override
     List<String> fpmArguments() {
-        List<String> args = super.fpmArguments();
-        args.add(String.format("--architecture=%s", getArchitecture().rpmQualifier()));
-        args.add("--rpm-os=linux");
-        args.add(String.format("--directories=%s/%s", getPrefix(), getJdkDirectoryName()));
-        return args;
+        List<String> arguments = new ArrayList<>();
+
+        arguments.add("--input-type=dir");
+        arguments.add(String.format("--output-type=%s", getPackageType()));
+        arguments.add(String.format("--package=%s", getOutputFile()));
+        arguments.add(String.format("--name=%s", getPackageName()));
+        arguments.add(String.format("--version=%s", getRpmVersion()));
+        arguments.add(String.format("--iteration=%s", getIteration()));
+        arguments.add(String.format("--architecture=%s", getArchitecture().rpmQualifier()));
+        arguments.add(String.format("--category=%s", getCategory()));
+        arguments.add(String.format("--prefix=%s", getPrefix()));
+        arguments.add(String.format("--maintainer=%s", getMaintainer()));
+        arguments.add(String.format("--license=%s", getLicense()));
+        arguments.add(String.format("--url=%s", getHomepage()));
+        arguments.add(String.format("--description=%s", getPackageDescription()));
+        arguments.add(String.format("--vendor=%s", getVendor()));
+        arguments.add(String.format("--chdir=%s", getTemporaryDir()));
+
+        if (getAfterInstallScript() != null) {
+            arguments.add(String.format("--after-install=%s",
+                    new File(getProject().getBuildDir(), getAfterInstallScript().getName())));
+        }
+        if (getBeforeRemoveScript() != null) {
+            arguments.add(String.format("--before-remove=%s",
+                    new File(getProject().getBuildDir(), getBeforeRemoveScript().getName())));
+        }
+        for (String dependency : collectDependencies()) {
+            arguments.add(String.format("--depends=%s", dependency));
+        }
+        for (String providesEntry : collectProvides()) {
+            arguments.add(String.format("--provides=%s", providesEntry));
+        }
+
+        arguments.add("--rpm-os=linux");
+        arguments.add(String.format("--directories=%s/%s", getPrefix(), getJdkDirectoryName()));
+        return arguments;
     }
 
     @Override
@@ -70,6 +105,7 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
         context.put("jdkDirectoryName", getJdkDirectoryName());
         context.put("packageName", getPackageName());
         context.put("packageVersion", getPackageVersion());
+        context.put("rpmVersion", getRpmVersion());
         context.put("prefix", getPrefix());
         context.put("vm", getVm());
         context.put("variant", getVariant());
@@ -102,5 +138,10 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
     @Override
     Set<String> getDistributionSpecificPackageContents() {
         return Collections.emptySet();
+    }
+
+    @Internal
+    String getRpmVersion() {
+        return getPackageVersion().replaceAll(ILLEGAL_RPM_VERSION_CHARS, "_");
     }
 }
