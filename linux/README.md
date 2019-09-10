@@ -135,13 +135,13 @@ By specifying all build properties (see above) building and uploading can be don
 
 All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, armhf and arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
 
-| OpenJDK                  | Debian                               | Ubuntu                                                        |
-|--------------------------|--------------------------------------|---------------------------------------------------------------|
-| JDK 8 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
-| JDK 9 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
-| JDK 10 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
-| JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
-| JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 18.10 (cosmic), 19.04 (disco) |
+| OpenJDK                  | Debian                               | Ubuntu                                                      |
+|--------------------------|--------------------------------------|-------------------------------------------------------------|
+| JDK 8 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
+| JDK 9 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
+| JDK 10 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
+| JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
+| JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
 
 * [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
 * [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
@@ -150,13 +150,13 @@ All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu 
 
 All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Amazon Linux 1, Fedora and OpenSUSE are only available for x86_64. Amazon Linux 2 supports aarch64, too. The packages for all other distributions are available for x86_64, s390x, ppc64le and aarch64.
 
-| OpenJDK                  | Amazon  | CentOS  | Fedora | RHEL    | OpenSUSE | SLES   |
-|--------------------------|---------|---------|--------|---------|----------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0     | 12, 15 |
+| OpenJDK                  | Amazon  | CentOS  | Fedora | RHEL    | OpenSUSE   | SLES   |
+|--------------------------|---------|---------|--------|---------|------------|--------|
+| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
 
 * Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support) 
 * [CentOS releases and support timeframe](https://wiki.centos.org/Download)
