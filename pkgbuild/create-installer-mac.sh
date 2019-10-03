@@ -21,7 +21,7 @@ if [ -f ~/.password ]; then
 fi
 
 cd pkgbuild
-for f in $WORKSPACE/workspace/target/*.tar.gz;
+for f in $WORKSPACE/workspace/target/OpenJDK*-j*.tar.gz;
 do tar -xf "$f";
   rm -rf Resources/license.rtf
 
