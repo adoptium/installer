@@ -16,7 +16,10 @@
 
 set -eu
 
-security unlock-keychain -p `cat ~/.password`
+if [ -f ~/.password ]; then
+  security unlock-keychain -p `cat ~/.password`
+fi
+
 cd pkgbuild
 for f in $WORKSPACE/workspace/target/*.tar.gz;
 do tar -xf "$f";
