@@ -131,7 +131,7 @@ rm -rf OpenJDK.pkg
 # Skip this on 8 until we can produce a hardened runtime
 #if [ "$MAJOR_VERSION" != 8 ]; then
 echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
-sudo xcode-select --switch /Applications/Xcode.app
+sudo xcode-select --switch /Applications/Xcode.app || true
 cd $WORKSPACE/pkgbuild/notarize
 npm install
 node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
