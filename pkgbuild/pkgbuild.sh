@@ -130,12 +130,12 @@ rm -rf OpenJDK.pkg
 # TODO Bring this back pending resolution to https://github.com/AdoptOpenJDK/TSC/issues/107
 # Skip this on 8 until we can produce a hardened runtime
 #if [ "$MAJOR_VERSION" != 8 ]; then
-#  echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
-#  sudo xcode-select --switch /Applications/Xcode.app
-#  cd $WORKSPACE/pkgbuild/notarize
-#  npm install
-#  node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
-#  # Validates that the app has been notarized
-#  spctl -a -v --type install ${OUTPUT_DIRECTORY}
-#  cd $WORKSPACE
+echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
+sudo xcode-select --switch /Applications/Xcode.app || true
+cd notarize
+npm install
+node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
+# Validates that the app has been notarized
+spctl -a -v --type install ${OUTPUT_DIRECTORY}
+cd -
 #fi
