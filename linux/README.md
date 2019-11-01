@@ -152,11 +152,11 @@ All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterpris
 
 | OpenJDK                  | Amazon  | CentOS  | Fedora | RHEL    | OpenSUSE   | SLES   |
 |--------------------------|---------|---------|--------|---------|------------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 29, 30 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
 
 * Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support) 
 * [CentOS releases and support timeframe](https://wiki.centos.org/Download)
