@@ -16,6 +16,8 @@
 
 set -eu
 
+SIGN_OPTION=
+
 while test $# -gt 0; do
   case "$1" in
     -h|--help)
@@ -50,7 +52,7 @@ while test $# -gt 0; do
       ;;
     -s|--sign)
       shift
-      SIGN="$1"
+      SIGN_OPTION="--sign $1"
       shift
       ;;
     *)
@@ -122,20 +124,22 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/conclusion.html ; \
 
-/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} --sign "${SIGN}" OpenJDK.pkg
-/usr/bin/productbuild --distribution distribution.xml --resources Resources --sign "${SIGN}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
+/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} ${SIGN_OPTION} OpenJDK.pkg
+/usr/bin/productbuild --distribution distribution.xml --resources Resources ${SIGN_OPTION} --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
 
 rm -rf OpenJDK.pkg
 
-# TODO Bring this back pending resolution to https://github.com/AdoptOpenJDK/TSC/issues/107
-# Skip this on 8 until we can produce a hardened runtime
-#if [ "$MAJOR_VERSION" != 8 ]; then
-echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
-sudo xcode-select --switch /Applications/Xcode.app || true
-cd notarize
-npm install
-node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
-# Validates that the app has been notarized
-spctl -a -v --type install ${OUTPUT_DIRECTORY}
-cd -
-#fi
+if [ ! -z "$SIGN_OPTION" ]; then
+  # TODO Bring this back pending resolution to https://github.com/AdoptOpenJDK/TSC/issues/107
+  # Skip this on 8 until we can produce a hardened runtime
+  #if [ "$MAJOR_VERSION" != 8 ]; then
+  echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
+  sudo xcode-select --switch /Applications/Xcode.app || true
+  cd notarize
+  npm install
+  node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
+  # Validates that the app has been notarized
+  spctl -a -v --type install ${OUTPUT_DIRECTORY}
+  cd -
+  #fi
+fi
