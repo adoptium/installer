@@ -17,6 +17,7 @@
 set -eu
 
 SIGN_OPTION=
+NOTARIZE_OPTION=
 
 while test $# -gt 0; do
   case "$1" in
@@ -53,6 +54,7 @@ while test $# -gt 0; do
     -s|--sign)
       shift
       SIGN_OPTION="--sign $1"
+      NOTARIZE_OPTION="true"
       shift
       ;;
     *)
@@ -129,7 +131,7 @@ cat distribution.xml.tmpl  \
 
 rm -rf OpenJDK.pkg
 
-if [ ! -z "$SIGN_OPTION" ]; then
+if [ ! -z "$NOTARIZE_OPTION" ]; then
   # TODO Bring this back pending resolution to https://github.com/AdoptOpenJDK/TSC/issues/107
   # Skip this on 8 until we can produce a hardened runtime
   #if [ "$MAJOR_VERSION" != 8 ]; then

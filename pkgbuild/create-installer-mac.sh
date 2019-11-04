@@ -27,8 +27,15 @@ if [ ! -z "$CERTIFICATE" ]; then
 fi
 set -u
 
+set +u
+SEARCH_PATTERN=
+if [ -z "$SEARCH_PATTERN" ]; then
+  SEARCH_PATTERN=OpenJDK*-j*.tar.gz
+fi
+set -u
+
 cd pkgbuild
-for f in $WORKSPACE/workspace/target/*.tar.gz;
+for f in $WORKSPACE/workspace/target/${SEARCH_PATTERN};
 do tar -xf "$f";
   rm -rf Resources/license.rtf
 
