@@ -20,8 +20,22 @@ if [ -f ~/.password ]; then
   security unlock-keychain -p `cat ~/.password`
 fi
 
+set +u
+SIGN_OPTION=
+if [ ! -z "$CERTIFICATE" ]; then
+  SIGN_OPTION="--sign ${CERTIFICATE}"
+fi
+set -u
+
+set +u
+SEARCH_PATTERN=
+if [ -z "$SEARCH_PATTERN" ]; then
+  SEARCH_PATTERN=OpenJDK*-j*.tar.gz
+fi
+set -u
+
 cd pkgbuild
-for f in $WORKSPACE/workspace/target/OpenJDK*-j*.tar.gz;
+for f in $WORKSPACE/workspace/target/${SEARCH_PATTERN};
 do tar -xf "$f";
   rm -rf Resources/license.rtf
 
@@ -38,6 +52,9 @@ do tar -xf "$f";
 
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
-  ./pkgbuild.sh --sign "${CERTIFICATE}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
+
+  ./pkgbuild.sh ${SIGN_OPTION} --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
+
   rm -rf ${directory}
+  rm -rf ${f}
 done
