@@ -28,7 +28,6 @@ fi
 set -u
 
 set +u
-SEARCH_PATTERN=
 if [ -z "$SEARCH_PATTERN" ]; then
   SEARCH_PATTERN=OpenJDK*-j*.tar.gz
 fi
@@ -37,6 +36,8 @@ set -u
 cd pkgbuild
 for f in $WORKSPACE/workspace/target/${SEARCH_PATTERN};
 do tar -xf "$f";
+  echo "Processing: $f"
+
   rm -rf Resources/license.rtf
 
   case $f in
