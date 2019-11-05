@@ -28,7 +28,6 @@ fi
 set -u
 
 set +u
-SEARCH_PATTERN=
 if [ -z "$SEARCH_PATTERN" ]; then
   SEARCH_PATTERN=OpenJDK*-j*.tar.gz
 fi
