@@ -23,7 +23,7 @@ fi
 set +u
 SIGN_OPTION=
 if [ ! -z "$CERTIFICATE" ]; then
-  SIGN_OPTION="--sign ${CERTIFICATE}"
+  SIGN_OPTION="--sign \"${CERTIFICATE}\""
 fi
 set -u
 
