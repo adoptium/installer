@@ -17,7 +17,7 @@
 set -eu
 
 SIGN_OPTION=
-SIGN_CMD
+SIGN_CMD=
 NOTARIZE_OPTION=
 
 while test $# -gt 0; do
