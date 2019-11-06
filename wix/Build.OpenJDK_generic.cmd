@@ -251,23 +251,53 @@ FOR %%A IN (%ARCH%) DO (
         ECHO MSI validation was skipped by option SKIP_MSI_VALIDATION=true
     )
 
+    REM create an array of timestamp servers...
+    set SERVERLIST=(http://timestamp.comodoca.com/authenticode http://timestamp.verisign.com/scripts/timestamp.dll http://timestamp.globalsign.com/scripts/timestamp.dll http://tsa.starfieldtech.com)
+
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
     IF DEFINED SIGNING_CERTIFICATE (
-        "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-        IF ERRORLEVEL 1 (
-            ECHO Failed to sign with SHA1
-            GOTO FAILED
+        set timestampErrors=0
+        for /L %%a in (1,1,300) do (
+            for %%s in %SERVERLIST% do (
+                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+
+                REM check the return value of the timestamping operation and retry a max of ten times...
+                if ERRORLEVEL 0 if not ERRORLEVEL 1 GOTO sha256
+
+                echo Signing failed. Probably cannot find the timestamp server at %%s
+                set /a timestampErrors+=1
+            )
+            REM wait 2 seconds...
+            choice /N /T:2 /D:Y >NUL
         )
-        "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-        IF ERRORLEVEL 1 (
-            ECHO Failed to sign with SHA256
-            GOTO FAILED
+
+        :sha256
+        for /L %%a in (1,1,300) do (
+            for %%s in %SERVERLIST% do (
+                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+
+                REM check the return value of the timestamping operation and retry a max of ten times...
+                if ERRORLEVEL 0 if not ERRORLEVEL 1 GOTO succeeded
+
+                echo Signing failed. Probably cannot find the timestamp server at %%s
+                set /a timestampErrors+=1
+            )
+            REM wait 2 seconds...
+            choice /N /T:2 /D:Y >NUL
         )
+
+        REM return an error code...
+        echo sign.bat exit code is 1. There were %timestampErrors% timestamping errors.
+        exit /b 1
+
     ) ELSE (
         ECHO Ignoring signing step : not certificate configured
     )
 
+    :succeeded
+    REM return a successful code...
+    echo sign.bat exit code is 0. There were %timestampErrors% timestamping errors.
 
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
@@ -307,6 +337,3 @@ SET WIN_SDK_FULL_VERSION=
 SET WIN_SDK_MAJOR_VERSION=
 
 EXIT /b 0
-
-:FAILED
-EXIT /b 2
