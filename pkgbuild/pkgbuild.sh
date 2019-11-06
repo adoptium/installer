@@ -17,6 +17,7 @@
 set -eu
 
 SIGN_OPTION=
+SIGN_CMD
 NOTARIZE_OPTION=
 
 while test $# -gt 0; do
@@ -53,7 +54,8 @@ while test $# -gt 0; do
       ;;
     -s|--sign)
       shift
-      SIGN_OPTION="--sign $1"
+      SIGN_OPTION="$1"
+      SIGN_CMD="--sign"
       NOTARIZE_OPTION="true"
       shift
       ;;
@@ -126,8 +128,8 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/conclusion.html ; \
 
-/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} ${SIGN_OPTION} OpenJDK.pkg
-/usr/bin/productbuild --distribution distribution.xml --resources Resources ${SIGN_OPTION} --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
+/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} ${SIGN_CMD} "${SIGN_OPTION}" OpenJDK.pkg
+/usr/bin/productbuild --distribution distribution.xml --resources Resources ${SIGN_CMD} "${SIGN_OPTION}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
 
 rm -rf OpenJDK.pkg
 
