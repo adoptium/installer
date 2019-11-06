@@ -22,8 +22,10 @@ fi
 
 set +u
 SIGN_OPTION=
+SIGN_CMD=
 if [ ! -z "$CERTIFICATE" ]; then
-  SIGN_OPTION="--sign \"${CERTIFICATE}\""
+  SIGN_CMD="--sign"
+  SIGN_OPTION="${CERTIFICATE}"
 fi
 set -u
 
@@ -54,9 +56,8 @@ do tar -xf "$f";
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
   
-  echo running "./pkgbuild.sh ${SIGN_OPTION} --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg"
-
-  ./pkgbuild.sh ${SIGN_OPTION} --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
+  echo running "./pkgbuild.sh ${SIGN_CMD} "${SIGN_OPTION}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg"
+  ./pkgbuild.sh ${SIGN_CMD} "${SIGN_OPTION}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
 
   rm -rf ${directory}
   rm -rf ${f}
