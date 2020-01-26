@@ -7,7 +7,7 @@ plugins {
 }
 
 ext {
-    assertj_version = "3.11.1"
+    assertj_version = "3.14.0"
     junit_version = "5.4.2"
     okhttp_version = "3.14.1"
 }
