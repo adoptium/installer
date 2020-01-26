@@ -3,6 +3,7 @@ package net.adoptopenjdk.installer;
 import org.gradle.api.UncheckedIOException;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.Internal;
 import org.gradle.api.tasks.Optional;
 import org.gradle.api.tasks.OutputFile;
 
@@ -219,6 +220,7 @@ public class BuildDebianPackage extends AbstractBuildLinuxPackage {
         this.priority = priority;
     }
 
+    @Internal
     String getDebVersion() {
         return getPackageVersion().replaceAll(ILLEGAL_DEB_VERSION_CHARS, "-");
     }

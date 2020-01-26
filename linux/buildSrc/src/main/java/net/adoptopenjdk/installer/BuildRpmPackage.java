@@ -2,7 +2,6 @@ package net.adoptopenjdk.installer;
 
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
-import org.gradle.api.tasks.Optional;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,7 +24,6 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
     }
 
     @Input
-    @Optional
     public boolean isSignPackage() {
         return signPackage;
     }
