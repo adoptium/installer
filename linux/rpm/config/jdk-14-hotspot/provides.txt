@@ -1,0 +1,14 @@
+java
+java-14
+java-14-devel
+java-14-openjdk
+java-14-openjdk-devel
+java-devel
+java-openjdk
+java-openjdk-devel
+java-sdk-14
+java-sdk-14-openjdk
+jre
+jre-14
+jre-14-openjdk
+jre-openjdk
