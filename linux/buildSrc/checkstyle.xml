@@ -6,6 +6,11 @@
     <!-- http://checkstyle.sf.net/config_whitespace.html -->
     <module name="FileTabCharacter"/>
 
+    <!-- http://checkstyle.sf.net/config_sizes.html -->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+    </module>
+
     <module name="TreeWalker">
         <!-- http://checkstyle.sf.net/config_blocks.html -->
         <module name="LeftCurly"/>
@@ -57,11 +62,6 @@
         <module name="ParameterName"/>
         <module name="StaticVariableName"/>
         <module name="TypeName"/>
-
-        <!-- http://checkstyle.sf.net/config_sizes.html -->
-        <module name="LineLength">
-            <property name="max" value="120"/>
-        </module>
 
         <!-- http://checkstyle.sf.net/config_whitespace.html -->
         <module name="GenericWhitespace"/>
