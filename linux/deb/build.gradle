@@ -49,23 +49,23 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
     architecture = buildDebianPackage.getArchitecture().debQualifier()
     releaseArchitecture amd64: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "disco", "eoan"]
+        ubuntu: ["xenial", "bionic", "disco", "eoan", "focal"]
     ]
     releaseArchitecture s390x: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "disco", "eoan"]
+        ubuntu: ["xenial", "bionic", "disco", "eoan", "focal"]
     ]
     releaseArchitecture ppc64el: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "disco", "eoan"]
+        ubuntu: ["xenial", "bionic", "disco", "eoan", "focal"]
     ]
     releaseArchitecture armhf: [
         debian  : ["jessie", "stretch", "buster"],
-        ubuntu  : ["xenial", "bionic", "disco", "eoan"]
+        ubuntu  : ["xenial", "bionic", "disco", "eoan", "focal"]
     ]
     releaseArchitecture arm64: [
         debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "disco", "eoan"]
+        ubuntu: ["xenial", "bionic", "disco", "eoan", "focal"]
     ]
 }
 
