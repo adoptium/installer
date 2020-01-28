@@ -27,7 +27,7 @@ It is possible to simultaneously build Debian and RPM packages by using `./gradl
 
 ### Deb packages
 
-Deb packages for Debian and Ubuntu (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm: 
+Deb packages for Debian and Ubuntu (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm:
 
 ```
 ./gradlew buildDebPackage \
@@ -63,10 +63,12 @@ Table with arguments:
 | JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 13 | 13                  | e.g. `13.0.1+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 14 | 14                  | e.g. `14+15`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 15 | 15                  | e.g. `15+10`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 ### RPM packages
 
-RPM packages for CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm: 
+RPM packages for CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm:
 
 ```
 ./gradlew buildRpmPackage \
@@ -79,7 +81,7 @@ RPM packages for CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as Open
     -PSIGN_PACKAGE=<true|false>
 ```
 
-`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package. 
+`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
 
 Example:
 
@@ -102,6 +104,8 @@ Example:
 | JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 13 | 13                  | e.g. `13.0.1+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 14 | 14                  | e.g. `14+15`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 15 | 15                  | e.g. `15+10`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
 
@@ -145,6 +149,8 @@ All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu 
 | JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
 | JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
 | JDK 13 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
+| JDK 14 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
+| JDK 15 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan) |
 
 * [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
 * [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
@@ -161,8 +167,10 @@ All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterpris
 | JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
 | JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
 | JDK 13 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 14 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
+| JDK 15 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31 | 6, 7, 8 | 15.0, 15.1 | 12, 15 |
 
-* Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support) 
+* Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support)
 * [CentOS releases and support timeframe](https://wiki.centos.org/Download)
 * [Fedora releases and support timeframe](https://fedoraproject.org/wiki/Releases)
 * [Red Hat Enterprise Linux releases and support timeframe](https://access.redhat.com/support/policy/updates/errata/)
