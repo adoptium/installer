@@ -142,6 +142,9 @@ if [ ! -z "$NOTARIZE_OPTION" ]; then
   cd notarize
   npm install
   node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
+  if [ $? != 0 ]; then 
+    exit 1
+  fi
   # Validates that the app has been notarized
   spctl -a -v --type install ${OUTPUT_DIRECTORY}
   cd -
