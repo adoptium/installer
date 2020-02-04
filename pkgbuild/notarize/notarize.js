@@ -22,13 +22,18 @@ let appleId = process.env.appleId
 let appleIdPassword = process.env.appleIdPassword
 
 async function packageTask () {
-  // Package your app here, and code side with hardened runtime
-  await notarize({
-    appBundleId,
-    appPath,
-    appleId,
-    appleIdPassword,
-  });
+  try {
+    // Package your app here, and code side with hardened runtime
+    await notarize({
+      appBundleId,
+      appPath,
+      appleId,
+      appleIdPassword,
+    });
+  } catch (error) {
+    console.error(error);
+    process.exit(1)
+  }
 }
 
 packageTask()
