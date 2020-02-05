@@ -133,10 +133,9 @@ cat distribution.xml.tmpl  \
 
 rm -rf OpenJDK.pkg
 
+/usr/bin/codesign --verbose=4 --deep --force -s "${SIGN_OPTION}" ${OUTPUT_DIRECTORY}
+
 if [ ! -z "$NOTARIZE_OPTION" ]; then
-  # TODO Bring this back pending resolution to https://github.com/AdoptOpenJDK/TSC/issues/107
-  # Skip this on 8 until we can produce a hardened runtime
-  #if [ "$MAJOR_VERSION" != 8 ]; then
   echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
   sudo xcode-select --switch /Applications/Xcode.app || true
   cd notarize
@@ -148,5 +147,4 @@ if [ ! -z "$NOTARIZE_OPTION" ]; then
   # Validates that the app has been notarized
   spctl -a -v --type install ${OUTPUT_DIRECTORY}
   cd -
-  #fi
 fi
