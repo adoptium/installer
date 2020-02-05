@@ -133,7 +133,7 @@ cat distribution.xml.tmpl  \
 
 rm -rf OpenJDK.pkg
 
-/usr/bin/codesign --verbose=4 --deep --force -s "${SIGN_OPTION}" ${OUTPUT_DIRECTORY}
+/usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${OUTPUT_DIRECTORY}
 
 if [ ! -z "$NOTARIZE_OPTION" ]; then
   echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
