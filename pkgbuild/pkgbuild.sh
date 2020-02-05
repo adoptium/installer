@@ -127,13 +127,13 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/conclusion.html ; \
+  
+/usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${INPUT_DIRECTORY}
 
 /usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} ${SIGN_CMD} "${SIGN_OPTION}" OpenJDK.pkg
 /usr/bin/productbuild --distribution distribution.xml --resources Resources ${SIGN_CMD} "${SIGN_OPTION}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
 
 rm -rf OpenJDK.pkg
-
-/usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${OUTPUT_DIRECTORY}
 
 if [ ! -z "$NOTARIZE_OPTION" ]; then
   echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
