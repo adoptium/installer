@@ -130,25 +130,31 @@ cat distribution.xml.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
   >Resources/en.lproj/conclusion.html ; \
- 
-xattr -cr .
-/usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${INPUT_DIRECTORY}
+
+# TODO: Remove this once we can notarize jdk8u
+if [ "$MAJOR_VERSION != "8" ]; then
+  xattr -cr .
+  /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${INPUT_DIRECTORY}
+fi
 
 /usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} ${SIGN_CMD} "${SIGN_OPTION}" OpenJDK.pkg
 /usr/bin/productbuild --distribution distribution.xml --resources Resources ${SIGN_CMD} "${SIGN_OPTION}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
 
 rm -rf OpenJDK.pkg
 
-if [ ! -z "$NOTARIZE_OPTION" ]; then
-  echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
-  sudo xcode-select --switch /Applications/Xcode.app || true
-  cd notarize
-  npm install
-  node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
-  if [ $? != 0 ]; then 
-    exit 1
+# TODO: Remove this once we can notarize jdk8u
+if [ "$MAJOR_VERSION != "8" ]; then
+  if [ ! -z "$NOTARIZE_OPTION" ]; then
+    echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
+    sudo xcode-select --switch /Applications/Xcode.app || true
+    cd notarize
+    npm install
+    node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
+    if [ $? != 0 ]; then 
+      exit 1
+    fi
+    # Validates that the app has been notarized
+    spctl -a -v --type install ${OUTPUT_DIRECTORY}
+    cd -
   fi
-  # Validates that the app has been notarized
-  spctl -a -v --type install ${OUTPUT_DIRECTORY}
-  cd -
 fi
