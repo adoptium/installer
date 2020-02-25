@@ -132,7 +132,7 @@ cat distribution.xml.tmpl  \
   >Resources/en.lproj/conclusion.html ; \
 
 # TODO: Remove this once we can notarize jdk8u
-if [ "$MAJOR_VERSION != "8" ]; then
+if [ "$MAJOR_VERSION" != "8" ]; then
   xattr -cr .
   /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${INPUT_DIRECTORY}
 fi
@@ -143,7 +143,7 @@ fi
 rm -rf OpenJDK.pkg
 
 # TODO: Remove this once we can notarize jdk8u
-if [ "$MAJOR_VERSION != "8" ]; then
+if [ "$MAJOR_VERSION" != "8" ]; then
   if [ ! -z "$NOTARIZE_OPTION" ]; then
     echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
     sudo xcode-select --switch /Applications/Xcode.app || true
