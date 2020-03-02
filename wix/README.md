@@ -116,3 +116,29 @@ Upgradable MSI work only for first 3 digit from the build number (due to MSI lim
 * Upgradable : 8.0.2.1 -> 8.0.2.2 No ( You must uninstall previous msi and install new one )
 * Upgradable : 8.0.2.1 -> 8.1.2.1 Yes
 * Upgradable : 8.0.2.1 -> 11.0.2.1 No  ( AdoptOpenJDK dont provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )
+
+## Troubleshooting
+
+Logfiles created by `msiexec.exe` help diagnosing problems with our MSI installers.
+
+If you are installing an AdoptOpenJDK MSI using the command line, pass `/l*v %temp%\AdoptOpenJDK-MSI.log` to write a log to `%temp%\AdoptOpenJDK-MSI.log`. Example command:
+
+```
+C:\WINDOWS\System32\msiexec.exe /i "C:\Users\Administrator\Downloads\OpenJDK11U-jdk_x64_windows_hotspot_11.0.6_10.msi" MSIINSTALLPERUSER=1 INSTALLDIR="C:\Users\Administrator\AppData\Local\Programs\AdoptOpenJDK" ADDLOCAL=FeatureJavaHome,FeatureEnvironment,FeatureJarFileRunWith /passive /l*v %temp%\AdoptOpenJDK-MSI.log
+```
+
+If you have trouble with the GUI installer, changes to the registry are needed to enable logging (copy into `cmd.exe`):
+
+```
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Debug /t REG_DWORD /d 7 /f 
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Logging /t REG_SZ /d voicewarmupx! /f
+```
+
+The logfiles are written to `%temp%\msi*.log` (`*` denotes a randomly generated string consisting of letters and numbers).
+
+To undo the changes to the registry:
+
+```
+reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Debug /f
+reg delete "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Logging /f
+```
