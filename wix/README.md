@@ -75,7 +75,7 @@ msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureMain,FeatureJavaHome,FeatureJarF
 see list for full/partial language translation available here https://github.com/AdoptOpenJDK/openjdk-installer/blob/master/wix/Lang/LanguageList.config
 (Feel free to make pull request to add/complete translation)
 
-Set property `TRANSFORMS` with :<code> where <code> is the id available in LanguageList.config
+Set property `TRANSFORMS` with `:<code>` where `<code>` is the ID available in `LanguageList.config`.
 
 ```batch
 msiexec /i OpenJDK8-jdk_xxx.msi ADDLOCAL=FeatureMain,FeatureJavaHome,FeatureJarFileRunWith INSTALLDIR=D:\testAdopt TRANSFORMS=:1036
