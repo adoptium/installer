@@ -47,13 +47,7 @@ shopt -s globstar nullglob nocaseglob nocasematch
 
 for DISTRIBUTION_TYPE in "jdk" "jre" ; do
     for ARCHITECTURE in "x64" "s390x" "ppc64le" "arm" "aarch64" ; do
-        # Temporary workaround for release of 14+36
-        if [ "$JVM" == "hotspot" ] ; then
-            JDK_FILENAME="OpenJDK${MAJOR_VERSION}U-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
-        else
-            JDK_FILENAME="OpenJDK${MAJOR_VERSION}-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
-        fi
-
+        JDK_FILENAME="OpenJDK${MAJOR_VERSION}U-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
         DOWNLOAD_URL="https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/${JDK_FILENAME}"
 
         # Script should continue even if the file cannot be downloaded because
