@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron-notarize": "^0.1.1",
+    "electron-notarize": "^0.3.0",
     "flags": "^0.1.3"
   }
 }
