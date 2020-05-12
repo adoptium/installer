@@ -1,10 +1,22 @@
 Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $filename = [System.IO.Path]::GetFileName($_)
-  $jdk_version_found = $filename -match "(?<jdk>OpenJDK\d+)"
-  $jdk_version = $Matches.jdk
+  $jdk_version_found = $filename -match "(?<jdk>^OpenJDK\d+)"
+  if (!$jdk_version_found) {
+    echo "filename : $filename don't match regex ^OpenJDK\d+"
+    exit 2
+  }
+  $jdk_version = $matches.jdk
   $package_type_found = $filename -match "(?<package_type>hotspot|openj9)"
+  if (!$package_type_found) {
+    echo "filename : $filename don't match regex hotspot|openj9"
+    exit 2
+  }
   $package_type = $Matches.package_type
   $platform_found = $filename -match "(?<platform>x86-32|x64)"
+  if (!$platform_found) {
+    echo "filename : $filename don't match regex x86-32|x64"
+    exit 2
+  }
   $platform = $Matches.platform
 
   Expand-Archive -Force -Path $filename -DestinationPath ".\$jdk_version\$package_type\$platform"
