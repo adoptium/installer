@@ -1,4 +1,4 @@
-@ECHO OFF
+IF NOT "%DEBUG%" == "true" @ECHO OFF
 
 REM Set version numbers and build option here if being run manually:
 REM PRODUCT_MAJOR_VERSION=11
@@ -251,16 +251,18 @@ FOR %%A IN (%ARCH%) DO (
         ECHO MSI validation was skipped by option SKIP_MSI_VALIDATION=true
     )
 
-    REM create an array of timestamp servers...
-    set SERVERLIST=(http://timestamp.comodoca.com/authenticode http://timestamp.verisign.com/scripts/timestamp.dll http://timestamp.globalsign.com/scripts/timestamp.dll http://tsa.starfieldtech.com)
-
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
     IF DEFINED SIGNING_CERTIFICATE (
         set timestampErrors=0
         for /L %%a in (1,1,300) do (
-            for %%s in %SERVERLIST% do (
+            for /F %%s IN (serverTimestamp.config) do (
+	        ECHO try !timestampErrors! / sha1 / timestamp server : %%s
+		REM Always hide password here
+		@ECHO OFF
                 "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+		@ECHO ON
+		IF NOT "%DEBUG%" == "true" @ECHO OFF
 
                 REM check the return value of the timestamping operation and retry a max of ten times...
                 if ERRORLEVEL 0 if not ERRORLEVEL 1 GOTO sha256
@@ -269,13 +271,18 @@ FOR %%A IN (%ARCH%) DO (
                 set /a timestampErrors+=1
             )
             REM wait 2 seconds...
-            choice /N /T:2 /D:Y >NUL
+            choice /N /T:2 /C:Y /D:Y >NUL
         )
 
         :sha256
         for /L %%a in (1,1,300) do (
-            for %%s in %SERVERLIST% do (
+            for /F %%s IN (serverTimestamp.config) do (
+	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
+		REM Always hide password here
+		@ECHO OFF
                 "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+		@ECHO ON
+		IF NOT "%DEBUG%" == "true" @ECHO OFF
 
                 REM check the return value of the timestamping operation and retry a max of ten times...
                 if ERRORLEVEL 0 if not ERRORLEVEL 1 GOTO succeeded
@@ -284,7 +291,7 @@ FOR %%A IN (%ARCH%) DO (
                 set /a timestampErrors+=1
             )
             REM wait 2 seconds...
-            choice /N /T:2 /D:Y >NUL
+            choice /N /T:2 /C:Y /D:Y >NUL
         )
 
         REM return an error code...
