@@ -1,6 +1,6 @@
 Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $filename = [System.IO.Path]::GetFileName($_)
-  $jdk_version_found = $filename -match "(?<jdk>^OpenJDK\d+)"
+  $jdk_version_found = $filename -match "(?<jdk>^(?:OpenJDK\d+|OpenJDK))"
   if (!$jdk_version_found) {
     echo "filename : $filename don't match regex ^OpenJDK\d+"
     exit 2
