@@ -1,26 +1,46 @@
 Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $filename = [System.IO.Path]::GetFileName($_)
-  $jdk_version_found = $filename -match "(?<jdk>^(?:OpenJDK\d+|OpenJDK))"
-  if (!$jdk_version_found) {
-    echo "filename : $filename don't match regex ^OpenJDK\d+"
+
+  # validate that the zip file is OpenJDK with an optional major version number
+  $openjdk_filename_regex = "^OpenJDK(?<major>\d*)"
+  $openjdk_found = $filename -match $openjdk_filename_regex
+  if (!$openjdk_found) {
+    echo "filename : $filename doesn't match regex $openjdk_filename_regex"
     exit 2
   }
-  $jdk_version = $matches.jdk
-  $package_type_found = $filename -match "(?<package_type>hotspot|openj9)"
-  if (!$package_type_found) {
-    echo "filename : $filename don't match regex hotspot|openj9"
+
+  $openjdk_basedir="OpenJDK"
+  if ([string]::IsNullOrEmpty($matches.major)) {
+    # put unnumbered OpenJDK filename into OpenJDK-Latest directory
+    # see Build.OpenJDK_generic.cmd who's going to look at it
+    $major=$openjdk_basedir + "-Latest"
+  } else {
+    $major=$openjdk_basedir + $Matches.major
+  }
+
+  $jvm_regex = "(?<jvm>hotspot|openj9)"
+  $jvm_found = $filename -match $jvm_regex
+  if (!$jvm_found) {
+    echo "filename : $filename doesn't match regex $jvm_regex"
     exit 2
   }
-  $package_type = $Matches.package_type
-  $platform_found = $filename -match "(?<platform>x86-32|x64)"
+  $jvm = $Matches.jvm
+
+  # Windows Architecture supported
+  $platform_regex = "(?<platform>x86-32|x64)"
+  $platform_found = $filename -match $platform_regex
   if (!$platform_found) {
-    echo "filename : $filename don't match regex x86-32|x64"
+    echo "filename : $filename doesn't match regex $platform_regex"
     exit 2
   }
   $platform = $Matches.platform
 
-  Expand-Archive -Force -Path $filename -DestinationPath ".\$jdk_version\$package_type\$platform"
-  Get-ChildItem -Directory ".\$jdk_version\$package_type\$platform" | where {$_ -match ".*_.*"} | ForEach {
+  # extract now
+  $unzip_dest = ".\$major\$jvm\$platform"
+  Expand-Archive -Force -Path $filename -DestinationPath $unzip_dest
+
+  # do some cleanup in path
+  Get-ChildItem -Directory $unzip_dest | where {$_ -match ".*_.*"} | ForEach {
     $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
     #echo "SourcePath: " $SourcePath
     #echo "fullname: "$_.FullName
