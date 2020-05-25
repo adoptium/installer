@@ -118,10 +118,18 @@ FOR %%A IN (%ARCH%) DO (
 				)
 				IF NOT EXIST "!REPRO_DIR!" (
 					ECHO Third !REPRO_DIR! not exists
-					ECHO SOURCE Dir not found / failed
-					ECHO Listing directory :
-					dir /a:d /s /b /o:n SourceDir
-					GOTO FAILED
+					REM try folder for JDK-Latest defined in CreateSourceFolder.AdoptOpenJDK.ps1
+					SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!-Latest\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%+%PRODUCT_PATCH_VERSION%
+					IF !PRODUCT_CATEGORY! == jre (
+						SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
+					)
+					IF NOT EXIST "!REPRO_DIR!" (
+						ECHO OpenJDK-Latest unnumbered !REPRO_DIR! does not exist
+						ECHO SOURCE Dir not found / failed
+						ECHO Listing directory :
+						dir /a:d /s /b /o:n SourceDir
+						GOTO FAILED
+					)
 				)
 			)
 		)
