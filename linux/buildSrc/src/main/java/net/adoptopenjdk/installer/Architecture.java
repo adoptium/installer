@@ -9,6 +9,7 @@ package net.adoptopenjdk.installer;
 public enum Architecture {
     X64("amd64", "x86_64", 64),
     S390X("s390x", "s390x", 64),
+    RISCV64("riscv64", "riscv64", 64),
     PPC64LE("ppc64el", "ppc64le", 64),
     ARM("armhf", "armhfp", 32),
     AARCH64("arm64", "aarch64", 64);
