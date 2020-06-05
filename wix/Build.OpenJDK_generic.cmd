@@ -70,6 +70,7 @@ SET PRODUCT_SKU=OpenJDK
 SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
 SET ICEDTEAWEB_DIR=.\SourceDir\icedtea-web-image
 
+SETLOCAL ENABLEDELAYEDEXPANSION
 REM JEP322 alike
 SET JEP322_BASE_NAME="unknown"
 IF %PRODUCT_CATEGORY% EQU jre SET JRE=-jre
@@ -90,7 +91,6 @@ SET ADOPT_NAME=jdk-!JEP322_BASE_NAME!!JRE!
 
 
 REM Generate platform specific builds (x86-32,x64)
-SETLOCAL ENABLEDELAYEDEXPANSION
 FOR %%A IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
   FOR %%J IN (%JVM%) DO (
