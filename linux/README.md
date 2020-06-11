@@ -53,6 +53,12 @@ Example:
     -PJDK_ARCHITECTURE=x64
 ```
 
+#### Optional Arguments
+- `-PVENDOR=vendor_name` - Specify a custom vendor name
+- `-PVENDOR_HOMEPAGE="www.homepage.com"` - specify a custom link to vendor homepage
+- `-PVENDOR_SOURCE_URL="www.sourcecode.com"` - specify a custom link to source code
+- `-PDEBIAN_ITERATION=1` - specify the iteration
+
 Table with arguments:
 
 |        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM                          | JDK\_ARCHITECTURE                           |
