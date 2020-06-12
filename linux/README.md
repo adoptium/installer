@@ -61,7 +61,7 @@ Example:
 * `-PVENDOR_SOURCE_URL="https://example.com/"` - specify a custom link to source code
 * `-PDEBIAN_ITERATION=1` - specify the iteration
 
-3rd party vendors can choose to populate the above optional arguments to customize package metadata.
+3rd party vendors can choose to populate the above optional arguments to customize package metadata. Please note that vendor name should be included in the JDK_VERSION.
 
 Example:
 
