@@ -32,7 +32,7 @@ ext {
         vm          : getJdkVirtualMachine(),
         description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by ${getVendor()}",
         homepage    : getVendorHomePage(),
-        vcsUrl      : getVendorSourceURL(),
+        vcsUrl   : getVendorSourceURL(),
         debianIteration: getDebianIteration(),
         rpmIteration: getRPMIteration(),
         license     : "GPL-2.0+CE",
@@ -87,7 +87,7 @@ def getVendor() {
 }
 
 def getPackageName() {
-    return hasProperty("VENDOR") ? "openjdk" : "adoptopenjdk"
+    return hasProperty("PACKAGE_NAME") ? PACKAGE_NAME : "adoptopenjdk"
 }
 
 def getVendorHomePage() {
@@ -95,7 +95,7 @@ def getVendorHomePage() {
 }
 
 def getVendorSourceURL() {
-    return hasProperty("VENDOR_SOURCE_URL") ? VENDOR_HOMEPAGE : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u"
+    return hasProperty("VENDOR_SOURCE_URL") ? VENDOR_SOURCE_URL : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u"
 }
 
 def getJdkMajorVersion() {
