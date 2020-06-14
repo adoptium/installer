@@ -15,8 +15,6 @@ plugins {
 allprojects {
     apply plugin: "base"
 
-    version = 1
-
     repositories {
         mavenCentral()
     }
@@ -32,21 +30,23 @@ ext {
     pkgMetadata = [
         architecture: getJdkArchitecture(),
         vm          : getJdkVirtualMachine(),
-        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by AdoptOpenJDK",
-        homepage    : "https://adoptopenjdk.net/",
-        vcsUrl      : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u",
-        iteration   : version,
+        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by ${getVendor()}",
+        homepage    : getVendorHomePage(),
+        vcsUrl   : getVendorSourceURL(),
+        debianIteration: getDebianIteration(),
+        rpmIteration: getRPMIteration(),
         license     : "GPL-2.0+CE",
-        maintainer  : "AdoptOpenJDK",
-        vendor      : "AdoptOpenJDK"
+        maintainer  : getVendor(),
+        vendor      : getVendor(),
+        packageName : "${getPackageName()}-${jdkMajorVersion}-${getJdkVirtualMachine().packageQualifier}${jdkDistributionType.pkgNameSuffix}"
     ]
     artifactory = [
         url       : "https://adoptopenjdk.jfrog.io/adoptopenjdk/",
-        user      : ARTIFACTORY_USER,
-        password  : ARTIFACTORY_PASSWORD,
+        user      : hasProperty("ARTIFACTORY_USER") ? ARTIFACTORY_USER : null,
+        password  : hasProperty("ARTIFACTORY_PASSWORD") ? ARTIFACTORY_PASSWORD : null,
         repository: [
-            deb: ARTIFACTORY_REPOSITORY_DEB,
-            rpm: ARTIFACTORY_REPOSITORY_RPM
+            deb: hasProperty("ARTIFACTORY_REPOSITORY_DEB") ? ARTIFACTORY_REPOSITORY_DEB : null,
+            rpm: hasProperty("ARTIFACTORY_REPOSITORY_RPM") ? ARTIFACTORY_REPOSITORY_RPM : null,
         ],
     ]
     jdkDistributionDir = JDK_DISTRIBUTION_DIR
@@ -56,6 +56,14 @@ ext {
 tasks.register("upload") {
     group = "upload"
     description = "Uploads all linux packages"
+}
+
+def getDebianIteration () {
+    return hasProperty("DEBIAN_ITERATION") ? Integer.parseInt(DEBIAN_ITERATION) : 2
+}
+
+def getRPMIteration () {
+    return hasProperty("RPM_ITERATION") ? Integer.parseInt(RPM_ITERATION) : 1
 }
 
 def getJdkDistributionType() {
@@ -72,6 +80,22 @@ def getJdkArchitecture() {
     return hasProperty("JDK_ARCHITECTURE") ?
         Architecture.valueOf(JDK_ARCHITECTURE.toUpperCase(Locale.US)) :
         Architecture.X64
+}
+
+def getVendor() {
+    return hasProperty("VENDOR") ? VENDOR : "AdoptOpenJDK"
+}
+
+def getPackageName() {
+    return hasProperty("PACKAGE_NAME") ? PACKAGE_NAME : "adoptopenjdk"
+}
+
+def getVendorHomePage() {
+    return hasProperty("VENDOR_HOMEPAGE") ? VENDOR_HOMEPAGE : "https://adoptopenjdk.net/"
+}
+
+def getVendorSourceURL() {
+    return hasProperty("VENDOR_SOURCE_URL") ? VENDOR_SOURCE_URL : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u"
 }
 
 def getJdkMajorVersion() {

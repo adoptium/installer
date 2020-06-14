@@ -53,6 +53,46 @@ Example:
     -PJDK_ARCHITECTURE=x64
 ```
 
+#### Optional Arguments
+
+* `-PPACKAGE_NAME=pkg_name` - Specify the name of the output package, defaults to `adoptopenjdk`
+* `-PVENDOR=vendor_name` - Specify a custom vendor name, defaults to `AdoptOpenJDK`
+* `-PVENDOR_HOMEPAGE="https://example.com/"` - specify a custom link to vendor homepage
+* `-PVENDOR_SOURCE_URL="https://example.com/"` - specify a custom link to source code
+* `-PDEBIAN_ITERATION=1` - specify the iteration
+
+3rd party vendors can choose to populate the above optional arguments to customize package metadata. Please note that vendor name should be included in the JDK_VERSION.
+
+Example:
+
+```bash
+./gradlew buildDebPackage \
+    -PJDK_DISTRIBUTION_TYPE=JDK \
+    -PPACKAGE_NAME=openjdk \
+    -PVENDOR=Vendor \
+    -PVENDOR_HOMEPAGE="https://homepage.com" \
+    -PJDK_DISTRIBUTION_DIR=path-to/jdk-11.0.8+2 \
+    -PJDK_MAJOR_VERSION=11 \
+    -PJDK_VERSION=11.0.8+2~vendor \
+    -PJDK_VM=hotspot \
+    -PJDK_ARCHITECTURE=x64 \
+    -PDEBIAN_ITERATION=5
+```
+
+will produce `openjdk-11-hotspot_11.0.8+2~vendor-5_amd64.deb` with the following metadata:
+
+```
+ new Debian package, version 2.0.
+ Package: openjdk-11-hotspot
+ Version: 11.0.8+2~vendor-5
+ Vendor: Vendor
+ Maintainer: Vendor
+ Homepage: https://homepage.com
+ Description: OpenJDK Development Kit 11 (JDK) with Hotspot by Vendor
+ ...
+
+```
+
 Table with arguments:
 
 |        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM                          | JDK\_ARCHITECTURE                           |

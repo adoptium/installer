@@ -2,9 +2,9 @@ import net.adoptopenjdk.installer.BuildRpmPackage
 import net.adoptopenjdk.installer.UploadRpmPackage
 
 tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
+    packageName = pkgMetadata.packageName
     packageVersion = jdkVersion
-    iteration = version
+    iteration = pkgMetadata.rpmIteration
     architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer
@@ -24,9 +24,9 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
 }
 
 tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
+    packageName = pkgMetadata.packageName
     packageVersion = jdkVersion
-    iteration = version
+    iteration = pkgMetadata.rpmIteration
     architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
     maintainer = pkgMetadata.maintainer

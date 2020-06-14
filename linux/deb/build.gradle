@@ -13,9 +13,9 @@ ext.jinfoPriorities = [
 ]
 
 tasks.register("buildDebianPackage", BuildDebianPackage) {
-    packageName = "adoptopenjdk-${jdkMajorVersion}-${pkgMetadata.vm.packageQualifier}${jdkDistributionType.pkgNameSuffix}"
+    packageName = pkgMetadata.packageName
     packageVersion = jdkVersion
-    iteration = 2
+    iteration = pkgMetadata.debianIteration
     priority = jinfoPriorities[jdkMajorVersion]
     architecture = pkgMetadata.architecture
     vm = pkgMetadata.vm
