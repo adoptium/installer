@@ -42,11 +42,11 @@ ext {
     ]
     artifactory = [
         url       : "https://adoptopenjdk.jfrog.io/adoptopenjdk/",
-        user      : hasProperty("ARTIFACTORY_USER") ? ARTIFACTORY_USER : null,
-        password  : hasProperty("ARTIFACTORY_PASSWORD") ? ARTIFACTORY_PASSWORD : null,
+        user      : project.hasProperty("ARTIFACTORY_USER") ? ARTIFACTORY_USER : null,
+        password  : project.hasProperty("ARTIFACTORY_PASSWORD") ? ARTIFACTORY_PASSWORD : null,
         repository: [
-            deb: hasProperty("ARTIFACTORY_REPOSITORY_DEB") ? ARTIFACTORY_REPOSITORY_DEB : null,
-            rpm: hasProperty("ARTIFACTORY_REPOSITORY_RPM") ? ARTIFACTORY_REPOSITORY_RPM : null,
+            deb: project.hasProperty("ARTIFACTORY_REPOSITORY_DEB") ? ARTIFACTORY_REPOSITORY_DEB : null,
+            rpm: project.hasProperty("ARTIFACTORY_REPOSITORY_RPM") ? ARTIFACTORY_REPOSITORY_RPM : null,
         ],
     ]
     jdkDistributionDir = JDK_DISTRIBUTION_DIR
