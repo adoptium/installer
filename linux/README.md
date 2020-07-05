@@ -181,16 +181,16 @@ By specifying all build properties (see above) building and uploading can be don
 
 All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, armhf and arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
 
-| OpenJDK                  | Debian                               | Ubuntu                                                                     |
-|--------------------------|--------------------------------------|----------------------------------------------------------------------------|
-| JDK 8 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 9 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 10 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 13 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 14 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
-| JDK 15 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.04 (disco), 19.10 (eoan), 20.04 (focal) |
+| OpenJDK                  | Debian                               | Ubuntu                                                                      |
+|--------------------------|--------------------------------------|-----------------------------------------------------------------------------|
+| JDK 8 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 9 (Hotspot, OpenJ9)  | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 10 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 11 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 12 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 13 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 14 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 15 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
 
 * [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
 * [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
@@ -201,14 +201,14 @@ All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterpris
 
 | OpenJDK                  | Amazon  | CentOS  | Fedora     | RHEL    | OpenSUSE   | SLES   |
 |--------------------------|---------|---------|------------|---------|------------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 13 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 14 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 15 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 30, 31, 32 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 13 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 14 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 15 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
 
 * Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support)
 * [CentOS releases and support timeframe](https://wiki.centos.org/Download)
