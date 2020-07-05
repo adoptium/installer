@@ -1,5 +1,5 @@
 if [ $1 -ge 1 ] ; then
-    update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1121 \
+    update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1151 \
                         --slave /usr/bin/jfr jfr {{ prefix }}/{{ jdkDirectoryName }}/bin/jfr \
                         --slave /usr/bin/jjs jjs {{ prefix }}/{{ jdkDirectoryName }}/bin/jjs \
                         --slave /usr/bin/jrunscript jrunscript {{ prefix }}/{{ jdkDirectoryName }}/bin/jrunscript \
@@ -15,7 +15,7 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/share/man/man1/rmid.1 rmid.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/rmid.1 \
                         --slave /usr/share/man/man1/rmiregistry.1 rmiregistry.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/rmiregistry.1
 
-    update-alternatives --install /usr/bin/javac javac {{ prefix }}/{{ jdkDirectoryName }}/bin/javac 1121 \
+    update-alternatives --install /usr/bin/javac javac {{ prefix }}/{{ jdkDirectoryName }}/bin/javac 1151 \
                         --slave /usr/bin/jaotc jaotc {{ prefix }}/{{ jdkDirectoryName }}/bin/jaotc \
                         --slave /usr/bin/jar jar {{ prefix }}/{{ jdkDirectoryName }}/bin/jar \
                         --slave /usr/bin/jarsigner jarsigner {{ prefix }}/{{ jdkDirectoryName }}/bin/jarsigner \
