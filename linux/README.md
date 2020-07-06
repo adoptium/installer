@@ -105,6 +105,7 @@ Table with arguments:
 | JDK 13 | 13                  | e.g. `13.0.1+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 14 | 14                  | e.g. `14+15`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 15 | 15                  | e.g. `15+10`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 16 | 16                  | e.g. `16+4`      | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 ### RPM packages
 
@@ -146,6 +147,7 @@ Example:
 | JDK 13 | 13                  | e.g. `13.0.1+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 14 | 14                  | e.g. `14+15`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 | JDK 15 | 15                  | e.g. `15+10`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+| JDK 16 | 16                  | e.g. `16+4`      | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
 
 RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
 
@@ -191,6 +193,7 @@ All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu 
 | JDK 13 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
 | JDK 14 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
 | JDK 15 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
+| JDK 16 (Hotspot, OpenJ9) | 8 (jessie), 9 (stretch), 10 (buster) | 16.04 (xenial), 18.04 (bionic), 19.10 (eoan), 20.04 (focal), 20.10 (groovy) |
 
 * [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
 * [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
@@ -209,6 +212,7 @@ All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterpris
 | JDK 13 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
 | JDK 14 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
 | JDK 15 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+| JDK 16 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 31, 32, 33 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
 
 * Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support)
 * [CentOS releases and support timeframe](https://wiki.centos.org/Download)
