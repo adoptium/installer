@@ -93,9 +93,13 @@ public abstract class AbstractBuildLinuxPackage extends DefaultTask {
     public void exec() {
         cleanTemporaryDirectory();
 
-        getProject().copy(copySpec -> {
-            copySpec.from(getPrebuiltJdkDirectory());
-            copySpec.into(new File(getTemporaryDir(), getJdkDirectoryName()));
+        // Copy with cp because Gradle's copy converts symlinks into hardlinks without reverting the permissions.
+        // https://github.com/gradle/gradle/issues/3982
+        getProject().exec(execSpec -> {
+            File source = getPrebuiltJdkDirectory();
+            File destination = new File(getTemporaryDir(), getJdkDirectoryName());
+            execSpec.commandLine("cp");
+            execSpec.args("-R", source.getAbsolutePath(), destination.getAbsolutePath());
         });
 
         Map<String, Object> templateContext = templateContext();
