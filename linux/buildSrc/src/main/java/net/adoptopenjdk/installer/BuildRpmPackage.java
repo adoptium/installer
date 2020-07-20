@@ -4,6 +4,7 @@ import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Internal;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -112,7 +113,25 @@ public class BuildRpmPackage extends AbstractBuildLinuxPackage {
 
     @Override
     protected void beforePackageBuild() {
-        // No pre processing needed.
+        /*
+         * Due do a bug in Gradle (https://github.com/gradle/gradle/issues/3982), symlinks in the JDK directory were
+         * converted into file copies, but with the wrong permissions. This was fixed in
+         * https://github.com/AdoptOpenJDK/openjdk-installer/pull/234, but introduced a new problem: RPM is unable to
+         * convert directories into symlinks. To proper approach to fix this would be to use a pretrans scriptlet,
+         * but fpm does not allow to write them in Lua which is mandatory
+         * (https://docs.fedoraproject.org/en-US/packaging-guidelines/Directory_Replacement/,
+         * https://github.com/jordansissel/fpm/issues/1666). Because there are already installations in the wild with
+         * the symlink, going back to the directory is not an option because that would break them, too. Migrating to
+         * a symlink in a post-install script isn't possible, either, because that symlink would be removed by the
+         * uninstall of the old package during an update. The solution with the lowest impact is just to delete the
+         * directory/symlink. The man pages are still there, but accessing them is less convenient.
+         */
+        File jaMan = Paths.get(getTemporaryDir().getAbsolutePath(), getJdkDirectoryName(), "man", "ja").toFile();
+        if (jaMan.exists()) {
+            if (!getProject().delete(jaMan.getAbsolutePath())) {
+                throw new RuntimeException("Could not delete " + jaMan.getAbsolutePath());
+            }
+        }
     }
 
     @Override
