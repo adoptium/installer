@@ -59,7 +59,7 @@ echoerr() { printf "%s\n" "$*" >&2; }
 # ARTIFACTORY_REPOSITORY_DEB or ARTIFACTORY_REPOSITORY_RPM. If it's a nightly
 # build without publication, instruct Gradle only to build the packages
 # without uploading them.
-case $RELEASE_TYPE in
+case "$RELEASE_TYPE" in
     "Release")
         if [ -z "${ARTIFACTORY_REPOSITORY_DEB+x}" ]; then
             ARTIFACTORY_REPOSITORY_DEB="deb"
@@ -88,6 +88,14 @@ case $RELEASE_TYPE in
         exit 0
         ;;
 esac
+
+
+if [ -z "${ARTIFACTORY_PASSWORD+x}" ]; then
+   echo No artifactory credentials available - will not upload
+   GRADLE_TASK=build
+elif [ "${GRADLE_TASK}" == "upload" ]; then
+   GRADLE_ARTIFACTORY_OPTS="-PARTIFACTORY_USER="$ARTIFACTORY_USER" -PARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" -PARTIFACTORY_REPOSITORY_DEB=$ARTIFACTORY_REPOSITORY_DEB -PARTIFACTORY_REPOSITORY_RPM=$ARTIFACTORY_REPOSITORY_RPM"
+fi
 
 JDK_TARBALLS=( "$WORKSPACE"/OpenJDK*.tar.gz )
 for JDK_TARBALL in ${JDK_TARBALLS[*]} ; do
@@ -137,8 +145,5 @@ for JDK_TARBALL in ${JDK_TARBALLS[*]} ; do
         -PJDK_VM="$JVM" \
         -PJDK_ARCHITECTURE="$ARCHITECTURE" \
         -PJDK_DISTRIBUTION_TYPE="$DISTRIBUTION_TYPE" \
-        -PARTIFACTORY_USER="$ARTIFACTORY_USER" \
-        -PARTIFACTORY_PASSWORD="$ARTIFACTORY_PASSWORD" \
-        -PARTIFACTORY_REPOSITORY_DEB=$ARTIFACTORY_REPOSITORY_DEB \
-        -PARTIFACTORY_REPOSITORY_RPM=$ARTIFACTORY_REPOSITORY_RPM
+        ${GRADLE_ARTIFACTORY_OPTS:-}
 done
