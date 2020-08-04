@@ -257,26 +257,6 @@ FOR %%A IN (%ARCH%) DO (
         set timestampErrors=0
         for /L %%a in (1,1,300) do (
             for /F %%s IN (serverTimestamp.config) do (
-	        ECHO try !timestampErrors! / sha1 / timestamp server : %%s
-		REM Always hide password here
-		@ECHO OFF
-                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-		@ECHO ON
-		IF NOT "%DEBUG%" == "true" @ECHO OFF
-
-                REM check the return value of the timestamping operation and retry a max of ten times...
-                if ERRORLEVEL 0 if not ERRORLEVEL 1 GOTO sha256
-
-                echo Signing failed. Probably cannot find the timestamp server at %%s
-                set /a timestampErrors+=1
-            )
-            REM wait 2 seconds...
-            choice /N /T:2 /C:Y /D:Y >NUL
-        )
-
-        :sha256
-        for /L %%a in (1,1,300) do (
-            for /F %%s IN (serverTimestamp.config) do (
 	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
 		REM Always hide password here
 		@ECHO OFF
