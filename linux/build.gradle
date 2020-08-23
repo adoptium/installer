@@ -59,11 +59,11 @@ tasks.register("upload") {
 }
 
 def getDebianIteration () {
-    return hasProperty("DEBIAN_ITERATION") ? Integer.parseInt(DEBIAN_ITERATION) : 2
+    return hasProperty("DEBIAN_ITERATION") ? Integer.parseInt(DEBIAN_ITERATION) : 3
 }
 
 def getRPMIteration () {
-    return hasProperty("RPM_ITERATION") ? Integer.parseInt(RPM_ITERATION) : 1
+    return hasProperty("RPM_ITERATION") ? Integer.parseInt(RPM_ITERATION) : 2
 }
 
 def getJdkDistributionType() {

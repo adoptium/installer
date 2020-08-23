@@ -1,5 +1,6 @@
 if [ $1 -ge 1 ] ; then
     update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1081 \
+                        --slave /usr/bin/jitserver jitserver {{ prefix }}/{{ jdkDirectoryName }}/bin/jitserver \
                         --slave /usr/bin/jjs jjs {{ prefix }}/{{ jdkDirectoryName }}/bin/jjs \
                         --slave /usr/bin/jrunscript jrunscript {{ prefix }}/{{ jdkDirectoryName }}/bin/jrunscript \
                         --slave /usr/bin/keytool keytool {{ prefix }}/{{ jdkDirectoryName }}/bin/keytool \
@@ -34,12 +35,17 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/javadoc javadoc {{ prefix }}/{{ jdkDirectoryName }}/bin/javadoc \
                         --slave /usr/bin/javah javah {{ prefix }}/{{ jdkDirectoryName }}/bin/javah \
                         --slave /usr/bin/javap javap {{ prefix }}/{{ jdkDirectoryName }}/bin/javap \
+                        --slave /usr/bin/jcmd jcmd {{ prefix }}/{{ jdkDirectoryName }}/bin/jcmd \
                         --slave /usr/bin/jconsole jconsole {{ prefix }}/{{ jdkDirectoryName }}/bin/jconsole \
                         --slave /usr/bin/jdb jdb {{ prefix }}/{{ jdkDirectoryName }}/bin/jdb \
                         --slave /usr/bin/jdeps jdeps {{ prefix }}/{{ jdkDirectoryName }}/bin/jdeps \
                         --slave /usr/bin/jdmpview jdmpview {{ prefix }}/{{ jdkDirectoryName }}/bin/jdmpview \
                         --slave /usr/bin/jextract jextract {{ prefix }}/{{ jdkDirectoryName }}/bin/jextract \
+                        --slave /usr/bin/jmap jmap {{ prefix }}/{{ jdkDirectoryName }}/bin/jmap \
+                        --slave /usr/bin/jps jps {{ prefix }}/{{ jdkDirectoryName }}/bin/jps \
                         --slave /usr/bin/jsadebugd jsadebugd {{ prefix }}/{{ jdkDirectoryName }}/bin/jsadebugd \
+                        --slave /usr/bin/jstack jstack {{ prefix }}/{{ jdkDirectoryName }}/bin/jstack \
+                        --slave /usr/bin/jstat jstat {{ prefix }}/{{ jdkDirectoryName }}/bin/jstat \
                         --slave /usr/bin/native2ascii native2ascii {{ prefix }}/{{ jdkDirectoryName }}/bin/native2ascii \
                         --slave /usr/bin/rmic rmic {{ prefix }}/{{ jdkDirectoryName }}/bin/rmic \
                         --slave /usr/bin/schemagen schemagen {{ prefix }}/{{ jdkDirectoryName }}/bin/schemagen \
@@ -57,10 +63,15 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/share/man/man1/javadoc.1 javadoc.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/javadoc.1 \
                         --slave /usr/share/man/man1/javah.1 javah.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/javah.1 \
                         --slave /usr/share/man/man1/javap.1 javap.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/javap.1 \
+                        --slave /usr/share/man/man1/jcmd.1 jcmd.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jcmd.1 \
                         --slave /usr/share/man/man1/jconsole.1 jconsole.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jconsole.1 \
                         --slave /usr/share/man/man1/jdb.1 jdb.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jdb.1 \
                         --slave /usr/share/man/man1/jdeps.1 jdeps.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jdeps.1 \
+                        --slave /usr/share/man/man1/jmap.1 jmap.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jmap.1 \
+                        --slave /usr/share/man/man1/jps.1 jps.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jps.1 \
                         --slave /usr/share/man/man1/jsadebugd.1 jsadebugd.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jsadebugd.1 \
+                        --slave /usr/share/man/man1/jstack.1 jstack.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jstack.1 \
+                        --slave /usr/share/man/man1/jstat.1 jstat.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jstat.1 \
                         --slave /usr/share/man/man1/native2ascii.1 native2ascii.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/native2ascii.1 \
                         --slave /usr/share/man/man1/rmic.1 rmic.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/rmic.1 \
                         --slave /usr/share/man/man1/schemagen.1 schemagen.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/schemagen.1 \

@@ -1,5 +1,7 @@
 bin/appletviewer jdk
+bin/clhsdb jdkhl
 bin/extcheck jdkhl
+bin/hsdb jdkhl
 bin/idlj jdkhl
 bin/jar jdkhl
 bin/jarsigner jdkhl
@@ -12,6 +14,7 @@ bin/jcmd jdkhl
 bin/jconsole jdk
 bin/jdb jdkhl
 bin/jdeps jdkhl
+bin/jfr jdkhl
 bin/jhat jdkhl
 bin/jinfo jdkhl
 bin/jjs hl

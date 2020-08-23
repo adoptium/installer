@@ -1,6 +1,6 @@
 if [ $1 -ge 1 ] ; then
     update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1141 \
-                        --slave /usr/bin/jfr jfr {{ prefix }}/{{ jdkDirectoryName }}/bin/jfr \
+                        --slave /usr/bin/jitserver jitserver {{ prefix }}/{{ jdkDirectoryName }}/bin/jitserver \
                         --slave /usr/bin/jjs jjs {{ prefix }}/{{ jdkDirectoryName }}/bin/jjs \
                         --slave /usr/bin/jrunscript jrunscript {{ prefix }}/{{ jdkDirectoryName }}/bin/jrunscript \
                         --slave /usr/bin/keytool keytool {{ prefix }}/{{ jdkDirectoryName }}/bin/keytool \

@@ -32,6 +32,7 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/jlink jlink {{ prefix }}/{{ jdkDirectoryName }}/bin/jlink \
                         --slave /usr/bin/jmap jmap {{ prefix }}/{{ jdkDirectoryName }}/bin/jmap \
                         --slave /usr/bin/jmod jmod {{ prefix }}/{{ jdkDirectoryName }}/bin/jmod \
+                        --slave /usr/bin/jpackage jpackage {{ prefix }}/{{ jdkDirectoryName }}/bin/jpackage \
                         --slave /usr/bin/jps jps {{ prefix }}/{{ jdkDirectoryName }}/bin/jps \
                         --slave /usr/bin/jshell jshell {{ prefix }}/{{ jdkDirectoryName }}/bin/jshell \
                         --slave /usr/bin/jstack jstack {{ prefix }}/{{ jdkDirectoryName }}/bin/jstack \

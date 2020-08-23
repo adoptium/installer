@@ -1,5 +1,6 @@
 bin/jaotc hl
 bin/java hl
+bin/jfr hl
 bin/jjs hl
 bin/jrunscript hl
 bin/keytool hl
@@ -8,3 +9,4 @@ bin/rmid hl
 bin/rmiregistry hl
 bin/unpack200 hl
 lib/jexec hl
+lib/jspawnhelper hl

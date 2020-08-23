@@ -1,7 +1,6 @@
 if [ $1 -ge 1 ] ; then
     update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1151 \
-                        --slave /usr/bin/jfr jfr {{ prefix }}/{{ jdkDirectoryName }}/bin/jfr \
-                        --slave /usr/bin/jjs jjs {{ prefix }}/{{ jdkDirectoryName }}/bin/jjs \
+                        --slave /usr/bin/jitserver jitserver {{ prefix }}/{{ jdkDirectoryName }}/bin/jitserver \
                         --slave /usr/bin/jrunscript jrunscript {{ prefix }}/{{ jdkDirectoryName }}/bin/jrunscript \
                         --slave /usr/bin/keytool keytool {{ prefix }}/{{ jdkDirectoryName }}/bin/keytool \
                         --slave /usr/bin/rmid rmid {{ prefix }}/{{ jdkDirectoryName }}/bin/rmid \
@@ -9,7 +8,6 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/jexec jexec {{ prefix }}/{{ jdkDirectoryName }}/lib/jexec \
                         --slave /usr/bin/jspawnhelper jspawnhelper {{ prefix }}/{{ jdkDirectoryName }}/lib/jspawnhelper \
                         --slave /usr/share/man/man1/java.1 java.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/java.1 \
-                        --slave /usr/share/man/man1/jjs.1 jjs.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jjs.1 \
                         --slave /usr/share/man/man1/jrunscript.1 jrunscript.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jrunscript.1 \
                         --slave /usr/share/man/man1/keytool.1 keytool.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/keytool.1 \
                         --slave /usr/share/man/man1/rmid.1 rmid.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/rmid.1 \
@@ -31,10 +29,11 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/jlink jlink {{ prefix }}/{{ jdkDirectoryName }}/bin/jlink \
                         --slave /usr/bin/jmap jmap {{ prefix }}/{{ jdkDirectoryName }}/bin/jmap \
                         --slave /usr/bin/jmod jmod {{ prefix }}/{{ jdkDirectoryName }}/bin/jmod \
+                        --slave /usr/bin/jpackage jpackage {{ prefix }}/{{ jdkDirectoryName }}/bin/jpackage \
                         --slave /usr/bin/jps jps {{ prefix }}/{{ jdkDirectoryName }}/bin/jps \
                         --slave /usr/bin/jshell jshell {{ prefix }}/{{ jdkDirectoryName }}/bin/jshell \
                         --slave /usr/bin/jstack jstack {{ prefix }}/{{ jdkDirectoryName }}/bin/jstack \
-                        --slave /usr/bin/rmic rmic {{ prefix }}/{{ jdkDirectoryName }}/bin/rmic \
+                        --slave /usr/bin/jstat jstat {{ prefix }}/{{ jdkDirectoryName }}/bin/jstat \
                         --slave /usr/bin/serialver serialver {{ prefix }}/{{ jdkDirectoryName }}/bin/serialver \
                         --slave /usr/bin/traceformat traceformat {{ prefix }}/{{ jdkDirectoryName }}/bin/traceformat \
                         --slave /usr/share/man/man1/jar.1 jar.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jar.1 \
@@ -46,6 +45,7 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/share/man/man1/jdb.1 jdb.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jdb.1 \
                         --slave /usr/share/man/man1/jdeps.1 jdeps.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jdeps.1 \
                         --slave /usr/share/man/man1/jps.1 jps.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jps.1 \
-                        --slave /usr/share/man/man1/rmic.1 rmic.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/rmic.1 \
+                        --slave /usr/share/man/man1/jstack.1 jstack.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jstack.1 \
+                        --slave /usr/share/man/man1/jstat.1 jstat.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jstat.1 \
                         --slave /usr/share/man/man1/serialver.1 serialver.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/serialver.1
 fi

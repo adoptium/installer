@@ -4,6 +4,7 @@ bin/java hl
 bin/javac jdkhl
 bin/javadoc jdkhl
 bin/javap jdkhl
+bin/jcmd jdkhl
 bin/jconsole jdk
 bin/jdb jdkhl
 bin/jdeprscan jdkhl
@@ -11,11 +12,16 @@ bin/jdeps jdkhl
 bin/jdmpview jdkhl
 bin/jextract jdkhl
 bin/jimage jdkhl
+bin/jitserver hl
 bin/jjs hl
 bin/jlink jdkhl
+bin/jmap jdkhl
+bin/jps jdkhl
 bin/jmod jdkhl
 bin/jrunscript hl
 bin/jshell jdkhl
+bin/jstack jdkhl
+bin/jstat jdkhl
 bin/keytool hl
 bin/pack200 hl
 bin/rmic jdkhl
@@ -25,3 +31,4 @@ bin/serialver jdkhl
 bin/traceformat jdkhl
 bin/unpack200 hl
 lib/jexec hl
+lib/jspawnhelper hl
