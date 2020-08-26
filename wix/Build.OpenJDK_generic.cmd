@@ -255,7 +255,7 @@ FOR %%A IN (%ARCH%) DO (
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
     IF DEFINED SIGNING_CERTIFICATE (
         set timestampErrors=0
-        for /L %%a in (1,1,300) do (
+        for /L %%a in (1,1,15) do (
             for /F %%s IN (serverTimestamp.config) do (
 	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
 		REM Always hide password here
@@ -270,8 +270,8 @@ FOR %%A IN (%ARCH%) DO (
                 echo Signing failed. Probably cannot find the timestamp server at %%s
                 set /a timestampErrors+=1
             )
-            REM wait 2 seconds...
-            choice /N /T:2 /C:Y /D:Y >NUL
+            REM always wait more than seconds after each retry
+            choice /N /T:%%a /C:Y /D:Y >NUL
         )
 
         REM return an error code...
