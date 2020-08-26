@@ -1,4 +1,4 @@
-@ECHO OFF
+IF NOT "%DEBUG%" == "true" @ECHO OFF
 
 REM Set version numbers and build option here if being run manually:
 REM PRODUCT_MAJOR_VERSION=11
@@ -277,20 +277,37 @@ FOR %%A IN (%ARCH%) DO (
     REM SIGN the MSIs with digital signature.
     REM Dual-Signing with SHA-1/SHA-256 requires Win 8.1 SDK or later.
     IF DEFINED SIGNING_CERTIFICATE (
-        "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha1 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-        IF ERRORLEVEL 1 (
-            ECHO Failed to sign with SHA1
-            GOTO FAILED
+        set timestampErrors=0
+        for /L %%a in (1,1,15) do (
+            for /F %%s IN (serverTimestamp.config) do (
+	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
+		REM Always hide password here
+		@ECHO OFF
+                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+		@ECHO ON
+		IF NOT "%DEBUG%" == "true" @ECHO OFF
+
+                REM check the return value of the timestamping operation and retry a max of ten times...
+                if ERRORLEVEL 0 if not ERRORLEVEL 1 GOTO succeeded
+
+                echo Signing failed. Probably cannot find the timestamp server at %%s
+                set /a timestampErrors+=1
+            )
+            REM always wait more than seconds after each retry
+            choice /N /T:%%a /C:Y /D:Y >NUL
         )
-        "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t http://timestamp.verisign.com/scripts/timstamp.dll "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-        IF ERRORLEVEL 1 (
-            ECHO Failed to sign with SHA256
-            GOTO FAILED
-        )
+
+        REM return an error code...
+        echo sign.bat exit code is 1. There were %timestampErrors% timestamping errors.
+        exit /b 1
+
     ) ELSE (
         ECHO Ignoring signing step : not certificate configured
     )
 
+    :succeeded
+    REM return a successful code...
+    echo sign.bat exit code is 0. There were %timestampErrors% timestamping errors.
 
     REM Remove files we do not need any longer.
     DEL "Files-!OUTPUT_BASE_FILENAME!.wxs"
