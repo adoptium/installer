@@ -1,6 +1,6 @@
 if [ $1 -ge 1 ] ; then
     update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1141 \
-                        --slave /usr/bin/jfr jfr {{ prefix }}/{{ jdkDirectoryName }}/bin/jfr \
+                        --slave /usr/bin/jitserver jitserver {{ prefix }}/{{ jdkDirectoryName }}/bin/jitserver \
                         --slave /usr/bin/jjs jjs {{ prefix }}/{{ jdkDirectoryName }}/bin/jjs \
                         --slave /usr/bin/jrunscript jrunscript {{ prefix }}/{{ jdkDirectoryName }}/bin/jrunscript \
                         --slave /usr/bin/keytool keytool {{ prefix }}/{{ jdkDirectoryName }}/bin/keytool \
@@ -31,9 +31,11 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/jlink jlink {{ prefix }}/{{ jdkDirectoryName }}/bin/jlink \
                         --slave /usr/bin/jmap jmap {{ prefix }}/{{ jdkDirectoryName }}/bin/jmap \
                         --slave /usr/bin/jmod jmod {{ prefix }}/{{ jdkDirectoryName }}/bin/jmod \
+                        --slave /usr/bin/jpackage jpackage {{ prefix }}/{{ jdkDirectoryName }}/bin/jpackage \
                         --slave /usr/bin/jps jps {{ prefix }}/{{ jdkDirectoryName }}/bin/jps \
                         --slave /usr/bin/jshell jshell {{ prefix }}/{{ jdkDirectoryName }}/bin/jshell \
                         --slave /usr/bin/jstack jstack {{ prefix }}/{{ jdkDirectoryName }}/bin/jstack \
+                        --slave /usr/bin/jstat jstat {{ prefix }}/{{ jdkDirectoryName }}/bin/jstat \
                         --slave /usr/bin/rmic rmic {{ prefix }}/{{ jdkDirectoryName }}/bin/rmic \
                         --slave /usr/bin/serialver serialver {{ prefix }}/{{ jdkDirectoryName }}/bin/serialver \
                         --slave /usr/bin/traceformat traceformat {{ prefix }}/{{ jdkDirectoryName }}/bin/traceformat \

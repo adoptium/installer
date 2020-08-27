@@ -59,7 +59,7 @@ tasks.register("upload") {
 }
 
 def getDebianIteration () {
-    return hasProperty("DEBIAN_ITERATION") ? Integer.parseInt(DEBIAN_ITERATION) : 2
+    return hasProperty("DEBIAN_ITERATION") ? Integer.parseInt(DEBIAN_ITERATION) : 3
 }
 
 def getRPMIteration () {

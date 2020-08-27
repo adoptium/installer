@@ -1,5 +1,5 @@
 bin/java hl
-bin/jfr hl
+bin/jitserver hl
 bin/jjs hl
 bin/jrunscript hl
 bin/keytool hl

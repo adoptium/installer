@@ -27,7 +27,9 @@ if [ $1 -ge 1 ] ; then
 
     update-alternatives --install /usr/bin/javac javac {{ prefix }}/{{ jdkDirectoryName }}/bin/javac 1081 \
                         --slave /usr/bin/appletviewer appletviewer {{ prefix }}/{{ jdkDirectoryName }}/bin/appletviewer \
+                        --slave /usr/bin/clhsdb clhsdb {{ prefix }}/{{ jdkDirectoryName }}/bin/clhsdb \
                         --slave /usr/bin/extcheck extcheck {{ prefix }}/{{ jdkDirectoryName }}/bin/extcheck \
+                        --slave /usr/bin/hsdb hsdb {{ prefix }}/{{ jdkDirectoryName }}/bin/hsdb \
                         --slave /usr/bin/idlj idlj {{ prefix }}/{{ jdkDirectoryName }}/bin/idlj \
                         --slave /usr/bin/jar jar {{ prefix }}/{{ jdkDirectoryName }}/bin/jar \
                         --slave /usr/bin/jarsigner jarsigner {{ prefix }}/{{ jdkDirectoryName }}/bin/jarsigner \
@@ -38,6 +40,7 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/jconsole jconsole {{ prefix }}/{{ jdkDirectoryName }}/bin/jconsole \
                         --slave /usr/bin/jdb jdb {{ prefix }}/{{ jdkDirectoryName }}/bin/jdb \
                         --slave /usr/bin/jdeps jdeps {{ prefix }}/{{ jdkDirectoryName }}/bin/jdeps \
+                        --slave /usr/bin/jfr jfr {{ prefix }}/{{ jdkDirectoryName }}/bin/jfr \
                         --slave /usr/bin/jhat jhat {{ prefix }}/{{ jdkDirectoryName }}/bin/jhat \
                         --slave /usr/bin/jinfo jinfo {{ prefix }}/{{ jdkDirectoryName }}/bin/jinfo \
                         --slave /usr/bin/jmap jmap {{ prefix }}/{{ jdkDirectoryName }}/bin/jmap \
@@ -54,7 +57,9 @@ if [ $1 -ge 1 ] ; then
                         --slave /usr/bin/wsimport wsimport {{ prefix }}/{{ jdkDirectoryName }}/bin/wsimport \
                         --slave /usr/bin/xjc xjc {{ prefix }}/{{ jdkDirectoryName }}/bin/xjc \
                         --slave /usr/share/man/man1/appletviewer.1 appletviewer.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/appletviewer.1 \
+                        --slave /usr/share/man/man1/clhsdb.1 clhsdb.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/clhsdb.1 \
                         --slave /usr/share/man/man1/extcheck.1 extcheck.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/extcheck.1 \
+                        --slave /usr/share/man/man1/hsdb.1 hsdb.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/hsdb.1 \
                         --slave /usr/share/man/man1/idlj.1 idlj.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/idlj.1 \
                         --slave /usr/share/man/man1/jar.1 jar.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jar.1 \
                         --slave /usr/share/man/man1/jarsigner.1 jarsigner.1 {{ prefix }}/{{ jdkDirectoryName }}/man/man1/jarsigner.1 \

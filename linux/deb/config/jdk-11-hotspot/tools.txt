@@ -10,6 +10,7 @@ bin/jconsole jdk
 bin/jdb jdkhl
 bin/jdeprscan jdkhl
 bin/jdeps jdkhl
+bin/jfr hl
 bin/jhsdb jdkhl
 bin/jimage jdkhl
 bin/jinfo jdkhl
@@ -31,3 +32,4 @@ bin/rmiregistry hl
 bin/serialver jdkhl
 bin/unpack200 hl
 lib/jexec hl
+lib/jspawnhelper hl

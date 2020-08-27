@@ -1,5 +1,6 @@
 bin/java hl
 bin/jextract hl
+bin/jitserver hl
 bin/jjs hl
 bin/keytool hl
 bin/orbd hl

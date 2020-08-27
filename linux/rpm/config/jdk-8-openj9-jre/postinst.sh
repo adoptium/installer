@@ -1,6 +1,7 @@
 if [ $1 -ge 1 ] ; then
     update-alternatives --install /usr/bin/java java {{ prefix }}/{{ jdkDirectoryName }}/bin/java 1081 \
                         --slave /usr/bin/jextract jextract {{ prefix }}/{{ jdkDirectoryName }}/bin/jextract \
+                        --slave /usr/bin/jitserver jitserver {{ prefix }}/{{ jdkDirectoryName }}/bin/jitserver \
                         --slave /usr/bin/jjs jjs {{ prefix }}/{{ jdkDirectoryName }}/bin/jjs \
                         --slave /usr/bin/keytool keytool {{ prefix }}/{{ jdkDirectoryName }}/bin/keytool \
                         --slave /usr/bin/orbd orbd {{ prefix }}/{{ jdkDirectoryName }}/bin/orbd \

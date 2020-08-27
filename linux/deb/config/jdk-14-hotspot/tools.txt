@@ -18,6 +18,7 @@ bin/jjs hl
 bin/jlink jdkhl
 bin/jmap jdkhl
 bin/jmod jdkhl
+bin/jpackage jdkhl
 bin/jps jdkhl
 bin/jrunscript hl
 bin/jshell jdkhl
