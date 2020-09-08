@@ -17,7 +17,7 @@
 set -eu
 
 if [ -f ~/.password ]; then
-  security unlock-keychain -p `cat ~/.password`
+  security unlock-keychain -p `cat ~/.password` login.keychain-db
 fi
 
 set +u
