@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ################################################################################
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,6 +19,7 @@ set -eu
 SIGN_OPTION=
 SIGN_CMD=
 NOTARIZE_OPTION=
+IDENTIFIER=
 VENDOR="adoptopenjdk"
 PACKAGE_NAME="AdoptOpenJDK"
 LOGO="Resources/adoptopenjdk.png"
@@ -37,6 +38,7 @@ while test $# -gt 0; do
       echo "--vendor                 adoptopenjdk, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
       echo "--logo                   Relative path to a custom logo (bottom left)"
+      echo "--identifier             override the identifier e.g net.adoptopenjdk.11.jdk"
       echo "-s, --sign               sign the installer>"
       exit 0
       ;;
@@ -85,6 +87,11 @@ while test $# -gt 0; do
       LOGO="$1"
       shift
       ;;
+    --identifier)
+      shift
+      IDENTIFIER="$1"
+      shift
+      ;;
     -s|--sign)
       shift
       SIGN_OPTION="true"
@@ -110,9 +117,11 @@ if [ $TYPE == "jre" ]; then
     /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:0 string CommandLine" "${INPUT_DIRECTORY}/Contents/Info.plist"
 fi
 
-case $JVM in
+case $TYPE in
   openj9)
-    IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}-openj9.${TYPE}"
+    if [ -z "$IDENTIFIER" ]; then
+      IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}-openj9.${TYPE}"
+    fi
     DIRECTORY="${VENDOR}-${MAJOR_VERSION}-openj9.${TYPE}"
     BUNDLE="${PACKAGE_NAME} (OpenJ9)"
     cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
@@ -122,7 +131,9 @@ case $JVM in
     esac
     ;;
   *)
-    IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
+    if [ -z "$IDENTIFIER" ]; then
+      IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
+    fi
     DIRECTORY="${VENDOR}-${MAJOR_VERSION}.${TYPE}"
     cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
     case $TYPE in
@@ -142,7 +153,7 @@ esac
 /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:1 string JNI" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:2 string BundledApp" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
-OUTPUT_FILE=$(echo "$OUTPUT_DIRECTORY" | cut -f 1 -d '.')
+OUTPUT_FILE=$(basename "$OUTPUT_DIRECTORY" | cut -f 1 -d '.')
 
 rm -rf *.pkg build/*.pkg distribution.xml Resources/en.lproj/welcome.html Resources/en.lproj/conclusion.html OpenJDKPKG.pkgproj "${DIRECTORY}"
 
@@ -177,9 +188,9 @@ cat OpenJDKPKG.pkgproj.template  \
 packagesbuild -v OpenJDKPKG.pkgproj
 
 if [ ! -z "$SIGN_OPTION" ]; then
-    /usr/bin/productsign --sign "${SIGN_CERT}" build/"$OUTPUT_DIRECTORY" "$OUTPUT_DIRECTORY"
+    /usr/bin/productsign --sign "${SIGN_CERT}" build/"$OUTPUT_FILE.pkg" "$OUTPUT_DIRECTORY"
 else
-    mv build/"$OUTPUT_DIRECTORY" .
+    mv build/"$OUTPUT_FILE.pkg" "$OUTPUT_DIRECTORY"
 fi
 
 if [ ! -z "$NOTARIZE_OPTION" ]; then
