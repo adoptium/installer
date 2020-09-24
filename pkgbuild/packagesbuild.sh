@@ -185,7 +185,7 @@ cat OpenJDKPKG.pkgproj.template  \
   | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
   >Resources/summary.html ; \
 
-packagesbuild -v OpenJDKPKG.pkgproj
+/usr/local/bin/packagesbuild -v OpenJDKPKG.pkgproj
 
 if [ ! -z "$SIGN_OPTION" ]; then
     /usr/bin/productsign --sign "${SIGN_CERT}" build/"$OUTPUT_FILE.pkg" "$OUTPUT_DIRECTORY"
