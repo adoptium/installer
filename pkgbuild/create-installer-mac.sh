@@ -25,7 +25,7 @@ SIGN_OPTION=
 SIGN_CMD=
 if [ ! -z "$CERTIFICATE" ]; then
   SIGN_CMD="--sign"
-  SIGN_OPTION="${CERTIFICATE}"
+  SIGN_CERT="${CERTIFICATE}"
 fi
 set -u
 
@@ -45,19 +45,27 @@ do tar -xf "$f";
   case $f in
     *hotspot*)
       export JVM="hotspot"
-      cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
     ;;
     *openj9*)
       export JVM="openj9"
-      cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
     ;;
+  esac
+
+  # Detect if JRE or JDK
+  case $f in
+    *-jre)
+      TYPE="jre"
+      ;;
+    *)
+      TYPE="jdk"
+      ;;
   esac
 
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
-  
-  echo running "./pkgbuild.sh ${SIGN_CMD} "${SIGN_OPTION}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg"
-  ./pkgbuild.sh ${SIGN_CMD} "${SIGN_OPTION}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg
+
+  echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
+  ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
 
   rm -rf ${directory}
   rm -rf ${f}

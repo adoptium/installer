@@ -1,2 +1,6 @@
 distribution.xml
 *.pkg
+OpenJDKPKG.pkgproj
+*.html
+*.jdk
+Resources/license.rtf

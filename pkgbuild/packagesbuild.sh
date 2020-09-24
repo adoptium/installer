@@ -19,6 +19,9 @@ set -eu
 SIGN_OPTION=
 SIGN_CMD=
 NOTARIZE_OPTION=
+VENDOR="adoptopenjdk"
+PACKAGE_NAME="AdoptOpenJDK"
+LOGO="Resources/adoptopenjdk.png"
 
 while test $# -gt 0; do
   case "$1" in
@@ -29,6 +32,11 @@ while test $# -gt 0; do
       echo "--full_version           1.8.0_192>"
       echo "-i, --input_directory    path to extracted jdk>"
       echo "-o, --output_directory   name of the pkg file>"
+      echo "--jvm                    hotspot or openj9"
+      echo "--type                   jdk or jre"
+      echo "--vendor                 adoptopenjdk, dragonwell etc"
+      echo "--package-name           full name of the package (shown in the title)"
+      echo "--logo                   Relative path to a custom logo (bottom left)"
       echo "-s, --sign               sign the installer>"
       exit 0
       ;;
@@ -52,10 +60,35 @@ while test $# -gt 0; do
       OUTPUT_DIRECTORY=$1
       shift
       ;;
+    --jvm)
+      shift
+      JVM=$1
+      shift
+      ;;
+    --type)
+      shift
+      TYPE=$1
+      shift
+      ;;
+    --vendor)
+      shift
+      VENDOR="$1"
+      shift
+      ;;
+    --package-name)
+      shift
+      PACKAGE_NAME="$1"
+      shift
+      ;;
+    --logo)
+      shift
+      LOGO="$1"
+      shift
+      ;;
     -s|--sign)
       shift
-      SIGN_OPTION="$1"
-      SIGN_CMD="--sign"
+      SIGN_OPTION="true"
+      SIGN_CERT="$1"
       NOTARIZE_OPTION="true"
       shift
       ;;
@@ -65,42 +98,36 @@ while test $# -gt 0; do
   esac
 done
 
-rm -rf *.pkg distribution.xml Resources/en.lproj/welcome.html Resources/en.lproj/conclusion.html
 mkdir -p "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries"
 if [ -f "${INPUT_DIRECTORY}/Contents/Home/lib/server/libjvm.dylib" ]; then
   cp "${INPUT_DIRECTORY}/Contents/Home/lib/server/libjvm.dylib" "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries/libserver.dylib"
 else
   cp "${INPUT_DIRECTORY}/Contents/Home/jre/lib/server/libjvm.dylib" "${INPUT_DIRECTORY}/Contents/Home/bundle/Libraries/libserver.dylib"
 fi
-# Detect if JRE or JDK
-case $INPUT_DIRECTORY in
-  *-jre)
-    TYPE="jre"
+
+if [ $TYPE == "jre" ]; then
     /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities array" "${INPUT_DIRECTORY}/Contents/Info.plist"
     /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:0 string CommandLine" "${INPUT_DIRECTORY}/Contents/Info.plist"
-    ;;
-  *)
-    TYPE="jdk"
-    ;;
-esac
+fi
 
-# Plist commands:
 case $JVM in
   openj9)
-    IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}-openj9.${TYPE}"
-    DIRECTORY="adoptopenjdk-${MAJOR_VERSION}-openj9.${TYPE}"
-    BUNDLE="AdoptOpenJDK (OpenJ9)"
+    IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}-openj9.${TYPE}"
+    DIRECTORY="${VENDOR}-${MAJOR_VERSION}-openj9.${TYPE}"
+    BUNDLE="${PACKAGE_NAME} (OpenJ9)"
+    cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
     case $TYPE in
-      jre) BUNDLE="AdoptOpenJDK (OpenJ9, JRE)" ;;
-      jdk) BUNDLE="AdoptOpenJDK (OpenJ9)" ;;
+      jre) BUNDLE="${PACKAGE_NAME} (OpenJ9, JRE)" ;;
+      jdk) BUNDLE="${PACKAGE_NAME} (OpenJ9)" ;;
     esac
     ;;
   *)
-    IDENTIFIER="net.adoptopenjdk.${MAJOR_VERSION}.${TYPE}"
-    DIRECTORY="adoptopenjdk-${MAJOR_VERSION}.${TYPE}"
+    IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
+    DIRECTORY="${VENDOR}-${MAJOR_VERSION}.${TYPE}"
+    cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
     case $TYPE in
-      jre) BUNDLE="AdoptOpenJDK (JRE)" ;;
-      jdk) BUNDLE="AdoptOpenJDK" ;;
+      jre) BUNDLE="${PACKAGE_NAME} (JRE)" ;;
+      jdk) BUNDLE="${PACKAGE_NAME}" ;;
     esac
     ;;
 esac
@@ -109,35 +136,51 @@ esac
 /usr/libexec/PlistBuddy -c "Set :CFBundleName ${BUNDLE} ${MAJOR_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleIdentifier ${IDENTIFIER}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :JavaVM:JVMPlatformVersion ${FULL_VERSION}" "${INPUT_DIRECTORY}/Contents/Info.plist"
-/usr/libexec/PlistBuddy -c "Set :JavaVM:JVMVendor AdoptOpenJDK" "${INPUT_DIRECTORY}/Contents/Info.plist"
+/usr/libexec/PlistBuddy -c "Set :JavaVM:JVMVendor ${PACKAGE_NAME}" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
 # Fix comes from https://apple.stackexchange.com/a/211033 to associate JAR files
 /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:1 string JNI" "${INPUT_DIRECTORY}/Contents/Info.plist"
 /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:2 string BundledApp" "${INPUT_DIRECTORY}/Contents/Info.plist"
 
-cat distribution.xml.tmpl  \
-  | sed -E "s/\\{identifier\\}/$IDENTIFIER/g" \
-  | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
-  | sed -E "s/\\{file\\}/OpenJDK.pkg/g" \
-  >distribution.xml ; \
+OUTPUT_FILE=$(echo "$OUTPUT_DIRECTORY" | cut -f 1 -d '.')
 
+rm -rf *.pkg build/*.pkg distribution.xml Resources/en.lproj/welcome.html Resources/en.lproj/conclusion.html OpenJDKPKG.pkgproj "${DIRECTORY}"
+
+cp -R "${INPUT_DIRECTORY}" "${DIRECTORY}"
+
+if [ ! -z "$SIGN_OPTION" ]; then
+    xattr -cr .
+    /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${DIRECTORY}
+fi
+
+cat OpenJDKPKG.pkgproj.template  \
+  | sed -E "s~\\{path\\}~$DIRECTORY~g" \
+  | sed -E "s~\\{output\\}~$OUTPUT_FILE~g" \
+  | sed -E "s~\\{identifier\\}~$IDENTIFIER~g" \
+  | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
+  | sed -E "s~\\{directory\\}~$DIRECTORY~g" \
+  | sed -E "s~\\{logo\\}~$LOGO~g" \
+  >OpenJDKPKG.pkgproj ; \
+  
   cat Resources/en.lproj/welcome.html.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
-  >Resources/en.lproj/welcome.html ; \
+  | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
+  >Resources/introduction.html ; \
 
   cat Resources/en.lproj/conclusion.html.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
-  >Resources/en.lproj/conclusion.html ; \
+  | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
+  >Resources/summary.html ; \
 
-  xattr -cr .
-  /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${INPUT_DIRECTORY}
+packagesbuild -v OpenJDKPKG.pkgproj
 
-/usr/bin/pkgbuild --root ${INPUT_DIRECTORY} --install-location /Library/Java/JavaVirtualMachines/${DIRECTORY} --identifier ${IDENTIFIER} --version ${FULL_VERSION} ${SIGN_CMD} "${SIGN_OPTION}" OpenJDK.pkg
-/usr/bin/productbuild --distribution distribution.xml --resources Resources ${SIGN_CMD} "${SIGN_OPTION}" --package-path OpenJDK.pkg ${OUTPUT_DIRECTORY}
-
-rm -rf OpenJDK.pkg
+if [ ! -z "$SIGN_OPTION" ]; then
+    /usr/bin/productsign --sign "${SIGN_CERT}" build/"$OUTPUT_DIRECTORY" "$OUTPUT_DIRECTORY"
+else
+    mv build/"$OUTPUT_DIRECTORY" .
+fi
 
 if [ ! -z "$NOTARIZE_OPTION" ]; then
   echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
