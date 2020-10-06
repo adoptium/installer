@@ -22,6 +22,13 @@ IF NOT DEFINED JVM SET ERR=6
 IF NOT DEFINED PRODUCT_CATEGORY SET ERR=7
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
+REM default vendor information
+IF NOT DEFINED VENDOR SET VENDOR=Adopt
+IF NOT DEFINED BRANDING SET BRANDING=AdoptOpenJDK
+IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose
+IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptopenjdk.net/support.html
+IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptopenjdk.net/releases.html
+
 IF NOT "%ARCH%" == "x64" (
 	IF NOT "%ARCH%" == "x86-32" (
 		IF NOT "%ARCH%" == "x86-32 x64" (
@@ -60,6 +67,16 @@ REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
 SET WIN_SDK_MAJOR_VERSION=10
 SET WIN_SDK_FULL_VERSION=10.0.17763.0
+
+REM find all .template files and replace text with configurations
+SETLOCAL ENABLEDELAYEDEXPANSION
+FOR /f %%i IN ('dir /s /b *.template') DO (
+    SET INPUT_FILE=%%i
+    SET OUTPUT_FILE=!INPUT_FILE:.template=%!
+    ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
+    powershell -Command "(gc %%i) -replace '{vendor}', '!VENDOR!' -replace '{branding}', '!BRANDING!' -replace '{product_help_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_support_link}', '!PRODUCT_HELP_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding ASCII !OUTPUT_FILE!"
+)
+ENDLOCAL
 
 REM
 REM Nothing below this line need to be changed normally.
