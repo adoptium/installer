@@ -13,7 +13,7 @@
 
   <?define ProductVersion="$(var.ProductMajorVersion).$(var.ProductMinorVersion).$(var.ProductMaintenanceVersion).$(var.ProductPatchVersion)" ?>
   <?define ProductLanguage="!(loc.ProductLanguage)" ?>
-  <?define ProductManufacturer="AdoptOpenJDK" ?>
+  <?define ProductManufacturer="{vendor}" ?>
 
   <?if $(env.PRODUCT_CATEGORY)="jre"?>
     <?define ProductName="!(loc.JREProductName)" ?>
