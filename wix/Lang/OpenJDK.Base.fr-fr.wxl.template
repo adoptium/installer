@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="ProductLanguage">1036</String>
-	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose</String>
-	<String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
-	<String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
+	<String Id="ProductHelpLink">{product_help_link}</String>
+	<String Id="ProductUrlInfoAbout">{product_support_link}</String>
+	<String Id="ProductUrlUpdateInfo">{product_update_info_link}</String>
 	<String Id="OSVersionRequired">Windows 7 ou ultérieur est requis.</String>
 	<String Id="ProductIsNotSupportedOnItanium">Ce produit n'est pas pris en charge sur les systèmes Itanium 64 bits.</String>
 	<String Id="FeatureEnvironmentTitle">Ajouter au PATH</String>
@@ -13,11 +13,11 @@
 	<String Id="FeatureSourceTitle">Code source</String>
 	<String Id="FeatureSourceDescription">Code source des classes qui composent l'API publique de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associer les .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec AdoptOpenJDK pour execution par double-click</String>
+	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec {branding} pour execution par double-click</String>
 	<String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
 	<String Id="FeatureOracleJavaSoftName">Clés de registre JavaSoft (Oracle)</String>
 	<!-- ! Description limité à 255 charactères -->
-	<String Id="FeatureOracleJavaSoftDescription">Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'AdoptOpenJDK, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin</String>
+	<String Id="FeatureOracleJavaSoftDescription">Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{branding}, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
 	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
 	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>

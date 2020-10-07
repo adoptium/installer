@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="ja-jp" Codepage="932" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="ProductLanguage">1041</String>
-	<String Id="ProductHelpLink">https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose</String>
-	<String Id="ProductUrlInfoAbout">https://adoptopenjdk.net/support.html</String>
-	<String Id="ProductUrlUpdateInfo">https://adoptopenjdk.net/releases.html</String>
+	<String Id="ProductHelpLink">{product_help_link}</String>
+	<String Id="ProductUrlInfoAbout">{product_support_link}</String>
+	<String Id="ProductUrlUpdateInfo">{product_update_info_link}</String>
 	<String Id="OSVersionRequired">Windows 7 or later is required.</String>
 	<String Id="ProductIsNotSupportedOnItanium">This product is not supported on Itanium 64-bit systems.</String>
 	<String Id="FeatureEnvironmentTitle">Add to PATH</String>
@@ -13,10 +13,10 @@
 	<String Id="FeatureSourceTitle">Source Code</String>
 	<String Id="FeatureSourceDescription">Source code for classes that comprise the public API of Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with AdoptOpenJDK</String>
+	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with {branding}</String>
 	<String Id="DowngradeDenied">"[ProductName]の新しいバージョンは既にインストールされています。セットアップは終了します。"</String>
 	<String Id="FeatureOracleJavaSoftName">JavaSoft (Oracle) registry keys</String>
-	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of AdoptOpenJDK, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
+	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of {branding}, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
 	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
 	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>
