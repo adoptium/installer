@@ -13,10 +13,10 @@
 	<String Id="FeatureSourceTitle">Source Code</String>
 	<String Id="FeatureSourceDescription">Source code for classes that comprise the public API of Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associate .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with {branding}</String>
+	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with {package_name}</String>
 	<String Id="DowngradeDenied">"已安装更高版本的[ProductName]。安装程序现在将退出。"</String>
 	<String Id="FeatureOracleJavaSoftName">JavaSoft (Oracle) registry keys</String>
-	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of {branding}, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
+	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of {package_name}, Oracle Java running from PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" does not work. You need to reinstall it to recreate these registry keys</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
 	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
 	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>

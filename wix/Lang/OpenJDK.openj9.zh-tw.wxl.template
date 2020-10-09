@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="zh-tw" Codepage="950" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="JREFeatureMainName">JRE with Eclipse OpenJ9</String>
-	<String Id="JREFeatureMainDescription">{branding} Runtime Environment with Eclipse OpenJ9</String>
-	<String Id="JREProductName">{branding} JRE with Eclipse OpenJ9</String>
-	<String Id="JREPackageDescription">{branding} Runtime Environment with Eclipse OpenJ9</String>
+	<String Id="JREFeatureMainDescription">{package_name} Runtime Environment with Eclipse OpenJ9</String>
+	<String Id="JREProductName">{package_name} JRE with Eclipse OpenJ9</String>
+	<String Id="JREPackageDescription">{package_name} Runtime Environment with Eclipse OpenJ9</String>
 
 	<String Id="JDKFeatureMainName">JDK with Eclipse OpenJ9</String>
-	<String Id="JDKFeatureMainDescription">{branding} Development Kit with Eclipse OpenJ9</String>
-	<String Id="JDKProductName">{branding} JDK with Eclipse OpenJ9</String>
-	<String Id="JDKPackageDescription">{branding} Development Kit with Eclipse OpenJ9</String>
+	<String Id="JDKFeatureMainDescription">{package_name} Development Kit with Eclipse OpenJ9</String>
+	<String Id="JDKProductName">{package_name} JDK with Eclipse OpenJ9</String>
+	<String Id="JDKPackageDescription">{package_name} Development Kit with Eclipse OpenJ9</String>
 </WixLocalization>

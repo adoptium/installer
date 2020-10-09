@@ -13,10 +13,10 @@
 	<String Id="FeatureSourceTitle">Código fuente</String>
 	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Asociar .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Asociar la extensión de fichero .jar con {branding}</String>
+	<String Id="FeatureJarFileRunWithDescription">Asociar la extensión de fichero .jar con {package_name}</String>
 	<String Id="DowngradeDenied">Ya hay instalada una versión posterior de [ProductName]. La instalación se cerrará.</String>
 	<String Id="FeatureOracleJavaSoftName">Claves de registro JavaSoft (Oracle)</String>
-	<String Id="FeatureOracleJavaSoftDescription">Sobrescribir las claves de registro HKLM\Software\JavaSoft (Oracle). Si se desinstala {branding}, la ejecución de Oracle Java desde la ruta "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" no funcionará. Será necesario reinstalarlo.</String>
+	<String Id="FeatureOracleJavaSoftDescription">Sobrescribir las claves de registro HKLM\Software\JavaSoft (Oracle). Si se desinstala {package_name}, la ejecución de Oracle Java desde la ruta "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" no funcionará. Será necesario reinstalarlo.</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
 	<String Id="FeatureIcedTeaWebDescription">Instalar el paquete IcedTea-Web</String>
 	<String Id="FeatureJNLPFileRunWithTitle">Asociar .jnlp</String>
