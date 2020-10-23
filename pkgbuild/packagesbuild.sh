@@ -117,7 +117,7 @@ if [ $TYPE == "jre" ]; then
     /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:0 string CommandLine" "${INPUT_DIRECTORY}/Contents/Info.plist"
 fi
 
-case $TYPE in
+case $JVM in
   openj9)
     if [ -z "$IDENTIFIER" ]; then
       IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}-openj9.${TYPE}"
