@@ -53,7 +53,7 @@ do tar -xf "$f";
 
   # Detect if JRE or JDK
   case $f in
-    *-jre)
+    *-jre_*)
       TYPE="jre"
       ;;
     *)
