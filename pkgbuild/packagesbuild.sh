@@ -161,6 +161,7 @@ cp -R "${INPUT_DIRECTORY}" "${DIRECTORY}"
 
 if [ ! -z "$SIGN_OPTION" ]; then
     xattr -cr .
+    security unlock-keychain -p `cat ~/.password` login.keychain-db
     /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${DIRECTORY}
 fi
 
