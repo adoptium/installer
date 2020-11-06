@@ -21,11 +21,12 @@ if [ -f ~/.password ]; then
 fi
 
 set +u
-SIGN_CERT=
-SIGN_CMD=
-if [ ! -z "$CERTIFICATE" ]; then
+if [ -z "$CERTIFICATE" ]; then
+  SIGN_CMD=
+  SIGN_CERT=
+else
   SIGN_CMD="--sign"
-  SIGN_CERT="${CERTIFICATE}"
+  SIGN_CERT="'${CERTIFICATE}'"
 fi
 set -u
 
@@ -64,8 +65,8 @@ do tar -xf "$f";
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
 
-  echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
-  ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
+  echo running "./packagesbuild.sh ${SIGN_CMD} ${SIGN_CERT} --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
+  ./packagesbuild.sh ${SIGN_CMD} ${SIGN_CERT} --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
 
   rm -rf ${directory}
   rm -rf ${f}
