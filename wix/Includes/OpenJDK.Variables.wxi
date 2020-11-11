@@ -17,7 +17,7 @@
 
   <?if $(env.PRODUCT_CATEGORY)="jre"?>
     <?define ProductName="!(loc.JREProductName)" ?>
-    <?define ProductNameWithVersion="!(loc.JREProductName) $(var.ProductFullVersion) $(var.Arch)" ?>
+    <?define ProductNameWithVersion="!(loc.JREProductName) $(var.ProductVersionString) $(var.Arch)" ?>
     <?define PackageDescription="!(loc.JREPackageDescription)" ?>
     <?define FeatureMainName="!(loc.JREFeatureMainName)" ?>
     <?define FeatureMainDescription="!(loc.JREFeatureMainDescription)" ?>
@@ -26,7 +26,7 @@
     <?define AppFolder="jre-$(var.ProductVersion)-$(var.JVM)" ?>
   <?else?>
     <?define ProductName="!(loc.JDKProductName)" ?>
-    <?define ProductNameWithVersion="!(loc.JDKProductName) $(var.ProductFullVersion) $(var.Arch)" ?>
+    <?define ProductNameWithVersion="!(loc.JDKProductName) $(var.ProductVersionString) $(var.Arch)" ?>
     <?define PackageDescription="!(loc.JDKPackageDescription)" ?>
     <?define FeatureMainName="!(loc.JDKFeatureMainName)" ?>
     <?define FeatureMainDescription="!(loc.JDKFeatureMainDescription)" ?>
