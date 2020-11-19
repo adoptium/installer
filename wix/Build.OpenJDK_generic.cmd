@@ -71,30 +71,26 @@ REM
 
 REM Cultures: https://msdn.microsoft.com/de-de/library/ee825488(v=cs.20).aspx
 SET PRODUCT_SKU=OpenJDK
-SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%.%PRODUCT_BUILD_NUMBER%
+SET PRODUCT_FULL_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%.%PRODUCT_BUILD_NUMBER%
 SET ICEDTEAWEB_DIR=.\SourceDir\icedtea-web-image
 
 SETLOCAL ENABLEDELAYEDEXPANSION
-REM JEP322 alike
-SET JEP322_BASE_NAME="unknown"
-SET PRODUCT_FULL_VERSION=%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_BUILD_NUMBER%
+SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_BUILD_NUMBER%
 IF %PRODUCT_CATEGORY% EQU jre SET JRE=-jre
 IF %PRODUCT_MAJOR_VERSION% GEQ 10 (
-    IF %PRODUCT_MAJOR_VERSION% EQU 11 SET LTS_VERSION=-LTS
     IF DEFINED PRODUCT_BUILD_NUMBER (
         SET BUILD_NUM=+%PRODUCT_BUILD_NUMBER%
     )
-    SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%
-    IF "%PRODUCT_MINOR_VERSION%" NEQ "0" SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%
-    IF "%PRODUCT_MAINTENANCE_VERSION%" NEQ "0" SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%
-    IF "%PRODUCT_PATCH_VERSION%" NEQ "0" SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
-    SET JEP322_NAME=!JEP322_BASE_NAME!!BUILD_NUM!!LTS_VERSION!
-    SET PRODUCT_FULL_VERSION=!JEP322_BASE_NAME!!BUILD_NUM!
+    SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%
+    IF "%PRODUCT_MINOR_VERSION%" NEQ "0" SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%
+    IF "%PRODUCT_MAINTENANCE_VERSION%" NEQ "0" SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%
+    IF "%PRODUCT_PATCH_VERSION%" NEQ "0" SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
+    SET PRODUCT_SHORT_VERSION=!PRODUCT_SHORT_VERSION!!BUILD_NUM!
 )
 
 REM ECHO Basic      =%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%.%PRODUCT_BUILD_NUMBER%
-REM ECHO JEP322_NAME=!JEP322_NAME!
-SET ADOPT_NAME=jdk-!JEP322_BASE_NAME!!JRE!
+REM ECHO PRODUCT_FULL_VERSION=!PRODUCT_FULL_VERSION!
+REM ECHO PRODUCT_SHORT_VERSION=!PRODUCT_SHORT_VERSION!
 
 
 REM Generate platform specific builds (x86-32,x64)
@@ -150,7 +146,7 @@ FOR %%A IN (%ARCH%) DO (
 					IF NOT EXIST "!REPRO_DIR!" (
 						ECHO Fourth !REPRO_DIR! not exists
 						REM try folder for JDK-Latest defined in CreateSourceFolder.AdoptOpenJDK.ps1
-						SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!-Latest\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\!ADOPT_NAME!
+						SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!-Latest\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\!PRODUCT_SHORT_VERSION!!JRE!
 						IF NOT EXIST "!REPRO_DIR!" (
 							ECHO OpenJDK-Latest unnumbered !REPRO_DIR! does not exist
 							ECHO SOURCE Dir not found / failed
@@ -166,7 +162,7 @@ FOR %%A IN (%ARCH%) DO (
 
     ECHO Source dir used : !REPRO_DIR!
 
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_VERSION!
+    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_FULL_VERSION!
     SET CACHE_BASE_FOLDER=Cache
     REM Each build his own cache for concurrent build
     SET CACHE_FOLDER=!CACHE_BASE_FOLDER!\!OUTPUT_BASE_FILENAME!
@@ -203,8 +199,8 @@ FOR %%A IN (%ARCH%) DO (
 
     REM Build with extra Source Code feature (needs work)
     REM "!WIX!bin\heat.exe" file "!REPRO_DIR!\lib\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductFullVersion -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductFullVersion="!PRODUCT_FULL_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
+    REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
     REM "!WIX!bin\light.exe" !MSI_VALIDATION_OPTION! Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 
     REM Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
@@ -232,7 +228,7 @@ FOR %%A IN (%ARCH%) DO (
     
 		ECHO HEAT
 		@ECHO ON
-        "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductFullVersion -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+        "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
 		IF ERRORLEVEL 1 (
 			ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
 		    GOTO FAILED
@@ -241,7 +237,7 @@ FOR %%A IN (%ARCH%) DO (
 
 		ECHO CANDLE
 		@ECHO ON
-        "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs !ITW_WXS! -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductFullVersion="!PRODUCT_FULL_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
+        "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs !ITW_WXS! -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
 		IF ERRORLEVEL 1 (
 		    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
 		    GOTO FAILED
