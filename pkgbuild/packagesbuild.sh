@@ -172,6 +172,7 @@ cat OpenJDKPKG.pkgproj.template  \
   | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
   | sed -E "s~\\{directory\\}~$DIRECTORY~g" \
   | sed -E "s~\\{logo\\}~$LOGO~g" \
+  | sed -E "s~\\{full-version\\}~$FULL_VERSION~g" \
   >OpenJDKPKG.pkgproj ; \
   
   cat Resources/en.lproj/welcome.html.tmpl  \
