@@ -1,0 +1,35 @@
+name: macOS
+on:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - .github/workflows/pkgbuild.yml
+      - pkgbuild/**
+jobs:
+  pkgbuild:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: brew cask install packages
+
+    - name: Setup environment variables
+      uses: allenevans/set-env@v2.0.0
+      with:
+        MAJOR_VERSION: 8
+        FULL_VERSION: 1.8.0_265
+        TAG: jdk8u265-b01
+        SUB_TAG: 8u265b01
+
+    - name: Download prebuilt binaries
+      run: |
+        mkdir -p workspace/target/
+        cd workspace/target/
+        wget -q "https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/OpenJDK${MAJOR_VERSION}U-jdk_x64_mac_${JVM}_${SUB_TAG}.tar.gz"
+        wget -q "https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/OpenJDK${MAJOR_VERSION}U-jre_x64_mac_${JVM}_${SUB_TAG}.tar.gz"
+
+    - name: Create Package
+      run: bash pkgbuild/create-installer-mac.sh
