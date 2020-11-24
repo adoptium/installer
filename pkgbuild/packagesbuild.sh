@@ -174,7 +174,7 @@ cat OpenJDKPKG.pkgproj.template  \
   | sed -E "s~\\{logo\\}~$LOGO~g" \
   | sed -E "s~\\{full-version\\}~$FULL_VERSION~g" \
   >OpenJDKPKG.pkgproj ; \
-  
+
   cat Resources/en.lproj/welcome.html.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
@@ -201,7 +201,7 @@ if [ ! -z "$NOTARIZE_OPTION" ]; then
   cd notarize
   npm install
   node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
-  if [ $? != 0 ]; then 
+  if [ $? != 0 ]; then
     exit 1
   fi
   # Validates that the app has been notarized
