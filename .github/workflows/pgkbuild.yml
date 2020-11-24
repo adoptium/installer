@@ -7,7 +7,7 @@ on:
       - pkgbuild/**
 jobs:
   pkgbuild:
-    name: macOS
+    name: pkgbuild
     runs-on: macos-latest
     steps:
 
@@ -23,13 +23,16 @@ jobs:
         FULL_VERSION: 1.8.0_265
         TAG: jdk8u265-b01
         SUB_TAG: 8u265b01
+        JVM: hotspot
 
     - name: Download prebuilt binaries
       run: |
         mkdir -p workspace/target/
         cd workspace/target/
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/OpenJDK${MAJOR_VERSION}U-jdk_x64_mac_${JVM}_${SUB_TAG}.tar.gz"
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/OpenJDK${MAJOR_VERSION}U-jre_x64_mac_${JVM}_${SUB_TAG}.tar.gz"
+        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
 
     - name: Create Package
-      run: bash pkgbuild/create-installer-mac.sh
+      run: |
+        export WORKSPACE=$PWD
+        bash pkgbuild/create-installer-mac.sh
