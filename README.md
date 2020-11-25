@@ -3,7 +3,7 @@ Repository for creating installable packages for AdoptOpenJDK releases.
 
 The packages are created using:
 1. The Wix Toolset http://wixtoolset.org (Windows only)
-2. pkgbuild (Mac OS)
+2. [Packages](http://s.sudre.free.fr/Software/Packages/about.html) (Mac OS)
 3. ??? (Linux .deb)
 4. ??? (Linux .rpm)
 
