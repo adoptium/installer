@@ -1,0 +1,45 @@
+name: Windows
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - .github/workflows/wix.yml
+      - wix/**
+jobs:
+  pkgbuild:
+    name: wix
+    runs-on: windows-latest
+    steps:
+
+    - uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        Invoke-WebRequest -UseBasicParsing 'https://wixtoolset.org/downloads/v3.14.0.3910/wix314.exe' -OutFile 'C:\temp\wix.exe';
+        Start-Process -Wait -FilePath 'C:\temp\wix.exe' -ArgumentList '/S'
+
+    - name: Setup environment variables
+      uses: allenevans/set-env@v2.0.0
+      with:
+        MAJOR_VERSION: 8
+        FULL_VERSION: 1.8.0_265
+        TAG: jdk8u265-b01
+        SUB_TAG: 8u265b01
+        JVM: hotspot
+        ICEDTEA_WEB_VERSION: icedtea-web-1.8.3
+
+    - name: Download prebuilt binaries
+      run: |
+        cd wix\SourceDir
+        wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ env.ICEDTEA_WEB_VERSION }}/${{ env.ICEDTEA_WEB_VERSION }}.win.bin.zip"
+        unzip icedtea-web-*.win.bin.zip
+        rm icedtea-web-*.win.bin.zip
+        rmdir /S /Q icedtea-web-image\share\doc
+        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_x64_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
+        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_x64_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
+        call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
+
+    - name: Create Package
+      run: |
+        call Build.OpenJDK_generic.cmd
