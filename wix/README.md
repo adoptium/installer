@@ -24,7 +24,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   SET PRODUCT_MINOR_VERSION=0
   SET PRODUCT_MAINTENANCE_VERSION=2
   SET PRODUCT_PATCH_VERSION=8
-  SET ARCH=x64|x86|aarch64 or all "x64 x86 aarch64"
+  SET ARCH=x64|x86|arm64 or all "x64 x86 arm64"
   SET JVM=hotspot|openj9 or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
   cmd /c Build.OpenJDK_generic.cmd
