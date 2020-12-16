@@ -7,7 +7,7 @@ REM PRODUCT_MAINTENANCE_VERSION=0
 REM PRODUCT_PATCH_VERSION=0
 REM PRODUCT_BUILD_NUMBER=28
 REM MSI_PRODUCT_VERSION=11.0.0.28
-REM ARCH=x64|x86-32 or both "x64 x86-32"
+REM ARCH=x64|x86-32|arm64 or all "x64 x86-32 arm64"
 REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
@@ -26,14 +26,37 @@ IF NOT DEFINED JVM SET ERR=8
 IF NOT DEFINED PRODUCT_CATEGORY SET ERR=9
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
+REM This needs tidying up, it's got out of control now
 IF NOT "%ARCH%" == "x64" (
 	IF NOT "%ARCH%" == "x86-32" (
-		IF NOT "%ARCH%" == "x86-32 x64" (
-			IF NOT "%ARCH%" == "x64 x86-32" (
-				ECHO ARCH %ARCH% not supported : valid values : x86-32, x64, x86-32 x64, x64 x86-32
-				GOTO FAILED
-			)
-		)
+        IF NOT "%ARCH%" == "arm64" (
+            IF NOT "%ARCH%" == "x86-32 x64" (
+                IF NOT "%ARCH%" == "x86-32 arm64" (
+                    IF NOT "%ARCH%" == "arm64 x86-32" (
+                        IF NOT "%ARCH%" == "x64 x86-32" (
+                            IF NOT "%ARCH%" == "x64 arm64" (
+                                IF NOT "%ARCH%" == "arm64 x64" (
+                                    IF NOT "%ARCH%" == "x86-32 x64 arm64" (
+                                        IF NOT "%ARCH%" == "x86-32 arm64 x64" (
+                                            IF NOT "%ARCH%" == "arm64 x86-32 x64" (
+                                                IF NOT "%ARCH%" == "arm64 x64 x86-32" (
+                                                    IF NOT "%ARCH%" == "x86-32 x64 arm64" (
+                                                        IF NOT "%ARCH%" == "x64 x86-32 arm64" (
+                                                            ECHO ARCH %ARCH% not supported : valid values : x64, x86-32, arm64, x86-32 x64, x64 x86-32, x86-32 x64 arm64, x86-32 arm64 x64, arm64 x86-32 x64, arm64 x64 x86-32, x86-32 x64 arm64, x64 x86-32 arm64
+                                                            GOTO FAILED
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
 	)
 )
 
@@ -93,7 +116,7 @@ ECHO PRODUCT_FULL_VERSION=!PRODUCT_FULL_VERSION!
 ECHO PRODUCT_SHORT_VERSION=!PRODUCT_SHORT_VERSION!
 
 
-REM Generate platform specific builds (x86-32,x64)
+REM Generate platform specific builds (x86-32,x64, arm64)
 FOR %%A IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
   FOR %%J IN (%JVM%) DO (
