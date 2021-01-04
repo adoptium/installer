@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ja-jp" Codepage="932" xmlns="http://schemas.microsoft.com/wix/2006/localization">
+	<String Id="JREFeatureMainName">JRE with Alibaba Dragonwell</String>
+	<String Id="JREFeatureMainDescription">AdoptOpenJDK Runtime Environment with Alibaba Dragonwell</String>
+	<String Id="JREProductName">AdoptOpenJDK JRE with Alibaba Dragonwell</String>
+	<String Id="JREPackageDescription">AdoptOpenJDK Runtime Environment with Alibaba Dragonwell</String>
+
+	<String Id="JDKFeatureMainName">JDK with Alibaba Dragonwell</String>
+	<String Id="JDKFeatureMainDescription">AdoptOpenJDK Development Kit with Alibaba Dragonwell</String>
+	<String Id="JDKProductName">AdoptOpenJDK JDK with Alibaba Dragonwell</String>
+	<String Id="JDKPackageDescription">AdoptOpenJDK Development Kit with Alibaba Dragonwell</String>
+</WixLocalization>

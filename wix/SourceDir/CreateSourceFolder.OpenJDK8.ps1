@@ -14,7 +14,7 @@ ForEach ($url in $urls) {
 
   $jdk_version_found = $filename -match "(?<jdk>OpenJDK\d+)"
   $jdk_version = $Matches.jdk
-  $package_type_found = $filename -match "(?<package_type>hotspot|openj9)"
+  $package_type_found = $filename -match "(?<package_type>hotspot|openj9|dragonwell)"
   $package_type = $Matches.package_type
   $platform_found = $filename -match "(?<platform>x86-32|x64)"
   $platform = $Matches.platform
