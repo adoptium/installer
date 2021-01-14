@@ -1,6 +1,7 @@
 /bin/sh
 /usr/sbin/alternatives
 ca-certificates
+dejavu-sans-fonts
 libX11.so.6()({{rpmIsaBits}})
 libXext.so.6()({{rpmIsaBits}})
 libXi.so.6()({{rpmIsaBits}})
@@ -13,3 +14,5 @@ libm.so.6()({{rpmIsaBits}})
 libpthread.so.0()({{rpmIsaBits}})
 libthread_db.so.1()({{rpmIsaBits}})
 libz.so.1()({{rpmIsaBits}})
+libfontconfig.so.1()({{rpmIsaBits}})
+libfreetype.so.6()({{rpmIsaBits}})

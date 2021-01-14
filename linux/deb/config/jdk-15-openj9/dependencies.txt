@@ -1,6 +1,9 @@
 ca-certificates
+fonts-dejavu
 libasound2
 libc6
+libfreetype6
+libfontconfig1
 libx11-6
 libxext6
 libxi6
