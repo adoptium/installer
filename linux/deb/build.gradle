@@ -49,24 +49,24 @@ tasks.register("uploadDebianPackage", UploadDebianPackage) {
     packageName = buildDebianPackage.getPackageName()
     architecture = buildDebianPackage.getArchitecture().debQualifier()
     releaseArchitecture amd64: [
-        debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "eoan", "focal", "groovy"]
+        debian: ["stretch", "buster", "bullseye"],
+        ubuntu: ["xenial", "bionic", "focal", "groovy", "hirsute"]
     ]
     releaseArchitecture s390x: [
-        debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "eoan", "focal", "groovy"]
+        debian: ["stretch", "buster", "bullseye"],
+        ubuntu: ["xenial", "bionic", "focal", "groovy", "hirsute"]
     ]
     releaseArchitecture ppc64el: [
-        debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "eoan", "focal", "groovy"]
+        debian: ["stretch", "buster", "bullseye"],
+        ubuntu: ["xenial", "bionic", "focal", "groovy", "hirsute"]
     ]
     releaseArchitecture armhf: [
-        debian  : ["jessie", "stretch", "buster"],
-        ubuntu  : ["xenial", "bionic", "eoan", "focal", "groovy"]
+        debian: ["stretch", "buster", "bullseye"],
+        ubuntu: ["xenial", "bionic", "focal", "groovy", "hirsute"]
     ]
     releaseArchitecture arm64: [
-        debian: ["jessie", "stretch", "buster"],
-        ubuntu: ["xenial", "bionic", "eoan", "focal", "groovy"]
+        debian: ["stretch", "buster", "bullseye"],
+        ubuntu: ["xenial", "bionic", "focal", "groovy", "hirsute"]
     ]
 }
 
