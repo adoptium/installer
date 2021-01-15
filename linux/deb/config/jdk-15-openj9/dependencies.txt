@@ -1,5 +1,6 @@
 ca-certificates
 fonts-dejavu
+java-common
 libasound2
 libc6
 libfreetype6
