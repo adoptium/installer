@@ -1,0 +1,14 @@
+java
+java-16
+java-16-devel
+java-16-openjdk
+java-16-openjdk-devel
+java-devel
+java-openjdk
+java-openjdk-devel
+java-sdk-16
+java-sdk-16-openjdk
+jre
+jre-16
+jre-16-openjdk
+jre-openjdk

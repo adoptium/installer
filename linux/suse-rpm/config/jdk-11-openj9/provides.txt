@@ -1,0 +1,14 @@
+java
+java-11
+java-11-devel
+java-11-openjdk
+java-11-openjdk-devel
+java-devel
+java-openjdk
+java-openjdk-devel
+java-sdk-11
+java-sdk-11-openjdk
+jre
+jre-11
+jre-11-openjdk
+jre-openjdk
