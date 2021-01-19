@@ -21,9 +21,10 @@ if [ -f ~/.password ]; then
 fi
 
 set +u
-SIGN_OPTION=
-SIGN_CMD=
-if [ ! -z "$CERTIFICATE" ]; then
+if [ -z "$CERTIFICATE" ]; then
+  SIGN_CMD=
+  SIGN_CERT=
+else
   SIGN_CMD="--sign"
   SIGN_CERT="${CERTIFICATE}"
 fi
@@ -53,7 +54,7 @@ do tar -xf "$f";
 
   # Detect if JRE or JDK
   case $f in
-    *-jre)
+    *-jre_*)
       TYPE="jre"
       ;;
     *)
@@ -64,8 +65,13 @@ do tar -xf "$f";
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
 
-  echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
-  ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
+  if [ -z "$SIGN_CMD" ]; then
+    echo running "./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
+    ./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
+  else
+    echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
+    ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
+  fi
 
   rm -rf ${directory}
   rm -rf ${f}

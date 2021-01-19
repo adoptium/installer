@@ -23,33 +23,7 @@ tasks.register("buildRedHatRpmPackage", BuildRpmPackage) {
     signPackage = getSignPackageProperty()
 }
 
-tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
-    packageName = pkgMetadata.packageName
-    packageVersion = jdkVersion
-    iteration = pkgMetadata.rpmIteration
-    architecture = pkgMetadata.architecture
-    vm = pkgMetadata.vm
-    maintainer = pkgMetadata.maintainer
-    vendor = pkgMetadata.vendor
-    homepage = pkgMetadata.homepage
-    license = pkgMetadata.license
-    packageDescription = pkgMetadata.description
-    category = "java"
-    dependenciesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/dependencies.txt")
-    providesFile = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/provides.txt")
-    prefix = pkgMetadata.architecture.isaBits() == 64 ? "/usr/lib64/jvm" : "/usr/lib/jvm"
-    afterInstallScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/postinst.sh")
-    beforeRemoveScript = file("config/jdk-${jdkMajorVersion}-${pkgMetadata.vm.configQualifier}${jdkDistributionType.pkgNameSuffix}/prerm.sh")
-    prebuiltJdkDirectory = jdkDistributionDir
-    variant = "suse"
-    signPackage = getSignPackageProperty()
-}
-
-task buildRpmPackage {
-    dependsOn buildRedHatRpmPackage, buildSuseRpmPackage
-}
-
-build.dependsOn(buildRpmPackage)
+rootProject.tasks.getByName("buildRpmPackage").dependsOn(buildRedHatRpmPackage)
 
 tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     dependsOn buildRedHatRpmPackage
@@ -65,7 +39,7 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
         amazonlinux: ["1", "2"],
         centos     : ["6", "7", "8"],
         rhel       : ["6", "7", "8"],
-        fedora     : ["31", "32", "33"]
+        fedora     : ["32", "33", "34"]
     ]
     releaseArchitecture s390x: [
         centos: ["6", "7", "8"],
@@ -78,42 +52,15 @@ tasks.register("uploadRedHatRpmPackage", UploadRpmPackage) {
     releaseArchitecture aarch64: [
         amazonlinux: ["2"],
         centos     : ["6", "7", "8"],
-        rhel       : ["6", "7", "8"]
+        rhel       : ["6", "7", "8"],
+        fedora     : ["33", "34"]
+    ]
+    releaseArchitecture armhfp: [
+        fedora     : ["33", "34"]
     ]
 }
 
-tasks.register("uploadSuseRpmPackage", UploadRpmPackage) {
-    dependsOn buildSuseRpmPackage
-
-    packageToPublish = buildSuseRpmPackage.getOutputFile()
-    apiEndpoint = artifactory.url
-    user = artifactory.user
-    password = artifactory.password
-    repository = artifactory.repository.rpm
-    packageName = buildSuseRpmPackage.getPackageName()
-    architecture = buildSuseRpmPackage.getArchitecture().rpmQualifier()
-    releaseArchitecture x86_64: [
-        opensuse: ["15.1", "15.2"],
-        sles    : ["12", "15"]
-    ]
-    releaseArchitecture s390x: [
-        sles: ["12", "15"]
-    ]
-    releaseArchitecture ppc64le: [
-        sles: ["12", "15"]
-    ]
-    releaseArchitecture aarch64: [
-        sles: ["12", "15"]
-    ]
-}
-
-tasks.register("uploadRpmPackage") {
-    group = "upload"
-    description = "Uploads all RPM packages"
-    dependsOn uploadRedHatRpmPackage, uploadSuseRpmPackage
-}
-
-rootProject.tasks.getByName("upload").dependsOn(uploadRpmPackage)
+rootProject.tasks.getByName("uploadRpmPackage").dependsOn(uploadRedHatRpmPackage)
 
 def getSignPackageProperty() {
     return hasProperty("SIGN_PACKAGE") ? Boolean.parseBoolean(SIGN_PACKAGE) : true

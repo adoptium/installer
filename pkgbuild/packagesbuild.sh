@@ -117,7 +117,7 @@ if [ $TYPE == "jre" ]; then
     /usr/libexec/PlistBuddy -c "Add :JavaVM:JVMCapabilities:0 string CommandLine" "${INPUT_DIRECTORY}/Contents/Info.plist"
 fi
 
-case $TYPE in
+case $JVM in
   openj9)
     if [ -z "$IDENTIFIER" ]; then
       IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}-openj9.${TYPE}"
@@ -161,6 +161,7 @@ cp -R "${INPUT_DIRECTORY}" "${DIRECTORY}"
 
 if [ ! -z "$SIGN_OPTION" ]; then
     xattr -cr .
+    security unlock-keychain -p `cat ~/.password` login.keychain-db
     /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${DIRECTORY}
 fi
 
@@ -171,8 +172,9 @@ cat OpenJDKPKG.pkgproj.template  \
   | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
   | sed -E "s~\\{directory\\}~$DIRECTORY~g" \
   | sed -E "s~\\{logo\\}~$LOGO~g" \
+  | sed -E "s~\\{full-version\\}~$FULL_VERSION~g" \
   >OpenJDKPKG.pkgproj ; \
-  
+
   cat Resources/en.lproj/welcome.html.tmpl  \
   | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
   | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
@@ -199,7 +201,7 @@ if [ ! -z "$NOTARIZE_OPTION" ]; then
   cd notarize
   npm install
   node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
-  if [ $? != 0 ]; then 
+  if [ $? != 0 ]; then
     exit 1
   fi
   # Validates that the app has been notarized

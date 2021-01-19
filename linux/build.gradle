@@ -53,9 +53,22 @@ ext {
     jdkDistributionType = getJdkDistributionType()
 }
 
+
+task buildRpmPackage {
+    // empty task that subprojects can use to attach specific tasks.
+}
+
+build.dependsOn(buildRpmPackage)
+
+tasks.register("uploadRpmPackage") {
+    group = "upload"
+    description = "Uploads all RPM packages"
+}
+
 tasks.register("upload") {
     group = "upload"
     description = "Uploads all linux packages"
+    dependsOn uploadRpmPackage
 }
 
 def getDebianIteration () {

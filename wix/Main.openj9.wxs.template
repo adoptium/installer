@@ -54,6 +54,12 @@
                 <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
             </Directory>
          </Directory>
+    <?elseif $(env.Platform)=arm64?>
+        <Directory Id="ProgramFilesARMFolder" Name="Program Files (Arm)">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+         </Directory>
     <?else?>
         <!-- unknown arch > build must failed without directory-->
     <?endif?>

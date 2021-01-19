@@ -4,8 +4,10 @@ REM Set version numbers and build option here if being run manually:
 REM PRODUCT_MAJOR_VERSION=11
 REM PRODUCT_MINOR_VERSION=0
 REM PRODUCT_MAINTENANCE_VERSION=0
-REM PRODUCT_PATCH_VERSION=28
-REM ARCH=x64|x86-32 or both "x64 x86-32"
+REM PRODUCT_PATCH_VERSION=0
+REM PRODUCT_BUILD_NUMBER=28
+REM MSI_PRODUCT_VERSION=11.0.0.28
+REM ARCH=x64|x86-32|arm64 or all "x64 x86-32 arm64"
 REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
@@ -17,9 +19,11 @@ IF NOT DEFINED PRODUCT_MAJOR_VERSION SET ERR=1
 IF NOT DEFINED PRODUCT_MINOR_VERSION SET ERR=2
 IF NOT DEFINED PRODUCT_MAINTENANCE_VERSION SET ERR=3
 IF NOT DEFINED PRODUCT_PATCH_VERSION SET ERR=4
-IF NOT DEFINED ARCH SET ERR=5
-IF NOT DEFINED JVM SET ERR=6
-IF NOT DEFINED PRODUCT_CATEGORY SET ERR=7
+IF NOT DEFINED PRODUCT_BUILD_NUMBER SET ERR=5
+IF NOT DEFINED MSI_PRODUCT_VERSION SET ERR=6
+IF NOT DEFINED ARCH SET ERR=7
+IF NOT DEFINED JVM SET ERR=8
+IF NOT DEFINED PRODUCT_CATEGORY SET ERR=9
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 REM default vendor information
@@ -29,14 +33,37 @@ IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/AdoptO
 IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptopenjdk.net/support.html
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptopenjdk.net/releases.html
 
+REM This needs tidying up, it's got out of control now
 IF NOT "%ARCH%" == "x64" (
 	IF NOT "%ARCH%" == "x86-32" (
-		IF NOT "%ARCH%" == "x86-32 x64" (
-			IF NOT "%ARCH%" == "x64 x86-32" (
-				ECHO ARCH %ARCH% not supported : valid values : x86-32, x64, x86-32 x64, x64 x86-32
-				GOTO FAILED
-			)
-		)
+        IF NOT "%ARCH%" == "arm64" (
+            IF NOT "%ARCH%" == "x86-32 x64" (
+                IF NOT "%ARCH%" == "x86-32 arm64" (
+                    IF NOT "%ARCH%" == "arm64 x86-32" (
+                        IF NOT "%ARCH%" == "x64 x86-32" (
+                            IF NOT "%ARCH%" == "x64 arm64" (
+                                IF NOT "%ARCH%" == "arm64 x64" (
+                                    IF NOT "%ARCH%" == "x86-32 x64 arm64" (
+                                        IF NOT "%ARCH%" == "x86-32 arm64 x64" (
+                                            IF NOT "%ARCH%" == "arm64 x86-32 x64" (
+                                                IF NOT "%ARCH%" == "arm64 x64 x86-32" (
+                                                    IF NOT "%ARCH%" == "x86-32 x64 arm64" (
+                                                        IF NOT "%ARCH%" == "x64 x86-32 arm64" (
+                                                            ECHO ARCH %ARCH% not supported : valid values : x64, x86-32, arm64, x86-32 x64, x64 x86-32, x86-32 x64 arm64, x86-32 arm64 x64, arm64 x86-32 x64, arm64 x64 x86-32, x86-32 x64 arm64, x64 x86-32 arm64
+                                                            GOTO FAILED
+                                                        )
+                                                    )
+                                                )
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
 	)
 )
 
@@ -84,30 +111,29 @@ REM
 
 REM Cultures: https://msdn.microsoft.com/de-de/library/ee825488(v=cs.20).aspx
 SET PRODUCT_SKU=OpenJDK
-SET PRODUCT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
+SET PRODUCT_FULL_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%.%PRODUCT_BUILD_NUMBER%
 SET ICEDTEAWEB_DIR=.\SourceDir\icedtea-web-image
 
 SETLOCAL ENABLEDELAYEDEXPANSION
-REM JEP322 alike
-SET JEP322_BASE_NAME="unknown"
+SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_BUILD_NUMBER%
 IF %PRODUCT_CATEGORY% EQU jre SET JRE=-jre
 IF %PRODUCT_MAJOR_VERSION% GEQ 10 (
-    IF %PRODUCT_MAJOR_VERSION% EQU 11 SET LTS_VERSION=-LTS
-    IF DEFINED PRODUCT_PATCH_VERSION (
-        SET PATCH=+%PRODUCT_PATCH_VERSION%
+    IF DEFINED PRODUCT_BUILD_NUMBER (
+        SET BUILD_NUM=+%PRODUCT_BUILD_NUMBER%
     )
-    IF "%PRODUCT_MINOR_VERSION%%PRODUCT_MAINTENANCE_VERSION%" EQU "00" SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%!PATCH!
-    IF "%PRODUCT_MAINTENANCE_VERSION%" NEQ "0" SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%!PATCH!
-    IF "%PRODUCT_MINOR_VERSION%" NEQ "0" IF %PRODUCT_MAINTENANCE_VERSION% EQU 0 SET JEP322_BASE_NAME=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%!PATCH!
-    SET JEP322_NAME=!JEP322_BASE_NAME!!LTS_VERSION!
+    SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%
+    IF "%PRODUCT_MINOR_VERSION%" NEQ "0" SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%
+    IF "%PRODUCT_MAINTENANCE_VERSION%" NEQ "0" SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%
+    IF "%PRODUCT_PATCH_VERSION%" NEQ "0" SET PRODUCT_SHORT_VERSION=%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
+    SET PRODUCT_SHORT_VERSION=!PRODUCT_SHORT_VERSION!!BUILD_NUM!
 )
 
-REM ECHO Basic      =%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%
-REM ECHO JEP322_NAME=!JEP322_NAME!
-SET ADOPT_NAME=jdk-!JEP322_BASE_NAME!!JRE!
+REM ECHO Basic      =%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%.%PRODUCT_BUILD_NUMBER%
+ECHO PRODUCT_FULL_VERSION=!PRODUCT_FULL_VERSION!
+ECHO PRODUCT_SHORT_VERSION=!PRODUCT_SHORT_VERSION!
 
 
-REM Generate platform specific builds (x86-32,x64)
+REM Generate platform specific builds (x86-32,x64, arm64)
 FOR %%A IN (%ARCH%) DO (
   REM We could build both "hotspot,openj9" in one script, but it is not clear if release cycle is the same.
   FOR %%J IN (%JVM%) DO (
@@ -123,53 +149,33 @@ FOR %%A IN (%ARCH%) DO (
     )
 
     SET SETUP_RESOURCES_DIR=.\Resources
-	
-	REM STANDARD LAYOUT
-	SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%
-	IF !PRODUCT_CATEGORY! == jre (
-		SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
-	)
-	IF NOT EXIST "!REPRO_DIR!" (
-		ECHO First !REPRO_DIR! not exists
-		IF !PRODUCT_MAJOR_VERSION! == 8 (
-			SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_PATCH_VERSION%
-			IF !PRODUCT_CATEGORY! == jre (
-				SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
-			)
-			IF NOT EXIST "!REPRO_DIR!" (
-				ECHO Second !REPRO_DIR! not exists
-				GOTO FAILED
-			)
-		) ELSE (
-			SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_PATCH_VERSION%
-			IF !PRODUCT_CATEGORY! == jre (
-				SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
-			)
-			IF NOT EXIST "!REPRO_DIR!" (
-				ECHO Second !REPRO_DIR! not exists
-				SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%+%PRODUCT_PATCH_VERSION%
-				IF !PRODUCT_CATEGORY! == jre (
-					SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!
-				)
-				IF NOT EXIST "!REPRO_DIR!" (
-					ECHO Third !REPRO_DIR! not exists
-					REM try folder for JDK-Latest defined in CreateSourceFolder.AdoptOpenJDK.ps1
-					SET REPRO_DIR=.\SourceDir\!PRODUCT_SKU!-Latest\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\!ADOPT_NAME!
-					IF NOT EXIST "!REPRO_DIR!" (
-						ECHO OpenJDK-Latest unnumbered !REPRO_DIR! does not exist
-						ECHO SOURCE Dir not found / failed
-						ECHO Listing directory :
-						dir /a:d /s /b /o:n SourceDir
-						GOTO FAILED
-					)
-				)
-			)
-		)
-	)
 
+    FOR %%P IN (
+        !PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%
+        !PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk%PRODUCT_MAJOR_VERSION%u%PRODUCT_MAINTENANCE_VERSION%-b%PRODUCT_BUILD_NUMBER%
+        !PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%+%PRODUCT_BUILD_NUMBER%
+        !PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%+%PRODUCT_BUILD_NUMBER%
+        !PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-%PRODUCT_MAJOR_VERSION%.%PRODUCT_MINOR_VERSION%.%PRODUCT_MAINTENANCE_VERSION%.%PRODUCT_PATCH_VERSION%+%PRODUCT_BUILD_NUMBER%
+        !PRODUCT_SKU!-Latest\!PACKAGE_TYPE!\!FOLDER_PLATFORM!\jdk-!PRODUCT_SHORT_VERSION!
+    ) DO (
+        SET REPRO_DIR=.\SourceDir\%%P
+        IF "!PRODUCT_CATEGORY!" == "jre" (
+            SET REPRO_DIR=!REPRO_DIR!-!PRODUCT_CATEGORY!)
+            ECHO looking for !REPRO_DIR!
+        IF EXIST "!REPRO_DIR!" (
+            goto CONTINUE
+        )
+    )
+    
+    ECHO SOURCE Dir not found / failed
+    ECHO Listing directory :
+    dir /a:d /s /b /o:n SourceDir
+    GOTO FAILED
+
+    :CONTINUE
     ECHO Source dir used : !REPRO_DIR!
 
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_VERSION!
+    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_FULL_VERSION!
     SET CACHE_BASE_FOLDER=Cache
     REM Each build his own cache for concurrent build
     SET CACHE_FOLDER=!CACHE_BASE_FOLDER!\!OUTPUT_BASE_FILENAME!
@@ -206,8 +212,8 @@ FOR %%A IN (%ARCH%) DO (
 
     REM Build with extra Source Code feature (needs work)
     REM "!WIX!bin\heat.exe" file "!REPRO_DIR!\lib\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
+    REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
     REM "!WIX!bin\light.exe" !MSI_VALIDATION_OPTION! Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 
     REM Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
@@ -235,7 +241,7 @@ FOR %%A IN (%ARCH%) DO (
     
 		ECHO HEAT
 		@ECHO ON
-        "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductMaintenanceVersion -var var.ProductPatchVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+        "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
 		IF ERRORLEVEL 1 (
 			ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
 		    GOTO FAILED
@@ -244,7 +250,7 @@ FOR %%A IN (%ARCH%) DO (
 
 		ECHO CANDLE
 		@ECHO ON
-        "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs !ITW_WXS! -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductMaintenanceVersion="!PRODUCT_MAINTENANCE_VERSION!" -dProductPatchVersion="!PRODUCT_PATCH_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
+        "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs !ITW_WXS! -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
 		IF ERRORLEVEL 1 (
 		    ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
 		    GOTO FAILED
@@ -353,6 +359,8 @@ SET PRODUCT_MAJOR_VERSION=
 SET PRODUCT_MINOR_VERSION=
 SET PRODUCT_MAINTENANCE_VERSION=
 SET PRODUCT_PATCH_VERSION=
+SET PRODUCT_BUILD_NUMBER=
+SET MSI_PRODUCT_VERSION=
 SET PRODUCT_ID=
 SET PRODUCT_VERSION=
 SET PLATFORM=

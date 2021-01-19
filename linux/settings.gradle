@@ -1,1 +1,1 @@
-include ":deb", ":rpm"
+include ":deb", ":rpm", ":suse-rpm"
