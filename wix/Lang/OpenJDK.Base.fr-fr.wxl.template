@@ -13,11 +13,11 @@
 	<String Id="FeatureSourceTitle">Code source</String>
 	<String Id="FeatureSourceDescription">Code source des classes qui composent l'API publique de Java.</String>
 	<String Id="FeatureJarFileRunWithTitle">Associer les .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec {package_name} pour execution par double-click</String>
+	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec {vendor_branding} pour execution par double-click</String>
 	<String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
 	<String Id="FeatureOracleJavaSoftName">Clés de registre JavaSoft (Oracle)</String>
 	<!-- ! Description limité à 255 charactères -->
-	<String Id="FeatureOracleJavaSoftDescription">Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{package_name}, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin</String>
+	<String Id="FeatureOracleJavaSoftDescription">Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{vendor_branding}, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
 	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
 	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>

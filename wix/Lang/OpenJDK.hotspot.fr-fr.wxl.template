@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
 	<String Id="JREFeatureMainName">JRE avec Hotspot</String>
-	<String Id="JREFeatureMainDescription">{package_name} Runtime Environment avec Hotspot</String>
-	<String Id="JREProductName">{package_name} JRE avec Hotspot</String>
-	<String Id="JREPackageDescription">{package_name} Runtime Environment avec Hotspot</String>
+	<String Id="JREFeatureMainDescription">{vendor_branding} Runtime Environment avec Hotspot</String>
+	<String Id="JREProductName">{vendor_branding} JRE avec Hotspot</String>
+	<String Id="JREPackageDescription">{vendor_branding} Runtime Environment avec Hotspot</String>
 
 	<String Id="JDKFeatureMainName">JDK avec Hotspot</String>
-	<String Id="JDKFeatureMainDescription">{package_name} Development Kit avec Hotspot</String>
-	<String Id="JDKProductName">{package_name} JDK avec Hotspot</String>
-	<String Id="JDKPackageDescription">{package_name} Development Kit avec Hotspot</String>
+	<String Id="JDKFeatureMainDescription">{vendor_branding} Development Kit avec Hotspot</String>
+	<String Id="JDKProductName">{vendor_branding} JDK avec Hotspot</String>
+	<String Id="JDKPackageDescription">{vendor_branding} Development Kit avec Hotspot</String>
 </WixLocalization>

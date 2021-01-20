@@ -28,7 +28,7 @@ IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 REM default vendor information
 IF NOT DEFINED VENDOR SET VENDOR=AdoptOpenJDK
-IF NOT DEFINED PACKAGE_NAME SET PACKAGE_NAME=AdoptOpenJDK
+IF NOT DEFINED VENDOR_BRANDING SET VENDOR_BRANDING=AdoptOpenJDK
 IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose
 IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptopenjdk.net/support.html
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptopenjdk.net/releases.html
@@ -101,7 +101,7 @@ FOR /f %%i IN ('dir /s /b *.template') DO (
     SET INPUT_FILE=%%i
     SET OUTPUT_FILE=!INPUT_FILE:.template=%!
     ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
-    powershell -Command "(gc %%i) -replace '{vendor}', '!VENDOR!' -replace '{package_name}', '!PACKAGE_NAME!' -replace '{product_help_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_support_link}', '!PRODUCT_HELP_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding ASCII !OUTPUT_FILE!"
+    powershell -Command "(gc %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_support_link}', '!PRODUCT_HELP_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding ASCII !OUTPUT_FILE!"
 )
 ENDLOCAL
 
