@@ -39,7 +39,7 @@ jobs:
       - name: Download IcedTea-Web
         run: |
           cd wix\SourceDir
-          wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ env.ICEDTEA_WEB_VERSION }}/${{ env.ICEDTEA_WEB_VERSION }}.win.bin.zip"
+          wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ matrix.ICEDTEA_WEB_VERSION }}/${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip"
           unzip icedtea-web-*.win.bin.zip
           rm icedtea-web-*.win.bin.zip
           Remove-Item 'icedtea-web-image\share\doc' -Recurse
