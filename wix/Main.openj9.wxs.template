@@ -15,7 +15,7 @@
     <Property Id="ORACLE_JAVASOFT_BASE_KEY" Value="$(var.OracleJavasoftBaseKey)" />
     <Property Id="DLL_PATH" Value="bin\server\jvm.dll" />
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
-    <Icon Id="logo.ico" SourceFile="$(var.SetupResourcesDir)\logo.ico" />
+    <Icon Id="logo.ico" SourceFile="{vendor_branding_logo}" />
 
     <!-- Windows 7 and later is required. -->
     <Condition Message="!(loc.OSVersionRequired)"><![CDATA[Installed OR VersionNT >= 601]]></Condition>
@@ -219,8 +219,8 @@
     </Feature> -->
 
     <WixVariable Id="WixUILicenseRtf" Value="$(var.SetupResourcesDir)\license-OpenJ9.en-us.rtf" />
-    <WixVariable Id="WixUIDialogBmp" Value="$(var.SetupResourcesDir)\wix-dialog.bmp" />
-    <WixVariable Id="WixUIBannerBmp" Value="$(var.SetupResourcesDir)\wix-banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="{vendor_branding_banner}" />
+    <WixVariable Id="WixUIBannerBmp" Value="{vendor_branding_dialog}" />
     <UI>
       <UIRef Id="WixUI_FeatureTree" />
     </UI>
