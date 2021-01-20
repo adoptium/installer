@@ -104,7 +104,7 @@ FOR /f %%i IN ('dir /s /b *.template') DO (
     SET INPUT_FILE=%%i
     SET OUTPUT_FILE=!INPUT_FILE:.template=%!
     ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
-    powershell -Command "(gc %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding_logo}', '!VENDOR_BRANDING_LOGO!' -replace '{vendor_branding_banner}', '!VENDOR_BRANDING_BANNER!' -replace '{vendor_branding_dialog}', '!VENDOR_BRANDING_DIALOG!' -replace '{vandor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_HELP_LINK!' -replace '{product_support_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding ASCII !OUTPUT_FILE!"
+    powershell -Command "(gc %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding_logo}', '!VENDOR_BRANDING_LOGO!' -replace '{vendor_branding_banner}', '!VENDOR_BRANDING_BANNER!' -replace '{vendor_branding_dialog}', '!VENDOR_BRANDING_DIALOG!' -replace '{vendor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_HELP_LINK!' -replace '{product_support_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding ASCII !OUTPUT_FILE!"
 )
 ENDLOCAL
 
