@@ -205,7 +205,7 @@
       </Feature>
       <?if $(env.Platform)=x64?>
         <?if $(env.PRODUCT_MAJOR_VERSION)=8?>
-          <?if $(env.BUNDLE_ICED_TEA_WEB)=true?>
+          <?if $(env.BUNDLE_ICEDTEAWEB)=true?>
             <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
               <ComponentGroupRef Id="IcedTeaWebFiles" />
               <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
