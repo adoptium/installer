@@ -213,7 +213,8 @@ FOR %%A IN (%ARCH%) DO (
     SET BUNDLE_ICEDTEAWEB=false
     IF !PLATFORM! == x64 (
         IF !PRODUCT_MAJOR_VERSION! == 8 (
-            IF EXIST ICEDTEAWEB_DIR (
+            IF EXIST !PRODUCT_MAJOR_VERSION! (
+                ECHO IcedTeaWeb Directory Exist!
                 SET BUNDLE_ICEDTEAWEB=true
                 SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
                 SET ITW_WIXOBJ="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj"
