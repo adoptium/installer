@@ -224,6 +224,8 @@ FOR %%A IN (%ARCH%) DO (
                     ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
                 )
+            ) ELSE (
+                ECHO IcedTeaWeb Directory Does Not Exist!
             )
         )
     )
