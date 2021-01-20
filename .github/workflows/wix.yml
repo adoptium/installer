@@ -47,6 +47,7 @@ jobs:
 
       - name: Download Prebuilt JDK/JRE
         run: |
+          cd wix\SourceDir
           wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
           wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
           ./CreateSourceFolder.AdoptOpenJDK.ps1
