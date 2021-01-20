@@ -30,6 +30,15 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   cmd /c Build.OpenJDK_generic.cmd
   ```
 
+  To customize branding information you can export the following environment variables to oveeride the default values. The default values are listed below:
+  ```batch
+  set VENDOR=AdoptOpenJDK
+  set VENDOR_BRANDING=AdoptOpenJDK
+  set PRODUCT_HELP_LINK=https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose
+  set PRODUCT_SUPPORT_LINK=https://adoptopenjdk.net/support.html
+  set PRODUCT_UPDATE_INFO_LINK=https://adoptopenjdk.net/releases.html
+  ```
+
  `Build.OpenJDK_generic.cmd` statically depend on this SDK version (edit if needed ):
   ```batch
   SET WIN_SDK_MAJOR_VERSION=10
