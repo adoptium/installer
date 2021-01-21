@@ -135,19 +135,23 @@
 
         <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\AdoptOpenJDK.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
-      <Component Id="SetOracleJavaSoftKeys" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="CurrentVersion" Type="string" Value="[ORACLE_VERSION_KEY]" KeyPath="yes" />
-        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
-        <?if $(env.PRODUCT_CATEGORY)="jre"?>
-            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR][DLL_PATH]" KeyPath="no" />
-            <!-- Oracle dont set RuntimeLib for JDK .. because JRE is "private" JRE so no ?else? -->
-        <?endif?>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
-        <?if $(env.PRODUCT_CATEGORY)="jre"?>
-            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR][DLL_PATH]" KeyPath="no" />
-            <!-- Oracle don't set RuntimeLib for JDK .. because JRE is "private" JRE so no ?else? -->
-        <?endif?>
-      </Component>
+
+      <?if $(env.ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION)=true?>
+        <Component Id="SetOracleJavaSoftKeys" Guid="*">
+          <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="CurrentVersion" Type="string" Value="[ORACLE_VERSION_KEY]" KeyPath="yes" />
+          <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
+          <?if $(env.PRODUCT_CATEGORY)="jre"?>
+              <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR][DLL_PATH]" KeyPath="no" />
+              <!-- Oracle dont set RuntimeLib for JDK .. because JRE is "private" JRE so no ?else? -->
+          <?endif?>
+          <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
+          <?if $(env.PRODUCT_CATEGORY)="jre"?>
+              <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR][DLL_PATH]" KeyPath="no" />
+              <!-- Oracle don't set RuntimeLib for JDK .. because JRE is "private" JRE so no ?else? -->
+          <?endif?>
+        </Component>
+      <?endif?>
+
       <!-- Add jnlp launch by double click -->
       <?if $(env.Platform)=x64?>
         <?if $(env.PRODUCT_MAJOR_VERSION)=8?>
@@ -197,14 +201,17 @@
         <ComponentRef Id="SetJavaHomeVariableUser" />
       </Feature>
 
-      <Feature Id="FeatureOracleJavaSoft" Level="2" Title="!(loc.FeatureOracleJavaSoftName)" Description="!(loc.FeatureOracleJavaSoftDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent" >
-        <!-- See https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB -->
-        <!-- As Oracle, don't override if current value is already bigger ( newer java ): "a value that is the highest installed version on the system" 
-        Note !! : the reg key is not removed during uninstall if any other installer reference it
-        -->
-        <Condition Level="0"><![CDATA[JAVASOFT_CURRENTVERSION <> "1.8" AND JAVASOFT_CURRENTVERSION > $(var.ProductMajorVersion)]]></Condition>
-        <ComponentRef Id="SetOracleJavaSoftKeys" />
-      </Feature>
+      <?if $(env.ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION)=true?>
+        <Feature Id="FeatureOracleJavaSoft" Level="2" Title="!(loc.FeatureOracleJavaSoftName)" Description="!(loc.FeatureOracleJavaSoftDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent" >
+          <!-- See https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB -->
+          <!-- As Oracle, don't override if current value is already bigger ( newer java ): "a value that is the highest installed version on the system" 
+          Note !! : the reg key is not removed during uninstall if any other installer reference it
+          -->
+          <Condition Level="0"><![CDATA[JAVASOFT_CURRENTVERSION <> "1.8" AND JAVASOFT_CURRENTVERSION > $(var.ProductMajorVersion)]]></Condition>
+          <ComponentRef Id="SetOracleJavaSoftKeys" />
+        </Feature>
+      <?endif?>
+
       <?if $(env.Platform)=x64?>
         <?if $(env.PRODUCT_MAJOR_VERSION)=8?>
           <?if $(env.BUNDLE_ICEDTEAWEB)=true?>

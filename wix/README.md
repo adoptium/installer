@@ -36,6 +36,12 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   SET WIN_SDK_FULL_VERSION=10.0.17763.0
   ```
 
+  By default MSI installer contains a *JavaSoft (Oracle registry keys)* option. To hide this option,
+  the following environment variable can be set.
+  ```batch
+  SET ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION=false
+  ```
+
 4. Run `Build.OpenJDK_generic.cmd` to create the MSI setup in "ReleaseDir":
 
 ```batch

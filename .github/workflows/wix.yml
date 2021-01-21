@@ -13,6 +13,9 @@ jobs:
         ICEDTEA_WEB_VERSION:
           - "icedtea-web-1.8.3"
           - ""
+        ENABLE_ORACLE_JAVA_SOFT_KEYS_OPTION:
+          - "false"
+          - ""
     name: wix
     runs-on: windows-latest
     steps:
@@ -44,6 +47,12 @@ jobs:
           rm icedtea-web-*.win.bin.zip
           Remove-Item 'icedtea-web-image\share\doc' -Recurse
         if: ${{ matrix.ICEDTEA_WEB_VERSION != '' }}
+
+      - name: SET ENABLE_ORACLE_JAVA_SOFT_KEYS_OPTION
+        uses: allenevans/set-env@v2.0.0
+        with:
+          ENABLE_ORACLE_JAVA_SOFT_KEYS_OPTION: ${{ matrix.ENABLE_ORACLE_JAVA_SOFT_KEYS_OPTION }}
+        if: ${{ matrix.ENABLE_ORACLE_JAVA_SOFT_KEYS_OPTION != '' }}
 
       - name: Download Prebuilt JDK/JRE
         run: |

@@ -12,6 +12,7 @@ REM JVM=hotspot|openj9 or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
+REM ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION=true|false (Display Oracle JavaSoft Keys option in the MSI installer, default to true)
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
@@ -24,6 +25,7 @@ IF NOT DEFINED MSI_PRODUCT_VERSION SET ERR=6
 IF NOT DEFINED ARCH SET ERR=7
 IF NOT DEFINED JVM SET ERR=8
 IF NOT DEFINED PRODUCT_CATEGORY SET ERR=9
+IF NOT DEFINED ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION SET ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION=true
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 REM This needs tidying up, it's got out of control now
@@ -364,6 +366,7 @@ SET REPRO_DIR=
 SET SETUP_RESOURCES_DIR=
 SET WIN_SDK_FULL_VERSION=
 SET WIN_SDK_MAJOR_VERSION=
+SET ENABLE_JAVASOFT_ORACLE_REGISTRY_KEYS_OPTION=
 
 EXIT /b 0
 
