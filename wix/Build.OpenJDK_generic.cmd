@@ -98,9 +98,9 @@ REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]
 SET WIN_SDK_MAJOR_VERSION=10
 SET WIN_SDK_FULL_VERSION=10.0.17763.0
 
-REM find all .template files and replace text with configurations
+REM find all *.wxi.template,*.wxl.template,*.wxs.template files and replace text with configurations
 SETLOCAL ENABLEDELAYEDEXPANSION
-FOR /f %%i IN ('dir /s /b *.template') DO (
+FOR /f %%i IN ('dir /s /b *.wxi.template,*.wxl.template,*.wxs.template') DO (
     SET INPUT_FILE=%%i
     SET OUTPUT_FILE=!INPUT_FILE:.template=%!
     ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
