@@ -18,7 +18,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     $major=$openjdk_basedir + $Matches.major
   }
 
-  $jvm_regex = "(?<jvm>hotspot|openj9)"
+  $jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)"
   $jvm_found = $filename -match $jvm_regex
   if (!$jvm_found) {
     echo "filename : $filename doesn't match regex $jvm_regex"
