@@ -2,63 +2,71 @@ name: Windows
 on:
   workflow_dispatch:
   pull_request:
-    branches: [ master ]
+    branches: [master]
     paths:
       - .github/workflows/wix.yml
       - wix/**
 jobs:
   pkgbuild:
+    strategy:
+      matrix:
+        ICEDTEA_WEB_VERSION:
+          - "icedtea-web-1.8.3"
+          - ""
     name: wix
     runs-on: windows-latest
     steps:
+      - uses: actions/checkout@v2
 
-    - uses: actions/checkout@v2
-    
-    - name: Install dependencies
-      run: |
-        choco install wget
+      - name: Install dependencies
+        run: |
+          choco install wget
 
-    - name: Setup environment variables
-      uses: allenevans/set-env@v2.0.0
-      with:
-        PRODUCT_MAJOR_VERSION: 8
-        PRODUCT_MINOR_VERSION: 0
-        PRODUCT_MAINTENANCE_VERSION: 265
-        PRODUCT_PATCH_VERSION: 0
-        PRODUCT_BUILD_NUMBER: "01"
-        MSI_PRODUCT_VERSION: 8.0.265.1
-        ARCH: x64
-        TAG: jdk8u265-b01
-        SUB_TAG: 8u265b01
-        JVM: hotspot
-        ICEDTEA_WEB_VERSION: icedtea-web-1.8.3
+      - name: Setup environment variables
+        uses: allenevans/set-env@v2.0.0
+        with:
+          PRODUCT_MAJOR_VERSION: 8
+          PRODUCT_MINOR_VERSION: 0
+          PRODUCT_MAINTENANCE_VERSION: 265
+          PRODUCT_PATCH_VERSION: 0
+          PRODUCT_BUILD_NUMBER: "01"
+          MSI_PRODUCT_VERSION: 8.0.265.1
+          ARCH: x64
+          TAG: jdk8u265-b01
+          SUB_TAG: 8u265b01
+          JVM: hotspot
 
-    - name: Download prebuilt binaries
-      run: |
-        cd wix\SourceDir
-        wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ env.ICEDTEA_WEB_VERSION }}/${{ env.ICEDTEA_WEB_VERSION }}.win.bin.zip"
-        unzip icedtea-web-*.win.bin.zip
-        rm icedtea-web-*.win.bin.zip
-        Remove-Item 'icedtea-web-image\share\doc' -Recurse
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
-        ./CreateSourceFolder.AdoptOpenJDK.ps1
+      - name: Download IcedTea-Web
+        run: |
+          cd wix\SourceDir
+          wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ matrix.ICEDTEA_WEB_VERSION }}/${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip"
+          unzip icedtea-web-*.win.bin.zip
+          rm icedtea-web-*.win.bin.zip
+          Remove-Item 'icedtea-web-image\share\doc' -Recurse
+        if: ${{ matrix.ICEDTEA_WEB_VERSION != '' }}
 
-    - name: Create JDK Installer
-      run: |
-        cd wix
-        set PRODUCT_CATEGORY=jdk
-        call Build.OpenJDK_generic.cmd
-      shell: cmd
+      - name: Download Prebuilt JDK/JRE
+        run: |
+          cd wix\SourceDir
+          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
+          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
+          ./CreateSourceFolder.AdoptOpenJDK.ps1
 
-    - name: Create JRE Installer
-      run: |
-        cd wix
-        set PRODUCT_CATEGORY=jre
-        call Build.OpenJDK_generic.cmd
-      shell: cmd
+      - name: Create JDK Installer
+        run: |
+          cd wix
+          set PRODUCT_CATEGORY=jdk
+          call Build.OpenJDK_generic.cmd
+        shell: cmd
 
-    - uses: actions/upload-artifact@v2
-      with:
-        name: windows
-        path: wix/ReleaseDir/*.msi
+      - name: Create JRE Installer
+        run: |
+          cd wix
+          set PRODUCT_CATEGORY=jre
+          call Build.OpenJDK_generic.cmd
+        shell: cmd
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: windows
+          path: wix/ReleaseDir/*.msi
