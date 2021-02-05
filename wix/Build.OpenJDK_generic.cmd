@@ -26,6 +26,16 @@ IF NOT DEFINED JVM SET ERR=8
 IF NOT DEFINED PRODUCT_CATEGORY SET ERR=9
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
+REM default vendor information
+IF NOT DEFINED VENDOR SET VENDOR=AdoptOpenJDK
+IF NOT DEFINED VENDOR_BRANDING SET VENDOR_BRANDING=AdoptOpenJDK
+IF NOT DEFINED VENDOR_BRANDING_LOGO SET VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
+IF NOT DEFINED VENDOR_BRANDING_BANNER SET VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.bmp
+IF NOT DEFINED VENDOR_BRANDING_DIALOG SET VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.bmp
+IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose
+IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptopenjdk.net/support.html
+IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptopenjdk.net/releases.html
+
 REM This needs tidying up, it's got out of control now
 IF NOT "%ARCH%" == "x64" (
 	IF NOT "%ARCH%" == "x86-32" (
@@ -89,6 +99,16 @@ REM Configure available SDK version:
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
 SET WIN_SDK_MAJOR_VERSION=10
 SET WIN_SDK_FULL_VERSION=10.0.17763.0
+
+REM find all *.wxi.template,*.wxl.template,*.wxs.template files and replace text with configurations
+SETLOCAL ENABLEDELAYEDEXPANSION
+FOR /f %%i IN ('dir /s /b *.wxi.template,*.wxl.template,*.wxs.template') DO (
+    SET INPUT_FILE=%%i
+    SET OUTPUT_FILE=!INPUT_FILE:.template=%!
+    ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
+    powershell -Command "(gc %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding_logo}', '!VENDOR_BRANDING_LOGO!' -replace '{vendor_branding_banner}', '!VENDOR_BRANDING_BANNER!' -replace '{vendor_branding_dialog}', '!VENDOR_BRANDING_DIALOG!' -replace '{vendor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_HELP_LINK!' -replace '{product_support_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding ASCII !OUTPUT_FILE!"
+)
+ENDLOCAL
 
 REM
 REM Nothing below this line need to be changed normally.
