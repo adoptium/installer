@@ -8,6 +8,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 2021-02-23
+### Changed
+- Update IcedTea-Web to 1.8.6
+
 ## 2021-01-25
 ### Added
 - This user oriented changelog is born [#143](https://github.com/AdoptOpenJDK/openjdk-installer/issues/143)

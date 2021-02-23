@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         ICEDTEA_WEB_VERSION:
-          - "icedtea-web-1.8.4"
+          - "icedtea-web-1.8.6"
           - ""
     name: wix
     runs-on: windows-latest
