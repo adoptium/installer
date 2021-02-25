@@ -46,8 +46,8 @@ set -eu
 shopt -s globstar nullglob nocaseglob nocasematch
 
 for DISTRIBUTION_TYPE in "jdk" "jre" ; do
-    for ARCHITECTURE in "x64" "s390x" "ppc64le" "arm" "aarch64" ; do
-        JDK_FILENAME="OpenJDK${MAJOR_VERSION}U-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
+    for ARCHITECTURE in "arm" "aarch64" ; do
+        JDK_FILENAME="OpenJDK${MAJOR_VERSION}U-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${TAG}.tar.gz"
         DOWNLOAD_URL="https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/${JDK_FILENAME}"
 
         # Script should continue even if the file cannot be downloaded because
