@@ -215,10 +215,10 @@ FOR %%A IN (%ARCH%) DO (
     COPY /Y "Main.!PACKAGE_TYPE!.wxs" "Main-!OUTPUT_BASE_FILENAME!.wxs"
 
     REM Build with extra Source Code feature (needs work)
-    REM "!WIX!bin\heat.exe" file "!REPRO_DIR!\lib\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
-    REM "!WIX!bin\light.exe" !MSI_VALIDATION_OPTION! Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    REM !WIX!bin\heat.exe file "!REPRO_DIR!\lib\src.zip" -out Src-!OUTPUT_BASE_FILENAME!.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    REM !WIX!bin\heat.exe dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    REM !WIX!bin\candle.exe -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs Src-!OUTPUT_BASE_FILENAME!.wxs -ext WixUIExtension -ext WixUtilExtension -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!"
+    REM !WIX!bin\light.exe !MSI_VALIDATION_OPTION! Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 
     REM Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
     IF EXIST !CACHE_FOLDER! rmdir /S /Q !CACHE_FOLDER!
@@ -241,7 +241,7 @@ FOR %%A IN (%ARCH%) DO (
                 SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
                 SET ITW_WIXOBJ="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj"
                 ECHO HEAT
-                "!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
+                !WIX!bin\heat.exe dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
                 IF ERRORLEVEL 1 (
                     ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
@@ -254,7 +254,7 @@ FOR %%A IN (%ARCH%) DO (
     
     ECHO HEAT
     @ECHO ON
-    "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    !WIX!bin\heat.exe dir "!REPRO_DIR!" -out Files-!OUTPUT_BASE_FILENAME!.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     IF ERRORLEVEL 1 (
         ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
         GOTO FAILED
@@ -263,7 +263,7 @@ FOR %%A IN (%ARCH%) DO (
 
     ECHO CANDLE
     @ECHO ON
-    "!WIX!bin\candle.exe" -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs !ITW_WXS! -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
+    !WIX!bin\candle.exe -arch !PLATFORM! Main-!OUTPUT_BASE_FILENAME!.wxs Files-!OUTPUT_BASE_FILENAME!.wxs !ITW_WXS! -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" -dProductSku="!PRODUCT_SKU!" -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" -dProductVersionString="!PRODUCT_SHORT_VERSION!" -dMSIProductVersion="!MSI_PRODUCT_VERSION!" -dProductId="!PRODUCT_ID!" -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -dReproDir="!REPRO_DIR!" -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" -dCulture="!CULTURE!" -dJVM="!PACKAGE_TYPE!"
     IF ERRORLEVEL 1 (
         ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
         GOTO FAILED
@@ -272,7 +272,7 @@ FOR %%A IN (%ARCH%) DO (
 
     ECHO LIGHT
     @ECHO ON
-    "!WIX!bin\light.exe" Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj !ITW_WIXOBJ! !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+    !WIX!bin\light.exe Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj !ITW_WIXOBJ! !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "Lang\!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "Lang\!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
     IF ERRORLEVEL 1 (
         ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
         GOTO FAILED
@@ -304,7 +304,7 @@ FOR %%A IN (%ARCH%) DO (
 	IF NOT "%SKIP_MSI_VALIDATION%" == "true" (
 		ECHO SMOKE
 		@ECHO ON
-		"!WIX!bin\smoke.exe" "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+		!WIX!bin\smoke.exe "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 		IF ERRORLEVEL 1 (
 			ECHO Failed to validate MSI
 		    GOTO FAILED
