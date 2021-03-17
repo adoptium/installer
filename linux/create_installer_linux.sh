@@ -103,10 +103,10 @@ for JDK_TARBALL in ${JDK_TARBALLS[*]} ; do
     # Determine whether the tarball to repackage is a JRE or JDK by looking at
     # the filenames.
     case "$JDK_TARBALL" in
-        *OpenJDK${MAJOR_VERSION}U*jdk*hotspot*.tar.gz|*OpenJDK${MAJOR_VERSION}U*jdk*openj9*.tar.gz)
+        *OpenJDK${MAJOR_VERSION}*jdk*hotspot*.tar.gz|*OpenJDK${MAJOR_VERSION}*jdk*openj9*.tar.gz)
             DISTRIBUTION_TYPE="JDK"
             ;;
-        *OpenJDK${MAJOR_VERSION}U*jre*hotspot*.tar.gz|*OpenJDK${MAJOR_VERSION}U*jre*openj9*.tar.gz)
+        *OpenJDK${MAJOR_VERSION}*jre*hotspot*.tar.gz|*OpenJDK${MAJOR_VERSION}*jre*openj9*.tar.gz)
             DISTRIBUTION_TYPE="JRE"
             ;;
         *)
