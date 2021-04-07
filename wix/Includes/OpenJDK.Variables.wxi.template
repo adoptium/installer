@@ -5,10 +5,14 @@
     <?define ProgramFilesFolder="ProgramFilesFolder" ?>
     <?define Win64="no" ?>
     <?define Arch="(x86)" ?>
-  <?else?>
+  <?elseif $(env.Platform)=x64?>
     <?define ProgramFilesFolder="ProgramFiles64Folder" ?>
     <?define Win64="yes" ?>
     <?define Arch="(x64)" ?>
+  <?elseif $(env.Platform)=arm64?>
+    <?define ProgramFilesFolder="ProgramFilesARMFolder" ?>
+    <?define Win64="no" ?>
+    <?define Arch="(arm64)" ?>
   <?endif?>
 
   <?define ProductVersion="$(var.MSIProductVersion)" ?>
