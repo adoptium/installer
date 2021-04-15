@@ -57,11 +57,14 @@
   <?endif?>
   
   <?if $(var.JVM)="openj9" ?>
-    <?define Licence="license-OpenJ9.en-us.rtf" ?>
+    <?define license="license-OpenJ9.en-us.rtf" ?>
+    <?define license_shown="1" ?>
   <?elseif $(var.JVM)="hotspot" ?>
-    <?define Licence="license-GPLv2+CE.en-us.rtf" ?>
+    <?define license="license-GPLv2+CE.en-us.rtf" ?>
+    <?define license_shown="0" ?>
   <?else?>
-    <?define Licence="no licence defined for $(var.JVM)" ?>
+    <?define license="no licence defined for $(var.JVM)" ?>
+    <?define license_shown="1" ?>
   <?endif?>
 
   <?if $(var.JVM)="openj9"?>
