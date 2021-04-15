@@ -222,7 +222,7 @@
       <ComponentGroupRef Id="SrcFiles" />
     </Feature> -->
 
-    <WixVariable Id="WixUILicenseRtf" Value="$(var.SetupResourcesDir)\license-GPLv2+CE.en-us.rtf" />
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SetupResourcesDir)\$(var.license)" />
     <WixVariable Id="WixUIDialogBmp" Value="{vendor_branding_dialog}" />
     <WixVariable Id="WixUIBannerBmp" Value="{vendor_branding_banner}" />
     <UI>

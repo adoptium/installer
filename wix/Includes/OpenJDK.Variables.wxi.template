@@ -56,23 +56,37 @@
     <?endif?>    
   <?endif?>
   
-  <!-- cf https://github.com/AdoptOpenJDK/openjdk-installer/issues/137 -->
-  <?if $(env.PRODUCT_CATEGORY)="jre"?>
-    <?if $(var.ProductMajorVersion)>=9?>
-        <!-- Prefere Server JVM in Java 9+ x64 -->
-        <?define DllPath="bin\server\jvm.dll" ?>
-    <?else?>
-        <!-- Java 1.8 -->
-        <?if $(env.PLATFORM)="x86"?>
-          <!-- if x86 then client jvm -->
-          <?define DllPath="bin\client\jvm.dll" ?>
-        <?else?>
-          <!-- if x64 then server jvm -->
+  <?if $(var.JVM)="openj9" ?>
+    <?define Licence="license-OpenJ9.en-us.rtf" ?>
+  <?elseif $(var.JVM)="hotspot" ?>
+    <?define Licence="license-GPLv2+CE.en-us.rtf" ?>
+  <?else?>
+    <?define Licence="no licence defined for $(var.JVM)" ?>
+  <?endif?>
+
+  <?if $(var.JVM)="openj9"?>
+    <?define DllPath="bin\server\jvm.dll" ?>
+  <?elseif $(var.JVM)="hotspot" ?>
+    <!-- cf https://github.com/AdoptOpenJDK/openjdk-installer/issues/137 -->
+    <?if $(env.PRODUCT_CATEGORY)="jre"?>
+      <?if $(var.ProductMajorVersion)>=9?>
+          <!-- Prefere Server JVM in Java 9+ x64 -->
           <?define DllPath="bin\server\jvm.dll" ?>
-        <?endif?>
+      <?else?>
+          <!-- Java 1.8 -->
+          <?if $(env.PLATFORM)="x86"?>
+            <!-- if x86 then client jvm -->
+            <?define DllPath="bin\client\jvm.dll" ?>
+          <?else?>
+            <!-- if x64 then server jvm -->
+            <?define DllPath="bin\server\jvm.dll" ?>
+          <?endif?>
+      <?endif?>
+    <?else?>
+      <?define DllPath="no RuntimeLib jvm.dll for JDK since Oracle does not define it" ?>
     <?endif?>
   <?else?>
-    <?define DllPath="no RuntimeLib jvm.dll for JDK since Oracle does not define it" ?>
+    <?define DllPath="no DllPath known for $(var.JVM)" ?>
   <?endif?>
   
   <!-- Static settings, DO NOT TOUCH or upgrades will break! -->
