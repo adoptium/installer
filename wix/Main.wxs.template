@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-  <?include $(sys.CURRENTDIR)Includes\$(var.ProductSku).Variables.wxi ?>
+  <?include $(sys.CURRENTDIR)\Workdir\$(var.OutputBaseFilename)-$(var.ProductSku).Variables.wxi ?>
 
   <Product Id="$(var.ProductId)" Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)">
     <Package Description="$(var.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" InstallerVersion="200" Compressed="yes" />
@@ -227,6 +227,11 @@
     <WixVariable Id="WixUIBannerBmp" Value="{vendor_branding_banner}" />
     <UI>
       <UIRef Id="WixUI_FeatureTree" />
+      <?if $(var.license_shown)=0 ?>
+        <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg"  Order="3">1</Publish>
+        <!-- skip the page on the way back too -->
+        <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg"  Order="3">1</Publish>
+      <?endif?>
     </UI>
   </Product>
 </Wix>
