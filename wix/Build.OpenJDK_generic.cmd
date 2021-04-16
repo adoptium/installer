@@ -278,6 +278,7 @@ FOR %%A IN (%ARCH%) DO (
     "!WIX!bin\light.exe" %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wixobj %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wixobj !ITW_WIXOBJ! !MSI_VALIDATION_OPTION! -cc !CACHE_FOLDER! -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
     IF ERRORLEVEL 1 (
         ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
+        dir /a:d /s /b /o:n
         GOTO FAILED
     )
     @ECHO OFF
