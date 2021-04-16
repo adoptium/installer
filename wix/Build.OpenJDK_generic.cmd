@@ -178,6 +178,10 @@ FOR %%A IN (%ARCH%) DO (
         SET OUTPUT_FILE=%WORKDIR%!OUTPUT_BASE_FILENAME!-!INPUT_FILE:.template=%!
         ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
         powershell -Command "(gc -Raw -encoding utf8 %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding_logo}', '!VENDOR_BRANDING_LOGO!' -replace '{vendor_branding_banner}', '!VENDOR_BRANDING_BANNER!' -replace '{vendor_branding_dialog}', '!VENDOR_BRANDING_DIALOG!' -replace '{vendor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_HELP_LINK!' -replace '{product_support_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding utf8 !OUTPUT_FILE!"
+	IF ERRORLEVEL 1 (
+	    ECHO Unable to make string replacement
+	    GOTO FAILED
+	)
     )
 
     SET CACHE_BASE_FOLDER=Cache
