@@ -73,7 +73,7 @@
     <!-- cf https://github.com/AdoptOpenJDK/openjdk-installer/issues/137 -->
     <?if $(env.PRODUCT_CATEGORY)="jre"?>
       <?if $(var.ProductMajorVersion)>=9?>
-          <!-- Prefere Server JVM in Java 9+ x64 -->
+          <!-- Prefer Server JVM in Java 9+ x64 -->
           <?define DllPath="bin\server\jvm.dll" ?>
       <?else?>
           <!-- Java 1.8 -->
