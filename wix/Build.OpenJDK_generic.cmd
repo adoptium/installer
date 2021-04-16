@@ -100,6 +100,7 @@ REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]
 SET WIN_SDK_MAJOR_VERSION=10
 SET WIN_SDK_FULL_VERSION=10.0.17763.0
 SET WORKDIR=Workdir\
+mkdir %WORKDIR%
 
 REM
 REM Nothing below this line need to be changed normally.
