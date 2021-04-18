@@ -10,9 +10,33 @@ jobs:
   pkgbuild:
     strategy:
       matrix:
-        ICEDTEA_WEB_VERSION:
-          - "icedtea-web-1.8.6"
-          - ""
+        jdk: [8, 11]
+        include:
+        - jdk: 8
+          ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
+          PRODUCT_MAJOR_VERSION: 8
+          PRODUCT_MINOR_VERSION: 0
+          PRODUCT_MAINTENANCE_VERSION: 265
+          PRODUCT_PATCH_VERSION: 0
+          PRODUCT_BUILD_NUMBER: "01"
+          MSI_PRODUCT_VERSION: 8.0.265.1
+          ARCH: x64
+          TAG: jdk8u265-b01
+          SUB_TAG: 8u265b01
+          JVM: hotspot
+        - jdk: 11
+          ICEDTEA_WEB_VERSION: ""
+          PRODUCT_MAJOR_VERSION: 11
+          PRODUCT_MINOR_VERSION: 0
+          PRODUCT_MAINTENANCE_VERSION: 9
+          PRODUCT_PATCH_VERSION: 1
+          PRODUCT_BUILD_NUMBER: 11
+          MSI_PRODUCT_VERSION: 11.0.9.1
+          ARCH: x64
+          TAG: jdk-11.0.9+11.1
+          SUB_TAG: 11.0.9_11
+          JVM: hotspot
+
     name: wix
     runs-on: windows-latest
     steps:
@@ -25,16 +49,14 @@ jobs:
       - name: Setup environment variables
         uses: allenevans/set-env@v2.0.0
         with:
-          PRODUCT_MAJOR_VERSION: 8
-          PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 265
-          PRODUCT_PATCH_VERSION: 0
-          PRODUCT_BUILD_NUMBER: "01"
-          MSI_PRODUCT_VERSION: 8.0.265.1
-          ARCH: x64
-          TAG: jdk8u265-b01
-          SUB_TAG: 8u265b01
-          JVM: hotspot
+          PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
+          PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
+          PRODUCT_MAINTENANCE_VERSION: ${{ matrix.PRODUCT_MAINTENANCE_VERSION }}
+          PRODUCT_PATCH_VERSION: ${{ matrix.PRODUCT_PATCH_VERSION }}
+          PRODUCT_BUILD_NUMBER: ${{ matrix.PRODUCT_BUILD_NUMBER }}
+          MSI_PRODUCT_VERSION: ${{ matrix.MSI_PRODUCT_VERSION }}
+          ARCH: ${{ matrix.ARCH }}
+          JVM: ${{ matrix.JVM }}
 
       - name: Download IcedTea-Web
         run: |
@@ -48,8 +70,8 @@ jobs:
       - name: Download Prebuilt JDK/JRE
         run: |
           cd wix\SourceDir
-          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
-          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ env.SUB_TAG }}.zip"
+          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
           ./CreateSourceFolder.AdoptOpenJDK.ps1
 
       - name: Create JDK Installer
