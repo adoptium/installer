@@ -44,7 +44,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          choco install wget
+          choco install --no-progress wget
 
       - name: Setup environment variables
         uses: allenevans/set-env@v2.0.0
