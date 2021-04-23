@@ -47,13 +47,13 @@ shopt -s globstar nullglob nocaseglob nocasematch
 
 for DISTRIBUTION_TYPE in "jdk" "jre" ; do
     for ARCHITECTURE in "x64" "s390x" "ppc64le" "arm" "aarch64" ; do
+        DOWNLOAD_PREFIX="https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}"
         JDK_FILENAME="OpenJDK${MAJOR_VERSION}-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
-        DOWNLOAD_URL="https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}/${JDK_FILENAME}"
-
-        # Script should continue even if the file cannot be downloaded because
-        # not all variants are available for all platforms.
-        # shellcheck disable=SC2015
-        (cd "$WORKSPACE" && curl -fO -L "$DOWNLOAD_URL" -o "$JDK_FILENAME" || true)
+        (cd "$WORKSPACE" && curl -fO -L "$DOWNLOAD_PREFIX/$JDK_FILENAME" -o "$JDK_FILENAME" || true)
+        if [ ! -r "$JDK_FILENAME" ]; then
+          JDK_FILENAME="OpenJDK${MAJOR_VERSION}U-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
+          (cd "$WORKSPACE" && curl -fO -L "$DOWNLOAD_PREFIX/$JDK_FILENAME" -o "$JDK_FILENAME" || true)
+        fi
 
         if [ -f "$WORKSPACE/$JDK_FILENAME" ] ; then
           (source create_installer_linux.sh)
