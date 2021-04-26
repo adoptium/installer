@@ -221,8 +221,8 @@
     <WixVariable Id="WixUILicenseRtf" Value="$(var.SetupResourcesDir)\license-GPLv2+CE.en-us.rtf" />
     <WixVariable Id="WixUIDialogBmp" Value="$(var.SetupResourcesDir)\wix-dialog.bmp" />
     <WixVariable Id="WixUIBannerBmp" Value="$(var.SetupResourcesDir)\wix-banner.bmp" />
-    <UI Id="tree" Title="Tree">
-      <UIRef Id="WixUI_FeatureTree" />
+    <UI Id="tree">
+      <UIRef Id="WixUI_FeatureTree" Title="FeatureTree"/>
     </UI>
   </Product>
 </Wix>
