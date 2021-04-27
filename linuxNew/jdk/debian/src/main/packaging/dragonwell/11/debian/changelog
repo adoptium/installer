@@ -1,0 +1,5 @@
+dragonwell-11-jdk (11.0.10.5.0.0-0) UNRELEASED; urgency=medium
+
+  * Alibaba Dragonwell 11.0.10.5 GA release.
+
+ -- Eclipse Adoptium Package Maintainers <packaging@adoptium.com>  Sat, 3 Mar 2021 15:39:10 +0000
