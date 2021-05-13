@@ -40,3 +40,5 @@ fi
 rm "${PKG}"
 
 curl -JO https://cbi.eclipse.org/macos/xcrun/${UUID}/download
+
+mv "${PKG}" "${WORKSPACE}/workspace/target/"
