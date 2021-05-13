@@ -35,9 +35,6 @@ do
         ;;
     esac
 
-    IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
-
-    tar -xf "$f";
     echo "Signing $f using Eclipse Foundation codesign service"
     dir=$(dirname "$f")
     file=$(basename "$f")
@@ -49,10 +46,10 @@ do
             ;;
         mac)
             curl -o "$f" -F file="@${dir}/unsigned_${file}" https://cbi.eclipse.org/macos/codesign/sign
+            IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
+            bash "${WORKSPACE}/codesign/eclipse-notarize.sh" "${f}" "${IDENTIFIER}"
             ;;
     esac
 
     rm -rf "${dir}/unsigned_${file}"
-
-    bash "${WORKSPACE}/codesign/eclipse-notarize.sh ${f} ${IDENTIFIER}"
 done
