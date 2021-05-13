@@ -20,8 +20,8 @@ SIGN_OPTION=
 SIGN_CMD=
 NOTARIZE_OPTION=
 IDENTIFIER=
-VENDOR="adoptopenjdk"
-PACKAGE_NAME="AdoptOpenJDK"
+VENDOR="adoptium"
+PACKAGE_NAME="Eclipse Temurin"
 LOGO="Resources/adoptopenjdk.png"
 
 while test $# -gt 0; do
@@ -35,7 +35,7 @@ while test $# -gt 0; do
       echo "-o, --output_directory   name of the pkg file>"
       echo "--jvm                    hotspot or openj9"
       echo "--type                   jdk or jre"
-      echo "--vendor                 adoptopenjdk, dragonwell etc"
+      echo "--vendor                 adoptium, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
       echo "--logo                   Relative path to a custom logo (bottom left)"
       echo "--identifier             override the identifier e.g net.adoptopenjdk.11.jdk"
