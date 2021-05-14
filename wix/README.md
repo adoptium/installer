@@ -32,7 +32,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
 
   To customize branding information you can export the following environment variables to oveeride the default values. The default values are listed below:
   ```batch
-  set VENDOR=Adoptium
+  set VENDOR=Temurin
   set VENDOR_BRANDING=Eclipse Temurin
   set PRODUCT_HELP_LINK=https://github.com/adoptium/adoptium-support/issues/new/choose
   set PRODUCT_SUPPORT_LINK=https://adoptium.net/support.html

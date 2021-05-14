@@ -20,9 +20,9 @@ SIGN_OPTION=
 SIGN_CMD=
 NOTARIZE_OPTION=
 IDENTIFIER=
-VENDOR="adoptium"
+VENDOR="temurin"
 PACKAGE_NAME="Eclipse Temurin"
-LOGO="Resources/adoptopenjdk.png"
+LOGO="Resources/adoptium.png"
 
 while test $# -gt 0; do
   case "$1" in
