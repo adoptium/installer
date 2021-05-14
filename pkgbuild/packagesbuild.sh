@@ -159,8 +159,11 @@ rm -rf *.pkg build/*.pkg distribution.xml Resources/en.lproj/welcome.html Resour
 
 cp -R "${INPUT_DIRECTORY}" "${DIRECTORY}"
 
-xattr -cr .
-/usr/bin/codesign --verbose=4 --deep --force -s - ${DIRECTORY}
+if [ ! -z "$SIGN_OPTION" ]; then
+    xattr -cr .
+    security unlock-keychain -p `cat ~/.password` login.keychain-db
+    /usr/bin/codesign --verbose=4 --deep --force -s - ${DIRECTORY}
+fi
 
 cat OpenJDKPKG.pkgproj.template  \
   | sed -E "s~\\{path\\}~$DIRECTORY~g" \
