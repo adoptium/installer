@@ -56,7 +56,7 @@
     <?endif?>    
   <?endif?>
   
-  <!-- cf https://github.com/AdoptOpenJDK/openjdk-installer/issues/137 -->
+  <!-- cf https://github.com/adoptium/installer/issues/137 -->
   <?if $(env.PRODUCT_CATEGORY)="jre"?>
     <?if $(var.ProductMajorVersion)>=9?>
         <!-- Prefere Server JVM in Java 9+ x64 -->

@@ -27,14 +27,14 @@ IF NOT DEFINED PRODUCT_CATEGORY SET ERR=9
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 REM default vendor information
-IF NOT DEFINED VENDOR SET VENDOR=AdoptOpenJDK
-IF NOT DEFINED VENDOR_BRANDING SET VENDOR_BRANDING=AdoptOpenJDK
+IF NOT DEFINED VENDOR SET VENDOR=Adoptium
+IF NOT DEFINED VENDOR_BRANDING SET VENDOR_BRANDING=Eclipse Temurin
 IF NOT DEFINED VENDOR_BRANDING_LOGO SET VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
 IF NOT DEFINED VENDOR_BRANDING_BANNER SET VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.bmp
 IF NOT DEFINED VENDOR_BRANDING_DIALOG SET VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.bmp
-IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/AdoptOpenJDK/openjdk-build/issues/new/choose
-IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptopenjdk.net/support.html
-IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptopenjdk.net/releases.html
+IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/adoptium/adoptium-support/issues/new/choose
+IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support.html
+IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/releases.html
 
 REM This needs tidying up, it's got out of control now
 IF NOT "%ARCH%" == "x64" (
@@ -199,7 +199,7 @@ FOR %%A IN (%ARCH%) DO (
     ) ELSE (
         REM It will be better if we can generate "Name-based UUID" as specified here https://tools.ietf.org/html/rfc4122#section-4.3
         REM but it's too difficult so fallback to random like guid based on md5 hash with getGuid.ps1
-        REM We use md5 hash to always get the same PRODUCT_UPGRADE_CODE(GUID) for each MSI build with same GUID_SSED to allow upgrade from AdoptOpenJDK
+        REM We use md5 hash to always get the same PRODUCT_UPGRADE_CODE(GUID) for each MSI build with same GUID_SSED to allow upgrade from Adoptium
         REM IF PRODUCT_UPGRADE_CODE change from build to build, upgrade is not proposed by Windows Installer
         REM Never change what compose SOURCE_TEXT_GUID and args0 for getGuid.ps1 or you will never get the same GUID as previous build and MSI upgradable feature wont work
         SET SOURCE_TEXT_GUID=!PRODUCT_CATEGORY!-!PRODUCT_MAJOR_VERSION!-!PLATFORM!-!PACKAGE_TYPE!
@@ -323,7 +323,7 @@ FOR %%A IN (%ARCH%) DO (
 	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
 		REM Always hide password here
 		@ECHO OFF
-                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "Adoptium" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 		@ECHO ON
 		IF NOT "%DEBUG%" == "true" @ECHO OFF
 
