@@ -1,0 +1,3 @@
+rootProject.name = "adoptium-packages-linux"
+
+include "jdk", "jdk:alpine", "jdk:debian", "jdk:redhat", "jdk:suse"
