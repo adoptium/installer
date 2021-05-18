@@ -56,23 +56,40 @@
     <?endif?>    
   <?endif?>
   
-  <!-- cf https://github.com/adoptium/installer/issues/137 -->
-  <?if $(env.PRODUCT_CATEGORY)="jre"?>
-    <?if $(var.ProductMajorVersion)>=9?>
-        <!-- Prefere Server JVM in Java 9+ x64 -->
-        <?define DllPath="bin\server\jvm.dll" ?>
-    <?else?>
-        <!-- Java 1.8 -->
-        <?if $(env.PLATFORM)="x86"?>
-          <!-- if x86 then client jvm -->
-          <?define DllPath="bin\client\jvm.dll" ?>
-        <?else?>
-          <!-- if x64 then server jvm -->
+  <?if $(var.JVM)="openj9" ?>
+    <?define license="license-OpenJ9.en-us.rtf" ?>
+    <?define license_shown="1" ?>
+  <?elseif $(var.JVM)="hotspot" ?>
+    <?define license="license-GPLv2+CE.en-us.rtf" ?>
+    <?define license_shown="0" ?>
+  <?else?>
+    <?define license="no licence defined for $(var.JVM)" ?>
+    <?define license_shown="1" ?>
+  <?endif?>
+
+  <?if $(var.JVM)="openj9"?>
+    <?define DllPath="bin\server\jvm.dll" ?>
+  <?elseif $(var.JVM)="hotspot" ?>
+    <!-- cf https://github.com/adoptium/installer/issues/137 -->
+    <?if $(env.PRODUCT_CATEGORY)="jre"?>
+      <?if $(var.ProductMajorVersion)>=9?>
+          <!-- Prefer Server JVM in Java 9+ x64 -->
           <?define DllPath="bin\server\jvm.dll" ?>
-        <?endif?>
+      <?else?>
+          <!-- Java 1.8 -->
+          <?if $(env.PLATFORM)="x86"?>
+            <!-- if x86 then client jvm -->
+            <?define DllPath="bin\client\jvm.dll" ?>
+          <?else?>
+            <!-- if x64 then server jvm -->
+            <?define DllPath="bin\server\jvm.dll" ?>
+          <?endif?>
+      <?endif?>
+    <?else?>
+      <?define DllPath="no RuntimeLib jvm.dll for JDK since Oracle does not define it" ?>
     <?endif?>
   <?else?>
-    <?define DllPath="no RuntimeLib jvm.dll for JDK since Oracle does not define it" ?>
+    <?define DllPath="no DllPath known for $(var.JVM)" ?>
   <?endif?>
   
   <!-- Static settings, DO NOT TOUCH or upgrades will break! -->
