@@ -19,7 +19,7 @@ set -eu
 PKG="$1"
 PRIMARY_BUNDLE_ID="$2"
 
-echo "Notarizing $1, this can take a while!"
+echo "Notarizing $1, this can take a while! Updating status every minute..."
 
 RESPONSE=$(curl -s -X POST -F file=@${PKG} -F 'options={"primaryBundleId": "'${PRIMARY_BUNDLE_ID}'", "staple": true};type=application/json' https://cbi.eclipse.org/macos/xcrun/notarize)
     
