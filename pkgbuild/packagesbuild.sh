@@ -20,9 +20,9 @@ SIGN_OPTION=
 SIGN_CMD=
 NOTARIZE_OPTION=
 IDENTIFIER=
-VENDOR="adoptopenjdk"
-PACKAGE_NAME="AdoptOpenJDK"
-LOGO="Resources/adoptopenjdk.png"
+VENDOR="temurin"
+PACKAGE_NAME="Eclipse Temurin"
+LOGO="Resources/adoptium.png"
 
 while test $# -gt 0; do
   case "$1" in
@@ -35,7 +35,7 @@ while test $# -gt 0; do
       echo "-o, --output_directory   name of the pkg file>"
       echo "--jvm                    hotspot or openj9"
       echo "--type                   jdk or jre"
-      echo "--vendor                 adoptopenjdk, dragonwell etc"
+      echo "--vendor                 adoptium, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
       echo "--logo                   Relative path to a custom logo (bottom left)"
       echo "--identifier             override the identifier e.g net.adoptopenjdk.11.jdk"
@@ -162,7 +162,7 @@ cp -R "${INPUT_DIRECTORY}" "${DIRECTORY}"
 if [ ! -z "$SIGN_OPTION" ]; then
     xattr -cr .
     security unlock-keychain -p `cat ~/.password` login.keychain-db
-    /usr/bin/codesign --verbose=4 --deep --force -s "Developer ID Application: London Jamocha Community CIC" ${DIRECTORY}
+    /usr/bin/codesign --verbose=4 --deep --force -s - ${DIRECTORY}
 fi
 
 cat OpenJDKPKG.pkgproj.template  \
