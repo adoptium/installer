@@ -32,12 +32,12 @@ while [[ ${STATUS} == 'IN_PROGRESS' ]]; do
     STATUS=$(echo $RESPONSE | grep -Po '"status"\s*:\s*"\K[^"]+')
 done
 
+rm "${PKG}"
+
 if [[ ${STATUS} != 'COMPLETE' ]]; then
     echo "Notarization failed: ${RESPONSE}"
     exit 1
 fi
-
-rm "${PKG}"
 
 curl -JO https://cbi.eclipse.org/macos/xcrun/${UUID}/download
 
