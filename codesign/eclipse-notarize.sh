@@ -33,7 +33,6 @@ while [[ ${STATUS} == 'IN_PROGRESS' ]]; do
 done
 
 rm "${PKG}" 
-rm "${WORKSPACE}/workspace/target/${PKG}"
 
 if [[ ${STATUS} != 'COMPLETE' ]]; then
     echo "Notarization failed: ${RESPONSE}"
@@ -42,4 +41,4 @@ fi
 
 curl -o "$1" https://cbi.eclipse.org/macos/xcrun/${UUID}/download
 
-mv "${PKG}" "${WORKSPACE}/workspace/target/"
+mv "${1}" "${WORKSPACE}/workspace/target/"
