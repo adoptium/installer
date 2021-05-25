@@ -39,6 +39,4 @@ if [[ ${STATUS} != 'COMPLETE' ]]; then
     exit 1
 fi
 
-curl -o "$1" https://cbi.eclipse.org/macos/xcrun/${UUID}/download
-
-mv "${1}" "${WORKSPACE}/workspace/target/"
+curl -o "$PKG" https://cbi.eclipse.org/macos/xcrun/${UUID}/download
