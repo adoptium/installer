@@ -32,7 +32,8 @@ while [[ ${STATUS} == 'IN_PROGRESS' ]]; do
     STATUS=$(echo $RESPONSE | grep -Po '"status"\s*:\s*"\K[^"]+')
 done
 
-rm "${PKG}" "${WORKSPACE}/workspace/target/${PKG}"
+rm "${PKG}" 
+rm "${WORKSPACE}/workspace/target/${PKG}"
 
 if [[ ${STATUS} != 'COMPLETE' ]]; then
     echo "Notarization failed: ${RESPONSE}"
