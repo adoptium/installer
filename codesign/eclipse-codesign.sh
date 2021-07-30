@@ -42,10 +42,10 @@ do
 
     case $OPERATING_SYSTEM in
         windows) 
-            curl -o "$f" -F file="@${dir}/unsigned_${file}" https://cbi.eclipse.org/authenticode/sign
+            curl --fail --silent --show-error -o "$f" -F file="@${dir}/unsigned_${file}" https://cbi.eclipse.org/authenticode/sign
             ;;
         mac)
-            curl -o "$f" -F file="@${dir}/unsigned_${file}" https://cbi.eclipse.org/macos/codesign/sign
+            curl --fail --silent --show-error -o "$f" -F file="@${dir}/unsigned_${file}" https://cbi.eclipse.org/macos/codesign/sign
             IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
             bash "${WORKSPACE}/codesign/eclipse-notarize.sh" "${f}" "${IDENTIFIER}"
             ;;
