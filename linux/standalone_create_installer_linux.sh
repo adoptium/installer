@@ -8,16 +8,16 @@
 # automatically published if they haven't been published yet (see environment
 # variable RELEASE_TYPE below).
 #
-# If you want to package AdoptOpenJDK builds yourself, use Gradle directly.
+# If you want to package Temurin builds yourself, use Gradle directly.
 #
 # The script expects some environment variables to be present:
 #
 #   RELEASE_TYPE          "Release", "Nightly" or "Nightly Without Publish".
-#                         See AdoptOpenJDK build pipelines for details.
+#                         See Temurin build pipelines for details.
 #
 #   WORKSPACE             Path to the root directory of Jenkins' workspace.
 #
-#   MAJOR_VERSION         Major version of AdoptOpenJDK, e.g. 8, 9, 11
+#   MAJOR_VERSION         Major version of Temurin, e.g. 8, 9, 11
 #
 #   VERSION               Complete version string, e.g. 1.8.0_222-b10
 #
@@ -47,7 +47,7 @@ shopt -s globstar nullglob nocaseglob nocasematch
 
 for DISTRIBUTION_TYPE in "jdk" "jre" ; do
     for ARCHITECTURE in "x64" "s390x" "ppc64le" "arm" "aarch64" ; do
-        DOWNLOAD_PREFIX="https://github.com/AdoptOpenJDK/openjdk${MAJOR_VERSION}-binaries/releases/download/${TAG}"
+        DOWNLOAD_PREFIX="https://github.com/adoptium/temurin${MAJOR_VERSION}-binaries/releases/download/${TAG}"
         JDK_FILENAME="OpenJDK${MAJOR_VERSION}-${DISTRIBUTION_TYPE}_${ARCHITECTURE}_linux_${JVM}_${SUB_TAG}.tar.gz"
         (cd "$WORKSPACE" && curl -fO -L "$DOWNLOAD_PREFIX/$JDK_FILENAME" -o "$JDK_FILENAME" || true)
         if [ ! -r "$JDK_FILENAME" ]; then

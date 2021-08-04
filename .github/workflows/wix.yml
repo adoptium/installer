@@ -13,28 +13,28 @@ jobs:
         jdk: [8, 11]
         include:
         - jdk: 8
-          ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
+          #ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
           PRODUCT_MAJOR_VERSION: 8
           PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 265
+          PRODUCT_MAINTENANCE_VERSION: 302
           PRODUCT_PATCH_VERSION: 0
           PRODUCT_BUILD_NUMBER: "01"
-          MSI_PRODUCT_VERSION: 8.0.265.1
+          MSI_PRODUCT_VERSION: 8.0.302.1
           ARCH: x64
-          TAG: jdk8u265-b01
-          SUB_TAG: 8u265b01
+          TAG: jdk8u302-b08
+          SUB_TAG: 8u302b08
           JVM: hotspot
         - jdk: 11
-          ICEDTEA_WEB_VERSION: ""
+          #ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 11
           PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 9
+          PRODUCT_MAINTENANCE_VERSION: 12
           PRODUCT_PATCH_VERSION: 1
-          PRODUCT_BUILD_NUMBER: 11
-          MSI_PRODUCT_VERSION: 11.0.9.1
+          PRODUCT_BUILD_NUMBER: 7
+          MSI_PRODUCT_VERSION: 11.0.12.1
           ARCH: x64
-          TAG: jdk-11.0.9+11.1
-          SUB_TAG: 11.0.9_11
+          TAG: jdk-11.0.12+7.1
+          SUB_TAG: 11.0.12_7
           JVM: hotspot
 
     name: wix
@@ -58,21 +58,21 @@ jobs:
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
 
-      - name: Download IcedTea-Web
-        run: |
-          cd wix\SourceDir
-          wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ matrix.ICEDTEA_WEB_VERSION }}/${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip"
-          unzip icedtea-web-*.win.bin.zip
-          rm icedtea-web-*.win.bin.zip
-          Remove-Item 'icedtea-web-image\share\doc' -Recurse
-        if: ${{ matrix.ICEDTEA_WEB_VERSION != '' }}
+      #- name: Download IcedTea-Web
+      #  run: |
+      #    cd wix\SourceDir
+      #    wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ matrix.ICEDTEA_WEB_VERSION }}/${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip"
+      #    unzip icedtea-web-*.win.bin.zip
+      #    rm icedtea-web-*.win.bin.zip
+      #    Remove-Item 'icedtea-web-image\share\doc' -Recurse
+      #  if: ${{ matrix.ICEDTEA_WEB_VERSION != '' }}
 
       - name: Download Prebuilt JDK/JRE
         run: |
           cd wix\SourceDir
-          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          ./CreateSourceFolder.AdoptOpenJDK.ps1
+          wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          ./CreateSourceFolder.Adoptium.ps1
 
       - name: Create JDK Installer
         run: |

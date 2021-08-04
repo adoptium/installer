@@ -1,4 +1,4 @@
-# Packaging AdoptOpenJDK for Linux
+# Packaging Temurin for Linux
 
 ## Prerequisites
 
@@ -29,7 +29,7 @@ It is possible to simultaneously build Debian and RPM packages by using `./gradl
 
 Deb packages for Debian and Ubuntu (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm:
 
-```
+```sh
 ./gradlew buildDebPackage \
     -PJDK_DISTRIBUTION_TYPE=<JDK|JRE> \
     -PJDK_DISTRIBUTION_DIR=/path/to/jdk \
@@ -39,11 +39,11 @@ Deb packages for Debian and Ubuntu (see section *Support Matrix* below for suppo
     -PJDK_ARCHITECTURE=<architecture>
 ```
 
-`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
+`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of Eclipse Temurin (for example an expanded tarball downloaded from [https://adoptium.net/](https://adoptium.net/)). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
 
 Example:
 
-```
+```sh
 ./gradlew buildDebPackage \
     -PJDK_DISTRIBUTION_TYPE=JDK \
     -PJDK_DISTRIBUTION_DIR=/path/to/jdk-11.0.2+9 \
@@ -55,8 +55,8 @@ Example:
 
 #### Optional Arguments
 
-* `-PPACKAGE_NAME=pkg_name` - Specify the name of the output package, defaults to `adoptopenjdk`
-* `-PVENDOR=vendor_name` - Specify a custom vendor name, defaults to `AdoptOpenJDK`
+* `-PPACKAGE_NAME=pkg_name` - Specify the name of the output package, defaults to `temurin`
+* `-PVENDOR=vendor_name` - Specify a custom vendor name, defaults to `Eclipse Foundation`
 * `-PVENDOR_HOMEPAGE="https://example.com/"` - specify a custom link to vendor homepage
 * `-PVENDOR_SOURCE_URL="https://example.com/"` - specify a custom link to source code
 * `-PDEBIAN_ITERATION=1` - specify the iteration
@@ -81,7 +81,7 @@ Example:
 
 will produce `openjdk-11-hotspot_11.0.8+2~vendor-5_amd64.deb` with the following metadata:
 
-```
+```txt
  new Debian package, version 2.0.
  Package: openjdk-11-hotspot
  Version: 11.0.8+2~vendor-5
@@ -111,7 +111,7 @@ Table with arguments:
 
 RPM packages for CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm:
 
-```
+```sh
 ./gradlew buildRpmPackage \
     -PJDK_DISTRIBUTION_TYPE=<JDK|JRE> \
     -PJDK_DISTRIBUTION_DIR=/path/to/jdk \
@@ -122,11 +122,11 @@ RPM packages for CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as Open
     -PSIGN_PACKAGE=<true|false>
 ```
 
-`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
+`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of Temurin (for example an expanded tarball downloaded from [https://adoptium.net/](https://adoptium.net/)). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
 
 Example:
 
-```
+```sh
 ./gradlew buildRpmPackage \
     -PJDK_DISTRIBUTION_TYPE=JRE \
     -PJDK_DISTRIBUTION_DIR=/path/to/jdk-11.0.2+9 \
@@ -151,7 +151,7 @@ Example:
 
 RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
 
-```
+```rpm
 %_signature gpg
 %_gpg_path /path/to/.gnupg
 %_gpg_name KEY_ID
@@ -162,7 +162,7 @@ RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requir
 
 Gradle tasks are included to upload Debian and RPM packages to Artifactory. To upload all package formats, run:
 
-```
+```sh
 ./gradlew upload \
     -PJDK_MAJOR_VERSION=<majorversion> \
     -PJDK_VERSION=<versionstring> \
@@ -179,7 +179,7 @@ By specifying all build properties (see above) building and uploading can be don
 
 ## Support Matrix
 
-### Deb packages
+### Deb packages support
 
 All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, armhf and arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
 
@@ -198,7 +198,7 @@ All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu 
 * [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
 * [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
 
-### RPM packages
+### RPM packages support
 
 All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Amazon Linux 1, Fedora and OpenSUSE are only available for x86_64. Amazon Linux 2 supports aarch64, too. The packages for all other distributions are available for x86_64, s390x, ppc64le and aarch64.
 

@@ -5,6 +5,6 @@
 
 FILE=InstallerChangelog.md
 
-[ -e $FILE ] && sed -i 's![^[]#\([0-9]\+\)! [#\1]\(https://github.com/AdoptOpenJDK/openjdk-installer/issues/\1)!g' $FILE
+[ -e $FILE ] && sed -i 's![^[]#\([0-9]\+\)! [#\1]\(https://github.com/adoptium/installer/issues/\1)!g' $FILE
 
 echo $?

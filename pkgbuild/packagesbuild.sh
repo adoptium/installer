@@ -38,7 +38,7 @@ while test $# -gt 0; do
       echo "--vendor                 adoptium, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
       echo "--logo                   Relative path to a custom logo (bottom left)"
-      echo "--identifier             override the identifier e.g net.adoptopenjdk.11.jdk"
+      echo "--identifier             override the identifier e.g net.adoptium.11.jdk"
       echo "-s, --sign               sign the installer>"
       exit 0
       ;;

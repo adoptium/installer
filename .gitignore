@@ -8,6 +8,7 @@ linux_ppc64le/
 # Ignore build outputs, temporary directories
 build
 .gradle
+bin
 
 # Ignore Finder, Explorer files
 Thumbs.db
@@ -17,6 +18,11 @@ Thumbs.db
 # Ignore IDE files
 .idea
 *.iml
+**/*.settings
+**/*.project
+**/*.classpath
+.java-version
+.vscode
 
 node_modules/
 wix/Workdir/

@@ -1,5 +1,5 @@
-import net.adoptopenjdk.installer.BuildDebianPackage
-import net.adoptopenjdk.installer.UploadDebianPackage
+import net.adoptium.installer.BuildDebianPackage
+import net.adoptium.installer.UploadDebianPackage
 
 ext.jinfoPriorities = [
     8 : 1081,

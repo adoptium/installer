@@ -12,6 +12,6 @@ We currently support the following versions with security updates.
 
 ## Reporting a Vulnerability
 
-Please report vulnerabilities to [security@adoptopenjdk.net](security@adoptopenjdk.net).
+TODO add new Eclipse Foundation based security contact details
 
 A member of the security team will respond within 48 hours with details on how to proceed including whether or not the vulnerability was accepted, declined or requires further investigation.

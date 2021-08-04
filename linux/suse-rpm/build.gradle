@@ -1,5 +1,5 @@
-import net.adoptopenjdk.installer.BuildRpmPackage
-import net.adoptopenjdk.installer.UploadRpmPackage
+import net.adoptium.installer.BuildRpmPackage
+import net.adoptium.installer.UploadRpmPackage
 
 tasks.register("buildSuseRpmPackage", BuildRpmPackage) {
     packageName = pkgMetadata.packageName

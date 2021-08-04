@@ -1,5 +1,5 @@
-import net.adoptopenjdk.installer.Architecture
-import net.adoptopenjdk.installer.VirtualMachine
+import net.adoptium.installer.Architecture
+import net.adoptium.installer.VirtualMachine
 
 buildscript {
     repositories {
@@ -28,20 +28,20 @@ ext {
     jdkMajorVersion = getJdkMajorVersion()
     jdkVersion = JDK_VERSION
     pkgMetadata = [
-        architecture: getJdkArchitecture(),
-        vm          : getJdkVirtualMachine(),
-        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by ${getVendor()}",
-        homepage    : getVendorHomePage(),
-        vcsUrl   : getVendorSourceURL(),
+        architecture   : getJdkArchitecture(),
+        vm             : getJdkVirtualMachine(),
+        description    : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by ${getVendor()}",
+        homepage       : getVendorHomePage(),
+        vcsUrl         : getVendorSourceURL(),
         debianIteration: getDebianIteration(),
-        rpmIteration: getRPMIteration(),
-        license     : "GPL-2.0+CE",
-        maintainer  : getVendor(),
-        vendor      : getVendor(),
-        packageName : "${getPackageName()}-${jdkMajorVersion}-${getJdkVirtualMachine().packageQualifier}${jdkDistributionType.pkgNameSuffix}"
+        rpmIteration   : getRPMIteration(),
+        license        : "GPL-2.0+CE",
+        maintainer     : getVendor(),
+        vendor         : getVendor(),
+        packageName    : "${getPackageName()}-${jdkMajorVersion}-${getJdkVirtualMachine().packageQualifier}${jdkDistributionType.pkgNameSuffix}"
     ]
     artifactory = [
-        url       : "https://adoptopenjdk.jfrog.io/adoptopenjdk/",
+        url       : "https://adoptium.jfrog.io/adoptium/",
         user      : project.hasProperty("ARTIFACTORY_USER") ? ARTIFACTORY_USER : null,
         password  : project.hasProperty("ARTIFACTORY_PASSWORD") ? ARTIFACTORY_PASSWORD : null,
         repository: [
@@ -96,23 +96,25 @@ def getJdkArchitecture() {
 }
 
 def getVendor() {
-    return hasProperty("VENDOR") ? VENDOR : "AdoptOpenJDK"
+    return hasProperty("VENDOR") ? VENDOR : "Eclipse Foundation"
 }
 
 def getPackageName() {
-    return hasProperty("PACKAGE_NAME") ? PACKAGE_NAME : "adoptopenjdk"
+    return hasProperty("PACKAGE_NAME") ? PACKAGE_NAME : "temurin"
 }
 
 def getVendorHomePage() {
-    return hasProperty("VENDOR_HOMEPAGE") ? VENDOR_HOMEPAGE : "https://adoptopenjdk.net/"
+    return hasProperty("VENDOR_HOMEPAGE") ? VENDOR_HOMEPAGE : "https://adoptium.net/"
 }
 
 def getVendorSourceURL() {
-    return hasProperty("VENDOR_SOURCE_URL") ? VENDOR_SOURCE_URL : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u"
+    return hasProperty("VENDOR_SOURCE_URL") ? VENDOR_SOURCE_URL : "https://github.com/adoptium/jdk${jdkMajorVersion}u"
 }
 
 def getJdkMajorVersion() {
     def versionString = hasProperty("JDK_MAJOR_VERSION") ? JDK_MAJOR_VERSION : ""
+    project.logger.lifecycle("JDK_MAJOR_VERSION: " + versionString);
+
     if (!versionString.matches("^[0-9]+\$")) {
         throw new IllegalArgumentException("Unparsable JDK major version '$versionString'")
     }

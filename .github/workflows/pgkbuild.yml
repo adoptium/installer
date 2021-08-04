@@ -29,8 +29,8 @@ jobs:
       run: |
         mkdir -p workspace/target/
         cd workspace/target/
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
 
     - name: Create Package
       run: |

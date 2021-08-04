@@ -1,32 +1,39 @@
-# openjdk-installer:
-Repository for creating installable packages for AdoptOpenJDK releases.
+# installer
+
+Repository for creating installer packages for Eclipse Adoptium releases.
 
 The packages are created using:
-1. The Wix Toolset http://wixtoolset.org (Windows only)
+
+1. The [Wix Toolset](http://wixtoolset.org) (Windows only)
 2. [Packages](http://s.sudre.free.fr/Software/Packages/about.html) (Mac OS)
 3. For putting together `.deb` and `rpms` head to this link: [linux subdir readme](https://github.com/adoptium/installer/tree/master/linux#readme)
 
-The available packages can be seen from the AdoptOpenJDK download pages: https://adoptopenjdk.net/releases.html.
+The available packages can be seen from the Adoptium download pages: [https://adoptium.net/releases.html](https://adoptium.net/releases.html).
 
-If a package is documented here but is not present on the AdoptOpenJDK download pages it may be because it is still being developed. Feel free to ask for the latest status in the installer Slack channel at [https://adoptopenjdk.slack.com].
+If a package is documented here but is not present on the Adoptium download pages it may be because it is still being developed. Feel free to ask for the latest status in the installer Slack channel at [https://adoptium.slack.com].
 
 See the [CONFIGURATION.md](./CONFIGURATION.md) file for the details of each package.
 
 ## Releasing Linux Installer packages
+
 During a Release the Linux installers (deb,rpm) are not created as part of the build job, but are instead created manually after
 the production binaries have been published to github.com/jdkNN-binaries/releases. The following documentation describes
 how to create and publish these Linux installers to Artifactory.
 
 1. Check the given jdk version binaries have been published to github.com, "latest" maybe Hotspot or OpenJ9 depending on
 the publish order, if so specify the expected tag name:
-  - jdk8 : https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/latest
-  - jdk11 : https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/latest
-  - jdk16 : https://github.com/AdoptOpenJDK/openjdk16-binaries/releases/latest
+
+- jdk8 : [https://github.com/adoptium/temurin8-binaries/releases/latest](https://github.com/adoptium/temurin8-binaries/releases/latest)
+- jdk11 : [https://github.com/adoptium/temurin11-binaries/releases/latest](https://github.com/adoptium/temurin11-binaries/releases/latest)
+- jdk16 : [https://github.com/adoptium/temurin16-binaries/releases/latest](https://github.com/adoptium/temurin16-binaries/releases/latest)
+
 2. For each jdk version and JVM variant run the following Jenkins job (Restricted auth permission) to create and
 publish the Linux installers to Artifactory:
-  - https://ci.adoptopenjdk.net/job/build-scripts/job/release/job/standalone_create_installer_linux
-  - Parameters: (ensure values are specified in the correct format, following the following examples, note for new VERSIONS
- eg.16, use the full 3 dotted value 16.0.0 for the VERSION parameter)
+
+- [https://ci.adoptium.net/job/build-scripts/job/release/job/standalone_create_installer_linux](https://ci.adoptium.net/job/build-scripts/job/release/job/standalone_create_installer_linux)
+- Parameters: (ensure values are specified in the correct format, following the following examples, note for new VERSIONS
+
+ e.g.16, use the full 3 dotted value 16.0.0 for the VERSION parameter)
     - Hotspot jdk8u292-b10:
       - VERSION: 8u292-b10
       - MAJOR_VERSION: 8
@@ -64,8 +71,7 @@ publish the Linux installers to Artifactory:
       - SUB_TAG: 16_36
 3. After each Jenkins job verify the success of the job, and also verify the artifacts have been uploaded to Artifactory by checking
 this location:
-  - https://adoptopenjdk.jfrog.io/ui/repos/tree/General/deb%2Fpool%2Fmain%2Fa
-    - Verify the artifacts exist under the relevant sub-folder for the job run, eg.adoptopenjdk-11-hotspot, for jdk-11 hotspot JDK, and
-adoptopenjdk-11-hotspot-jre for jdk-11 hotspot JRE
 
-
+- [https://adoptium.jfrog.io/ui/repos/tree/General/deb%2Fpool%2Fmain%2Fa](https://adoptium.jfrog.io/ui/repos/tree/General/deb%2Fpool%2Fmain%2Fa)
+  - Verify the artifacts exist under the relevant sub-folder for the job run, e.g. temurin-11-hotspot, for jdk-11 hotspot JDK, and
+temurin-11-hotspot-jre for jdk-11 hotspot JRE

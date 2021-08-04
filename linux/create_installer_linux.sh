@@ -6,21 +6,21 @@
 # resulting packages are automatically published if they haven't been published
 # yet (see environment variable RELEASE_TYPE below).
 #
-# If you want to package AdoptOpenJDK builds yourself, use Gradle directly.
+# If you want to package Temurin builds yourself, use Gradle directly.
 #
 # The script expects some environment variables to be present:
 #
 #   RELEASE_TYPE          "Release", "Nightly" or "Nightly Without Publish".
-#                         See AdoptOpenJDK build pipelines for details.
+#                         See Temurin build pipelines for details.
 #
 #   WORKSPACE             Path to the root directory of Jenkins' workspace.
 #
-#   MAJOR_VERSION         Major version of AdoptOpenJDK, e.g. 8, 9, 11
+#   MAJOR_VERSION         Major version of Temurin, e.g. 8, 9, 11
 #
 #   VERSION               Complete version string, e.g. 1.8.0_222-b10
 #
 #   ARCHITECTURE          Name of the CPU architecture, e.g. x64. See
-#                         AdoptOpenJDK build pipelines for valid values.
+#                         Temurin build pipelines for valid values.
 #
 #   ARTIFACTORY_PASSWORD  Password of the user that is used to push releases
 #                         to Artifactory.
@@ -39,6 +39,7 @@ set -eu
 shopt -s globstar nullglob nocaseglob nocasematch
 
 if [ -z "${ARTIFACTORY_USER+x}" ]; then
+    # TODO Need to change bot user name long term
     ARTIFACTORY_USER="adoptopenjdk-jenkins-bot"
 fi
 
@@ -88,7 +89,6 @@ case "$RELEASE_TYPE" in
         exit 0
         ;;
 esac
-
 
 if [ -z "${ARTIFACTORY_PASSWORD+x}" ]; then
    echo No artifactory credentials available - will not upload

@@ -1,9 +1,9 @@
 [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; 
 $urls = @(
-  'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jdk_x64_windows_hotspot_11_28.zip',
-  'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jdk_x64_windows_openj9_11_28.zip',
-  'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jre_x64_windows_hotspot_11_28.zip',
-  'https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jre_x64_windows_openj9_11_28.zip'
+  'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jdk_x64_windows_hotspot_11_28.zip',
+  #'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jdk_x64_windows_openj9_11_28.zip',
+  'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jre_x64_windows_hotspot_11_28.zip'
+  #'https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11%2B28/OpenJDK11-jre_x64_windows_openj9_11_28.zip'
 )
 ForEach ($url in $urls) {
   $filename = [System.IO.Path]::GetFileName($url)

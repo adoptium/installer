@@ -1,4 +1,4 @@
-# Changelog for AdoptOpenJDK Windows installer
+# Changelog for Temurin Windows installer
 
 # Changelog
 * All notable changes **impacting the users** will be documented in this file.
