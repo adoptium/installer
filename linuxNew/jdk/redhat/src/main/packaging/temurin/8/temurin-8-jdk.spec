@@ -1,4 +1,4 @@
-%global upstream_version 8.0.302-b08
+%global upstream_version 8u302-b08
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
