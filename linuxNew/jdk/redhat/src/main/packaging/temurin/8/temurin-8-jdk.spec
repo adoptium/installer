@@ -1,4 +1,4 @@
-%global upstream_version 8.0.302+8
+%global upstream_version 8.0.302-b08
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -8,9 +8,8 @@
 %global spec_release 1
 %global priority 1111
 
-%global source_url_base https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download
-%global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
-%global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
+%global source_url_base https://github.com/adoptium/temurin8-binaries/releases/download
+%global upstream_version_no_dash %(echo %{upstream_version} | sed 's/-//g')
 %global java_provides openjdk
 
 # Map architecture to the expected value in the download URL; Allow for a
@@ -37,7 +36,7 @@ Summary:     Eclipse Temurin 8 JDK
 
 Group:       java
 License:     GPLv2 with exceptions
-Vendor:      Eclipse Adoptium
+Vendor:      Eclipse Foundation
 URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
@@ -63,22 +62,22 @@ Requires: fontconfig%{?_isa}
 Requires: freetype%{?_isa}
 
 Provides: java
-Provides: java-11
-Provides: java-11-devel
-Provides: java-11-%{java_provides}
-Provides: java-11-%{java_provides}-devel
+Provides: java-8
+Provides: java-8-devel
+Provides: java-8-%{java_provides}
+Provides: java-8-%{java_provides}-devel
 Provides: java-devel
 Provides: java-%{java_provides}
 Provides: java-%{java_provides}-devel
-Provides: java-sdk-11
-Provides: java-sdk-11-%{java_provides}
+Provides: java-sdk-8
+Provides: java-sdk-8-%{java_provides}
 Provides: jre
-Provides: jre-11
-Provides: jre-11-%{java_provides}
+Provides: jre-8
+Provides: jre-8-%{java_provides}
 Provides: jre-%{java_provides}
 
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
@@ -150,7 +149,6 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1
 
     update-alternatives --install %{_bindir}/javac javac %{prefix}/bin/javac %{priority} \
-                        --slave %{_bindir}/jaotc jaotc %{prefix}/bin/jaotc \
                         --slave %{_bindir}/jar jar %{prefix}/bin/jar \
                         --slave %{_bindir}/jarsigner jarsigner %{prefix}/bin/jarsigner \
                         --slave %{_bindir}/javadoc javadoc %{prefix}/bin/javadoc \
@@ -158,16 +156,10 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jcmd jcmd %{prefix}/bin/jcmd \
                         --slave %{_bindir}/jconsole jconsole %{prefix}/bin/jconsole \
                         --slave %{_bindir}/jdb jdb %{prefix}/bin/jdb \
-                        --slave %{_bindir}/jdeprscan jdeprscan %{prefix}/bin/jdeprscan \
-                        --slave %{_bindir}/jdeps jdeps %{prefix}/bin/jdeps \
-                        --slave %{_bindir}/jhsdb jhsdb %{prefix}/bin/jhsdb \
-                        --slave %{_bindir}/jimage jimage %{prefix}/bin/jimage \
+                        --slave %{_bindir}/hsdb hsdb %{prefix}/bin/hsdb \
                         --slave %{_bindir}/jinfo jinfo %{prefix}/bin/jinfo \
-                        --slave %{_bindir}/jlink jlink %{prefix}/bin/jlink \
                         --slave %{_bindir}/jmap jmap %{prefix}/bin/jmap \
-                        --slave %{_bindir}/jmod jmod %{prefix}/bin/jmod \
                         --slave %{_bindir}/jps jps %{prefix}/bin/jps \
-                        --slave %{_bindir}/jshell jshell %{prefix}/bin/jshell \
                         --slave %{_bindir}/jstack jstack %{prefix}/bin/jstack \
                         --slave %{_bindir}/jstat jstat %{prefix}/bin/jstat \
                         --slave %{_bindir}/jstatd jstatd %{prefix}/bin/jstatd \
@@ -205,4 +197,4 @@ fi
 
 %changelog
 * Fri Aug 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.302.0.0.8-1.adopt0
-- Eclipse Temurin 8.0.302+8 release.
+- Eclipse Temurin 8.0.302-b08 release.
