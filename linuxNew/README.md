@@ -50,7 +50,6 @@ which in turn has a dependency on the `package` task (this is how Gradle knows t
 
 ### Build a Debian specific package for a version
 
-
 ```shell
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
@@ -60,7 +59,6 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 Replace `<version>` with `8|11|16`
 Replace `<vendor>` with `temurin|dragonwell`
-
 
 ```shell
 export _JAVA_OPTIONS="-Xmx4g"
