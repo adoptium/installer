@@ -1,7 +1,7 @@
 Source: temurin-8-jdk
 Section: java
 Priority: optional
-Maintainer: Eclipse Adoptium Package Maintainers <packaging@adoptium.com>
+Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 Build-Depends: debhelper (>= 11), lsb-release
 
 Package: temurin-11-jdk

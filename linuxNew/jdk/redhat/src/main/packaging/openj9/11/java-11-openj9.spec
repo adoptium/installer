@@ -56,7 +56,7 @@ Group:       java
 License:     GPLv2 with exceptions
 Vendor:      Eclipse Adoptium
 URL:         https://projects.eclipse.org/projects/adoptium
-Packager:    Eclipse Adoptium Package Maintainers <packaging@adoptium.com>
+Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
@@ -232,5 +232,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Sun Jan 31 2021 Eclipse Adoptium Package Maintainers <packaging@adoptium.com> 11.0.10.0.0.9-1.adopt0
+* Sun Jan 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.10.0.0.9-1.adopt0
 - OpenJ9 11.0.10+9 release.

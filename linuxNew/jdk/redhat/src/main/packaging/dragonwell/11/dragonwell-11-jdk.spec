@@ -41,7 +41,7 @@ Group:       java
 License:     GPLv2 with exceptions
 Vendor:      Alibaba
 URL:         https://github.com/alibaba/dragonwell11/
-Packager:    Eclipse Adoptium Package Maintainers <packaging@adoptium.com>
+Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
@@ -205,5 +205,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Sun Mar 14 2021 Eclipse Adoptium Package Maintainers <packaging@adoptium.com> 11.0.10.5.0.0-1
+* Sun Mar 14 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.10.5.0.0-1
 - Alibaba Dragonwell 11.0.10.5 GA release.

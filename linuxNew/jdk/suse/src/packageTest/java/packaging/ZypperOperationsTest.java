@@ -62,7 +62,7 @@ class ZypperOperationsTest {
 				.contains("Name        : " + System.getenv("PACKAGE"))
 				.contains("Group       : java")
 				.contains("License     : GPLv2 with exceptions")
-				.contains("Packager    : Eclipse Adoptium Package Maintainers <packaging@adoptium.com>");
+				.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
 		}
 	}
 }
