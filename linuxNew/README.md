@@ -8,8 +8,6 @@ and then looping over configuration to create the various packages and sign them
 with the (Eclipse Foundation as a default) signing service.
 
 TODO You can then optionally upload those packages to a package repository of your choice. As a default
-the scripts upload to the Eclipse Foundation Nexus Package Repository as part of the Eclipse Adoptium
-CI/CD pipeline runs.
 
 ## Prerequisites
 
@@ -49,8 +47,6 @@ which in turn has a dependency on the `package` task (this is how Gradle knows t
 (A _Dockerfile_ is included in each subdirectory), mount some file locations (so you can get to the output) and then run packaging commands in that container.
 * **checkJdk&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
 _src/packageTest/java/packaging_ on them.
-
-### Build a Debian specific package for a version
 
 ```shell
 export _JAVA_OPTIONS="-Xmx4g"
@@ -92,17 +88,17 @@ Prerequisites: `rpm-build` and `rpmdevtools` packages are installed.
 Consider this RPM build where x86_64 is the build hosts' architecture.
 
 ```shell
-$ spec=$(pwd)/temurin-11-jdk.spec
-$ mkdir temurin_x86_64
-$ pushd temurin_x86_64
-$ spectool --gf ${spec}
-$ sha256sum -c *.sha256.txt
+spec=$(pwd)/temurin-11-jdk.spec
+mkdir temurin_x86_64
+pushd temurin_x86_64
+spectool --gf ${spec}
+sha256sum -c *.sha256.txt
 ```
 
 Create an SRPM:
 
 ```shell
-$ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
+rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
            --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
            --define "_rpmdir $(pwd)" --nodeps -bs ${spec}
 ```
@@ -110,7 +106,7 @@ $ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 Build the binary from the SRPM:
 
 ```shell
-$ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
+rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
            --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
            --define "_rpmdir $(pwd)" --rebuild *.src.rpm
 ```
@@ -120,18 +116,18 @@ $ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 In order to produce RPMs on an x86_64 build host for the s390x target architecture, consider this example.
 
 ```shell
-$ spec=$(pwd)/temurin-11-jdk.spec
-$ mkdir temurin_s390x
-$ pushd temurin_s390x
-$ spectool --define 'vers_arch s390x' \
+spec=$(pwd)/temurin-11-jdk.spec
+mkdir temurin_s390x
+pushd temurin_s390x
+spectool --define 'vers_arch s390x' \
            --gf ${spec}.spec
-$ sha256sum -c *.sha256.txt
+sha256sum -c *.sha256.txt
 ```
 
 Create an SRPM:
 
 ```shell
-$ rpmbuild --define 'vers_arch s390x' \
+rpmbuild --define 'vers_arch s390x' \
            --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
            --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
            --define "_rpmdir $(pwd)" --nodeps -bs ${spec}.spec
@@ -140,7 +136,7 @@ $ rpmbuild --define 'vers_arch s390x' \
 Build the binary from the SRPM:
 
 ```shell
-$ rpmbuild --define 'vers_arch s390x' \
+rpmbuild --define 'vers_arch s390x' \
            --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
            --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
            --define "_rpmdir $(pwd)" --target "s390x" --rebuild *.src.rpm
