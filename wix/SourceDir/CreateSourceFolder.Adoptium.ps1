@@ -5,7 +5,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $openjdk_filename_regex = "^OpenJDK(?<major>\d*)"
   $openjdk_found = $filename -match $openjdk_filename_regex
   if (!$openjdk_found) {
-    echo "filename : $filename doesn't match regex $openjdk_filename_regex"
+    Write-Output "filename : $filename doesn't match regex $openjdk_filename_regex"
     exit 2
   }
 
@@ -21,7 +21,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)"
   $jvm_found = $filename -match $jvm_regex
   if (!$jvm_found) {
-    echo "filename : $filename doesn't match regex $jvm_regex"
+    Write-Output "filename : $filename doesn't match regex $jvm_regex"
     exit 2
   }
   $jvm = $Matches.jvm
@@ -30,7 +30,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $platform_regex = "(?<platform>x86-32|x64|aarch64)"
   $platform_found = $filename -match $platform_regex
   if (!$platform_found) {
-    echo "filename : $filename doesn't match regex $platform_regex"
+    Write-Output "filename : $filename doesn't match regex $platform_regex"
     exit 2
   }
   $platform = $Matches.platform
@@ -45,22 +45,22 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   Expand-Archive -Force -Path $filename -DestinationPath $unzip_dest
 
   # do some cleanup in path
-  Get-ChildItem -Directory $unzip_dest | where {$_ -match ".*_.*"} | ForEach {
+  Get-ChildItem -Directory $unzip_dest | Where-Object {$_ -match ".*_.*"} | ForEach-Object {
     $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
-    #echo "SourcePath: " $SourcePath
-    #echo "fullname: "$_.FullName
-    #echo "Name: " $_.Name
+    #Write-Output "SourcePath: " $SourcePath
+    #Write-Output "fullname: "$_.FullName
+    #Write-Output "Name: " $_.Name
     if ( $_.Name -Match "(.*)_(.*)-jre$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1-jre'
     } elseif ( $_.Name -Match "(.*)_(.*)$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1'
     }
     
-    #echo "NewName: " $NewName
+    #Write-Output "NewName: " $NewName
     $Destination = Join-Path -Path $SourcePath -ChildPath $NewName
-    #echo "Destination: "$Destination
+    #Write-Output "Destination: "$Destination
     
-    echo Moving $_.FullName to $Destination
+    Write-Output Moving $_.FullName to $Destination
     if (Test-Path $Destination) { Remove-Item $Destination -Recurse; }
     Move-Item -Path $_.FullName -Destination $Destination -Force
     }

@@ -1,4 +1,4 @@
-# Linux Packages of Eclipse Adoptium 
+# Linux Packages of Eclipse Adoptium
 
 ## RPMs for Fedora/Red Hat
 
@@ -13,7 +13,7 @@ In this example, we are using the existing spec files for the Temurin 11 JDK to 
 SRPM into a binary RPM. It supports building it for the current target architecture or for a different one than the host
 system by specifying `vers_arch`.
 
-Prequisites: `rpm-build` and `rpmdevtools` packages are installed.
+Prerequisites: `rpm-build` and `rpmdevtools` packages are installed.
 
 #### Produce a Source/Binary RPM for x86_64
 
