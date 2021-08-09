@@ -1,14 +1,14 @@
-%global upstream_version 11.0.10+9
+%global upstream_version 11.0.12+7
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 11.0.10.0.1___9 11.0.10.0.0+9
-#  11.0.10.0.0___9 == 11.0.10.0.0+9
-%global spec_version 11.0.10.0.0.9
+#  $ rpmdev-vercmp 11.0.12.0.1___7 11.0.12.0.0+7
+#  11.0.12.0.0___7 == 11.0.12.0.0+7
+%global spec_version 11.0.12.0.0.7
 %global spec_release 1
-%global priority 1111
+%global priority 1081
 
-%global source_url_base https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjdk
@@ -191,5 +191,5 @@ fi
 %{prefix}
 
 %changelog
-* Sun Jan 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.10.0.0.9-1.adopt0
-- Eclipse Temurin 11.0.10+9 release.
+* Sun Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.12.0.0.7-1.adopt0
+- Eclipse Temurin 11.0.12+7 release.

@@ -50,10 +50,10 @@ Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
 Requires: dejavu-sans-fonts
-# TODO check if this brings in libatomic as epxected on Arm7 
-%ifarch %ix86
-Requires: libatomic1.(i?86)
-%endif
+# TODO Bring in libatomic as epxected on Arm7 
+#%ifarch %i#x86
+#Requires: libatomic1.(i?86)
+#%endif
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
 Requires: libXi%{?_isa}
