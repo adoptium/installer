@@ -1,12 +1,12 @@
 #!/usr/bin/make -f
 
 pkg_name = temurin-11-jdk
-priority = 1111
+priority = 1081
 jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jjs jlink jmap jmod jps jrunscript jshell jstack jstat jstatd keytool pack200 rmic rmid rmiregistry serialver unpack200 jexec jspawnhelper
-amd64_tarball_url = https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jdk_x64_linux_hotspot_11.0.10_9.tar.gz
-amd64_checksum = ae78aa45f84642545c01e8ef786dfd700d2226f8b12881c844d6a1f71789cb99
-arm64_tarball_url = https://github.com/AdoptOpenJDK/openjdk11-binaries/releases/download/jdk-11.0.10%2B9/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.10_9.tar.gz
-arm64_checksum = 420c5d1e5dc66b2ed7dedd30a7bdf94bfaed10d5e1b07dc579722bf60a8114a9
+amd64_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.12_7.tar.gz
+amd64_checksum = 105bdc12fcd54c551e8e8ac96bc82412467244c32063689c41cee29ceb7452a2
+arm64_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.12%2B7/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.12_7.tar.gz
+arm64_checksum = 9000b68e04b949b2412472153d01c04f4df44e44c62378d2a2f802d6c9ca3442
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm

@@ -3,10 +3,10 @@
 pkg_name = temurin-16-jdk
 priority = 1161
 jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd keytool rmid rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://github.com/AdoptOpenJDK/openjdk16-binaries/releases/download/jdk16-2021-01-28-06-06/OpenJDK16-jdk_x64_linux_hotspot_2021-01-28-06-06.tar.gz
-amd64_checksum = 058e5f48321f58895b1cc5c70bc0e929ce51f6d6609f01d7c4e755dc9f9656b3
-arm64_tarball_url = https://github.com/AdoptOpenJDK/openjdk16-binaries/releases/download/jdk16-2021-01-28-06-06/OpenJDK16-jdk_aarch64_linux_hotspot_2021-01-28-06-06.tar.gz
-arm64_checksum = 9dac272d16918e2d9f58cf9762c6eee61f31f17608aab9df781e9bb3b2c85c56
+amd64_tarball_url = https://github.com/adoptium/temurin16-binaries/releases/download/jdk-16.0.2%2B7/OpenJDK16-jdk_x64_linux_hotspot_16.0.2_7.tar.gz
+amd64_checksum = 323d6d7474a359a28eff7ddd0df8e65bd61554a8ed12ef42fd9365349e573c2c
+arm64_tarball_url = https://github.com/adoptium/temurin16-binaries/releases/download/jdk-16.0.2%2B7/OpenJDK16-jdk_aarch64_linux_hotspot_16.0.2_7.tar.gz
+arm64_checksum = cb77d9d126f97898dfdc8b5fb694d1e0e5d93d13a0a6cb2aeda76f8635384340
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm

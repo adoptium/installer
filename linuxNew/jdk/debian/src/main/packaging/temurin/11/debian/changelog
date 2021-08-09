@@ -1,5 +1,5 @@
-temurin-11-jdk (11.0.10.0.0+9-0~adopt0) UNRELEASED; urgency=medium
+temurin-11-jdk (11.0.12.0.0+7-0~adopt0) UNRELEASED; urgency=medium
 
-  * Eclipse Temurin 11.0.10.0.0+9-0~adopt0 release.
+  * Eclipse Temurin 11.0.12.0.0+7-0~adopt0 release.
 
- -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Fri, 22 Jan 2021 14:32:55 +0000
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Fri, 13 Aug 2021 14:32:55 +0000
