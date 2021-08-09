@@ -6,7 +6,7 @@
 #  11.0.12.0.0___7 == 11.0.12.0.0+7
 %global spec_version 11.0.12.0.0.7
 %global spec_release 1
-%global priority 1111
+%global priority 1081
 
 %global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
