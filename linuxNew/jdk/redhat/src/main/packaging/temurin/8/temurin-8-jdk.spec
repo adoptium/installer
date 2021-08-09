@@ -6,7 +6,7 @@
 #  8.0.302.0.0___8 == 8.0.302.0.0+8
 %global spec_version 8.0.302.0.0.8
 %global spec_release 1
-%global priority 1111
+%global priority 1081
 
 %global source_url_base https://github.com/adoptium/temurin8-binaries/releases/download
 %global upstream_version_no_dash %(echo %{upstream_version} | sed 's/-//g')
@@ -50,6 +50,10 @@ Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
 Requires: dejavu-sans-fonts
+# TODO check if this brings in libatomic as epxected on Arm7 
+%ifarch %ix86
+Requires: libatomic1.(i?86)
+%endif
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
 Requires: libXi%{?_isa}
@@ -76,8 +80,8 @@ Provides: jre-8
 Provides: jre-8-%{java_provides}
 Provides: jre-%{java_provides}
 
-Source0: %{source_url_base}/jdk-%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
+Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
@@ -98,7 +102,7 @@ pushd "%{_sourcedir}"
 sha256sum -c "%SOURCE1"
 popd
 
-%setup -n jdk-%{upstream_version}
+%setup -n jdk%{upstream_version}
 
 %build
 # noop
@@ -112,9 +116,9 @@ tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{SOURCE0}
 rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
 
 # Use cacerts included in OS
-rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
-pushd "%{buildroot}%{prefix}/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
+rm -f "%{buildroot}%{prefix}/jre/lib/security/cacerts"
+pushd "%{buildroot}%{prefix}/jre/lib/security"
+ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/jre/lib/security/cacerts"
 popd
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
