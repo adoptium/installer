@@ -10,7 +10,6 @@ Depends: adoptium-ca-certificates,
          fonts-dejavu,
          java-common,
          libasound2,
-         libatomic1 [armhf]
          libc6,
          libx11-6,        
          libfontconfig1,
