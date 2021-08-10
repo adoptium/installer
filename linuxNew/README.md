@@ -1,6 +1,6 @@
 # Linux Packages of Eclipse Adoptium
 
-We package for Debian, Red Hat, Suse (e.g. Yum and RPM based) Linux distributions.
+We package for Debian, Red Hat, SUSE (e.g. DEB and RPM based) Linux distributions.
 
 The current implementation to build the packages involves using Gradle to call a small Java program.
 That Java program spinning up a Docker container, installing the base O/S and its packaging tools,
@@ -16,7 +16,7 @@ To run this locally
 
 * You will need to have Docker installed and running.
 * You will need to have Java 8+ installed.
-* You will need to have a minimum of 16GB of RAM on your system.
+* You will need to have a minimum of 8GB of RAM on your system (the build required 4GB).
 
 ## Building the Packages
 
@@ -26,7 +26,7 @@ You'll want to make sure you've set the exact versions of the binaries you want 
 
 * **Debian Based** - _jdk\debian\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;platform&gt;\\rules_ files.
 * **Red Hat Based** - _jdk\redhat\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;vendor&gt;-&lt;version&gt;-jdk.spec_ files.
-* **Suse Based** - _jdk\suse\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;vendor&gt;-&lt;version&gt;-jdk.spec_ files.
+* **SUSE Based** - _jdk\suse\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;vendor&gt;-&lt;version&gt;-jdk.spec_ files.
 
 In all of the examples below you'll need to replace the following variables:
 
@@ -65,7 +65,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
-### Build a Suse specific package for a version
+### Build a SUSE specific package for a version
 
 Replace `<version>` with `8|11|16`
 
