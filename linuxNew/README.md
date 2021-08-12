@@ -4,9 +4,10 @@ We package for Debian, Red Hat, SUSE (e.g. DEB and RPM based) Linux distribution
 
 The current implementation to build the packages involves using Gradle to call a small Java program.
 That Java program spinning up a Docker container, installing the base O/S and its packaging tools,
-and then looping over configuration to create the various packages and sign them as appropriate.
+and then looping over configuration to create the various packages and sign them as appropriate
+with the (Eclipse Foundation as a default) signing service.
 
-TODO You can then optionally upload those packages to a package repository of your choice.  As a default
+TODO You can then optionally upload those packages to a package repository of your choice. As a default
 the scripts upload to the Eclipse Foundation Nexus Package Repository as part of the Eclipse Adoptium
 CI/CD pipeline runs.
 
@@ -20,7 +21,7 @@ To run this locally
 
 ## Building the Packages
 
-Builds take at least ~15 minutes to complete on a modern machine.  Please ensure that you have Docker installed and running.
+Builds take at least ~5-15 minutes to complete on a modern machine.  Please ensure that you have Docker installed and running.
 
 You'll want to make sure you've set the exact versions of the binaries you want package in the:
 
@@ -46,7 +47,8 @@ The scripts roughly work as follows:
 which in turn has a dependency on the `package` task (this is how Gradle knows to trigger each of those in turn).
 * **packageJdk&lt;platform&gt; Tasks** - These tasks are responsible for building the various packages for the given platform.  They fire up the Docker container
 (A _Dockerfile_ is included in each subdirectory), mount some file locations (so you can get to the output) and then run packaging commands in that container.
-* **TODO** - More details about how it works.
+* **checkJdk&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
+_src/packageTest/java/packaging_ on them.
 
 ### Build a Debian specific package for a version
 
