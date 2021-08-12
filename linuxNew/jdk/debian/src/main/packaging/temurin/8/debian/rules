@@ -57,7 +57,8 @@ override_dh_auto_install:
 	# Add jinfo file (alternatives support).
 	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
 
-	# Strip bundled Freetype and use OS package instead.
+	# Strip bundled Freetype and use OS package instead. Not strictly required for
+	# current releases: https://github.com/adoptium/temurin-build/pull/2226
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
 
 	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
