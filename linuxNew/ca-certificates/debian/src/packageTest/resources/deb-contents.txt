@@ -1,0 +1,15 @@
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/ca-certificates/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/ca-certificates/update.d/
+-rwxr-xr-x root/root       795 2020-07-29 13:35 ./etc/ca-certificates/update.d/adoptium-cacerts
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/default/
+-rw-r--r-- root/root       180 2020-07-29 13:35 ./etc/default/adoptium-ca-certificates
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/ssl/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/ssl/certs/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./etc/ssl/certs/adoptium/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./usr/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./usr/share/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./usr/share/doc/
+drwxr-xr-x root/root         0 2020-07-29 13:35 ./usr/share/doc/adoptium-ca-certificates/
+-rw-r--r-- root/root       169 2020-07-29 13:35 ./usr/share/doc/adoptium-ca-certificates/changelog.Debian.gz

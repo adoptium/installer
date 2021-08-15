@@ -1,6 +1,11 @@
 x64
 ===
 
+Job adoptium-ca-certificates/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean :ca-certificates:package --parallel
+
 Job Temurin JDK 11/Debian:
 
 export _JAVA_OPTIONS="-Xmx4g"
