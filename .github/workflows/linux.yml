@@ -12,6 +12,8 @@ jobs:
   check-ca-certificates:
     name: "Check ca-certificates"
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./linuxNew
 
     steps:
       - name: Checkout
@@ -31,6 +33,8 @@ jobs:
   check-jdk-packages:
     name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }}"
     runs-on: ubuntu-latest
+    env:
+      working-directory: ./linuxNew
     strategy:
       fail-fast: false
       matrix:
