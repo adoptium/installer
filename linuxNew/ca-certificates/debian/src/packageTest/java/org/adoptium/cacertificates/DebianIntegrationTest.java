@@ -39,7 +39,7 @@ class DebianIntegrationTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -63,8 +63,7 @@ class DebianIntegrationTest {
 			assertThat(result.getStdout())
 				.containsIgnoringCase("Keystore type: jks")
 				.containsIgnoringCase("Keystore provider: SUN")
-				.contains("swisssigngoldca-g2")
-				.contains("staatdernederlandenrootca-g3");
+				.contains("swisssigngoldca-g2");
 		}
 	}
 
@@ -75,7 +74,7 @@ class DebianIntegrationTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -98,8 +97,7 @@ class DebianIntegrationTest {
 			assertThat(result.getStdout())
 				.containsIgnoringCase("Keystore type: jks")
 				.containsIgnoringCase("Keystore provider: SUN")
-				.contains("swisssigngoldca-g2")
-				.contains("staatdernederlandenrootca-g3");
+				.contains("swisssigngoldca-g2");
 
 			result = runShell(container, "update-ca-certificates");
 			assertThat(result.getExitCode()).isEqualTo(0);
@@ -111,8 +109,7 @@ class DebianIntegrationTest {
 			assertThat(result.getStdout())
 				.containsIgnoringCase("Keystore type: jks")
 				.containsIgnoringCase("Keystore provider: SUN")
-				.contains("swisssigngoldca-g2")
-				.contains("staatdernederlandenrootca-g3");
+				.contains("swisssigngoldca-g2");
 		}
 	}
 
@@ -123,7 +120,7 @@ class DebianIntegrationTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -160,7 +157,7 @@ class DebianIntegrationTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -200,7 +197,7 @@ class DebianIntegrationTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();

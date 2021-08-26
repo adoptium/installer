@@ -43,7 +43,7 @@ class ZypperOperationsTest {
 
 		File containerRpm = new File("", hostRpm.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostRpm), containerRpm.toString())
 				.start();

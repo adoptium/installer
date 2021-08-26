@@ -40,7 +40,7 @@ class AptOperationsTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -75,16 +75,20 @@ class AptOperationsTest {
 		File containerDeb = new File("", hostDeb.toFile().getName());
 		String packageContents = IOUtil.resourceAsString("/deb-contents.txt");
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
 
 			Container.ExecResult result;
 
-			result = runShell(container, "dpkg --contents " + containerDeb);
+			// Remove the size and date_time columns from the comparison
+			result = runShell(container, "dpkg --contents " + containerDeb + " | awk '{$3=$4=$5=\"\"; print $0}'");
 			assertThat(result.getExitCode()).isEqualTo(0);
-			assertThat(result.getStdout().replaceAll("\n\n", "\n")).isEqualTo(packageContents);
+
+			String dpkgContents = result.getStdout();
+			dpkgContents = dpkgContents.replaceAll("(\\r|\\n|\\r\\n|\\n\\n)+", "\n");
+			assertThat(dpkgContents).isEqualTo(packageContents);
 		}
 	}
 
@@ -95,7 +99,7 @@ class AptOperationsTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -152,7 +156,7 @@ class AptOperationsTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();
@@ -197,7 +201,7 @@ class AptOperationsTest {
 		assertThat(hostDeb).exists();
 		File containerDeb = new File("", hostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.start();

@@ -47,7 +47,7 @@ class AptOperationsTest {
 		File containerDeb = new File("", hostDeb.toFile().getName());
 		File certificatesDeb = new File("", certificatesHostDeb.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
 				.withCopyFileToContainer(MountableFile.forHostPath(certificatesHostDeb), certificatesDeb.toString())
