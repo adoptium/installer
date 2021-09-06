@@ -1,4 +1,4 @@
-Set-PSDebug -Trace 1
+# Set-PSDebug -Trace 1
 Write-Output "Executing CreateSourceFolder.AdoptOpenJDK"
 
 Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
@@ -47,23 +47,34 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
 
   # extract now
   $unzip_dest = ".\$major\$jvm\$platform"
+  Write-Output "Extracting $filename to $unzip_dest"
   Expand-Archive -Force -Path $filename -DestinationPath $unzip_dest
 
   # do some cleanup in path
+  Write-Output "Cleaning up $unzip_dest"
+
+  Get-ChildItem -Directory $unzip_dest | ForEach-Object {
+    $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
+    Write-Output "SourcePath: " $SourcePath
+    Write-Output "fullname: "$_.FullName
+    Write-Output "Name: " $_.Name
+  }
+
   Get-ChildItem -Directory $unzip_dest | Where-Object {$_ -match ".*_.*"} | ForEach-Object {
     $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
-    #echo "SourcePath: " $SourcePath
-    #echo "fullname: "$_.FullName
-    #echo "Name: " $_.Name
+    Write-Output "SourcePath: " $SourcePath
+    Write-Output "fullname: "$_.FullName
+    Write-Output "Name: " $_.Name
+
     if ( $_.Name -Match "(.*)_(.*)-jre$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1-jre'
     } elseif ( $_.Name -Match "(.*)_(.*)$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1'
     }
     
-    #echo "NewName: " $NewName
+    Write-Output "NewName: " $NewName
     $Destination = Join-Path -Path $SourcePath -ChildPath $NewName
-    #echo "Destination: "$Destination
+    Write-Output "Destination: "$Destination
     
     Write-Output Moving $_.FullName to $Destination
     if (Test-Path $Destination) { Remove-Item $Destination -Recurse; }
