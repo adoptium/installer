@@ -41,7 +41,7 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: /usr/lib/jvm/%{name}
+Prefix: %{_libdir}/jvm/%{name}
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -49,21 +49,21 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
+Requires: dejavu-fonts
 # TODO Bring in libatomic as epxected on Arm7 
 #%ifarch %i#x86
 #Requires: libatomic1.(i?86)
 #%endif
-Requires: libX11%{?_isa}
-Requires: libXext%{?_isa}
-Requires: libXi%{?_isa}
-Requires: libXrender%{?_isa}
-Requires: libXtst%{?_isa}
-Requires: alsa-lib%{?_isa}
+Requires: libX11-6%{?_isa}
+Requires: libXext6%{?_isa}
+Requires: libXi6%{?_isa}
+Requires: libXrender1%{?_isa}
+Requires: libXtst6%{?_isa}
+Requires: libasound2%{?_isa}
 Requires: glibc%{?_isa}
-Requires: zlib%{?_isa}
+Requires: libz1%{?_isa}
 Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
+Requires: libfreetype6%{?_isa}
 
 Provides: java
 Provides: java-8
@@ -112,14 +112,8 @@ rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/jre/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/jre/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/jre/lib/security/cacerts"
+ln -s /var/lib/ca-certificates/java-cacerts "%{buildroot}%{prefix}/jre/lib/security/cacerts"
 popd
-
-# Ensure systemd-tmpfiles-clean does not remove pid files
-# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
-%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
-echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
-echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 
 %pretrans
 # noop
@@ -224,8 +218,7 @@ fi
 %files
 %defattr(-,root,root)
 %{prefix}
-/usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Fri Aug 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.302.0.0.8-1.adopt0
+* Tue Aug 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.302.0.0.8-1.adopt0
 - Eclipse Temurin 8.0.302-b08 release.

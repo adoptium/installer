@@ -51,6 +51,10 @@ Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
 Requires: dejavu-fonts
+# TODO Bring in libatomic as epxected on Arm7 
+#%ifarch %i#x86
+#Requires: libatomic1.(i?86)
+#%endif
 Requires: libX11-6%{?_isa}
 Requires: libXext6%{?_isa}
 Requires: libXi6%{?_isa}

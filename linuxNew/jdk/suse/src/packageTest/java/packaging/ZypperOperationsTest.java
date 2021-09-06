@@ -53,6 +53,7 @@ class ZypperOperationsTest {
 			result = runShell(container, "zypper update -y");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
+			// 4 - ZYPPER_EXIT_ERR_ZYPP - A problem is reported by ZYPP library.
 			result = runShell(container, "zypper install -y --allow-unsigned-rpm " + containerRpm);
 			assertThat(result.getExitCode()).isEqualTo(0);
 
