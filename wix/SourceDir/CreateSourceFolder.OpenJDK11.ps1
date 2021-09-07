@@ -20,21 +20,17 @@ ForEach ($url in $urls) {
   
   Get-ChildItem -Directory ".\$jdk_version\$package_type\$platform" | Where-Object {$_ -match ".*_.*"} | ForEach-Object {
     $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
-    #echo "SourcePath: " $SourcePath
-    #echo "fullname: "$_.FullName
-    #echo "Name: " $_.Name
+
     if ( $_.Name -Match "(.*)_(.*)-jre$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1-jre'
     } elseif ( $_.Name -Match "(.*)_(.*)$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1'
     }
     
-    #echo "NewName: " $NewName
     $Destination = Join-Path -Path $SourcePath -ChildPath $NewName
-    #echo "Destination: "$Destination
     
     Write-Object Moving $_.FullName to $Destination
     if (Test-Path $Destination) { Remove-Item $Destination -Recurse; }
     Move-Item -Path $_.FullName -Destination $Destination -Force
-    }
+  }
 }
