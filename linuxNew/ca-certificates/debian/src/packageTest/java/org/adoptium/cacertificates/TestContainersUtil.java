@@ -28,7 +28,7 @@ public final class TestContainersUtil {
 		// no instances
 	}
 
-	public static Container.ExecResult runCmd(Container container, String... command) {
+	public static Container.ExecResult runCmd(Container<?> container, String... command) {
 		try {
 			Container.ExecResult result = container.execInContainer(command);
 			System.out.print(result.getStdout());
@@ -39,7 +39,7 @@ public final class TestContainersUtil {
 		}
 	}
 
-	public static Container.ExecResult runShell(Container container, String command) {
+	public static Container.ExecResult runShell(Container<?> container, String command) {
 		String[] shellCmd = new String[]{"/bin/bash", "-c", command};
 		try {
 			Container.ExecResult result = container.execInContainer(shellCmd);

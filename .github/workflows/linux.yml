@@ -12,6 +12,9 @@ jobs:
   check-ca-certificates:
     name: "Check ca-certificates"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./linuxNew
 
     steps:
       - name: Checkout
@@ -31,15 +34,18 @@ jobs:
   check-jdk-packages:
     name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }}"
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./linuxNew
     strategy:
       fail-fast: false
       matrix:
         # No Docker on macOS
         # https://github.community/t/is-it-possible-to-install-and-configure-docker-on-macos-runner/16981/8
         product: [
-          { name: dragonwell, version: 11 },
+          { name: temurin, version: 8 },
           { name: temurin, version: 11 },
-          { name: temurin, version: 16 },
+          { name: temurin, version: 16 }
         ]
 
     steps:

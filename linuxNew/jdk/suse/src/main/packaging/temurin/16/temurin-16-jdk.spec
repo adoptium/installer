@@ -1,14 +1,14 @@
-%global upstream_version 11.0.12+7
+%global upstream_version 16.0.2+7
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 11.0.12.0.1___7 11.0.12.0.0+7
-#  11.0.12.0.0___7 == 11.0.12.0.0+7
-%global spec_version 11.0.12.0.0.7
+#  $ rpmdev-vercmp 16.0.2.0.1___7 16.0.2.0.0+7
+#  16.0.2.0.0___7 == 16.0.2.0.0+7
+%global spec_version 16.0.2.0.0.7
 %global spec_release 1
-%global priority 1111
+%global priority 1161
 
-%global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin16-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjdk
@@ -30,10 +30,10 @@
 %endif
 %endif
 
-Name:        temurin-11-jdk
+Name:        temurin-16-jdk
 Version:     %{spec_version}
 Release:     %{spec_release}
-Summary:     Eclipse Temurin 11 JDK
+Summary:     Eclipse Temurin 16 JDK
 
 Group:       java
 License:     GPLv2 with exceptions
@@ -67,22 +67,22 @@ Requires: fontconfig%{?_isa}
 Requires: libfreetype6%{?_isa}
 
 Provides: java
-Provides: java-11
-Provides: java-11-devel
-Provides: java-11-%{java_provides}
-Provides: java-11-%{java_provides}-devel
+Provides: java-16
+Provides: java-16-devel
+Provides: java-16-%{java_provides}
+Provides: java-16-%{java_provides}-devel
 Provides: java-devel
 Provides: java-%{java_provides}
 Provides: java-%{java_provides}-devel
-Provides: java-sdk-11
-Provides: java-sdk-11-%{java_provides}
+Provides: java-sdk-16
+Provides: java-sdk-16-%{java_provides}
 Provides: jre
-Provides: jre-11
-Provides: jre-11-%{java_provides}
+Provides: jre-16
+Provides: jre-16-%{java_provides}
 Provides: jre-%{java_provides}
 
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK16U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK16U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
@@ -195,5 +195,5 @@ fi
 %{prefix}
 
 %changelog
-* Sun Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.12.0.0.7-1.adopt0
-- Eclipse Temurin 11.0.12+7 release.
+* Sun Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 16.0.2.0.0.7-1.adopt0
+- Eclipse Temurin 16.0.2+7 release.

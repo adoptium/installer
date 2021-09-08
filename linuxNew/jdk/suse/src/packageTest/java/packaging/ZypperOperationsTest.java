@@ -43,7 +43,7 @@ class ZypperOperationsTest {
 
 		File containerRpm = new File("", hostRpm.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostRpm), containerRpm.toString())
 				.start();
@@ -53,6 +53,7 @@ class ZypperOperationsTest {
 			result = runShell(container, "zypper update -y");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
+			// 4 - ZYPPER_EXIT_ERR_ZYPP - A problem is reported by ZYPP library.
 			result = runShell(container, "zypper install -y --allow-unsigned-rpm " + containerRpm);
 			assertThat(result.getExitCode()).isEqualTo(0);
 
@@ -62,7 +63,7 @@ class ZypperOperationsTest {
 				.contains("Name        : " + System.getenv("PACKAGE"))
 				.contains("Group       : java")
 				.contains("License     : GPLv2 with exceptions")
-				.contains("Packager    : Eclipse Adoptium Package Maintainers <packaging@adoptium.com>");
+				.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
 		}
 	}
 }

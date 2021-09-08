@@ -1,12 +1,13 @@
 #!/usr/bin/make -f
 
-pkg_name = temurin-16-jdk
-priority = 1161
-jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd keytool rmid rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://github.com/adoptium/temurin16-binaries/releases/download/jdk-16.0.2%2B7/OpenJDK16U-jdk_x64_linux_hotspot_16.0.2_7.tar.gz
-amd64_checksum = 323d6d7474a359a28eff7ddd0df8e65bd61554a8ed12ef42fd9365349e573c2c
-arm64_tarball_url = https://github.com/adoptium/temurin16-binaries/releases/download/jdk-16.0.2%2B7/OpenJDK16u-jdk_aarch64_linux_hotspot_16.0.2_7.tar.gz
-arm64_checksum = cb77d9d126f97898dfdc8b5fb694d1e0e5d93d13a0a6cb2aeda76f8635384340
+pkg_name = temurin-8-jdk
+priority = 1081
+# The list below must be kept in sync with the jinfo.in file 
+jvm_tools = appletviewer clhsdb extcheck hsdb idlj jar jarsigner java javac javadoc javah javap jcmd jconsole jdb jdeps jfr jhat jinfo jjs jmap jps jrunscript jsadebugd jstack jstat jstatd keytool native2ascii orbd pack200 policytool rmic rmid rmiregistry schemagen serialver servertool tnameserv unpack200 wsgen wsimport xjc jexec
+amd64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u302b08.tar.gz
+amd64_checksum = cc13f274becf9dd5517b6be583632819dfd4dd81e524b5c1b4f406bdaf0e063a
+#arm64_tarball_url = https://github.com/Adoptium/temurin8-binaries/releases/download/jdk8u302-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u302b08.tar.gz
+#arm64_checksum = 
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
@@ -56,12 +57,13 @@ override_dh_auto_install:
 	# Add jinfo file (alternatives support).
 	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
 
-	# Strip bundled Freetype and use OS package instead.
+	# Strip bundled Freetype and use OS package instead. Not strictly required for
+	# current releases: https://github.com/adoptium/temurin-build/pull/2226
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
 
 	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
-	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
-	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/jre/lib/security/cacerts"
+	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/jre/lib/security/cacerts"
 
 	# Ensure src.zip is present in the root folder of the JDK.
 	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \

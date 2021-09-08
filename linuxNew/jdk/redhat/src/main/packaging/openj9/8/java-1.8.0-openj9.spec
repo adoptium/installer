@@ -53,9 +53,9 @@ Summary:     OpenJ9 8 JDK
 
 Group:       java
 License:     GPLv2 with exceptions
-Vendor:      Eclipse Adoptium
+Vendor:      Eclipse Foundation
 URL:         https://projects.eclipse.org/projects/adoptium
-Packager:    Eclipse Adoptium Package Maintainers <packaging@adoptium.com>
+Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
@@ -218,5 +218,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Thu Apr 08 2021 Eclipse Adoptium Package Maintainers <packaging@adoptium.com> 1.8.0.282.08-1
+* Thu Apr 08 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 1.8.0.282.08-1
 - OpenJ9 8u282-b08 release.

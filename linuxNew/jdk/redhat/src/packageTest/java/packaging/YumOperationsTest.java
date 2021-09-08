@@ -43,7 +43,7 @@ class YumOperationsTest {
 
 		File containerRpm = new File("", hostRpm.toFile().getName());
 
-		try (GenericContainer container = new GenericContainer(String.format("%s:%s", distribution, codename))) {
+		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostRpm), containerRpm.toString())
 				.start();
@@ -63,7 +63,7 @@ class YumOperationsTest {
 				.contains("Group       : java")
 				.contains("License     : GPLv2 with exceptions")
 				.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
-				.contains("Packager    : Eclipse Adoptium Package Maintainers <packaging@adoptium.com>");
+				.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
 		}
 	}
 }
