@@ -4,10 +4,11 @@ We package for Debian, Red Hat, SUSE (e.g. DEB and RPM based) Linux distribution
 
 The current implementation to build the packages involves using Gradle to call a small Java program.
 That Java program spinning up a Docker container, installing the base O/S and its packaging tools,
-and then looping over configuration to create the various packages and sign them as appropriate
+and then looping over configuration to create the various packages and signing them as appropriate
 with the (Eclipse Foundation as a default) signing service.
 
-TODO You can then optionally upload those packages to a package repository of your choice. As a default
+TODO You can then optionally upload those packages to a package repository of your choice.
+TODO List the default location that Adoptium is using.
 
 ## Prerequisites
 
