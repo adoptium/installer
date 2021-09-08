@@ -3,7 +3,7 @@
 We package for Debian, Red Hat, SUSE (e.g. DEB and RPM based) Linux distributions.
 
 The current implementation to build the packages involves using Gradle to call a small Java program.
-That Java program spinning up a Docker container, installing the base O/S and its packaging tools,
+That Java program spins up a Docker container, installing the base O/S and its packaging tools,
 and then looping over configuration to create the various packages and signing them as appropriate
 with the (Eclipse Foundation as a default) signing service.
 
