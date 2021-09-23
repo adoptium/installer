@@ -30,7 +30,7 @@ You'll want to make sure you've set the exact versions of the binaries you want 
 
 In all of the examples below you'll need to replace the following variables:
 
-* Replace `<version>` with `8|11|16`
+* Replace `<version>` with `8|11|16|17`
 * Replace `<vendor>` with `temurin|dragonwell`
 
 ### Build all packages for a version
@@ -56,7 +56,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a Red Hat specific package for a version
 
-Replace `<version>` with `8|11|16`
+Replace `<version>` with `8|11|16|17`
 Replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
@@ -66,7 +66,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a SUSE specific package for a version
 
-Replace `<version>` with `8|11|16`
+Replace `<version>` with `8|11|16|17`
 
 ```shell
 export _JAVA_OPTIONS="-Xmx4g"

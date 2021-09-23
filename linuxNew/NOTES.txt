@@ -51,6 +51,21 @@ Job Temurin JDK 16/SUSE:
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
 
+Job Temurin JDK 17/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
 aarch64
 =======
 
@@ -116,6 +131,27 @@ export _JAVA_OPTIONS="-Xmx4g"
 export TESTCONTAINERS_RYUK_DISABLED=true
 export TESTCONTAINERS_CHECKS_DISABLE=true
 ./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 17/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
 
 Notes:
 
