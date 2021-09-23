@@ -45,7 +45,8 @@ jobs:
         product: [
           { name: temurin, version: 8 },
           { name: temurin, version: 11 },
-          { name: temurin, version: 16 }
+          { name: temurin, version: 16 },
+          { name: temurin, version: 17 }
         ]
 
     steps:
