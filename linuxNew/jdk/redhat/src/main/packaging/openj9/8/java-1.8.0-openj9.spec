@@ -53,7 +53,7 @@ Summary:     OpenJ9 8 JDK
 
 Group:       java
 License:     GPLv2 with exceptions
-Vendor:      Eclipse Foundation
+Vendor:      Eclipse Adoptium
 URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
