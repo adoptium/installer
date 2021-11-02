@@ -62,15 +62,25 @@ do tar -xf "$f";
       ;;
   esac
 
+  # Detect architecture
+  case $f in
+    *x64*)
+      ARCHITECTURE="x86_64"
+      ;;
+    *aarch64*)
+      ARCHITECTURE="arm64"
+      ;;
+  esac
+
   directory=$(ls -d jdk*)
   file=${f%%.tar.gz*}
 
   if [ -z "$SIGN_CMD" ]; then
-    echo running "./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
-    ./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
+    echo running "./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}"
+    ./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}
   else
-    echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}"
-    ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --type ${TYPE}
+    echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}"
+    ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}
   fi
 
   rm -rf ${directory}

@@ -7,7 +7,7 @@ on:
       - .github/workflows/wix.yml
       - wix/**
 jobs:
-  pkgbuild:
+  wix:
     strategy:
       matrix:
         jdk: [8, 11]

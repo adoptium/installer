@@ -34,6 +34,7 @@ while test $# -gt 0; do
       echo "-i, --input_directory    path to extracted jdk>"
       echo "-o, --output_directory   name of the pkg file>"
       echo "--jvm                    hotspot or openj9"
+      echo "--architecture           x86_64 or arm64"
       echo "--type                   jdk or jre"
       echo "--vendor                 adoptium, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
@@ -65,6 +66,11 @@ while test $# -gt 0; do
     --jvm)
       shift
       JVM=$1
+      shift
+      ;;
+    --architecture)
+      shift
+      ARCHITECTURE="$1"
       shift
       ;;
     --type)
@@ -150,6 +156,7 @@ cat OpenJDKPKG.pkgproj.template  \
   | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
   | sed -E "s~\\{directory\\}~$DIRECTORY~g" \
   | sed -E "s~\\{logo\\}~$LOGO~g" \
+  | sed -E "s~\\{arch\\}~$ARCHITECTURE~g" \
   | sed -E "s~\\{full-version\\}~$FULL_VERSION~g" \
   >OpenJDKPKG.pkgproj ; \
 
