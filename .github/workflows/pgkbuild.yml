@@ -7,6 +7,9 @@ on:
       - pkgbuild/**
 jobs:
   pkgbuild:
+    strategy:
+      matrix:
+        architecture: [x64, aarch64]
     name: pkgbuild
     runs-on: macos-latest
     steps:
@@ -16,21 +19,36 @@ jobs:
     - name: Install dependencies
       run: brew install --cask packages
 
-    - name: Setup environment variables
+    - name: Setup environment variables x64
       uses: allenevans/set-env@v2.0.0
       with:
         MAJOR_VERSION: 8
-        FULL_VERSION: 1.8.0_265
-        TAG: jdk8u265-b01
-        SUB_TAG: 8u265b01
+        FULL_VERSION: 1.8.0_302
+        TAG: jdk8u302-b08
+        SUB_TAG: 8u302b08
         JVM: hotspot
+      if: ${{ matrix.architecture == 'x64' }}
+
+    - name: Setup environment variables aarch64
+      uses: allenevans/set-env@v2.0.0
+      with:
+        MAJOR_VERSION: 17
+        FULL_VERSION: 17.0.1_12
+        TAG: jdk-17.0.1+12
+        SUB_TAG: 17.0.1_12
+        JVM: hotspot
+      if: ${{ matrix.architecture == 'aarch64' }}
 
     - name: Download prebuilt binaries
       run: |
         mkdir -p workspace/target/
         cd workspace/target/
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_${{ matrix.architecture }}_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+
+    - name: Download prebuilt binaries
+      run: |
+        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_${{ matrix.architecture }}_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+      if: ${{ matrix.architecture == 'x64' }}
 
     - name: Create Package
       run: |
@@ -39,5 +57,5 @@ jobs:
         
     - uses: actions/upload-artifact@v2
       with:
-        name: macOS
+        name: macOS_${{ matrix.architecture }}
         path: workspace/target/*.pkg
