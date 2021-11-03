@@ -51,7 +51,7 @@ def buildAndTest() {
             break;
     }
     for (os in ["Debian", "RedHat", "Suse"]) {
-        sh("./gradlew clean packageJdk${os} checkJdk${os} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
+        sh("./gradlew packageJdk${os} checkJdk${os} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
     }
 }
 
