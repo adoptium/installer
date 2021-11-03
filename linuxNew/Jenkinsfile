@@ -26,7 +26,7 @@ pipeline {
     }
     post {
         always {
-            archiveArtifacts artifacts: '*/*/build/ospackage/*,*/*/build/reports/**'
+            archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
         }
     }
 }
@@ -38,11 +38,7 @@ def setup() {
         env.TESTCONTAINERS_CHECKS_DISABLE=true
     }
     env._JAVA_OPTIONS="-Xmx4g"
-    checkout scm: [$class: 'GitSCM',
-            branches: [[name: "linux"]],
-            extensions: [[$class: 'CleanBeforeCheckout']],
-            userRemoteConfigs: [[url: "https://github.com/sophia-guo/installer"]]
-    ]
+    checkout scm
 }
 
 def buildAndTest() {
