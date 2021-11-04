@@ -16,15 +16,20 @@ pipeline {
                 axes {
                     axis {
                         name 'VERSION'
-                        values 8, 11, 17
+                        values '8', '11', '17'
+                    }
+                    axis {
+                        name 'DISTRO'
+                        values 'Debian', 'RedHat', 'Suse'
                     }
                 }
                 stages {
-                    stage("Temurin ${VERSION}") {
+                    stage('Build Installer') {
                         steps {
+                            echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
                             setup()
                             dir('linuxNew') {
-                                buildAndTest(VERSION)
+                                buildAndTest()
                             }
                             uploadArtifacts()
                         }
@@ -45,7 +50,7 @@ def setup() {
     checkout scm
 }
 
-def buildAndTest(version) {
+def buildAndTest() {
     switch(JDK_SOURCE) {
         case "upstream":
             break;
@@ -54,9 +59,7 @@ def buildAndTest(version) {
         default: //Adoptium API 
             break;
     }
-    for (os in ["Debian", "RedHat", "Suse"]) {
-        sh("./gradlew packageJdk${os} checkJdk${os} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${version}")
-    }
+    sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
     archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
 }
 

@@ -8,6 +8,11 @@ on:
     paths:
       - 'linuxNew/**'
 
+# Cancel existing runs if user makes another push.
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check-ca-certificates:
     name: "Check ca-certificates"
