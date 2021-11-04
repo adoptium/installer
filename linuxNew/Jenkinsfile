@@ -1,32 +1,36 @@
-NODE_LABEL = "ci.role.test&&hw.arch.x86&&sw.os.linux&&ubuntu&&sw.tool.docker" // need to double check specific platform requirements for the package jobs, "fpm?"
+NODE_LABEL = "dockerBuild&&linux&&x64" // Dynamic docker machines from Azure
 
 pipeline {
-    agent { 
+    agent {
         label NODE_LABEL
     }
-    stages {
-        stage('Set up') {
-            steps {
-                setup()
-            }
-        }
-        stage('Build and test package') {
-            steps {
-                dir('linuxNew') {
-                    buildAndTest()
-	            }
-            }
-        }
-        // For now looks like upload is combined with build and tests
-        stage('Upload') {
-            steps {
-                uploadArtifacts()
-            }
-        }
+    tools {
+        jdk "JDK11"
     }
-    post {
-        always {
-            archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
+    stages {
+        stage('Linux Installers') {
+            matrix {
+                agent {
+                    label NODE_LABEL
+                }
+                axes {
+                    axis {
+                        name 'VERSION'
+                        values 8, 11, 17
+                    }
+                }
+                stages {
+                    stage("Temurin ${VERSION}") {
+                        steps {
+                            setup()
+                            dir('linuxNew') {
+                                buildAndTest(VERSION)
+                            }
+                            uploadArtifacts()
+                        }
+                    }
+                }
+            }
         }
     }
 }
@@ -41,7 +45,7 @@ def setup() {
     checkout scm
 }
 
-def buildAndTest() {
+def buildAndTest(version) {
     switch(JDK_SOURCE) {
         case "upstream":
             break;
@@ -51,8 +55,9 @@ def buildAndTest() {
             break;
     }
     for (os in ["Debian", "RedHat", "Suse"]) {
-        sh("./gradlew packageJdk${os} checkJdk${os} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
+        sh("./gradlew packageJdk${os} checkJdk${os} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${version}")
     }
+    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
 }
 
 def uploadArtifacts() {
