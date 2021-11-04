@@ -1,26 +1,40 @@
-NODE_LABEL = "ci.role.test&&hw.arch.x86&&sw.os.linux&&ubuntu&&sw.tool.docker" // need to double check specific platform requirements for the package jobs, "fpm?"
+NODE_LABEL = "dockerBuild&&linux&&x64" // Dynamic docker machines from Azure
 
 pipeline {
-    agent { 
+    agent {
         label NODE_LABEL
     }
+    tools {
+        jdk "JDK11"
+    }
     stages {
-        stage('Set up') {
-            steps {
-                setup()
-            }
-        }
-        stage('Build and test package') {
-            steps {
-                dir('linuxNew') {
-                    buildAndTest()
-	            }
-            }
-        }
-        // For now looks like upload is combined with build and tests
-        stage('Upload') {
-            steps {
-                uploadArtifacts()
+        stage('Linux Installers') {
+            matrix {
+                agent {
+                    label NODE_LABEL
+                }
+                axes {
+                    axis {
+                        name 'VERSION'
+                        values '8', '11', '17'
+                    }
+                    axis {
+                        name 'DISTRO'
+                        values 'Debian', 'RedHat', 'Suse'
+                    }
+                }
+                stages {
+                    stage('Build Installer') {
+                        steps {
+                            echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                            setup()
+                            dir('linuxNew') {
+                                buildAndTest()
+                            }
+                            uploadArtifacts()
+                        }
+                    }
+                }
             }
         }
     }
@@ -33,11 +47,7 @@ def setup() {
         env.TESTCONTAINERS_CHECKS_DISABLE=true
     }
     env._JAVA_OPTIONS="-Xmx4g"
-    checkout scm: [$class: 'GitSCM',
-            branches: [[name: "linux"]],
-            extensions: [[$class: 'CleanBeforeCheckout']],
-            userRemoteConfigs: [[url: "https://github.com/sophia-guo/installer"]]
-    ]
+    checkout scm
 }
 
 def buildAndTest() {
@@ -49,9 +59,8 @@ def buildAndTest() {
         default: //Adoptium API 
             break;
     }
-    for (os in ["Debian", "RedHat", "Suse"]) {
-        sh("./gradlew clean packageJdk${os} checkJdk${os} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
-    }
+    sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
+    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
 }
 
 def uploadArtifacts() {

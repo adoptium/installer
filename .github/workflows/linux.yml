@@ -8,6 +8,11 @@ on:
     paths:
       - 'linuxNew/**'
 
+# Cancel existing runs if user makes another push.
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check-ca-certificates:
     name: "Check ca-certificates"
@@ -32,7 +37,7 @@ jobs:
           ./gradlew --parallel :ca-certificates:check --stacktrace
 
   check-jdk-packages:
-    name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }}"
+    name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -40,8 +45,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # No Docker on macOS
-        # https://github.community/t/is-it-possible-to-install-and-configure-docker-on-macos-runner/16981/8
+        distro: [Debian, RedHat, Suse]
         product: [
           { name: temurin, version: 8 },
           { name: temurin, version: 11 },
@@ -62,7 +66,7 @@ jobs:
       - name: Build
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
-          ./gradlew --parallel check -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
+          ./gradlew --parallel packageJdk${{ matrix.distro }} checkJdk${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
 
   # Ensures we don't accept a Gradle Wrapper update that has been tampered with.
   validation:
