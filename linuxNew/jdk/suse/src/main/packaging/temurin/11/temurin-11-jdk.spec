@@ -1,10 +1,10 @@
-%global upstream_version 11.0.12+7
+%global upstream_version 11.0.13+8
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 11.0.12.0.1___7 11.0.12.0.0+7
-#  11.0.12.0.0___7 == 11.0.12.0.0+7
-%global spec_version 11.0.12.0.0.7
+#  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
+#  11.0.13.0.0___8 == 11.0.13.0.0+8
+%global spec_version 11.0.13.0.0.8
 %global spec_release 1
 %global priority 1111
 
