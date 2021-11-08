@@ -1,5 +1,5 @@
-temurin-17-jdk (17.0.0.0.0+35-0~adopt0) UNRELEASED; urgency=medium
+temurin-17-jdk (17.0.1.0.0+12-1) UNRELEASED; urgency=medium
 
-  * Eclipse Temurin 17.0.0.0.0+35-0~adopt0 release.
+  * Eclipse Temurin 17.0.1.0.0+12-1 release.
 
  -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 23 sep 2021 15:32:48 +0000
