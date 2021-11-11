@@ -82,6 +82,14 @@ task packageJdkSuse {
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-suse:latest"
 		}
+		
+		project.copy {
+			from("${outputDir.absolutePath}")
+			into("${outputDir.absolutePath}")
+			rename { filename ->
+				filename.replace '.rpm', '.suse.rpm'
+			}
+		}
 	}
 }
 

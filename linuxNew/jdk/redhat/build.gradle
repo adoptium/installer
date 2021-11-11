@@ -82,6 +82,14 @@ task packageJdkRedHat {
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-redhat:latest"
 		}
+		
+		project.copy {
+			from("${outputDir.absolutePath}")
+			into("${outputDir.absolutePath}")
+			rename { filename ->
+				filename.replace '.rpm', '.redhat.rpm'
+			}
+		}
 	}
 }
 
