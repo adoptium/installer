@@ -34,16 +34,18 @@ rpmdev-setuptree \n\
 targets="x86_64 ppc64le s390x" \n\
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
 	spectool -g -R "$spec";\n\
+	rpmbuild --nodeps -bs "$spec"; \n\
 	if [[ "$spec" =~ "temurin-8-jdk" ]]; then \n\
 		targets="x86_64 ppc64le" \n\
 	fi \n\
 	for target in $targets; do \n\
-		rpmbuild -bb --target "$target" "$spec";\n\
+		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm;\n\
 	done;\n\
 done;\n\
 \n\
-# Copy generated RPMs to destination folder\n\
-find /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out\n\
+
+# Copy generated SRPMS, RPMs to destination folder\n\
+find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out\n\
 '\
 >> /home/builder/build.sh
 RUN chmod +x /home/builder/build.sh
