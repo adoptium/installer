@@ -6,7 +6,8 @@ Build-Depends: debhelper (>= 11), lsb-release
 
 Package: temurin-17-jdk
 Architecture: amd64 armhf arm64 ppc64el s390x
-Depends: java-common,
+Depends: ca-certificates-java,
+         java-common,
          libasound2,
          libc6,
          libx11-6,
