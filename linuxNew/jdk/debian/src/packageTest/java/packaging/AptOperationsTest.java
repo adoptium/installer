@@ -57,13 +57,13 @@ class AptOperationsTest {
 			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
-			if (codename.equals("buster") ) {
-			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb + " openjdk-11-jre-headless");
-			} else if ( codename.equals("stretch") ) {
-			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb + " openjdk-8-jre-headless");
-			} else {
+//			if (codename.equals("buster") ) {
+//			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb + " openjdk-11-jre-headless");
+//			} else if ( codename.equals("stretch") ) {
+//			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb + " openjdk-8-jre-headless");
+//			} else {
 			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb);
-			}
+//			}
 			assertThat(result.getExitCode()).isEqualTo(0);
 
 			result = runShell(container, "apt-cache show " + System.getenv("PACKAGE"));
@@ -73,6 +73,9 @@ class AptOperationsTest {
 				.contains("Priority: optional")
 				.contains("Section: java")
 				.contains("Status: install ok installed");
+System.out.println("CABBAGE");
+System.err.println("CABBAGE: " + result.getStdout());
+System.err.println("CABBAGER: " + result.getStderr());
 		}
 	}
 }
