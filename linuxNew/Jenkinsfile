@@ -59,8 +59,8 @@ def buildAndTest() {
         default: //Adoptium API 
             break;
     }
-    sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
-    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
+    sh("./gradlew :ca-certificates:package packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
+    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**,**/build/**/adoptium-ca-certificates*.deb'
 }
 
 def uploadArtifacts() {
