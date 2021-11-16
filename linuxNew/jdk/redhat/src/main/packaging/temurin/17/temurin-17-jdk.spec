@@ -15,19 +15,32 @@
 
 # Map architecture to the expected value in the download URL; Allow for a
 # pre-defined value of vers_arch and use that if it's defined
-#  x86_64 => x64
-#  i668 = x86
-%if %{!?vers_arch:1}0
+
 %ifarch x86_64
 %global vers_arch x64
-%else
-%ifarch %{ix86}
-%global vers_arch x86
-%else
-# Catch-all, use _arch value
-%global vers_arch %{_arch}
+%global vers_arch2 ppc64le
+%global vers_arch3 s390x
+%global src_num 0
+%global sha_src_num 1
 %endif
+%ifarch ppc64le
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 s390x
+%global src_num 2
+%global sha_src_num 3
 %endif
+%ifarch s390x
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 s390x
+%global src_num 4
+%global sha_src_num 5
+%endif
+# Allow for noarch SRPM build
+%ifarch noarch
+%global src_num 0
+%global sha_src_num 1
 %endif
 
 Name:        temurin-17-jdk
@@ -77,8 +90,15 @@ Provides: jre-17
 Provides: jre-17-%{java_provides}
 Provides: jre-%{java_provides}
 
+# First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+# Second architecture (ppc64le)
+Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+# Third architecture (s390x)
+Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
@@ -96,10 +116,10 @@ applications and components using the programming language Java.
 
 %prep
 pushd "%{_sourcedir}"
-sha256sum -c "%SOURCE1"
+sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
 popd
 
-%setup -n jdk-%{upstream_version}
+%setup -n jdk-%{upstream_version} -T -b %{src_num}
 
 %build
 # noop
@@ -107,7 +127,7 @@ popd
 %install
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
-tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{SOURCE0}
+tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
 
 # Strip bundled Freetype and use OS package instead.
 rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
