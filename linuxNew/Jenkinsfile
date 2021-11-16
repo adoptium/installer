@@ -60,7 +60,7 @@ def buildAndTest() {
             break;
     }
     sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
-    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**'
+    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**,*,**/ospackage/adoptium-ca-certificates*.deb'
 }
 
 def uploadArtifacts() {
