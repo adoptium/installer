@@ -1,6 +1,6 @@
 FROM opensuse/leap:15.2
 
-RUN zypper update -y && zypper install -y rpm-build rpmdevtools rpmlint gpg2 wget tar dpkg findutils tini
+RUN zypper update -y && zypper install -y rpm-build rpm-devel rpmdevtools rpmlint gpg2 wget tar dpkg findutils tini
 
 RUN wget --progress=dot:mega -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')"
 RUN wget --progress=dot:mega -O /tmp/gosu.asc https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')".asc
@@ -23,12 +23,21 @@ set -euxo pipefail\n\
 rpmdev-setuptree \n\
 \n\
 # Build all spec files we can find.\n\
+
+targets="x86_64 ppc64le s390x" \n\
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
-	rpmbuild --undefine=_disable_source_fetch -bb "$spec";\n\
+	rpmdev-spectool -g -R "$spec";\n\
+	rpmbuild --nodeps -bs "$spec"; \n\
+	if [[ "$spec" =~ "temurin-8-jdk" ]]; then \n\
+		targets="x86_64 ppc64le" \n\
+	fi \n\
+	for target in $targets; do \n\
+		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm;\n\
+	done;\n\
 done;\n\
 \n\
 # Copy generated RPMs to destination folder\n\
-find /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out\n\
+find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out\n\
 '\
 >> /home/builder/build.sh
 RUN chmod +x /home/builder/build.sh
