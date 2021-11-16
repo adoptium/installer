@@ -38,15 +38,19 @@ class AptOperationsTest {
 	@ParameterizedTest(name = "{0}:{1}")
 	@ArgumentsSource(DebianFlavours.class)
 	void packageSuccessfullyInstalled(String distribution, String codename) throws Exception {
+		Path certificatesHostDeb = Paths.get(getClass().getResource("/dependencies/deb/adoptium-ca-certificates_1.0.0-1_all.deb").toURI());
 		Path hostDeb = DebFiles.hostDebPath();
 
 		assertThat(hostDeb).exists();
+		assertThat(certificatesHostDeb).exists();
 
 		File containerDeb = new File("", hostDeb.toFile().getName());
+		File certificatesDeb = new File("", certificatesHostDeb.toFile().getName());
 
 		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
 			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
 				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
+				.withCopyFileToContainer(MountableFile.forHostPath(certificatesHostDeb), certificatesDeb.toString())
 				.start();
 
 			Container.ExecResult result;
@@ -57,17 +61,10 @@ class AptOperationsTest {
 			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
-System.out.println("CABBAGE: " + codename);
-			if (codename.equals("stretch") ) {
-System.out.println("CABBAGE-8");
-			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb + " openjdk-8-jre-headless");
-			} else if ( codename.equals("buster") ) {
-System.out.println("CABBAGE-11");
-			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb + " openjdk-11-jre-headless");
-			} else {
-System.out.println("CABBAGE-NONE");
-			  result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb);
-			}
+			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + certificatesDeb);
+			assertThat(result.getExitCode()).isEqualTo(0);
+
+			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb);
 			assertThat(result.getExitCode()).isEqualTo(0);
 
 			result = runShell(container, "apt-cache show " + System.getenv("PACKAGE"));

@@ -63,7 +63,7 @@ override_dh_auto_install:
 
 	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/jre/lib/security/cacerts"
-	ln -s /etc/ssl/certs/java/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/jre/lib/security/cacerts"
+	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/jre/lib/security/cacerts"
 
 	# Ensure src.zip is present in the root folder of the JDK.
 	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
