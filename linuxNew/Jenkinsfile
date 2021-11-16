@@ -4,14 +4,14 @@ pipeline {
     agent {
         label NODE_LABEL
     }
-    tools {
-        jdk "JDK11"
-    }
     stages {
         stage('Linux Installers') {
             matrix {
                 agent {
                     label NODE_LABEL
+                }
+                tools {
+                    jdk "JDK11"
                 }
                 axes {
                     axis {
@@ -38,10 +38,6 @@ pipeline {
 
 def setup() {
     cleanWs()
-    if (PLATFORM == "aarch64") {
-        env.TESTCONTAINERS_RYUK_DISABLED=true
-        env.TESTCONTAINERS_CHECKS_DISABLE=true
-    }
     env._JAVA_OPTIONS="-Xmx4g"
     checkout scm
 }
@@ -55,8 +51,14 @@ def buildAndTest() {
         default: //Adoptium API 
             break;
     }
-    sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
-    archiveArtifacts artifacts: '**/*/build/ospackage/*,**/*/build/reports/**,*,**/ospackage/adoptium-ca-certificates*.deb'
+    // Install Adoptium GPG key for RPM signing
+    withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
+        if (DISTRO != "Debian") {
+            SIGN_CMD="-PGPG_KEY=${GPG_KEY}"
+        }
+        sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} ${SIGN_CMD} || true")
+    }
+    archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
 }
 
 def uploadArtifacts() {

@@ -39,3 +39,7 @@ def getProduct() {
 def getProductVersion() {
 	return hasProperty("PRODUCT_VERSION") ? Integer.parseInt(PRODUCT_VERSION) : null
 }
+
+def getGPGKey() {
+	return hasProperty("GPG_KEY") ? GPG_KEY.toString() : null
+}

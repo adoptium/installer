@@ -1,6 +1,6 @@
 FROM fedora:33
 
-RUN dnf update -y && dnf install -y rpmdevtools rpmlint gnupg2 wget tar dpkg findutils
+RUN dnf update -y && dnf install -y rpmdevtools rpm-sign rpmlint gnupg2 wget tar dpkg findutils
 
 RUN wget --progress=dot:mega -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')"
 RUN wget --progress=dot:mega -O /tmp/gosu.asc https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')".asc
@@ -29,8 +29,12 @@ set -euxo pipefail\n\
 # Ensure necessary directories for rpmbuild operation are present.\n\
 rpmdev-setuptree \n\
 \n\
+# Add GPG key if installed.\n\
+if [[ -f /home/builder/build/private.gpg ]]; then\n\
+	gpg --import /home/builder/build/private.gpg \n\
+	gpg --list-secret-keys --keyid-format LONG \n\
+fi;\n\
 # Build all spec files we can find.\n\
-
 targets="x86_64 ppc64le s390x" \n\
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
 	spectool -g -R "$spec";\n\
@@ -46,6 +50,10 @@ done;\n\
 
 # Copy generated SRPMS, RPMs to destination folder\n\
 find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out\n\
+# Sign generated RPMs with rpmsign.\n\
+if [[ -f /home/builder/build/private.gpg ]]; then\n\
+	rpmsign /home/builder/out/*.rpm \n\
+fi;\n\
 '\
 >> /home/builder/build.sh
 RUN chmod +x /home/builder/build.sh

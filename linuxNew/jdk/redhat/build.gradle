@@ -54,6 +54,7 @@ task packageJdkRedHat {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
 
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
@@ -66,6 +67,12 @@ task packageJdkRedHat {
 		project.copy {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
+		}
+		if (gpgKey) {
+			project.copy {
+				from("${gpgKey}")
+				into("${buildDir}/private.gpg")
+			}
 		}
 		project.exec {
 			workingDir "src/main/packaging"
