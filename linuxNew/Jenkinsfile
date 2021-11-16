@@ -15,10 +15,6 @@ pipeline {
                 }
                 axes {
                     axis {
-                        name 'VERSION'
-                        values '8', '11', '17'
-                    }
-                    axis {
                         name 'DISTRO'
                         values 'Debian', 'RedHat', 'Suse'
                     }
