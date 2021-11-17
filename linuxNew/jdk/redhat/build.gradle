@@ -69,17 +69,22 @@ task packageJdkRedHat {
 			into("${buildDir}/generated/packaging")
 		}
 		if (gpgKey) {
-			project.copy {
-				from("${gpgKey}")
-				into("${buildDir}/private.gpg")
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build",
+					"-t", "adoptium-packages-linux-jdk-redhat",
+					"--secret", "id=gpg,src=${gpgKey}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
 			}
-		}
-		project.exec {
-			workingDir "src/main/packaging"
-			commandLine "docker", "build",
-				"-t", "adoptium-packages-linux-jdk-redhat",
-				"-f", "Dockerfile",
-				getProjectDir().absolutePath + "/src/main/packaging"
+		} else {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build",
+					"-t", "adoptium-packages-linux-jdk-redhat",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
 		}
 
 		project.exec {

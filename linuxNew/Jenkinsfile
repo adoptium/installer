@@ -38,6 +38,8 @@ pipeline {
 
 def setup() {
     cleanWs()
+    // Docker --mount option requires BuildKit
+    env.DOCKER_BUILDKIT=1
     env._JAVA_OPTIONS="-Xmx4g"
     checkout scm
 }
@@ -54,9 +56,10 @@ def buildAndTest() {
     // Install Adoptium GPG key for RPM signing
     withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
         if (DISTRO != "Debian") {
-            SIGN_CMD="-PGPG_KEY=${GPG_KEY}"
+            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} || true")
+        } else {
+            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} || true")
         }
-        sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} ${SIGN_CMD} || true")
     }
     archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
 }

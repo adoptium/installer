@@ -5,6 +5,8 @@ set -euox pipefail
 # into it without changing its ownership (which could render the folder or its contents inaccessible to the host user),
 # add the user builder to the group with the same GID as the host user.
 HOST_USER_GID=$(stat -c "%g" /home/builder/out)
+# gpg: signing failed: Inappropriate ioctl for device
+export GPG_TTY=$(tty)
 getent group "$HOST_USER_GID" || groupadd -g "$HOST_USER_GID" hostusrg
 usermod -a -G "$HOST_USER_GID" builder
 chmod g+w /home/builder/out

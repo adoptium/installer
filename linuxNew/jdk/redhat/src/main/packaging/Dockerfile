@@ -21,6 +21,16 @@ RUN rm -f /tmp/tini.asc
 RUN groupadd -g 10001 builder
 RUN useradd -m -d /home/builder -u 10000 -g 10001 builder
 
+# Add GPG key
+USER builder
+RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.gpg gpg --import /tmp/private.gpg
+RUN printf '%%_signature gpg\n\
+%%_gpg_name 3B04D753C9050D9A5D343F39843C48A565F8F04B\n\
+%%__gpg /usr/bin/gpg\n\
+'\
+>> /home/builder/.rpmmacros
+USER root
+
 # Prepare entrypoint and build scripts
 ADD entrypoint.sh /entrypoint.sh
 RUN printf '#!/usr/bin/env bash\n\
@@ -29,12 +39,9 @@ set -euxo pipefail\n\
 # Ensure necessary directories for rpmbuild operation are present.\n\
 rpmdev-setuptree \n\
 \n\
-# Add GPG key if installed.\n\
-if [[ -f /home/builder/build/private.gpg ]]; then\n\
-	gpg --import /home/builder/build/private.gpg \n\
-	gpg --list-secret-keys --keyid-format LONG \n\
-fi;\n\
-# Build all spec files we can find.\n\
+cat /home/builder/.rpmmacros \n\
+gpg --list-signatures \n\
+# Build all spec files we can fin.\n\
 targets="x86_64 ppc64le s390x" \n\
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
 	spectool -g -R "$spec";\n\
@@ -47,12 +54,11 @@ for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
 	done;\n\
 done;\n\
 \n\
-
 # Copy generated SRPMS, RPMs to destination folder\n\
 find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out\n\
 # Sign generated RPMs with rpmsign.\n\
-if [[ -f /home/builder/build/private.gpg ]]; then\n\
-	rpmsign /home/builder/out/*.rpm \n\
+if [[ -f /home/builder/.rpmmacros ]]; then \n\
+	rpmsign --addsign /home/builder/out/*.rpm \n\
 fi;\n\
 '\
 >> /home/builder/build.sh
