@@ -60,6 +60,19 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
 
+      # Setup for buildx
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+
+      # Debugging information
+      - name: Docker info
+        run: docker info
+      - name: Buildx inspect
+        run: docker buildx inspect
+
       - name: Build
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
@@ -71,7 +84,6 @@ jobs:
         with:
           name: ${{ matrix.product.name }}-${{ matrix.product.version }}-${{ matrix.distro }}
           path: |
-            **/*/build/ospackage/*
             **/*/build/reports/**
 
   # Ensures we don't accept a Gradle Wrapper update that has been tampered with.
