@@ -40,6 +40,7 @@ def setup() {
     cleanWs()
     // Docker --mount option requires BuildKit
     env.DOCKER_BUILDKIT=1
+    env.COMPOSE_DOCKER_CLI_BUILD=1
     env._JAVA_OPTIONS="-Xmx4g"
     checkout scm
 }

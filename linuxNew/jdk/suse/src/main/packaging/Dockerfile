@@ -1,6 +1,6 @@
 FROM opensuse/leap:15.2
 
-RUN zypper update -y && zypper install -y rpm-build rpm-sign rpmdevtools rpmlint gpg2 wget tar dpkg findutils tini
+RUN zypper update -y && zypper install -y rpm-build rpmdevtools rpmlint gpg2 wget tar dpkg findutils tini
 
 RUN wget --progress=dot:mega -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')"
 RUN wget --progress=dot:mega -O /tmp/gosu.asc https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')".asc
