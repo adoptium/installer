@@ -2,7 +2,6 @@ Source: temurin-17-jdk
 Section: java
 Priority: optional
 Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
-License: GPL-2.0+CE
 Build-Depends: debhelper (>= 11), lsb-release
 
 Package: temurin-17-jdk
