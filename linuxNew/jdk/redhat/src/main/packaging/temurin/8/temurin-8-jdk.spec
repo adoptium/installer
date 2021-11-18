@@ -242,5 +242,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Fri Aug 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.302.0.0.8-1.adopt0
+* Tue Aug 31 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.302.0.0.8-1.adopt0
 - Eclipse Temurin 8.0.302-b08 release.

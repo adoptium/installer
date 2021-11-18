@@ -54,6 +54,7 @@ task packageJdkRedHat {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
 
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
@@ -67,12 +68,23 @@ task packageJdkRedHat {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
-		project.exec {
-			workingDir "src/main/packaging"
-			commandLine "docker", "build",
-				"-t", "adoptium-packages-linux-jdk-redhat",
-				"-f", "Dockerfile",
-				getProjectDir().absolutePath + "/src/main/packaging"
+		if (gpgKey) {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build",
+					"-t", "adoptium-packages-linux-jdk-redhat",
+					"--secret", "id=gpg,src=${gpgKey}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		} else {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build",
+					"-t", "adoptium-packages-linux-jdk-redhat",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
 		}
 
 		project.exec {

@@ -73,6 +73,14 @@ export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageSuseRedHat checkSuseRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
+## GPG Signing RPMs
+
+In order to GPG sign the generated RPMs you must add the following argument to the gradlew command:
+
+```shell
+./gradlew packageSuseRedHat -PGPG_KEY=</path/to/private/gpg/key>
+```
+
 ## Building SRPMs and RPMs Directly
 
 If you do not require testing or advanced build support, it is perfectly fine to eschew the Gradle-based build and to
