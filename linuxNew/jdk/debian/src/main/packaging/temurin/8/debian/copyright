@@ -1,0 +1,6 @@
+Upstream-Name: temurin-8-jdk
+Upstream-Contact: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+Source: temurin-8-jdk
+
+Files: *
+License: GPL-2.0+CE
