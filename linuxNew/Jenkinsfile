@@ -5,6 +5,87 @@ pipeline {
         label NODE_LABEL
     }
     stages {
+        stage('Run non-x64 Deb packaging in parallel') {
+            parallel {
+                stage('aarch64 Debian packages') {
+                    agent {
+                        label "docker&&linux&&aarch64"
+                    }
+                    tools {
+                        jdk "JDK11"
+                    }
+                    environment {
+                        DISTRO = "Debian"
+                    }
+                    steps {
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        setup()
+                        dir('linuxNew') {
+                            buildAndTest()
+                        }
+                        uploadArtifacts()
+                    }
+                }
+                stage('ppc64le Debian packages') {
+                    agent {
+                        label "docker&&linux&&ppc64le"
+                    }
+                    tools {
+                        jdk "JDK11"
+                    }
+                    environment {
+                        DISTRO = "Debian"
+                    }
+                    steps {
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        setup()
+                        dir('linuxNew') {
+                            buildAndTest()
+                        }
+                        uploadArtifacts()
+                    }
+                }
+                stage('armv7l Debian packages') {
+                    agent {
+                        label "docker&&linux&&armv7l"
+                    }
+                    tools {
+                        jdk "JDK11"
+                    }
+                    environment {
+                        DISTRO = "Debian"
+                        JAVA_OPTIONS = "-Xmx2g"
+                    }
+                    steps {
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        setup()
+                        dir('linuxNew') {
+                            buildNoTest()
+                        }
+                        uploadArtifacts()
+                    }
+                }
+                stage('s390x Debian packages') {
+                    agent {
+                        label "docker&&linux&&s390x"
+                    }
+                    tools {
+                        jdk "JDK11"
+                    }
+                    environment {
+                        DISTRO = "Debian"
+                    }
+                    steps {
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        setup()
+                        dir('linuxNew') {
+                            buildNoTest()
+                        }
+                        uploadArtifacts()
+                    }
+                }
+            }
+        }
         stage('Linux-x64 Installers') {
             matrix {
                 agent {
@@ -32,87 +113,6 @@ pipeline {
                     }
                 }
 	    }
-        }
-        stage('Run non-x64 Deb packaging in parallel') {
-            parallel {
-                stage('aarch64 Deb packages') {
-                    agent {
-                        label "docker&&linux&&aarch64"
-                    }
-                    tools {
-                        jdk "JDK11"
-                    }
-                    environment {
-                        DISTRO = "Debian"
-                    }
-                    steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                        setup()
-                        dir('linuxNew') {
-                            buildAndTest()
-                        }
-                        uploadArtifacts()
-                    }
-                }
-                stage('ppc64le packages') {
-                    agent {
-                        label "docker&&linux&&ppc64le"
-                    }
-                    tools {
-                        jdk "JDK11"
-                    }
-                    environment {
-                        DISTRO = "Debian"
-                    }
-                    steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                        setup()
-                        dir('linuxNew') {
-                            buildAndTest()
-                        }
-                        uploadArtifacts()
-                    }
-                }
-                stage('armv7l packages') {
-                    agent {
-                        label "docker&&linux&&armv7l"
-                    }
-                    tools {
-                        jdk "JDK11"
-                    }
-                    environment {
-                        DISTRO = "Debian"
-                        JAVA_OPTIONS = "-Xmx2g"
-                    }
-                    steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                        setup()
-                        dir('linuxNew') {
-                            buildNoTest()
-                        }
-                        uploadArtifacts()
-                    }
-                }
-                stage('s390x packages') {
-                    agent {
-                        label "docker&&linux&&s390x"
-                    }
-                    tools {
-                        jdk "JDK11"
-                    }
-                    environment {
-                        DISTRO = "Debian"
-                    }
-                    steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                        setup()
-                        dir('linuxNew') {
-                            buildNoTest()
-                        }
-                        uploadArtifacts()
-                    }
-                }
-            }
         }
     }
 }
