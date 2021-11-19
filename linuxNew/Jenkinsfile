@@ -5,6 +5,34 @@ pipeline {
         label NODE_LABEL
     }
     stages {
+        stage('Linux-x64 Installers') {
+            matrix {
+                agent {
+                    label NODE_LABEL
+                }
+                tools {
+                    jdk "JDK11"
+                }
+                axes {
+                    axis {
+                        name 'DISTRO'
+                        values 'Debian', 'RedHat', 'Suse'
+                    }
+                }
+                stages {
+                    stage('Build Installer') {
+                        steps {
+                            echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                            setup()
+                            dir('linuxNew') {
+                                buildAndTest()
+                            }
+                            uploadArtifacts()
+                        }
+                    }
+                }
+	    }
+        }
         stage('Run non-x64 Deb packaging in parallel') {
             parallel {
                 stage('aarch64 Debian packages') {
@@ -45,27 +73,12 @@ pipeline {
                         uploadArtifacts()
                     }
                 }
-                stage('armv7l Debian packages') {
-                    agent {
-                        label "docker&&linux&&armv7l"
-                    }
-                    tools {
-                        jdk "JDK11"
-                    }
-                    environment {
-                        DISTRO = "Debian"
-                        JAVA_OPTIONS = "-Xmx2g"
-                    }
-                    steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                        setup()
-                        dir('linuxNew') {
-                            buildNoTest()
-                        }
-                        uploadArtifacts()
-                    }
-                }
                 stage('s390x Debian packages') {
+                    when {
+                       expression {
+                          return VERSION != '8'
+                       }
+                    }
                     agent {
                         label "docker&&linux&&s390x"
                     }
@@ -74,6 +87,7 @@ pipeline {
                     }
                     environment {
                         DISTRO = "Debian"
+                        DOCKER_BUILDKIT = "0"
                     }
                     steps {
                         echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
@@ -85,34 +99,6 @@ pipeline {
                     }
                 }
             }
-        }
-        stage('Linux-x64 Installers') {
-            matrix {
-                agent {
-                    label NODE_LABEL
-                }
-                tools {
-                    jdk "JDK11"
-                }
-                axes {
-                    axis {
-                        name 'DISTRO'
-                        values 'Debian', 'RedHat', 'Suse'
-                    }
-                }
-                stages {
-                    stage('Build Installer') {
-                        steps {
-                            echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                            setup()
-                            dir('linuxNew') {
-                                buildAndTest()
-                            }
-                            uploadArtifacts()
-                        }
-                    }
-                }
-	    }
         }
     }
 }
@@ -130,9 +116,9 @@ def buildAndTest() {
     // Install Adoptium GPG key for RPM signing
     withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
         if (DISTRO != "Debian") {
-            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} || true")
+            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY}")
         } else {
-            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} || true")
+            sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
         }
     }
     archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
@@ -142,9 +128,9 @@ def buildNoTest() {
     // Install Adoptium GPG key for RPM signing
     withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
         if (DISTRO != "Debian") {
-            sh("./gradlew packageJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} || true")
+            sh("./gradlew packageJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY}")
         } else {
-            sh("./gradlew packageJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} || true")
+            sh("./gradlew packageJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
         }
     }
     archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
