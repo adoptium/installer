@@ -7,6 +7,12 @@ amd64_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/down
 amd64_checksum = 6ea18c276dcbb8522feeebcfc3a4b5cb7c7e7368ba8590d3326c6c3efc5448b6
 arm64_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_aarch64_linux_hotspot_17.0.1_12.tar.gz
 arm64_checksum = f23d482b2b4ada08166201d1a0e299e3e371fdca5cd7288dcbd81ae82f3a75e3
+armhf_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_arm_linux_hotspot_17.0.1_12.tar.gz
+armhf_checksum = f5945a39929384235e7cb1c57df071b8c7e49274632e2a54e54b2bad05de21a5
+ppc64el_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_ppc64le_linux_hotspot_17.0.1_12.tar.gz
+ppc64el_checksum = bd65d4e8ecc4236924ae34d2075b956799abca594021e1b40c36aa08a0d610b0
+s390x_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.1%2B12/OpenJDK17U-jdk_s390x_linux_hotspot_17.0.1_12.tar.gz
+s390x_checksum = dcc17e6ef28984656e997b6b8a6a31c89f45aff87a56b5d3819137c8f1050bef
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
