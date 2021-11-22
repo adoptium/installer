@@ -16,7 +16,7 @@ pipeline {
                 axes {
                     axis {
                         name 'DISTRO'
-                        values 'Debian', 'RedHat', 'Suse'
+                        values 'Debian'
                     }
                 }
                 stages {
@@ -143,9 +143,28 @@ def buildNoTest() {
 
 def uploadArtifacts() {
     if (DISTRO == "Debian") {
-        echo "test"
+        uploadDebArtifacts()
     } else {
         uploadRPMArtifacts()
+    }
+}
+
+def uploadDebArtifacts() {
+    def architectures = ["amd64"]
+    architectures.each {
+        arch -> rtUpload (
+            serverId: 'adoptium.jfrog.io',
+            failNoOp: true,
+            spec: """{
+                "files": [
+                    {
+                    "pattern": "**/build/ospackage/temurin-*${arch}.deb",
+                    "target": "deb/pool/main/t/temurin-${VERSION}/",
+                    "props": "deb.distribution=stretch;deb.distribution=buster;deb.distribution=bullseye;deb.distribution=xenial;deb.distribution=bionic;deb.distribution=focal;deb.distribution=groovy;deb.distribution=hirsute;deb.component=main;deb.architecture=${arch}"
+                    }
+                ]
+            }""",
+        )
     }
 }
 
