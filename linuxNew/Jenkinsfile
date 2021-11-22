@@ -66,5 +66,55 @@ def buildAndTest() {
 }
 
 def uploadArtifacts() {
-    echo "tests"
+    if (DISTRO == "Debian") {
+        echo "test"
+    } else {
+        uploadRPMArtifacts()
+    }
+}
+
+def uploadRPMArtifacts() {
+    def distro = DISTRO.toLowerCase()
+    def distro_Package = [
+        'redhat' : [
+            'rpm/centos/8',
+            'rpm/centos/7',
+            'rpm/fedora/33',
+            'rpm/oraclelinux/8',
+            'rpm/amazonlinux/2',
+            'rpm/oraclelinux/7'
+        ],
+        'suse'   : [
+            'rpm/opensuse/15.1',
+            'rpm/opensuse/15.2'
+        ]
+    ]
+    def archs = [
+        "x86_64" : "x86_64",
+        "ppc64le": "ppc64le",
+        "source" : "src"
+    ]
+    def packageDirs = distro_Package.get(distro)
+    
+    if ( !VERSION.equals("8") ) {
+        archs.put("s390x", "s390x")
+    }
+
+    packageDirs.each {
+        packageDir -> 
+            archs.each {
+                entry -> rtUpload (
+                    serverId: 'adoptium.jfrog.io',
+                    failNoOp: true,
+                    spec: """{
+                        "files": [
+                            {
+                            "pattern": "**/build/ospackage/*.${entry.value}.rpm",
+                            "target": "${packageDir}/${entry.key}/Packages/"
+                            }
+                        ]
+                    }"""
+               )
+            }
+    }
 }
