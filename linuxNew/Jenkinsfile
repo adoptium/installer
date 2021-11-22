@@ -46,10 +46,10 @@ pipeline {
                         DISTRO = "Debian"
                     }
                     steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO} on aarch64"
                         setup()
                         dir('linuxNew') {
-                            buildAndTest()
+                            buildNoTest()
                         }
                         uploadArtifacts()
                     }
@@ -65,10 +65,10 @@ pipeline {
                         DISTRO = "Debian"
                     }
                     steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO} on ppc64le"
                         setup()
                         dir('linuxNew') {
-                            buildAndTest()
+                            buildNoTest()
                         }
                         uploadArtifacts()
                     }
@@ -90,7 +90,7 @@ pipeline {
                         DOCKER_BUILDKIT = "0"
                     }
                     steps {
-                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO} so s390x"
                         setup()
                         dir('linuxNew') {
                             buildNoTest()
