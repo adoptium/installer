@@ -22,12 +22,14 @@ pipeline {
                 stages {
                     stage('Build Installer') {
                         steps {
-                            echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                            setup()
-                            dir('linuxNew') {
-                                buildAndTest()
+                            catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                                echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
+                                setup()
+                                dir('linuxNew') {
+                                    buildAndTest()
+                                }
+                                uploadArtifacts()
                             }
-                            uploadArtifacts()
                         }
                     }
                 }
@@ -46,12 +48,14 @@ pipeline {
                         DISTRO = "Debian"
                     }
                     steps {
+                      catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
                         echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO} on aarch64"
                         setup()
                         dir('linuxNew') {
                             buildNoTest()
                         }
                         uploadArtifacts()
+                      }
                     }
                 }
                 stage('ppc64le Debian packages') {
