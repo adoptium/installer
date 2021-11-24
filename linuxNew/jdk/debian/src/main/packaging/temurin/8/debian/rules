@@ -6,8 +6,12 @@ priority = 1081
 jvm_tools = appletviewer clhsdb extcheck hsdb idlj jar jarsigner java javac javadoc javah javap jcmd jconsole jdb jdeps jfr jhat jinfo jjs jmap jps jrunscript jsadebugd jstack jstat jstatd keytool native2ascii orbd pack200 policytool rmic rmid rmiregistry schemagen serialver servertool tnameserv unpack200 wsgen wsimport xjc jexec
 amd64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_x64_linux_hotspot_8u312b07.tar.gz
 amd64_checksum = 699981083983b60a7eeb511ad640fae3ae4b879de5a3980fe837e8ade9c34a08
-#arm64_tarball_url = https://github.com/Adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_aarch64_linux_hotspot_8u312b07.tar.gz
-#arm64_checksum = 87ff502eba3008cac71edeb9595398a73dc14883fe3072d152e731bf0877897e
+arm64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_aarch64_linux_hotspot_8u312b07.tar.gz
+arm64_checksum = 87ff502eba3008cac71edeb9595398a73dc14883fe3072d152e731bf0877897e
+armhf_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_arm_linux_hotspot_8u312b07.tar.gz
+armhf_checksum = 5a9e72c6c20373aa380554a6d7191a258540d2a0399d842223b8d5eb0f74b298
+ppc64el_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u312-b07/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u312b07.tar.gz
+ppc64el_checksum = ddce3f067eab6fd98bb2a8ea3d18de6b09ea41d10382c76ad22bd3e7895951cf
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
