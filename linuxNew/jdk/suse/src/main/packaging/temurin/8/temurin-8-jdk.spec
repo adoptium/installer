@@ -18,16 +18,24 @@
 %ifarch x86_64
 %global vers_arch x64
 %global vers_arch2 ppc64le
+%global vers_arch3 aarch64
 %global src_num 0
 %global sha_src_num 1
 %endif
 %ifarch ppc64le
 %global vers_arch x64
 %global vers_arch2 ppc64le
+%global vers_arch3 aarch64
 %global src_num 2
 %global sha_src_num 3
 %endif
-
+%ifarch aarch64
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 aarch64
+%global src_num 4
+%global sha_src_num 5
+%endif
 # Allow for noarch SRPM build
 %ifarch noarch
 %global src_num 0
@@ -91,6 +99,10 @@ Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_li
 # Second architecture (ppc64le)
 Source2: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
 Source3: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
+# Third architecture (aarch64)
+Source4: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
+Source5: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
+
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
