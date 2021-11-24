@@ -19,6 +19,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 arm
 %global src_num 0
 %global sha_src_num 1
 %endif
@@ -26,6 +27,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 arm
 %global src_num 2
 %global sha_src_num 3
 %endif
@@ -33,10 +35,18 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 arm
 %global src_num 4
 %global sha_src_num 5
 %endif
-
+%ifarch %{arm}
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 aarch64
+%global vers_arch4 arm
+%global src_num 6
+%global sha_src_num 7
+%endif
 # Allow for noarch SRPM build
 %ifarch noarch
 %global src_num 0
@@ -103,6 +113,9 @@ Source3: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch2}_l
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
 Source5: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
+# Fourth architecture (arm32)
+Source6: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
+Source7: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
