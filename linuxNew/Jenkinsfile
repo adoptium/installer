@@ -4,6 +4,12 @@ pipeline {
     agent {
         label NODE_LABEL
     }
+    parameters {
+        string(name: 'PRODUCT', defaultValue: 'temurin')
+        string(name: 'JDK_SOURCE', defaultValue: 'Adoptium')
+        string(name: 'VERSION', defaultValue: '8')
+        booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
+    }
     stages {
         stage('Linux-x64 Installers') {
             matrix {
@@ -16,7 +22,7 @@ pipeline {
                 axes {
                     axis {
                         name 'DISTRO'
-                        values 'Debian'
+                        values 'Debian', 'RedHat', 'Suse'
                     }
                 }
                 stages {
@@ -29,6 +35,11 @@ pipeline {
                                     buildAndTest()
                                 }
                                 uploadArtifacts()
+                            }
+                            script {
+                                if (UPLOAD.toBoolean()) {
+                                    uploadArtifacts('amd64')
+                                }
                             }
                         }
                     }
@@ -54,7 +65,7 @@ pipeline {
                         dir('linuxNew') {
                             buildNoTest()
                         }
-                        uploadArtifacts()
+                        uploadArtifacts('arm64')
                       }
                     }
                 }
@@ -74,7 +85,7 @@ pipeline {
                         dir('linuxNew') {
                             buildNoTest()
                         }
-                        uploadArtifacts()
+                        uploadArtifacts('ppc64el')
                     }
                 }
                 stage('s390x Debian packages') {
@@ -99,7 +110,7 @@ pipeline {
                         dir('linuxNew') {
                             buildNoTest()
                         }
-                        uploadArtifacts()
+                        uploadArtifacts('s390x')
                     }
                 }
             }
@@ -141,31 +152,28 @@ def buildNoTest() {
     archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
 }
 
-def uploadArtifacts() {
+def uploadArtifacts(arch) {
     if (DISTRO == "Debian") {
-        uploadDebArtifacts()
+        uploadDebArtifacts(arch)
     } else {
         uploadRPMArtifacts()
     }
 }
 
-def uploadDebArtifacts() {
-    def architectures = ["amd64"]
-    architectures.each {
-        arch -> rtUpload (
-            serverId: 'adoptium.jfrog.io',
-            failNoOp: true,
-            spec: """{
-                "files": [
-                    {
-                    "pattern": "**/build/ospackage/temurin-*${arch}.deb",
-                    "target": "deb/pool/main/t/temurin-${VERSION}/",
-                    "props": "deb.distribution=stretch;deb.distribution=buster;deb.distribution=bullseye;deb.distribution=xenial;deb.distribution=bionic;deb.distribution=focal;deb.distribution=groovy;deb.distribution=hirsute;deb.component=main;deb.architecture=${arch}"
-                    }
-                ]
-            }""",
-        )
-    }
+def uploadDebArtifacts(arch) {
+    rtUpload (
+        serverId: 'adoptium.jfrog.io',
+        failNoOp: true,
+        spec: """{
+            "files": [
+                {
+                "pattern": "**/build/ospackage/temurin-*${arch}.deb",
+                "target": "deb/pool/main/t/temurin-${VERSION}/",
+                "props": "deb.distribution=stretch;deb.distribution=buster;deb.distribution=bullseye;deb.distribution=xenial;deb.distribution=bionic;deb.distribution=focal;deb.distribution=groovy;deb.distribution=hirsute;deb.component=main;deb.architecture=${arch}"
+                }
+            ]
+        }""",
+    )
 }
 
 def uploadRPMArtifacts() {
