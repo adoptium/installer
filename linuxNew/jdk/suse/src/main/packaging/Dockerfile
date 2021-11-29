@@ -37,7 +37,7 @@ rpmdev-setuptree \n\
 \n\
 # Build all spec files we can find.\n\
 
-targets="x86_64 ppc64le s390x aarch64" \n\
+targets="x86_64 ppc64le s390x aarch64 armv7l" \n\
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
 	rpmdev-spectool -g -R "$spec";\n\
 	rpmbuild --nodeps -bs "$spec"; \n\
