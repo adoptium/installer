@@ -46,6 +46,8 @@
 %global vers_arch4 arm
 %global src_num 6
 %global sha_src_num 7
+# jdk8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
+%global upstream_version 8u312-b07-aarch32-20211101
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
