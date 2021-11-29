@@ -34,11 +34,10 @@ pipeline {
                                 dir('linuxNew') {
                                     buildAndTest()
                                 }
-                                uploadArtifacts()
-                            }
-                            script {
-                                if (UPLOAD.toBoolean()) {
-                                    uploadArtifacts('amd64')
+                                script {
+                                    if (UPLOAD.toBoolean()) {
+                                        uploadArtifacts('amd64')
+                                    }
                                 }
                             }
                         }
@@ -65,7 +64,11 @@ pipeline {
                         dir('linuxNew') {
                             buildNoTest()
                         }
-                        uploadArtifacts('arm64')
+                        script {
+                            if (UPLOAD.toBoolean()) {
+                                uploadArtifacts('arm64')
+                            }
+                        }
                       }
                     }
                 }
@@ -85,7 +88,11 @@ pipeline {
                         dir('linuxNew') {
                             buildNoTest()
                         }
-                        uploadArtifacts('ppc64el')
+                        script {
+                            if (UPLOAD.toBoolean()) {
+                                uploadArtifacts('ppc64el')
+                            }
+                        }
                     }
                 }
                 stage('s390x Debian packages') {
@@ -110,7 +117,11 @@ pipeline {
                         dir('linuxNew') {
                             buildNoTest()
                         }
-                        uploadArtifacts('s390x')
+                        script {
+                            if (UPLOAD.toBoolean()) {
+                                uploadArtifacts('s390x')
+                            }
+                        }
                     }
                 }
             }
