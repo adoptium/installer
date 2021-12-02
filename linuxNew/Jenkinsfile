@@ -206,7 +206,8 @@ def uploadRPMArtifacts() {
     def archs = [
         "x86_64" : "x86_64",
         "ppc64le": "ppc64le",
-	"aarch64": "aarch64",
+        "aarch64": "aarch64",
+        "armv7hl": "armv7hl",
         "source" : "src"
     ]
     def packageDirs = distro_Package.get(distro)

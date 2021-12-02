@@ -46,6 +46,8 @@
 %global vers_arch4 arm
 %global src_num 6
 %global sha_src_num 7
+# jdk8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
+%global upstream_version 8u312-b07-aarch32-20211101
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -74,10 +76,9 @@ Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
 Requires: dejavu-fonts
-# TODO Bring in libatomic as epxected on Arm7 
-#%ifarch %i#x86
-#Requires: libatomic1.(i?86)
-#%endif
+%ifarch %{arm}
+Requires: libatomic1
+%endif
 Requires: libX11-6%{?_isa}
 Requires: libXext6%{?_isa}
 Requires: libXi6%{?_isa}

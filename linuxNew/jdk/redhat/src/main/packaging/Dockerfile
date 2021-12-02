@@ -43,12 +43,12 @@ set -euxo pipefail\n\
 rpmdev-setuptree \n\
 \n\
 # Build all spec files we can fin.\n\
-targets="x86_64 ppc64le s390x aarch64 armv7l" \n\
+targets="x86_64 ppc64le s390x aarch64 armv7hl" \n\
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do\n\
 	spectool -g -R "$spec";\n\
 	rpmbuild --nodeps -bs "$spec"; \n\
 	if [[ "$spec" =~ "temurin-8-jdk" ]]; then \n\
-		targets="x86_64 ppc64le aarch64" \n\
+		targets="x86_64 ppc64le aarch64 armv7hl" \n\
 	fi \n\
 	for target in $targets; do \n\
 		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm;\n\
