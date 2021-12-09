@@ -124,8 +124,8 @@ def setup() {
     checkout scm
 }
 
-def buildAndTest(distro, arch) {
-    if (distro != "Debian") {
+def buildAndTest(DISTRO, arch) {
+    if (DISTRO != "Debian") {
         // Install Adoptium GPG key for RPM signing
         withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
             sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY}")
@@ -172,7 +172,7 @@ def uploadDebArtifacts(buildArch) {
 }
 
 def uploadRPMArtifacts(distro) {
-    distro = distro.toLowerCase()
+    def tempDistro = distro.toLowerCase()
     def distro_Package = [
         'redhat' : [
             'rpm/centos/8',
@@ -194,7 +194,7 @@ def uploadRPMArtifacts(distro) {
         "armv7hl": "armv7hl",
         "source" : "src"
     ]
-    def packageDirs = distro_Package.get(distro)
+    def packageDirs = distro_Package.get(tempDistro)
     
     if ( !VERSION.equals("8") ) {
         archs.put("s390x", "s390x")
