@@ -72,6 +72,31 @@ pipeline {
                       }
                     }
                 }
+                stage('armv7l Debian packages') {
+                    agent {
+                        label "docker&&linux&&armv7l"
+                    }
+                    tools {
+                        jdk "JDK11"
+                    }
+                    environment {
+                        DISTRO = "Debian"
+                    }
+                    steps {
+                      catchError(buildResult: 'SUCCESS', stageResult: 'FAILURE') {
+                        echo "Debian Installer Job for Temurin ${VERSION} - ${DISTRO} on armv7l"
+                        setup()
+                        dir('linuxNew') {
+                            buildNoTest()
+                        }
+                        script {
+                            if (UPLOAD.toBoolean()) {
+                                uploadArtifacts('armhf')
+                            }
+                        }
+                      }
+                    }
+                }
                 stage('ppc64le Debian packages') {
                     agent {
                         label "docker&&linux&&ppc64le"
