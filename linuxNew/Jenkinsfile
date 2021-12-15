@@ -18,7 +18,7 @@ pipeline {
                     label NODE_LABEL
                 }
                 tools {
-                    jdk "JDK11"
+                    jdk "jdk-11.0.13+8"
                 }
                 when {
                     allOf {
@@ -63,7 +63,7 @@ pipeline {
         stage('Run non-x64 Deb packaging in parallel') {
             matrix {
                 tools {
-                    jdk "JDK11"
+                    jdk "jdk-11.0.13+8"
                 }
                 when { 
                    allOf {
