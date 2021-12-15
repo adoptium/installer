@@ -111,6 +111,9 @@ pipeline {
                                 if (ARCH == "s390x") {
                                     env.DOCKER_BUILDKIT=0
                                 }
+                                if (ARCH == "armv7l") {
+                                    env._JAVA_OPTIONS=""
+                                }
                             }
                             dir('linuxNew') {
                                 buildAndTest('Debian', ARCH)
