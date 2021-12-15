@@ -8,6 +8,7 @@ pipeline {
         string(name: 'PRODUCT', defaultValue: 'temurin')
         string(name: 'JDK_SOURCE', defaultValue: 'Adoptium')
         choice(name: 'VERSION_FILTER', choices: ['8', '11', '17', 'all'], description: 'Build for specific VERSION')
+        choice(name: 'DISTRO_FILTER', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro')
         booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
     }
     stages {
@@ -19,10 +20,16 @@ pipeline {
                 tools {
                     jdk "JDK11"
                 }
-                when { 
-                    anyOf {
-                        expression { params.VERSION_FILTER == 'all' }
-                        expression { params.VERSION_FILTER == env.VERSION }
+                when {
+                    allOf {
+                        anyOf {
+                            expression { params.VERSION_FILTER == 'all' }
+                            expression { params.VERSION_FILTER == env.VERSION }
+                        }
+                        anyOf {
+                            expression { params.DISTRO_FILTER == 'all' }
+                            expression { params.DISTRO_FILTER == env.DISTRO }
+                        }
                     }
                 }
                 axes {
@@ -59,9 +66,15 @@ pipeline {
                     jdk "JDK11"
                 }
                 when { 
-                    anyOf {
-                        expression { params.VERSION_FILTER == 'all' }
-                        expression { params.VERSION_FILTER == env.VERSION }
+                   allOf {
+                        anyOf {
+                            expression { params.VERSION_FILTER == 'all' }
+                            expression { params.VERSION_FILTER == env.VERSION }
+                        }
+                        anyOf {
+                            expression { params.DISTRO_FILTER == 'all' }
+                            expression { params.DISTRO_FILTER == 'Debian' }
+                        }
                     }
                 }
                 axes {
