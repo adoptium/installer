@@ -117,7 +117,7 @@ pipeline {
                             }
                             script {
                                 if (UPLOAD.toBoolean()) {
-                                    uploadArtifacts('Debian', "${ARCH}")
+                                    uploadArtifacts('Debian', ARCH)
                                 }
                             }
                         }
