@@ -192,8 +192,8 @@ def uploadRPMArtifacts(distro) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/8',
-            'rpm/centos/7',
-            'rpm/fedora/33',
+            'rpm/fedora/34',
+            'rpm/fedora/35',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2',
             'rpm/oraclelinux/7'
