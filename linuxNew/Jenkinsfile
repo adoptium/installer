@@ -8,6 +8,7 @@ pipeline {
         string(name: 'PRODUCT', defaultValue: 'temurin')
         string(name: 'JDK_SOURCE', defaultValue: 'Adoptium')
         choice(name: 'VERSION_FILTER', choices: ['8', '11', '17', 'all'], description: 'Build for specific VERSION')
+        choice(name: 'DISTRO_FILTER', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro')
         booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
     }
     stages {
@@ -17,12 +18,18 @@ pipeline {
                     label NODE_LABEL
                 }
                 tools {
-                    jdk "JDK11"
+                    jdk "jdk-11.0.13+8"
                 }
-                when { 
-                    anyOf {
-                        expression { params.VERSION_FILTER == 'all' }
-                        expression { params.VERSION_FILTER == env.VERSION }
+                when {
+                    allOf {
+                        anyOf {
+                            expression { params.VERSION_FILTER == 'all' }
+                            expression { params.VERSION_FILTER == env.VERSION }
+                        }
+                        anyOf {
+                            expression { params.DISTRO_FILTER == 'all' }
+                            expression { params.DISTRO_FILTER == env.DISTRO }
+                        }
                     }
                 }
                 axes {
@@ -56,12 +63,18 @@ pipeline {
         stage('Run non-x64 Deb packaging in parallel') {
             matrix {
                 tools {
-                    jdk "JDK11"
+                    jdk "jdk-11.0.13+8"
                 }
                 when { 
-                    anyOf {
-                        expression { params.VERSION_FILTER == 'all' }
-                        expression { params.VERSION_FILTER == env.VERSION }
+                   allOf {
+                        anyOf {
+                            expression { params.VERSION_FILTER == 'all' }
+                            expression { params.VERSION_FILTER == env.VERSION }
+                        }
+                        anyOf {
+                            expression { params.DISTRO_FILTER == 'all' }
+                            expression { params.DISTRO_FILTER == 'Debian' }
+                        }
                     }
                 }
                 axes {
@@ -98,13 +111,16 @@ pipeline {
                                 if (ARCH == "s390x") {
                                     env.DOCKER_BUILDKIT=0
                                 }
+                                if (ARCH == "armv7l") {
+                                    env._JAVA_OPTIONS=""
+                                }
                             }
                             dir('linuxNew') {
                                 buildAndTest('Debian', ARCH)
                             }
                             script {
                                 if (UPLOAD.toBoolean()) {
-                                    uploadArtifacts('Debian', "${ARCH}")
+                                    uploadArtifacts('Debian', ARCH)
                                 }
                             }
                         }
