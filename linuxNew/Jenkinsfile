@@ -61,20 +61,20 @@ pipeline {
             }
         }
         stage('Run non-x64 Deb packaging in parallel') {
+            when {
+                anyOf {
+                    expression { params.DISTRO_FILTER == 'all' }
+                    expression { params.DISTRO_FILTER == 'Debian' }
+                }
+            }
             matrix {
                 tools {
                     jdk "jdk-11.0.13+8"
                 }
-                when { 
-                   allOf {
-                        anyOf {
-                            expression { params.VERSION_FILTER == 'all' }
-                            expression { params.VERSION_FILTER == env.VERSION }
-                        }
-                        anyOf {
-                            expression { params.DISTRO_FILTER == 'all' }
-                            expression { params.DISTRO_FILTER == 'Debian' }
-                        }
+                when {
+                    anyOf {
+                        expression { params.VERSION_FILTER == 'all' }
+                        expression { params.VERSION_FILTER == env.VERSION }
                     }
                 }
                 axes {
