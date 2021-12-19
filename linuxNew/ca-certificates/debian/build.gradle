@@ -24,7 +24,7 @@ version "1.0.0-SNAPSHOT"
  *
  * **Attention**: If you alter the list, check if the class DebianFlavours needs to be updated, too.
  */
-def deb_versions = ["stretch", "buster", "bullseye", "bionic", "focal", "groovy", "hirsute"]
+def deb_versions = ["stretch", "buster", "bullseye", "bionic", "focal", "groovy", "hirsute", "impish"]
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
