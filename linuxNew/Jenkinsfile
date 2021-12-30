@@ -191,7 +191,10 @@ def uploadRPMArtifacts(distro) {
     def tempDistro = distro.toLowerCase()
     def distro_Package = [
         'redhat' : [
+            'rpm/centos/7',
             'rpm/centos/8',
+            'rpm/rhel/7',
+            'rpm/rhel/8',
             'rpm/fedora/34',
             'rpm/fedora/35',
             'rpm/oraclelinux/8',
@@ -200,7 +203,8 @@ def uploadRPMArtifacts(distro) {
         ],
         'suse'   : [
             'rpm/opensuse/15.1',
-            'rpm/opensuse/15.2'
+            'rpm/opensuse/15.2',
+            'rpm/opensuse/15.3'
         ]
     ]
     def archs = [
@@ -217,7 +221,7 @@ def uploadRPMArtifacts(distro) {
     }
 
     packageDirs.each {
-        packageDir -> 
+        packageDir ->
             archs.each {
                 entry -> rtUpload (
                     serverId: 'adoptium.jfrog.io',
@@ -230,7 +234,7 @@ def uploadRPMArtifacts(distro) {
                             }
                         ]
                     }"""
-               )
+                )
             }
     }
 }
