@@ -171,6 +171,12 @@ def uploadDebArtifacts(buildArch) {
         "armv7l": "armhf",
         "s390x" : "s390x"
     ]
+    def distro_list = ""
+    def deb_versions = ["stretch", "buster", "bullseye", "bionic", "focal", "groovy", "hirsute"]
+    deb_versions.each { distro ->
+        // Creates list like deb.distribution=stretch;deb.distribution=buster;
+        distro_list += "deb.distribution=${distro};"
+    }
     def arch = archs.get(buildArch)
     rtUpload (
         serverId: 'adoptium.jfrog.io',
@@ -180,7 +186,7 @@ def uploadDebArtifacts(buildArch) {
                 {
                 "pattern": "**/build/ospackage/temurin-*${arch}.deb",
                 "target": "deb/pool/main/t/temurin-${VERSION}/",
-                "props": "deb.distribution=stretch;deb.distribution=buster;deb.distribution=bullseye;deb.distribution=xenial;deb.distribution=bionic;deb.distribution=focal;deb.distribution=groovy;deb.distribution=hirsute;deb.component=main;deb.architecture=${arch}"
+                "props": "${distro_list}deb.component=main;deb.architecture=${arch}"
                 }
             ]
         }""",
