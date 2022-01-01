@@ -38,6 +38,7 @@ public class DebianFlavours implements ArgumentsProvider {
 			Arguments.of("debian", "bullseye"),
 			Arguments.of("ubuntu", "bionic"),
 			Arguments.of("ubuntu", "focal"),
+			Arguments.of("ubuntu", "hirsute"),
 			Arguments.of("ubuntu", "impish")
 		);
 	}
