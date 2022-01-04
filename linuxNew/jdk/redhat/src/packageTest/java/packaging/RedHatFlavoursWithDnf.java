@@ -45,6 +45,7 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 			Arguments.of("centos", "8"),
 			Arguments.of("fedora", "34"),
 			Arguments.of("fedora", "35"),
+			Arguments.of("registry.access.redhat.com/ubi8/ubi", "latest"),
 			Arguments.of("oraclelinux", "8")
 		);
 	}
