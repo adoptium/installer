@@ -102,17 +102,28 @@ Requires: freetype%{?_isa}
 Provides: java
 Provides: java-11
 Provides: java-11-devel
+Provides: java-11-headless
 Provides: java-11-%{java_provides}
 Provides: java-11-%{java_provides}-devel
+Provides: java-11-%{java_provides}-headless
 Provides: java-devel
+Provides: java-devel-%{java_provides}
+Provides: java-headless
 Provides: java-%{java_provides}
 Provides: java-%{java_provides}-devel
+Provides: java-%{java_provides}-headless
+Provides: java-sdk
 Provides: java-sdk-11
 Provides: java-sdk-11-%{java_provides}
+Provides: java-sdk-%{java_provides}
 Provides: jre
 Provides: jre-11
+Provides: jre-11-headless
 Provides: jre-11-%{java_provides}
+Provides: jre-11-%{java_provides}-headless
+Provides: jre-headless
 Provides: jre-%{java_provides}
+Provides: jre-%{java_provides}-headless
 
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK11U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
