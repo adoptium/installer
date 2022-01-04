@@ -91,19 +91,30 @@ Requires: fontconfig%{?_isa}
 Requires: libfreetype6%{?_isa}
 
 Provides: java
-Provides: java-8
-Provides: java-8-devel
-Provides: java-8-%{java_provides}
-Provides: java-8-%{java_provides}-devel
+Provides: java-1.8.0
+Provides: java-1.8.0-devel
+Provides: java-1.8.0-headless
+Provides: java-1.8.0-%{java_provides}
+Provides: java-1.8.0-%{java_provides}-devel
+Provides: java-1.8.0-%{java_provides}-headless
 Provides: java-devel
+Provides: java-devel-%{java_provides}
+Provides: java-headless
 Provides: java-%{java_provides}
 Provides: java-%{java_provides}-devel
-Provides: java-sdk-8
-Provides: java-sdk-8-%{java_provides}
+Provides: java-%{java_provides}-headless
+Provides: java-sdk
+Provides: java-sdk-1.8.0
+Provides: java-sdk-1.8.0-%{java_provides}
+Provides: java-sdk-%{java_provides}
 Provides: jre
-Provides: jre-8
-Provides: jre-8-%{java_provides}
+Provides: jre-1.8.0
+Provides: jre-1.8.0-headless
+Provides: jre-1.8.0-%{java_provides}
+Provides: jre-1.8.0-%{java_provides}-headless
+Provides: jre-headless
 Provides: jre-%{java_provides}
+Provides: jre-%{java_provides}-headless
 
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
