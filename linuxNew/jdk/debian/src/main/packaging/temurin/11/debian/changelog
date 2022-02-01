@@ -1,4 +1,8 @@
-temurin-11-jdk (11.0.13.0.0+8-1) UNRELEASED; urgency=medium
+temurin-11-jdk (11.0.14.0.0+9-1) UNRELEASED; urgency=medium
+
+  * Eclipse Temurin 11.0.14.0.0+9-1 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 1 Feb 2022 10:20:21 +0000
 
   * Eclipse Temurin 11.0.13.0.0+8-1 release.
 
