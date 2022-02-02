@@ -195,5 +195,5 @@ fi
 %{prefix}
 
 %changelog
-* Sun Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 16.0.2.0.0.7-1.adopt0
+* Tue Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 16.0.2.0.0.7-1.adopt0
 - Eclipse Temurin 16.0.2+7 release.

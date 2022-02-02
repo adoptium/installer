@@ -265,5 +265,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Sun Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.12.0.0.7-1.adopt0
+* Tue Aug 10 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.12.0.0.7-1.adopt0
 - Eclipse Temurin 11.0.12+7 release.
+* Tue Feb 1 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.14.0.0.9-1.adopt0
+- Eclipse Temurin 11.0.14+9 release.
