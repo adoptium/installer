@@ -199,6 +199,7 @@ def uploadRPMArtifacts(distro) {
         'redhat' : [
             'rpm/centos/7',
             'rpm/centos/8',
+            'rpm/rocky/8',
             'rpm/rhel/7',
             'rpm/rhel/8',
             'rpm/fedora/34',
@@ -210,7 +211,9 @@ def uploadRPMArtifacts(distro) {
         'suse'   : [
             'rpm/opensuse/15.1',
             'rpm/opensuse/15.2',
-            'rpm/opensuse/15.3'
+            'rpm/opensuse/15.3',
+            'rpm/sles/12',
+            'rpm/sles/15'
         ]
     ]
     def archs = [
