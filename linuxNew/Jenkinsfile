@@ -210,7 +210,9 @@ def uploadRPMArtifacts(distro) {
         'suse'   : [
             'rpm/opensuse/15.1',
             'rpm/opensuse/15.2',
-            'rpm/opensuse/15.3'
+            'rpm/opensuse/15.3',
+            'rpm/sles/12',
+            'rpm/sles/15'
         ]
     ]
     def archs = [
