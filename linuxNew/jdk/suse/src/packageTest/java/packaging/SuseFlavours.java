@@ -38,7 +38,6 @@ public class SuseFlavours implements ArgumentsProvider {
 			Arguments.of("opensuse/leap", "15.1"),
 			Arguments.of("opensuse/leap", "15.2"),
 			Arguments.of("opensuse/leap", "15.3"),
-			Arguments.of("registry.suse.com/suse/sles12sp3", "latest"),
 			Arguments.of("registry.suse.com/suse/sle15", "latest")
 		);
 	}

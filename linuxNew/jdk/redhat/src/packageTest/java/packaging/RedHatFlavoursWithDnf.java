@@ -35,17 +35,15 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 		/*
-		 * CentOS: Remove 8 once there are no more maintenance updates provided
-		 *     (https://wiki.centos.org/About/Product), expected end of 2021.
 		 * Rocky Linux (CentOS replacement): All supported versions
 		 * Oracle Linux: All supported versions until premier support runs out
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
 		 */
 		return Stream.of(
-			Arguments.of("centos", "8"),
+			Arguments.of("rockylinux", "8"),
 			Arguments.of("fedora", "34"),
 			Arguments.of("fedora", "35"),
-			Arguments.of("redhat/ubi8-minimal", "latest"),
+			Arguments.of("redhat/ubi8", "latest"),
 			Arguments.of("oraclelinux", "8")
 		);
 	}

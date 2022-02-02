@@ -199,6 +199,7 @@ def uploadRPMArtifacts(distro) {
         'redhat' : [
             'rpm/centos/7',
             'rpm/centos/8',
+            'rpm/rocky/8',
             'rpm/rhel/7',
             'rpm/rhel/8',
             'rpm/fedora/34',
