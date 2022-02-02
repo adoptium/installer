@@ -3,7 +3,7 @@ on:
   push:
     paths:
       - 'linuxNew/**'
-  pull_request_target:
+  pull_request:
     branches: [ master ]
     paths:
       - 'linuxNew/**'
@@ -42,7 +42,7 @@ jobs:
         if: always() # always run even if the previous step fails
         with:
           report_paths: '**/build/test-results/**/TEST-*.xml'
-          token: ${{ secrets.ADOPTIUM_TEMURIN_BOT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   check-jdk-packages:
     name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
@@ -83,7 +83,7 @@ jobs:
         if: always() # always run even if the previous step fails
         with:
           report_paths: '**/build/test-results/**/TEST-*.xml'
-          token: ${{ secrets.ADOPTIUM_TEMURIN_BOT_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   # Ensures we don't accept a Gradle Wrapper update that has been tampered with.
   validation:
