@@ -237,14 +237,14 @@ def uploadRPMArtifacts(distro) {
         packageDir ->
             def archesToUse = archs
             // Centos 6 supported on x86_64 only
-            if (packageDir.contains("centos/6")) {
+            if (packageDir.contains("centos/6") || packageDir.contains("rhel/6")) {
                 archesToUse = [
                     "x86_64" : "x86_64",
                     "source" : "src"
                 ]
             }
             // Oracle Linux and Amazon Linux support x86_64 and Aarch64
-            if (packageDir.contains("oraclelinux") or packageDir.contains("amazonlinux")) {
+            if (packageDir.contains("oraclelinux") || packageDir.contains("amazonlinux") || packageDir.contains("rocky")) {
                 archesToUse = [
                     "x86_64" : "x86_64",
                     "aarch64": "aarch64",
