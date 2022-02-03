@@ -7,6 +7,7 @@ on:
     branches: [ master ]
     paths:
       - 'linuxNew/**'
+      - '.github/workflows/linux.yml'
 
 # Cancel existing runs if user makes another push.
 concurrency:
@@ -27,7 +28,7 @@ jobs:
 
       - uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '11'
           java-package: jdk
           architecture: x64
           distribution: 'temurin'
@@ -37,12 +38,11 @@ jobs:
           export _JAVA_OPTIONS="-Xmx4G"
           ./gradlew --parallel :ca-certificates:check --stacktrace
 
-      - name: Publish Test Reports
-        uses: mikepenz/action-junit-report@v2
+      - uses: actions/upload-artifact@v2
         if: always() # always run even if the previous step fails
         with:
-          report_paths: '**/build/test-results/**/TEST-*.xml'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: test-results
+          path: '**/build/test-results/**/TEST-*.xml'
 
   check-jdk-packages:
     name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
@@ -66,7 +66,7 @@ jobs:
 
       - uses: actions/setup-java@v2
         with:
-          java-version: '8'
+          java-version: '11'
           java-package: jdk
           architecture: x64
           distribution: 'temurin'
@@ -78,12 +78,17 @@ jobs:
           export COMPOSE_DOCKER_CLI_BUILD=1
           ./gradlew --parallel packageJdk${{ matrix.distro }} checkJdk${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
 
-      - name: Publish Test Reports
-        uses: mikepenz/action-junit-report@v2
+      - name: Relocate test results
+        if: always() # always run even if the previous step fails
+        run: |
+          mkdir ${{ matrix.product.version }}
+          mv jdk ${{ matrix.product.version }}
+
+      - uses: actions/upload-artifact@v2
         if: always() # always run even if the previous step fails
         with:
-          report_paths: '**/build/test-results/**/TEST-*.xml'
-          token: ${{ secrets.GITHUB_TOKEN }}
+          name: test-results
+          path: '**/build/test-results/**/TEST-*.xml'
 
   # Ensures we don't accept a Gradle Wrapper update that has been tampered with.
   validation:
