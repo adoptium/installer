@@ -79,6 +79,7 @@ jobs:
           ./gradlew --parallel packageJdk${{ matrix.distro }} checkJdk${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
 
       - name: Relocate test results
+        if: always() # always run even if the previous step fails
         run: |
           mkdir ${{ matrix.product.version }}
           mv jdk ${{ matrix.product.version }}
