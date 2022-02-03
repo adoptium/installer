@@ -78,6 +78,11 @@ jobs:
           export COMPOSE_DOCKER_CLI_BUILD=1
           ./gradlew --parallel packageJdk${{ matrix.distro }} checkJdk${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
 
+      - name: Relocate test results
+        run: |
+          mkdir ${{ matrix.product.version }}
+          mv jdk ${{ matrix.product.version }}
+
       - uses: actions/upload-artifact@v2
         if: always() # always run even if the previous step fails
         with:
