@@ -1,0 +1,16 @@
+name: Publish Test Reports
+on:
+  workflow_run:
+    workflows: ['Check Linux Packages'] # runs after Check Linux Packages worflow
+    types:
+      - completed
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: dorny/test-reporter@v1
+      with:
+        artifact: test-results            # artifact name
+        name: JUnit Test Report           # Name of the check run which will be created
+        path: '**/build/test-results/**/TEST-*.xml' # Path to test results (inside artifact .zip)
+        reporter: java-junit              # Format of test results
