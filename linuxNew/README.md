@@ -8,7 +8,7 @@ and then looping over configuration to create the various packages and signing t
 with the (Eclipse Foundation as a default) signing service.
 
 TODO You can then optionally upload those packages to a package repository of your choice.
-TODO List the default location that Adoptium is using.
+The default Adoptium package repository is https://packages.adoptium.net/ui/packages. The packages are built and uploaded by Jenkins pipeline job defined by [Jenkinsfile](https://github.com/adoptium/installer/blob/master/linuxNew/Jenkinsfile)
 
 ## Prerequisites
 
@@ -24,18 +24,21 @@ Builds take at least ~5-15 minutes to complete on a modern machine.  Please ensu
 
 You'll want to make sure you've set the exact versions of the binaries you want package in the:
 
-* **Debian Based** - _jdk\debian\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;platform&gt;\\rules_ files.
+* **Debian Based** - _jdk\debian\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\debian\\rules_ files.
 * **Red Hat Based** - _jdk\redhat\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;vendor&gt;-&lt;version&gt;-jdk.spec_ files.
 * **SUSE Based** - _jdk\suse\src\main\packaging\\&lt;vendor&gt;\\&lt;version&gt;\\&lt;vendor&gt;-&lt;version&gt;-jdk.spec_ files.
 
 In all of the examples below you'll need to replace the following variables:
 
-* Replace `<version>` with `8|11|16|17`
+* Replace `<version>` with `8|11|17`
 * Replace `<vendor>` with `temurin|dragonwell`
+* Replace `<platform>` with `Debian|RedHat|Suse`
 
 ### Build all packages for a version
 
 ```shell
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean package checkPackage -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
@@ -49,24 +52,33 @@ which in turn has a dependency on the `package` task (this is how Gradle knows t
 * **checkJdk&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
 _src/packageTest/java/packaging_ on them.
 
+### Build a Debian specific package for a version
+
+Replace `<version>` with `8|11|17`
+Replace `<vendor>` with `temurin|dragonwell`
+
 ```shell
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
 ### Build a Red Hat specific package for a version
 
-Replace `<version>` with `8|11|16|17`
+Replace `<version>` with `8|11|17`
 Replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
+export DOCKER_BUILDKIT=1
+export COMPOSE_DOCKER_CLI_BUILD=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
 ### Build a SUSE specific package for a version
 
-Replace `<version>` with `8|11|16|17`
+Replace `<version>` with `8|11|17`
 
 ```shell
 export _JAVA_OPTIONS="-Xmx4g"
@@ -90,11 +102,18 @@ In this example, we are using the existing spec files for the Temurin 11 JDK to 
 SRPM into a binary RPM. It supports building it for the current target architecture or for a different one than the host
 system by specifying `vers_arch`.
 
-Prerequisites: `rpm-build` and `rpmdevtools` packages are installed.
+Prerequisites: `rpm-build` and `rpmdevtools` packages are installed. For example:
+
+```
+$ rpm -q rpmdevtools rpm-build
+rpmdevtools-9.3-3.fc33.noarch
+rpm-build-4.16.1.3-1.fc33.x86_64
+```
 
 ### Produce a Source/Binary RPM for x86_64
 
 Consider this RPM build where x86_64 is the build hosts' architecture.
+Download the release blobs and associated sources.
 
 ```shell
 spec=$(pwd)/temurin-11-jdk.spec
@@ -104,7 +123,7 @@ spectool --gf ${spec}
 sha256sum -c *.sha256.txt
 ```
 
-Create an SRPM:
+Create a SRPM:
 
 ```shell
 rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
@@ -120,33 +139,43 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
            --define "_rpmdir $(pwd)" --rebuild *.src.rpm
 ```
 
-### Produce a Source/Binary RPM for s390x on a x86_64 Host
+### Building for a different architecture 
 
-In order to produce RPMs on an x86_64 build host for the s390x target architecture, consider this example.
-
-```shell
-spec=$(pwd)/temurin-11-jdk.spec
-mkdir temurin_s390x
-pushd temurin_s390x
-spectool --define 'vers_arch s390x' \
-           --gf ${spec}.spec
-sha256sum -c *.sha256.txt
-```
-
-Create an SRPM:
+In order to produce RPMs on an x86_64 build host for the s390x target architecture, Use the `--target` switch to `rpm-build` so as to build for a different
+archicture. Suppose the host architecture is `x86_64` and we want to build
+for target architecture `s390x`:
 
 ```shell
-rpmbuild --define 'vers_arch s390x' \
-           --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
+$ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
            --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
-           --define "_rpmdir $(pwd)" --nodeps -bs ${spec}.spec
+           --define "_rpmdir $(pwd)" --target s390x --rebuild *.src.rpm
 ```
 
-Build the binary from the SRPM:
+## Supported packages
 
-```shell
-rpmbuild --define 'vers_arch s390x' \
-           --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
-           --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
-           --define "_rpmdir $(pwd)" --target "s390x" --rebuild *.src.rpm
-```
+### DEB (TODO)
+
+### RPM 
+Supported JDK version 8,11,17. Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x( s390x is only available for jdk11+). SRPM also available.  
+
+| Distr            | Test enabled platforms | Note |
+| ---------------- |:----------------------:|:----:|
+| amazonlinux/2    | x86_64     |                |
+| centos/7         | x86_64     |                |
+| centos/8 (switch to rocky/8)  | x86_64     ||   |
+| rpm/fedora/34    | x86_64     |                |
+| rpm/fedora/35    | x86_64     |                |
+| oraclelinux/7    | x86_64     |                |
+| oraclelinux/8    | x86_64     |                |
+| opensuse/15.1    | x86_64     |                |
+| opensuse/15.2    | x86_64     |                |
+| opensuse/15.3    | x86_64     |                |
+| rocky/8          | x86_64     |                |
+| rpm/rhel/7       | x86_64     |                |
+| rpm/rhel/8       | x86_64     |                |
+| sles/12          | Null       | Need subscription to even run zypper update|
+| sles/15          | x86_64     |                |
+
+## Install the packages
+
+See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://blog.adoptium.net/2021/12/eclipse-temurin-linux-installers-available)
