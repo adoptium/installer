@@ -50,6 +50,10 @@ do tar -xf "$f";
     *openj9*)
       export JVM="openj9"
     ;;
+    *)
+      echo Cannot identify variant from filename "${f}" - only hotspot or openj9 are allowable
+      exit 1
+    ;;
   esac
 
   # Detect if JRE or JDK
