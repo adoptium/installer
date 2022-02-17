@@ -70,6 +70,10 @@ IF NOT "%ARCH%" == "x64" (
 	)
 )
 
+REM Update to handle the change of build variant until implications
+REM of setting this to Temurin can be evaluated
+IF "%JVM%" == "temurin" SET JVM=hotspot
+
 IF NOT "%JVM%" == "hotspot" (
 	IF NOT "%JVM%" == "openj9" (
 	    IF NOT "%JVM%" == "dragonwell" (
