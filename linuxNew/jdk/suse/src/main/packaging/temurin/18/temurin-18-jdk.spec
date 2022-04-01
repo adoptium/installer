@@ -116,14 +116,6 @@ Provides: java-sdk
 Provides: java-sdk-18
 Provides: java-sdk-18-%{java_provides}
 Provides: java-sdk-%{java_provides}
-Provides: jre
-Provides: jre-18
-Provides: jre-18-headless
-Provides: jre-18-%{java_provides}
-Provides: jre-18-%{java_provides}-headless
-Provides: jre-headless
-Provides: jre-%{java_provides}
-Provides: jre-%{java_provides}-headless
 
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK18U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
