@@ -7,7 +7,7 @@ pipeline {
     parameters {
         string(name: 'PRODUCT', defaultValue: 'temurin')
         string(name: 'JDK_SOURCE', defaultValue: 'Adoptium')
-        choice(name: 'VERSION_FILTER', choices: ['8', '11', '17', 'all'], description: 'Build for specific VERSION')
+        choice(name: 'VERSION_FILTER', choices: ['8', '11', '17', '18', 'all'], description: 'Build for specific VERSION')
         choice(name: 'DISTRO_FILTER', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro')
         booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
     }
@@ -39,7 +39,7 @@ pipeline {
                     }
                     axis {
                         name 'VERSION'
-                        values '8', '11', '17'
+                        values '8', '11', '17', '18'
                     }
                 }
                 stages {
@@ -84,7 +84,7 @@ pipeline {
                     }
                     axis {
                         name 'VERSION'
-                        values '8', '11', '17'
+                        values '8', '11', '17', '18'
                     }
                 }
                 excludes {
