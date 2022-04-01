@@ -105,7 +105,7 @@ Provides: java-18-devel
 Provides: java-18-headless
 Provides: java-18-%{java_provides}
 Provides: java-18-%{java_provides}-devel
-Provides: java-187-%{java_provides}-headless
+Provides: java-18-%{java_provides}-headless
 Provides: java-devel
 Provides: java-devel-%{java_provides}
 Provides: java-headless
@@ -257,5 +257,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Tue Apr 1 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 18.0.0.0.0.36-1.adopt0
+* Fri Apr 1 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 18.0.0.0.0.36-1.adopt0
 - Eclipse Temurin 18.0.0+36 release. 

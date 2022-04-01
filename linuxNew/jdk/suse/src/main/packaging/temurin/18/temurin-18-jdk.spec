@@ -244,5 +244,5 @@ fi
 %{prefix}
 
 %changelog
-* Tue Apr 1 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 18.0.0.0.0.36-1.adopt0
+* Fri Apr 1 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 18.0.0.0.0.36-1.adopt0
 - Eclipse Temurin 18.0.0+36 release.
