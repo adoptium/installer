@@ -252,6 +252,8 @@ fi
 %{prefix}
 
 %changelog
+* Tue Apr 27 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.3.0.0.7.adopt0
+- Eclipse Temurin 17.0.3+7 release.
 * Tue Feb 1 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.2.0.0.8-1.adopt0
 - Eclipse Temurin 17.0.2+8 release.
 * Thu Sep 23 2021 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.0.0.0.35-1.adopt0
