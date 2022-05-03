@@ -3,7 +3,7 @@
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
-#  17.0.1.0.0___12 == 17.0.3.0.0+7
+#  17.0.3.0.0___7 == 17.0.3.0.0+7
 %global spec_version 17.0.3.0.0.7
 %global spec_release 1
 %global priority 1161
