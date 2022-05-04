@@ -1,3 +1,9 @@
+temurin-18-jdk (18.0.1+10) UNRELEASED; urgency=medium
+
+  * Eclipse Temurin 18.0.1+10 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 4 May 2022 13:28:00 +0000
+
 temurin-18-jdk (18+36) UNRELEASED; urgency=medium
 
   * Eclipse Temurin 18+36 release.
