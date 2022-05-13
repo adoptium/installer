@@ -25,6 +25,7 @@ pkg_alias = $(pkg_name)-$(DEB_HOST_ARCH)
 override_dh_auto_clean:
 override_dh_auto_test:
 override_dh_auto_build:
+override_dh_strip:
 override_dh_auto_install:
 	# Download and verify checksum of JDK
 	wget --progress=dot:mega -O jdk.tar.gz $($(DEB_HOST_ARCH)_tarball_url)
