@@ -30,8 +30,8 @@ You'll want to make sure you've set the exact versions of the binaries you want 
 
 In all of the examples below you'll need to replace the following variables:
 
-* Replace `<version>` with `8|11|17`
-* Replace `<vendor>` with `temurin|dragonwell`
+* Replace `<version>` with `8|11|17|18`
+* Replace `<vendor>` with `temurin|dragon|openj9` (openj9 only for ReaHat)
 * Replace `<platform>` with `Debian|RedHat|Suse`
 
 ### Build all packages for a version
@@ -54,8 +54,8 @@ _src/packageTest/java/packaging_ on them.
 
 ### Build a Debian specific package for a version
 
-Replace `<version>` with `8|11|17`
-Replace `<vendor>` with `temurin|dragonwell`
+Replace `<version>` with `8|11|17|18`
+Replace `<vendor>` with `temurin`
 
 ```shell
 export DOCKER_BUILDKIT=1
@@ -66,8 +66,8 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a Red Hat specific package for a version
 
-Replace `<version>` with `8|11|17`
-Replace `<vendor>` with `temurin|dragonwell`
+Replace `<version>` with `8|11|17|18`
+Replace `<vendor>` with `temurin`
 
 ```shell
 export DOCKER_BUILDKIT=1
@@ -78,7 +78,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a SUSE specific package for a version
 
-Replace `<version>` with `8|11|17`
+Replace `<version>` with `8|11|17|18`
 
 ```shell
 export _JAVA_OPTIONS="-Xmx4g"
@@ -153,10 +153,13 @@ $ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 
 ## Supported packages
 
-### DEB (TODO)
+### DEB
+Supported JDK version 8,11,17,18. 
+Supported platform x86_64, aarch64, armv7hl, ppc64le, x86_32, s390x (s390x is only available for jdk11+).  
 
-### RPM 
-Supported JDK version 8,11,17. Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x( s390x is only available for jdk11+). SRPM also available.  
+### RPM (RedHat and Suse)
+Supported JDK version 8,11,17,18. 
+Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk11+). SRPM also available.  
 
 | Distr            | Test enabled platforms | Note |
 | ---------------- |:----------------------:|:----:|

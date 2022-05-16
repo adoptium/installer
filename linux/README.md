@@ -1,4 +1,8 @@
+# Disclaimer
+Folder "linux" is deprecated, please refer to "linuxNew" for Linux related installer job
+
 # Packaging AdoptOpenJDK for Linux
+
 
 ## Prerequisites
 
