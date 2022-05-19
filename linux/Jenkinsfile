@@ -1,126 +1,134 @@
-NODE_LABEL = "dockerBuild&&linux&&x64" // Dynamic docker machines from Azure
+/*
+--------------------------------------------
+buildArch   RPM         DEB         Comments
+--------------------------------------------
+x86_64      x86_64      amd64
+armv7l      armv7hl     armhf       arm32
+aarch64     aarch64     arm64       arm64
+ppc64le     ppc64le     ppc64le
+source      src         -           only for SRPM and no need specify as option or target
+s390x       s390x       s390x       only for jdk8+
+*/
+
+env.NODE_LABEL_RPM = "dockerBuild&&linux&&x64" // RedHat + Suse + Debian x64
+env.NODE_LABEL_DEB = "docker&&linux&&${ARCH}"  // Debian non-x64 
+env.PRODUCT = "temurin"
 
 pipeline {
     agent {
-        label NODE_LABEL
+        label NODE_LABEL_RPM
+    }
+    options {
+        timeout(time: 2, unit: 'HOURS') 
     }
     parameters {
-        string(name: 'PRODUCT', defaultValue: 'temurin')
-        string(name: 'JDK_SOURCE', defaultValue: 'Adoptium')
-        choice(name: 'VERSION_FILTER', choices: ['8', '11', '17', '18', 'all'], description: 'Build for specific VERSION')
-        choice(name: 'DISTRO_FILTER', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro')
-        booleanParam(name: 'UPLOAD', defaultValue: false, description: 'Tick this box to upload the deb/rpm files to Artifactory')
+        choice(name: 'VERSION', choices: ['8', '11', '17', '18'], description: 'Build for specific JDK VERSION')
+        choice(name: 'ARCH', choices: ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: "Build for specific platform\n s300x not for VERSION 8\n")
+        choice(name: 'DISTRO', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
+        booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files exlude src.rpm to Artifactory')
+        booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload the src.rpm files to Artifactory')
+        string(name: 'gitrepo', defaultValue: 'https://github.com/adoptium/installer', description: 'Do not modify unless want to build from a specific gitrepo')
+        string(name: 'gitbranch', defaultValue: 'master', description: 'Do not change unless want to build on a specific branch from above gitrepo')
+        booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
+    }
+    tools {
+        // this is set in the jenkins global tool
+        jdk "jdk-11.0.13+8"
     }
     stages {
-        stage('Linux-x64 Installers') {
-            matrix {
-                agent {
-                    label NODE_LABEL
+        stage ("Prepare Build"){
+            steps{
+                script{
+                    currentBuild.displayName =  "jdk${VERSION} - ${ARCH} - ${DISTRO}"
+                    currentBuild.description = env.BUILD_USER_ID
+                    sh("docker --version")
                 }
-                tools {
-                    jdk "jdk-11.0.13+8"
-                }
-                when {
-                    allOf {
-                        anyOf {
-                            expression { params.VERSION_FILTER == 'all' }
-                            expression { params.VERSION_FILTER == env.VERSION }
-                        }
-                        anyOf {
-                            expression { params.DISTRO_FILTER == 'all' }
-                            expression { params.DISTRO_FILTER == env.DISTRO }
-                        }
-                    }
-                }
-                axes {
-                    axis {
-                        name 'DISTRO'
-                        values 'Debian', 'RedHat', 'Suse'
-                    }
-                    axis {
-                        name 'VERSION'
-                        values '8', '11', '17', '18'
-                    }
-                }
-                stages {
-                    stage('Build Installer') {
-                        steps {
-                                echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
-                                setup()
-                                dir('linux') {
-                                    buildAndTest(DISTRO, 'x64')
-                                }
-                                script {
-                                    if (UPLOAD.toBoolean()) {
-                                        uploadArtifacts(DISTRO, 'amd64')
-                                    }
-                                }
-                            }
-                    }
+                checkout(
+                    [
+                        $class: 'GitSCM',
+                        branches: [[name: "$gitbranch"]],
+                        extensions: [[$class: 'CleanBeforeCheckout', deleteUntrackedNestedRepositories: true]],
+                        userRemoteConfigs: [[url: "$gitrepo"]]
+                    ]
+                )
+                dir("linux") {
+                    stash name: "installercode", includes: "**"
                 }
             }
         }
-        stage('Run non-x64 Deb packaging in parallel') {
-            when {
-                anyOf {
-                    expression { params.DISTRO_FILTER == 'all' }
-                    expression { params.DISTRO_FILTER == 'Debian' }
-                }
-            }
-            matrix {
-                tools {
-                    jdk "jdk-11.0.13+8"
-                }
-                when {
-                    anyOf {
-                        expression { params.VERSION_FILTER == 'all' }
-                        expression { params.VERSION_FILTER == env.VERSION }
-                    }
-                }
-                axes {
-                    axis {
-                        name 'ARCH'
-                        values 'aarch64', 'ppc64le', 's390x', 'armv7l'
-                    }
-                    axis {
-                        name 'VERSION'
-                        values '8', '11', '17', '18'
-                    }
-                }
-                excludes {
-                    exclude {
-                        axis {
-                            name 'ARCH'
-                            values 's390x'
+        stage ("BUILD")
+        {
+            parallel{
+                stage('Build Installer for Debian') {
+                    when  {
+                        beforeAgent true
+                        anyOf {
+                            expression{ params.DISTRO == 'all' }  // trigger debian build
+                            expression{ params.DISTRO == 'Debian' }
                         }
-                        axis {
-                            name 'VERSION'
-                            values '8'
+                    }
+                    agent {
+                        label "${ARCH}" == "x86_64" ? "${env.NODE_LABEL_RPM}": "${env.NODE_LABEL_DEB}"
+                    }
+                    steps{
+                        dir('linuxDebian') {
+                            script {
+                                DISTRO = "Debian"
+                                echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
+                                setup("${DISTRO}", "${ARCH}")
+                                unstash 'installercode'
+                                buildAndTest("${DISTRO}", "${ARCH}")
+                                if (params.uploadPackage.toBoolean()) {
+                                    echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
+                                    uploadArtifacts("${DISTRO}", "${ARCH}")
+                                }
+                            }
                         }
                     }
                 }
-                agent {
-                    label "docker&&linux&&${ARCH}"
+                stage('Build Installer for Redhat') {
+                    when  {
+                        beforeAgent true
+                        anyOf {
+                            expression{ params.DISTRO == 'all' }  // trigger debian build
+                            expression{ params.DISTRO == 'RedHat' }
+                        }
+                    }
+                    steps{
+                        dir('linuxRedHat') {
+                            script {
+                                DISTRO = "RedHat"
+                                echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
+                                setup("${DISTRO}", "${ARCH}")
+                                unstash 'installercode'
+                                buildAndTest("${DISTRO}", "${ARCH}")
+                                if (params.uploadPackage.toBoolean()) {
+                                    echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
+                                    uploadArtifacts("${DISTRO}", "${ARCH}")
+                                }
+                            }
+                        }
+                    }
                 }
-                stages {
-                    stage('Build Installer') {
-                        steps {
-                            echo "Debian Installer Job for Temurin ${VERSION} - on ${ARCH}"
-                            setup()
+                stage('Build Installer for Suse') {
+                    when  {
+                        beforeAgent true // do condition when before allocate to agent
+                        anyOf {
+                            expression{ params.DISTRO == 'all' }  // trigger debian build
+                            expression{ params.DISTRO == 'Suse' }
+                        }
+                    }
+                    steps{
+                        dir('linuxSuse') {
                             script {
-                                if (ARCH == "s390x") {
-                                    env.DOCKER_BUILDKIT=0
-                                }
-                                if (ARCH == "armv7l") {
-                                    env._JAVA_OPTIONS=""
-                                }
-                            }
-                            dir('linux') {
-                                buildAndTest('Debian', ARCH)
-                            }
-                            script {
-                                if (UPLOAD.toBoolean()) {
-                                    uploadArtifacts('Debian', ARCH)
+                                DISTRO = "Suse"
+                                echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
+                                setup("${DISTRO}", "${ARCH}")
+                                unstash 'installercode'
+                                buildAndTest("${DISTRO}", "${ARCH}")
+                                if (params.uploadPackage.toBoolean()) {
+                                    echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
+                                    uploadArtifacts("${DISTRO}", "${ARCH}")
                                 }
                             }
                         }
@@ -131,69 +139,92 @@ pipeline {
     }
 }
 
-def setup() {
+/*
+* Common Functions
+*/
+def setup(DISTRO, buildArch) {
     cleanWs()
     // Docker --mount option requires BuildKit
-    env.DOCKER_BUILDKIT=1
-    env._JAVA_OPTIONS="-Xmx4g"
-    checkout scm
+    env.DOCKER_BUILDKIT = buildArch == "s390x" ? '0' : '1'
+    env.COMPOSE_DOCKER_CLI_BUILD=1
+    env._JAVA_OPTIONS =  (buildArch == "armv7l" && DISTRO == "Debian")? "" : "-Xmx4g"
 }
 
-def buildAndTest(DISTRO, arch) {
-    if (DISTRO != "Debian") {
-        // Install Adoptium GPG key for RPM signing
-        withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
-            sh('./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY}')
+def buildAndTest(DISTRO, buildArch) {
+    try {
+        if (DISTRO != "Debian") { // for RPM based: RedHat / Suse
+            // Install Adoptium GPG key for RPM signing
+            withCredentials([file(credentialsId: 'adoptium-artifactory-gpg-key', variable: 'GPG_KEY')]) {
+                def buildCLI = "./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}"
+                buildCLI = params.enableDebug.toBoolean() ? buildCLI + " --stacktrace" : buildCLI
+                sh("$buildCLI")
+            }
+        } else {
+            def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
+            def debArchList = [
+                "x86_64" : "amd64",
+                "armv7l": "armhf",
+                "aarch64": "arm64",
+                "ppc64le": "ppc64el",
+                "s390x"  : "s390x"
+            ]
+            def buildCLI = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
+            buildCLI = params.enableDebug.toBoolean() ? buildCLI + " --stacktrace" : buildCLI
+            sh("$buildCLI")
         }
-    } else if (arch == 'x64') {
-        sh("./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
-    } else {
-        // Current tests are not supported on non-x64 platform
-        sh("./gradlew packageJdk${DISTRO} --parallel -PPRODUCT=${PRODUCT} -PPRODUCT_VERSION=${VERSION}")
+    } catch (Exception ex) {
+        echo 'Exception in buildAndTest: ' + ex.toString() 
+        currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
+    } finally {
+        archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: true
     }
-    archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
 }
 
-def uploadArtifacts(distro, arch) {
-    if (distro == "Debian") {
-        uploadDebArtifacts(arch)
-    } else {
-        uploadRPMArtifacts(distro)
+def uploadArtifacts(DISTRO, buildArch) {
+    if (DISTRO == "Debian") {
+        uploadDebArtifacts(buildArch)
+    } else {  // DISTRO == RPM(RedHat||Suse)
+        uploadRPMArtifacts(DISTRO)
     }
 }
 
 def uploadDebArtifacts(buildArch) {
-    def archs = [
-        "amd64" : "amd64",
-        "ppc64le": "ppc64el",
-        "aarch64": "arm64",
+    // full list of all platforms, up to user to opt out s390x+jdk8
+    def debArchList = [
+        "x86_64" : "amd64",
         "armv7l": "armhf",
-        "s390x" : "s390x"
+        "aarch64": "arm64",
+        "ppc64le": "ppc64el",
+        "s390x"  : "s390x"
     ]
-    def distro_list = ""
+    /*
+        Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04
+        add more into list when avaiable for release
+        also update linux/jdk/debian/main/packing/build.sh
+    */
     def deb_versions = ["buster", "bullseye", "bionic", "focal", "jammy"]
-    deb_versions.each { distro ->
-        // Creates list like deb.distribution=bullseye;deb.distribution=bullseye;
-        distro_list += "deb.distribution=${distro};"
+    def distro_list = ""
+    deb_versions.each { deb_version ->
+        // Creates list like deb.distribution=stretch;deb.distribution=buster;
+        distro_list += "deb.distribution=${deb_version};"
     }
-    def arch = archs.get(buildArch)
-    rtUpload (
+
+    rtUpload ( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
         failNoOp: true,
         spec: """{
             "files": [
                 {
-                "pattern": "**/build/ospackage/temurin-*${arch}.deb",
+                "pattern": "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb",
                 "target": "deb/pool/main/t/temurin-${VERSION}/",
-                "props": "${distro_list}deb.component=main;deb.architecture=${arch}"
+                "props": "${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}"
                 }
             ]
         }""",
     )
 }
 
-def uploadRPMArtifacts(distro) {
-    def tempDistro = distro.toLowerCase()
+def uploadRPMArtifacts(DISTRO) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
@@ -203,9 +234,10 @@ def uploadRPMArtifacts(distro) {
             'rpm/rhel/9',
             'rpm/fedora/35',
             'rpm/fedora/36',
+            'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2',
-            'rpm/oraclelinux/7'
+
         ],
         'suse'   : [
             'rpm/opensuse/15.3',
@@ -214,22 +246,22 @@ def uploadRPMArtifacts(distro) {
             'rpm/sles/15'
         ]
     ]
-    def archs = [
+    def packageDirs = distro_Package[DISTRO.toLowerCase()]
+    // full list of all platforms, up to user to opt out s390x+jdk8 from input
+    def rpmArchList = [
         "x86_64" : "x86_64",
-        "ppc64le": "ppc64le",
+        "armv7l": "armv7hl",
         "aarch64": "aarch64",
-        "armv7hl": "armv7hl",
-        "source" : "src"
+        "ppc64le": "ppc64le",
+        "source" : "src",  // here we need src in the list to be able to upload
+        "s390x"  : "s390x"
     ]
-    def packageDirs = distro_Package.get(tempDistro)
-    
-    if ( !VERSION.equals("8") ) {
-        archs.put("s390x", "s390x")
-    }
+    // Enable upload src.rpm
+    if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all'){   rpmArchList.put("Source","src") }
 
     packageDirs.each {
         packageDir ->
-            archs.each {
+            rpmArchList.each {
                 entry -> rtUpload (
                     serverId: 'adoptium.jfrog.io',
                     failNoOp: true,

@@ -43,3 +43,7 @@ def getProductVersion() {
 def getGPGKey() {
 	return hasProperty("GPG_KEY") ? GPG_KEY.toString() : null
 }
+
+def getArch() {
+	return hasProperty("ARCH") ? ARCH.toString() : "all"
+}

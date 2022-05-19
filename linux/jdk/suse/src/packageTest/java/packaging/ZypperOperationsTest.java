@@ -37,8 +37,7 @@ class ZypperOperationsTest {
 	@ParameterizedTest(name = "{0}:{1}")
 	@ArgumentsSource(SuseFlavours.class)
 	void packageSuccessfullyInstalled(String distribution, String codename) throws Exception {
-		Path hostRpm = RpmFiles.hostRpmPath();
-
+        Path hostRpm = RpmFiles.hostRpmPath();
 		assertThat(hostRpm).exists();
 
 		File containerRpm = new File("", hostRpm.toFile().getName());
@@ -52,32 +51,35 @@ class ZypperOperationsTest {
 
 			result = runShell(container, "zypper update -y");
 			assertThat(result.getExitCode()).isEqualTo(0);
-			
-			if (System.getenv("JDKGPG") != null) {
-				// Signature verification failed [4-Signatures public key is not available]
-				result = runShell(container, "zypper --no-gpg-checks install -y " + containerRpm);
-			} else {
-				// 4 - ZYPPER_EXIT_ERR_ZYPP - A problem is reported by ZYPP library.
-				result = runShell(container, "zypper install -y --allow-unsigned-rpm " + containerRpm);
-			}
-			assertThat(result.getExitCode()).isEqualTo(0);
 
-			result = runShell(container, "rpm -qi " + System.getenv("PACKAGE"));
-			assertThat(result.getExitCode()).isEqualTo(0);
-			if (System.getenv("JDKGPG") != null) {
-				assertThat(result.getStdout())
-					.contains("Name        : " + System.getenv("PACKAGE"))
-					.contains("Group       : java")
-					.contains("License     : GPLv2 with exceptions")
-					.contains("Signature   : RSA/SHA256")
-					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
-			} else {
-				assertThat(result.getStdout())
-					.contains("Name        : " + System.getenv("PACKAGE"))
-					.contains("Group       : java")
-					.contains("License     : GPLv2 with exceptions")
-					.contains("Signature   : (none)")
-					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			// below part: only test x86_64 rpm package in docker container
+			if (System.getenv("testArch") == "x86_64" || System.getenv("testArch") == "all") {
+				if (System.getenv("JDKGPG") != null) {
+					// Signature verification failed [4-Signatures public key is not available]
+					result = runShell(container, "zypper --no-gpg-checks install -y " + containerRpm);
+				} else {
+					// 4 - ZYPPER_EXIT_ERR_ZYPP - A problem is reported by ZYPP library.
+					result = runShell(container, "zypper install -y --allow-unsigned-rpm " + containerRpm);
+				}
+				assertThat(result.getExitCode()).isEqualTo(0);	
+
+				result = runShell(container, "rpm -qi " + System.getenv("PACKAGE"));
+				assertThat(result.getExitCode()).isEqualTo(0);
+				if (System.getenv("JDKGPG") != null) {
+					assertThat(result.getStdout())
+						.contains("Name        : " + System.getenv("PACKAGE"))
+						.contains("Group       : java")
+						.contains("License     : GPLv2 with exceptions")
+						.contains("Signature   : RSA/SHA256")
+						.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+				} else {
+					assertThat(result.getStdout())
+						.contains("Name        : " + System.getenv("PACKAGE"))
+						.contains("Group       : java")
+						.contains("License     : GPLv2 with exceptions")
+						.contains("Signature   : (none)")
+						.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+				}
 			}
 		}
 	}

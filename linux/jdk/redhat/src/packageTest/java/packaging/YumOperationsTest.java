@@ -54,27 +54,30 @@ class YumOperationsTest {
 			result = runShell(container, "yum update -y");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
-			result = runShell(container, "yum install -y " + containerRpm);
-			assertThat(result.getExitCode()).isEqualTo(0);
+			// below part: only test x86_64 rpm package in docker container
+			if (System.getenv("testArch") == "x86_64" || System.getenv("testArch") == "all") {
+				result = runShell(container, "yum install -y " + containerRpm);
+				assertThat(result.getExitCode()).isEqualTo(0);
 
-			result = runShell(container, "rpm -qi " + System.getenv("PACKAGE"));
-			assertThat(result.getExitCode()).isEqualTo(0);
-			if (System.getenv("JDKGPG") != null) {
-				assertThat(result.getStdout())
-					.contains("Name        : " + System.getenv("PACKAGE"))
-					.contains("Group       : java")
-					.contains("License     : GPLv2 with exceptions")
-					.contains("Signature   : RSA/SHA256,")
-					.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
-					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
-			} else {
-				assertThat(result.getStdout())
-					.contains("Name        : " + System.getenv("PACKAGE"))
-					.contains("Group       : java")
-					.contains("License     : GPLv2 with exceptions")
-					.contains("Signature   : (none)")
-					.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
-					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+				result = runShell(container, "rpm -qi " + System.getenv("PACKAGE"));
+				assertThat(result.getExitCode()).isEqualTo(0);
+				if (System.getenv("JDKGPG") != null) {
+					assertThat(result.getStdout())
+						.contains("Name        : " + System.getenv("PACKAGE"))
+						.contains("Group       : java")
+						.contains("License     : GPLv2 with exceptions")
+						.contains("Signature   : RSA/SHA256,")
+						.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
+						.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+				} else {
+					assertThat(result.getStdout())
+						.contains("Name        : " + System.getenv("PACKAGE"))
+						.contains("Group       : java")
+						.contains("License     : GPLv2 with exceptions")
+						.contains("Signature   : (none)")
+						.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
+						.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+				}
 			}
 		}
 	}

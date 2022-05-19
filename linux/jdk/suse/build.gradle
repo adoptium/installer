@@ -3,9 +3,9 @@ plugins {
 }
 
 ext {
-	junitVersion = "5.7.0"
-	testcontainersVersion = "1.15.1"
-	assertjCoreVersion = "3.18.1"
+	junitVersion = "5.9.0"
+	testcontainersVersion = "1.17.3"
+	assertjCoreVersion = "3.23.1"
 }
 
 repositories {
@@ -58,6 +58,7 @@ task packageJdkSuse {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
+	def arch = getArch()
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -87,10 +88,12 @@ task packageJdkSuse {
 			}			
 		}
 
-
 		project.exec {
 			workingDir getRootDir()
-			commandLine "docker", "run", "--rm",
+			commandLine "docker", "run",
+				"--rm",
+				"-e", "buildArch=${arch}",
+				"-e", "buildVersion=${productVersion}",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-suse:latest"
@@ -110,13 +113,14 @@ task checkJdkSuse(type: Test) {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
+	def arch = getArch()
 
 	environment "PACKAGE", "$product-$productVersion-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
 		println "We set the gpgkey!"
 	}
-	
+	environment "testArch", "$arch"
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"

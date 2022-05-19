@@ -4,16 +4,22 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
-# Build all spec files we can find
-targets="x86_64 ppc64le s390x aarch64 armv7hl"
+echo "DEBUG: building RH arch ${buildArch} with jdk version ${buildVersion}"
+# Build specified target or build all (not s390x on jdk8)
+if [ "${buildArch}" != "all" ]; then
+	targets=${buildArch}
+elif [ "${buildVersion}" != "8" ]; then
+	targets="x86_64 ppc64le aarch64 armv7hl s390x"
+else
+	targets="x86_64 ppc64le aarch64 armv7hl"
+fi
+
+# loop spec file originally from src/main/packaging/$product/$productVersion/*.spec
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 	spectool -g -R "$spec";
-	rpmbuild --nodeps -bs "$spec";
-	if [[ "$spec" =~ "temurin-8-jdk" ]]; then
-		targets="x86_64 ppc64le aarch64 armv7hl"
-	fi
+	rpmbuild --nodeps -bs "$spec"; # build src.rpm
 	for target in $targets; do
-		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm;
+		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm; # build binary package from src.rpm
 	done;
 done;
 

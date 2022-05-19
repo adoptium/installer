@@ -38,6 +38,9 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 * Rocky Linux (CentOS replacement): All supported versions
 		 * Oracle Linux: All supported versions until premier support runs out
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
+		 * Amazon Linux2 does not support DNF but only Yum
+		 * ubi7 does not have DNF pre-installed, ubi-minimal has microdnf
+		 * ubi8 has DNF installed
 		 */
 		return Stream.of(
 			Arguments.of("rockylinux", "8"),
