@@ -1,8 +1,0 @@
-java
-java-14
-java-14-openjdk
-java-openjdk
-jre
-jre-14
-jre-14-openjdk
-jre-openjdk

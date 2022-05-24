@@ -1,8 +1,0 @@
-bin/java hl
-bin/jitserver hl
-bin/jrunscript hl
-bin/keytool hl
-bin/rmid hl
-bin/rmiregistry hl
-lib/jexec hl
-lib/jspawnhelper hl

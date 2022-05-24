@@ -1,8 +1,0 @@
-java
-java-1.8.0
-java-1.8.0-openjdk
-java-openjdk
-jre
-jre-1.8.0
-jre-1.8.0-openjdk
-jre-openjdk

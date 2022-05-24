@@ -1,8 +1,0 @@
-java
-java-11
-java-11-openjdk
-java-openjdk
-jre
-jre-11
-jre-11-openjdk
-jre-openjdk
