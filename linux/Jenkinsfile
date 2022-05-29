@@ -47,7 +47,7 @@ pipeline {
                         steps {
                                 echo "Installer Job for Temurin ${VERSION} - ${DISTRO}"
                                 setup()
-                                dir('linuxNew') {
+                                dir('linux') {
                                     buildAndTest(DISTRO, 'x64')
                                 }
                                 script {
@@ -115,7 +115,7 @@ pipeline {
                                     env._JAVA_OPTIONS=""
                                 }
                             }
-                            dir('linuxNew') {
+                            dir('linux') {
                                 buildAndTest('Debian', ARCH)
                             }
                             script {

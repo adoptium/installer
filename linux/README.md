@@ -8,7 +8,7 @@ and then looping over configuration to create the various packages and signing t
 with the (Eclipse Foundation as a default) signing service.
 
 TODO You can then optionally upload those packages to a package repository of your choice.
-The default Adoptium package repository is https://packages.adoptium.net/ui/packages. The packages are built and uploaded by Jenkins pipeline job defined by [Jenkinsfile](https://github.com/adoptium/installer/blob/master/linuxNew/Jenkinsfile)
+The default Adoptium package repository is https://packages.adoptium.net/ui/packages. The packages are built and uploaded by Jenkins pipeline job defined by [Jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile)
 
 ## Prerequisites
 
