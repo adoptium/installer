@@ -1,8 +1,0 @@
-java
-java-9
-java-9-openjdk
-java-openjdk
-jre
-jre-9
-jre-9-openjdk
-jre-openjdk

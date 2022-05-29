@@ -1,8 +1,0 @@
-java
-java-15
-java-15-openjdk
-java-openjdk
-jre
-jre-15
-jre-15-openjdk
-jre-openjdk
