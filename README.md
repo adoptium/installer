@@ -4,7 +4,7 @@ Repository for creating installable packages for AdoptOpenJDK releases.
 The packages are created using:
 1. The Wix Toolset http://wixtoolset.org (Windows only)
 2. [Packages](http://s.sudre.free.fr/Software/Packages/about.html) (Mac OS)
-3. For putting together `.deb` and `rpms` head to this link: [linuxNew subdir readme](https://github.com/adoptium/installer/tree/master/linuxNew#readme)
+3. For putting together `.deb` and `rpms` head to this link: [linux subdir readme](https://github.com/adoptium/installer/tree/master/linux#readme)
 
 The available packages can be seen from the AdoptOpenJDK download pages: https://adoptopenjdk.net/releases.html.
 
