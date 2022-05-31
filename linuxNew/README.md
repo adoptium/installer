@@ -165,6 +165,7 @@ Supported JDK version 8,11,17. Supported platform x86_64, aarch64, armv7hl, ppc6
 | centos/8 (switch to rocky/8)  | x86_64     ||   |
 | rpm/fedora/34    | x86_64     |                |
 | rpm/fedora/35    | x86_64     |                |
+| rpm/fedora/36    | x86_64     |                |
 | oraclelinux/7    | x86_64     |                |
 | oraclelinux/8    | x86_64     |                |
 | opensuse/15.1    | x86_64     |                |
