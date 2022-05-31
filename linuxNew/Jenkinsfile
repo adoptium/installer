@@ -204,6 +204,7 @@ def uploadRPMArtifacts(distro) {
             'rpm/rhel/8',
             'rpm/fedora/34',
             'rpm/fedora/35',
+            'rpm/fedora/36',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2',
             'rpm/oraclelinux/7'
