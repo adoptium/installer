@@ -1,4 +1,4 @@
-This document describes the install packages created for each AdoptOpenJDK release and jdk / jre, the default installation locations and other pertinent information such as registry updates and post installation actions such as setting symlinks.
+This document describes the install packages created for each Temurin OpenJDK release and jdk / jre, the default installation locations and other pertinent information such as registry updates and post installation actions such as setting symlinks.
 
 It is intended for use either for reference or as a specification document for developing new installers.
 
