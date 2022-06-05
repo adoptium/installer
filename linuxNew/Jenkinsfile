@@ -4,6 +4,9 @@ pipeline {
     agent {
         label NODE_LABEL
     }
+    properties([
+        buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '1', daysToKeepStr: '', numToKeepStr: '10')),
+    ])
     parameters {
         string(name: 'PRODUCT', defaultValue: 'temurin')
         string(name: 'JDK_SOURCE', defaultValue: 'Adoptium')
@@ -197,16 +200,17 @@ def uploadRPMArtifacts(distro) {
     def tempDistro = distro.toLowerCase()
     def distro_Package = [
         'redhat' : [
+            'rpm/centos/6',
             'rpm/centos/7',
-            'rpm/centos/8',
             'rpm/rocky/8',
+            'rpm/rhel/6',
             'rpm/rhel/7',
             'rpm/rhel/8',
             'rpm/fedora/34',
             'rpm/fedora/35',
-            'rpm/oraclelinux/8',
-            'rpm/amazonlinux/2',
             'rpm/oraclelinux/7'
+            'rpm/oraclelinux/8',
+            'rpm/amazonlinux/2'
         ],
         'suse'   : [
             'rpm/opensuse/15.1',
@@ -231,7 +235,23 @@ def uploadRPMArtifacts(distro) {
 
     packageDirs.each {
         packageDir ->
-            archs.each {
+            def archesToUse = archs
+            // Centos 6 supported on x86_64 only
+            if (packageDir.contains("centos/6") || packageDir.contains("rhel/6")) {
+                archesToUse = [
+                    "x86_64" : "x86_64",
+                    "source" : "src"
+                ]
+            }
+            // Oracle Linux and Amazon Linux support x86_64 and Aarch64
+            if (packageDir.contains("oraclelinux") || packageDir.contains("amazonlinux") || packageDir.contains("rocky")) {
+                archesToUse = [
+                    "x86_64" : "x86_64",
+                    "aarch64": "aarch64",
+                    "source" : "src"
+                ]
+            }
+            archesToUse.each {
                 entry -> rtUpload (
                     serverId: 'adoptium.jfrog.io',
                     failNoOp: true,

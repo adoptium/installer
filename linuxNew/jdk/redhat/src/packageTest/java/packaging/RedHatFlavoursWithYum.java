@@ -44,6 +44,7 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 */
 		return Stream.of(
 			Arguments.of("amazonlinux", "2"),
+			Arguments.of("centos", "6"),
 			Arguments.of("centos", "7"),
 			Arguments.of("registry.access.redhat.com/ubi7/ubi", "latest"),
 			Arguments.of("oraclelinux", "7")
