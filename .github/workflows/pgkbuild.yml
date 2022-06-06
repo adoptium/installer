@@ -55,7 +55,7 @@ jobs:
         export WORKSPACE=$PWD
         bash pkgbuild/create-installer-mac.sh
         
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v3
       with:
         name: macOS_${{ matrix.architecture }}
         path: workspace/target/*.pkg
