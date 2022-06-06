@@ -1,8 +1,5 @@
 name: Check Linux Packages
 on:
-  push:
-    paths:
-      - 'linux/**'
   pull_request:
     branches: [ master ]
     paths:
