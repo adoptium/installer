@@ -20,7 +20,7 @@ jobs:
       run: brew install --cask packages
 
     - name: Setup environment variables x64
-      uses: allenevans/set-env@v2.0.0
+      uses: allenevans/set-env@v2.2.0
       with:
         MAJOR_VERSION: 8
         FULL_VERSION: 1.8.0_302
@@ -30,7 +30,7 @@ jobs:
       if: ${{ matrix.architecture == 'x64' }}
 
     - name: Setup environment variables aarch64
-      uses: allenevans/set-env@v2.0.0
+      uses: allenevans/set-env@v2.2.0
       with:
         MAJOR_VERSION: 17
         FULL_VERSION: 17.0.1_12

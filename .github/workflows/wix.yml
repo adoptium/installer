@@ -47,7 +47,7 @@ jobs:
           choco install --no-progress wget
 
       - name: Setup environment variables
-        uses: allenevans/set-env@v2.0.0
+        uses: allenevans/set-env@v2.2.0
         with:
           PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
           PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
