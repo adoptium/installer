@@ -61,7 +61,7 @@ task packageDebian {
 	dependsOn "assemble"
 
 	group = "packaging"
-	description = "Creates deb package for Debian flavours."
+	description = "Creates ca-certificate deb package for Debian flavours."
 
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
@@ -93,7 +93,7 @@ task packageDebian {
 task checkDebianPackage(type: Test) {
 	dependsOn packageDebian
 
-	description = 'Tests the generated Debian packages.'
+	description = 'Tests the generated ca-certificate Debian packages.'
 	group = 'verification'
 
 	testClassesDirs = sourceSets.packageTest.output.classesDirs
