@@ -1,12 +1,9 @@
 name: Check Linux Packages
 on:
-  push:
-    paths:
-      - 'linuxNew/**'
   pull_request:
     branches: [ master ]
     paths:
-      - 'linuxNew/**'
+      - 'linux/**'
       - '.github/workflows/linux.yml'
 
 # Cancel existing runs if user makes another push.
@@ -20,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./linuxNew
+        working-directory: ./linux
 
     steps:
       - name: Checkout
@@ -49,7 +46,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./linuxNew
+        working-directory: ./linux
     strategy:
       fail-fast: false
       matrix:
