@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 pkg_name = temurin-18-jdk
-priority = 1161
+priority = 1811
 jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd keytool rmid rmiregistry serialver jexec jspawnhelper
 amd64_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.1%2B10/OpenJDK18U-jdk_x64_linux_hotspot_18.0.1_10.tar.gz
 amd64_checksum = 16b1d9d75f22c157af04a1fd9c664324c7f4b5163c022b382a2f2e8897c1b0a2
