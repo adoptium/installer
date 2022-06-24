@@ -161,10 +161,12 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 
 ### DEB
 Supported JDK version 8,11,17,18 
+
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk11+)  
 
 ### RPM (RedHat and Suse)
 Supported JDK version 8,11,17,18
+
 Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk11+)
 SRPM also available.
 
@@ -189,4 +191,4 @@ SRPM also available.
 
 ## Install the packages
 
-See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://blog.adoptium.net/2021/12/eclipse-temurin-linux-installers-available)
+See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://adoptium.net/installation/linux/)
