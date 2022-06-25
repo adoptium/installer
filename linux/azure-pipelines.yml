@@ -32,7 +32,7 @@ steps:
         shellcheck *.sh
         shellcheck packaging/debian/adoptium-cacerts.sh
         shellcheck packaging/debian/postinst
-        shellcheck packaging/debian/postrm
+        shellcheck packaging/debian/prerm
 
   - task: Gradle@2
     displayName: "Build and run tests"

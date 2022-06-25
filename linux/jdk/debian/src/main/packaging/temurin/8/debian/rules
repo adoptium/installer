@@ -51,7 +51,7 @@ override_dh_auto_install:
 		-e 's/@jvm_dir@/$(jvm_dir)/g' \
 		-e 's/@priority@/$(priority)/g' \
 		-e 's/@jvm_tools@/$(jvm_tools)/g' \
-	    debian/postrm.in > debian/postrm
+	    debian/prerm.in > debian/prerm
 
 	# Unpack JDK.
 	dh_installdirs \
