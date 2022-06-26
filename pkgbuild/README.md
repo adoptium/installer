@@ -6,13 +6,13 @@ The generation of the OpenJDK installer depends on an open-source utility tool [
 The application must be installed before running the installer generation task.
 
 ```bash
-brew cask install packages
+brew install --cask packages
 ```
 
 ## Example Usage
 
 ```bash
-./packagesbuild.sh --major_version 8 --full_version 1.8.0_192 --input_directory /path/to/jdk --output_directory OpenJDK8U-jdk_x64_mac_hotspot_8u181b13.pkg --jvm hotspot --type jdk
+./packagesbuild.sh --major_version 17 --full_version 17.0.3_7 --input_directory /path/to/jdk --output_directory OpenJDK17U-jdk_x64_mac_hotspot_17.0.3_7.pkg --jvm hotspot --architecture x86_64 --type jdk
 ```
 
 ## Sign the installer

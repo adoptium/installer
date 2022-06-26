@@ -29,18 +29,18 @@ while test $# -gt 0; do
     -h|--help)
       echo "options:"
       echo "-h, --help               show brief help"
-      echo "--major_version          <8,9,10,11>"
-      echo "--full_version           1.8.0_192>"
-      echo "-i, --input_directory    path to extracted jdk>"
-      echo "-o, --output_directory   name of the pkg file>"
+      echo "--major_version          <8,11,17,18>"
+      echo "--full_version           17.0.3_7"
+      echo "-i, --input_directory    path to extracted jdk"
+      echo "-o, --output_directory   name of the pkg file"
       echo "--jvm                    hotspot or openj9"
       echo "--architecture           x86_64 or arm64"
       echo "--type                   jdk or jre"
       echo "--vendor                 adoptium, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
       echo "--logo                   Relative path to a custom logo (bottom left)"
-      echo "--identifier             override the identifier e.g net.adoptopenjdk.11.jdk"
-      echo "-s, --sign               sign the installer>"
+      echo "--identifier             override the identifier e.g net.adoptopenjdk.17.jdk"
+      echo "-s, --sign               sign the installer"
       exit 0
       ;;
     --major_version)
