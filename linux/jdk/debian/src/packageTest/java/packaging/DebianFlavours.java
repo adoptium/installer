@@ -24,6 +24,7 @@ import java.util.stream.Stream;
 
 /**
  * @author Andreas Ahlenstorf
+ * @author luozhenyu
  */
 public class DebianFlavours implements ArgumentsProvider {
 	@Override
@@ -36,10 +37,12 @@ public class DebianFlavours implements ArgumentsProvider {
 			Arguments.of("debian", "stretch"),
 			Arguments.of("debian", "buster"),
 			Arguments.of("debian", "bullseye"),
+			Arguments.of("debian", "bookworm"),
 			Arguments.of("ubuntu", "bionic"),
 			Arguments.of("ubuntu", "focal"),
-			Arguments.of("ubuntu", "hirsute"),
-			Arguments.of("ubuntu", "jammy")
+			Arguments.of("ubuntu", "impish"),
+			Arguments.of("ubuntu", "jammy"),
+			Arguments.of("ubuntu", "kinetic")
 		);
 	}
 }
