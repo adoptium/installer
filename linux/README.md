@@ -182,9 +182,8 @@ SRPM also available.
 | rpm/fedora/36    | x86_64     |                |
 | oraclelinux/7    | x86_64     |                |
 | oraclelinux/8    | x86_64     |                |
-| opensuse/15.1    | x86_64     |                |
-| opensuse/15.2    | x86_64     |                |
 | opensuse/15.3    | x86_64     |                |
+| opensuse/15.4    | x86_64     |                |
 | rocky/8          | x86_64     |                |
 | rpm/rhel/7       | x86_64     |                |
 | rpm/rhel/8       | x86_64     |                |
