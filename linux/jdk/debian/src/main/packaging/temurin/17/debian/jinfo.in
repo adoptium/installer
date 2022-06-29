@@ -3,7 +3,6 @@ alias=@pkg_alias@
 priority=@priority@
 section=contrib
 
-jdkhl jaotc /usr/lib/jvm/@jvm_dir@/bin/jaotc
 jdkhl jar /usr/lib/jvm/@jvm_dir@/bin/jar
 jdkhl jarsigner /usr/lib/jvm/@jvm_dir@/bin/jarsigner
 hl java /usr/lib/jvm/@jvm_dir@/bin/java
@@ -30,7 +29,6 @@ jdkhl jstack /usr/lib/jvm/@jvm_dir@/bin/jstack
 jdkhl jstat /usr/lib/jvm/@jvm_dir@/bin/jstat
 jdkhl jstatd /usr/lib/jvm/@jvm_dir@/bin/jstatd
 hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
-hl rmid /usr/lib/jvm/@jvm_dir@/bin/rmid
 hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry
 jdkhl serialver /usr/lib/jvm/@jvm_dir@/bin/serialver
 hl jexec /usr/lib/jvm/@jvm_dir@/lib/jexec
