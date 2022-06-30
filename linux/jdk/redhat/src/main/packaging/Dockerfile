@@ -1,4 +1,4 @@
-FROM fedora:33
+FROM fedora:36
 
 RUN dnf update -y && dnf install -y rpmdevtools \
 	rpm-sign \
@@ -10,8 +10,8 @@ RUN dnf update -y && dnf install -y rpmdevtools \
 	findutils \
 	tini
 
-RUN wget --progress=dot:mega -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-	&& wget --progress=dot:mega -O /tmp/gosu.asc https://github.com/tianon/gosu/releases/download/1.12/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')".asc \
+RUN wget --progress=dot:mega -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.14/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
+	&& wget --progress=dot:mega -O /tmp/gosu.asc https://github.com/tianon/gosu/releases/download/1.14/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')".asc \
 	&& gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
 	&& gpg --batch --verify /tmp/gosu.asc /usr/bin/gosu \
 	&& chmod +x /usr/bin/gosu \

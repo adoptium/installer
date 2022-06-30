@@ -41,10 +41,11 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 */
 		return Stream.of(
 			Arguments.of("rockylinux", "8"),
-			Arguments.of("fedora", "34"),
 			Arguments.of("fedora", "35"),
 			Arguments.of("fedora", "36"),
+			Arguments.of("fedora", "37"),
 			Arguments.of("redhat/ubi8", "latest"),
+			Arguments.of("redhat/ubi9", "latest"),
 			Arguments.of("oraclelinux", "8")
 		);
 	}

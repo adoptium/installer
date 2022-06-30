@@ -187,10 +187,9 @@ SRPM also available.
 | ---------------- |:----------------------:|:----:|
 | amazonlinux/2    | x86_64     |                |
 | centos/7         | x86_64     |                |
-| centos/8 (switch to rocky/8)  | x86_64     ||   |
-| rpm/fedora/34    | x86_64     |                |
 | rpm/fedora/35    | x86_64     |                |
 | rpm/fedora/36    | x86_64     |                |
+| rpm/fedora/37    | x86_64     |                |
 | oraclelinux/7    | x86_64     |                |
 | oraclelinux/8    | x86_64     |                |
 | opensuse/15.3    | x86_64     |                |
@@ -198,6 +197,7 @@ SRPM also available.
 | rocky/8          | x86_64     |                |
 | rpm/rhel/7       | x86_64     |                |
 | rpm/rhel/8       | x86_64     |                |
+| rpm/rhel/9       | x86_64     |                |
 | sles/12          | Null       | Need subscription to even run zypper update|
 | sles/15          | x86_64     |                |
 
