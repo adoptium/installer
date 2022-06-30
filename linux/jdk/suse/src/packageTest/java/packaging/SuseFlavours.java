@@ -35,9 +35,8 @@ public class SuseFlavours implements ArgumentsProvider {
 		 * SLES: All supported versions, see https://www.suse.com/lifecycle.
 		*/
 		return Stream.of(
-			Arguments.of("opensuse/leap", "15.1"),
-			Arguments.of("opensuse/leap", "15.2"),
 			Arguments.of("opensuse/leap", "15.3"),
+			Arguments.of("opensuse/leap", "15.4"),
 			Arguments.of("registry.suse.com/suse/sle15", "latest")
 		);
 	}
