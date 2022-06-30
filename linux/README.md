@@ -167,6 +167,17 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 Supported JDK version 8,11,17,18 
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk11+)  
 
+| Distr        | Test enabled platforms | Note |
+|--------------|:----------------------:|:----:|
+| debian/12    |         x86_64         |      |
+| debian/11    |         x86_64         |      |
+| debian/10    |         x86_64         |      |   
+| ubuntu/22.10 |         x86_64         |      |
+| ubuntu/22.04 |         x86_64         |      |
+| ubuntu/21.10 |         x86_64         |      |
+| ubuntu/20.04 |         x86_64         |      |
+| ubuntu/18.04 |         x86_64         |      |
+
 ### RPM (RedHat and Suse)
 Supported JDK version 8,11,17,18
 Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk11+)

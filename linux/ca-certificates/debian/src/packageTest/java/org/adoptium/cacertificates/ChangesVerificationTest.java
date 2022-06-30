@@ -37,6 +37,6 @@ class ChangesVerificationTest {
 		assertThat(changesFile).exists();
 
 		List<String> lines = Files.readAllLines(changesFile, StandardCharsets.UTF_8);
-		assertThat(lines).contains("Distribution: stretch buster bullseye bionic focal groovy hirsute jammy");
+		assertThat(lines).contains("Distribution: buster bullseye bionic focal impish jammy");
 	}
 }
