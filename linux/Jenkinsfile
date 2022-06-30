@@ -172,9 +172,9 @@ def uploadDebArtifacts(buildArch) {
         "s390x" : "s390x"
     ]
     def distro_list = ""
-    def deb_versions = ["stretch", "buster", "bullseye", "bionic", "focal", "groovy", "hirsute", "jammy"]
+    def deb_versions = ["buster", "bullseye", "bionic", "focal", "impish", "jammy"]
     deb_versions.each { distro ->
-        // Creates list like deb.distribution=stretch;deb.distribution=buster;
+        // Creates list like deb.distribution=bullseye;deb.distribution=bullseye;
         distro_list += "deb.distribution=${distro};"
     }
     def arch = archs.get(buildArch)

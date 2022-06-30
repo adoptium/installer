@@ -30,16 +30,19 @@ public class DebianFlavours implements ArgumentsProvider {
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 		/*
 		 * Debian policy: Oldest, newest and development version.
+		 *     (https://www.debian.org/releases/)
 		 * Ubuntu policy: Oldest LTS, newest LTS, and development version.
+		 *     (https://wiki.ubuntu.com/Releases)
 		 */
 		return Stream.of(
-			Arguments.of("debian", "stretch"),
 			Arguments.of("debian", "buster"),
 			Arguments.of("debian", "bullseye"),
+			Arguments.of("debian", "bookworm"),
 			Arguments.of("ubuntu", "bionic"),
 			Arguments.of("ubuntu", "focal"),
-			Arguments.of("ubuntu", "hirsute"),
-			Arguments.of("ubuntu", "jammy")
+			Arguments.of("ubuntu", "impish"),
+			Arguments.of("ubuntu", "jammy"),
+			Arguments.of("ubuntu", "kinetic")
 		);
 	}
 }
