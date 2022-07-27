@@ -1,3 +1,9 @@
+temurin-8-jdk (8.0.342.0.0+7-1) STABLE; urgency=medium
+
+  * Eclipse Temurin 8.0.342.0.0+7 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 2 Aug 2022 11:26:00 +0000
+ 
 temurin-8-jdk (8.0.332.0.0+9-1) UNRELEASED; urgency=medium
 
   * Eclipse Temurin 8.0.332.0.0+9 release.
