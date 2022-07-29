@@ -1,3 +1,9 @@
+temurin-11-jdk (11.0.16.0.0+8) STABLE; urgency=medium
+
+  * Eclipse Temurin 11.0.16.0.0+8 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 26 Jul 2022 17:19:22 +0000
+
 temurin-11-jdk (11.0.15.0.0+10) UNRELEASED; urgency=medium
 
   * Eclipse Temurin 11.0.15.0.0+10 release.
