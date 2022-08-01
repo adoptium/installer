@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
 %global spec_version 11.0.16.0.0.8
-%global spec_release 2
+%global spec_release 1
 %global priority 1111
 
 %global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
