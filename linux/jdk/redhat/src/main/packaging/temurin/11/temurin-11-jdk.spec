@@ -1,11 +1,11 @@
-%global upstream_version 11.0.15+10
+%global upstream_version 11.0.16+8
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
-%global spec_version 11.0.15.0.0.10
-%global spec_release 1
+%global spec_version 11.0.16.0.0.8
+%global spec_release 2
 %global priority 1111
 
 %global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
@@ -265,6 +265,8 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Tue Jul 26 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.16.0.0.8.adopt0
+- Eclipse Temurin 11.0.16.0+8 release.
 * Wed Apr 27 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.15.0.0.10.adopt0
 - Eclipse Temurin 11.0.15.0+10 release.
 * Thu Feb 10 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.14.1.0.1-1.adopt0

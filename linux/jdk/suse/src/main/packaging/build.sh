@@ -21,6 +21,6 @@ done;
 # Copy generated RPMs to destination folder
 find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out
 # Sign generated RPMs with rpmsign
-if grep -q %%_gpg_name /home/builder/.rpmmacros; then
+if grep -q %_gpg_name /home/builder/.rpmmacros; then
 	rpmsign --addsign /home/builder/out/*.rpm
 fi;

@@ -1,3 +1,9 @@
+temurin-17-jdk (17.0.4.0.0+8) STABLE; urgency=medium
+
+  * Eclipse Temurin 17.0.4.0.0+8 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 27 Jul 2022 17:38:30 +0000
+ 
 temurin-17-jdk (17.0.3.0.0+7) UNRELEASED; urgency=medium
 
   * Eclipse Temurin 17.0.3.0.0+7 release.
