@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 #  17.0.3.0.0___7 == 17.0.3.0.0+7
 %global spec_version 17.0.4.0.0.8
-%global spec_release 1
+%global spec_release 2
 %global priority 1161
 
 %global source_url_base https://github.com/adoptium/temurin17-binaries/releases/download
