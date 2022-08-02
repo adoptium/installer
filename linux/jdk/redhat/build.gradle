@@ -108,8 +108,13 @@ task checkJdkRedHat(type: Test) {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
+
 
 	environment "PACKAGE", "$product-$productVersion-jdk"
+	if (gpgKey != null) {
+		environment "JDKGPG", "$gpgKey"
+	}
 
 	useJUnitPlatform()
 	testLogging {
@@ -120,6 +125,9 @@ task checkJdkRedHat(type: Test) {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
 		}
+		if (System.getenv().containsKey("JDKGPG")) {
+            println "We got gpg set!"
+        }
 	}
 }
 

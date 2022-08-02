@@ -58,12 +58,23 @@ class YumOperationsTest {
 
 			result = runShell(container, "rpm -qi " + System.getenv("PACKAGE"));
 			assertThat(result.getExitCode()).isEqualTo(0);
-			assertThat(result.getStdout())
-				.contains("Name        : " + System.getenv("PACKAGE"))
-				.contains("Group       : java")
-				.contains("License     : GPLv2 with exceptions")
-				.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
-				.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			if (System.getenv("JDKGPG") != null) {
+				assertThat(result.getStdout())
+					.contains("Name        : " + System.getenv("PACKAGE"))
+					.contains("Group       : java")
+					.contains("License     : GPLv2 with exceptions")
+					.contains("Signature   : RSA/SHA256")
+					.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
+					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			} else {
+				assertThat(result.getStdout())
+					.contains("Name        : " + System.getenv("PACKAGE"))
+					.contains("Group       : java")
+					.contains("License     : GPLv2 with exceptions")
+					.contains("Signature   : (none)")
+					.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
+					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			}
 		}
 	}
 }

@@ -53,7 +53,7 @@ class ZypperOperationsTest {
 			result = runShell(container, "zypper update -y");
 			assertThat(result.getExitCode()).isEqualTo(0);
 			
-			if (System.getenv("GPG") != null) {
+			if (System.getenv("JDKGPG") != "null") {
 				// Signature verification failed [4-Signatures public key is not available]
 				result = runShell(container, "zypper --no-gpg-checks install -y " + containerRpm);
 			} else {
@@ -64,11 +64,21 @@ class ZypperOperationsTest {
 
 			result = runShell(container, "rpm -qi " + System.getenv("PACKAGE"));
 			assertThat(result.getExitCode()).isEqualTo(0);
-			assertThat(result.getStdout())
-				.contains("Name        : " + System.getenv("PACKAGE"))
-				.contains("Group       : java")
-				.contains("License     : GPLv2 with exceptions")
-				.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			if (System.getenv("JDKGPG") != null) {
+				assertThat(result.getStdout())
+					.contains("Name        : " + System.getenv("PACKAGE"))
+					.contains("Group       : java")
+					.contains("License     : GPLv2 with exceptions")
+					.contains("Signature   : RSA/SHA256")
+					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			} else {
+				assertThat(result.getStdout())
+					.contains("Name        : " + System.getenv("PACKAGE"))
+					.contains("Group       : java")
+					.contains("License     : GPLv2 with exceptions")
+					.contains("Signature   : (none)")
+					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
+			}
 		}
 	}
 }
