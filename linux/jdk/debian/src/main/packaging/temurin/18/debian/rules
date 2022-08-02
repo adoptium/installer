@@ -7,12 +7,12 @@ amd64_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/down
 amd64_checksum = 5e5dbf6f1308829528778e00631ec83e252d90fc444503091e71a66465e88941
 arm64_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2%2B9/OpenJDK18U-jdk_aarch64_linux_hotspot_18.0.2_9.tar.gz
 arm64_checksum = f4aca720bfcea4df7f02b59de1f68648632070c492f210b9e41e69170ee5e48f
-armhf_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.1%2B10/OpenJDK18U-jdk_arm_linux_hotspot_18.0.1_10.tar.gz
-armhf_checksum = 0ddec3c165ab0b662a57a845db3fdaeb840660b493f164696b03df76aadf61c8
+armhf_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2%2B9/OpenJDK18U-jdk_arm_linux_hotspot_18.0.2_9.tar.gz
+armhf_checksum = 52ec0ddee9ff16397de2c9f614ff6b5464220bd5c3d705e8b89d28fd478feb60
 ppc64el_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2%2B9/OpenJDK18U-jdk_ppc64le_linux_hotspot_18.0.2_9.tar.gz
 ppc64el_checksum = 4262677f8b6054d26f1c0042ac47dfbaab6a18d7dc73fa807b15ee03cdcbdece
-s390x_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.1%2B10/OpenJDK18U-jdk_s390x_linux_hotspot_18.0.1_10.tar.gz
-s390x_checksum = 236dc78e698c21f258078661ab5c74b8cc7d38a1febb7aa7a6598bd3b999c0dc
+s390x_tarball_url = https://github.com/adoptium/temurin18-binaries/releases/download/jdk-18.0.2%2B9/OpenJDK18U-jdk_s390x_linux_hotspot_18.0.2_9.tar.gz
+s390x_checksum = d916cfa15552ae2ad2f2c96ebc72aaaea4c844af9842f5ca9724fcbbdc08d25c
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
