@@ -53,7 +53,7 @@ class ZypperOperationsTest {
 			result = runShell(container, "zypper update -y");
 			assertThat(result.getExitCode()).isEqualTo(0);
 			
-			if (System.getenv("JDKGPG") != "null") {
+			if (System.getenv("JDKGPG") != null) {
 				// Signature verification failed [4-Signatures public key is not available]
 				result = runShell(container, "zypper --no-gpg-checks install -y " + containerRpm);
 			} else {
