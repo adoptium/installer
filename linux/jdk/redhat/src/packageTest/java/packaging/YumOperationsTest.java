@@ -37,6 +37,7 @@ class YumOperationsTest {
 	@ParameterizedTest(name = "{0}:{1}")
 	@ArgumentsSource(RedHatFlavoursWithYum.class)
 	void packageSuccessfullyInstalled(String distribution, String codename) throws Exception {
+		
 		Path hostRpm = RpmFiles.hostRpmPath();
 
 		assertThat(hostRpm).exists();
@@ -63,7 +64,7 @@ class YumOperationsTest {
 					.contains("Name        : " + System.getenv("PACKAGE"))
 					.contains("Group       : java")
 					.contains("License     : GPLv2 with exceptions")
-					.contains("Signature   : RSA/SHA256")
+					.contains("Signature   : RSA/SHA256,")
 					.contains("Relocations : /usr/lib/jvm/" + System.getenv("PACKAGE"))
 					.contains("Packager    : Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>");
 			} else {

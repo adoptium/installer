@@ -114,8 +114,9 @@ task checkJdkSuse(type: Test) {
 	environment "PACKAGE", "$product-$productVersion-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
+		println "We set gpg!"
 	}
-
+	
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
@@ -125,9 +126,6 @@ task checkJdkSuse(type: Test) {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
 		}
-		if (System.getenv().containsKey("JDKGPG")) {
-            println "We got gpg set!"
-        }
 	}
 }
 

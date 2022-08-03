@@ -3,9 +3,9 @@ plugins {
 }
 
 ext {
-	junitVersion = "5.7.0"
-	testcontainersVersion = "1.15.1"
-	assertjCoreVersion = "3.18.1"
+	junitVersion = "5.9.0"
+	testcontainersVersion = "1.17.3"
+	assertjCoreVersion = "3.23.1"
 }
 
 repositories {
@@ -111,9 +111,11 @@ task checkJdkRedHat(type: Test) {
 	def gpgKey = getGPGKey()
 
 
+	
 	environment "PACKAGE", "$product-$productVersion-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
+		println "We set gpg!"
 	}
 
 	useJUnitPlatform()
@@ -125,9 +127,6 @@ task checkJdkRedHat(type: Test) {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
 		}
-		if (System.getenv().containsKey("JDKGPG")) {
-            println "We got gpg set!"
-        }
 	}
 }
 
