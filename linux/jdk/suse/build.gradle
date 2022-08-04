@@ -114,7 +114,7 @@ task checkJdkSuse(type: Test) {
 	environment "PACKAGE", "$product-$productVersion-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
-		println "We set gpg!"
+		println "We set the gpgkey!"
 	}
 	
 	useJUnitPlatform()
