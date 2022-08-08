@@ -1,4 +1,5 @@
-# openjdk-installer:
+# Adoptium Installers
+
 Repository for creating installable packages for Eclipse Adoptium based releases.
 
 The packages are created using:
