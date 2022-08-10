@@ -47,7 +47,7 @@
 %global src_num 6
 %global sha_src_num 7
 # jdk8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
-%global upstream_version 8u332-b09-aarch32-20220420
+%global upstream_version 8u345-ga-aarch32-20220802
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -280,7 +280,7 @@ fi
 
 %changelog
 * Thu Aug 08 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.345.0.0.1.adopt0
-- Eclipse Temurin 8.0.332-b09 release.
+- Eclipse Temurin 8.0.345-b01 release.
 * Thu May 05 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.332.0.0.9.adopt0
 - Eclipse Temurin 8.0.332-b09 release.
 * Thu Feb 03 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.322.0.0.6-1.adopt0
