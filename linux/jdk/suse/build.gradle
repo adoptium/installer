@@ -112,8 +112,11 @@ task checkJdkSuse(type: Test) {
 	def gpgKey = getGPGKey()
 
 	environment "PACKAGE", "$product-$productVersion-jdk"
-	environment "GPG", "$gpgKey"
-
+	if (gpgKey != null) {
+		environment "JDKGPG", "$gpgKey"
+		println "We set the gpgkey!"
+	}
+	
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
