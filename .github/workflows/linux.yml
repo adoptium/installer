@@ -73,7 +73,6 @@ jobs:
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
           export DOCKER_BUILDKIT=1
-          export COMPOSE_DOCKER_CLI_BUILD=1
           ./gradlew --parallel packageJdk${{ matrix.distro }} checkJdk${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
 
       - name: Relocate test results

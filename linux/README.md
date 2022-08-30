@@ -14,7 +14,7 @@ The default Adoptium package repository is https://packages.adoptium.net/ui/pack
 
 To run this locally
 
-* You will need to have Docker installed and running.
+* You will need to have Docker 20.10+ installed and running.
 * You will need to have Java 8+ installed.
 * You will need to have a minimum of 8GB of RAM on your system (the build required 4GB).
 
@@ -38,7 +38,6 @@ In all of the examples below you'll need to replace the following variables:
 
 ```shell
 export DOCKER_BUILDKIT=1
-export COMPOSE_DOCKER_CLI_BUILD=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean package checkPackage -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
@@ -62,7 +61,6 @@ _src/packageTest/java/packaging_ on them.
 
 ```shell
 export DOCKER_BUILDKIT=1
-export COMPOSE_DOCKER_CLI_BUILD=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
@@ -74,7 +72,6 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ```shell
 export DOCKER_BUILDKIT=1
-export COMPOSE_DOCKER_CLI_BUILD=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
@@ -85,8 +82,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 - replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
-export _JAVA_OPTIONS="-Xmx4g"
-export COMPOSE_DOCKER_CLI_BUILD=1
+export DOCKER_BUILDKIT=1
 export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
@@ -165,6 +161,7 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 
 ### DEB
 Supported JDK version 8,11,17,18 
+
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk11+)  
 
 | Distr        | Test enabled platforms | Note |
@@ -180,6 +177,7 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 
 ### RPM (RedHat and Suse)
 Supported JDK version 8,11,17,18
+
 Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk11+)
 SRPM also available.
 
@@ -203,4 +201,4 @@ SRPM also available.
 
 ## Install the packages
 
-See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://blog.adoptium.net/2021/12/eclipse-temurin-linux-installers-available)
+See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://adoptium.net/installation/linux/)
