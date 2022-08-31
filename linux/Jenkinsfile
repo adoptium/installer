@@ -205,7 +205,9 @@ def uploadRPMArtifacts(distro) {
             'rpm/fedora/36',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2',
-            'rpm/oraclelinux/7'
+            'rpm/oraclelinux/7',
+            'rpm/almalinux/8',
+            'rpm/almalinux/9'
         ],
         'suse'   : [
             'rpm/opensuse/15.3',

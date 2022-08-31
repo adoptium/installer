@@ -38,6 +38,7 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 * Rocky Linux (CentOS replacement): All supported versions
 		 * Oracle Linux: All supported versions until premier support runs out
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
+		 * AlmaLinux (1:1 binary compatible clone of RHEL): All supported versions
 		 */
 		return Stream.of(
 			Arguments.of("rockylinux", "8"),
@@ -46,7 +47,9 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 			Arguments.of("fedora", "37"),
 			Arguments.of("redhat/ubi8", "latest"),
 			Arguments.of("redhat/ubi9", "latest"),
-			Arguments.of("oraclelinux", "8")
+			Arguments.of("oraclelinux", "8"),
+			Arguments.of("almalinux", "8"),
+			Arguments.of("almalinux", "9")
 		);
 	}
 }

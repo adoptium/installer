@@ -183,6 +183,8 @@ SRPM also available.
 
 | Distr            | Test enabled platforms | Note |
 | ---------------- |:----------------------:|:----:|
+| almalinux/8      | x86_64     |                |
+| almalinux/9      | x86_64     |                |
 | amazonlinux/2    | x86_64     |                |
 | centos/7         | x86_64     |                |
 | rpm/fedora/35    | x86_64     |                |
