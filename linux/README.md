@@ -162,7 +162,7 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 ### DEB
 Supported JDK version 8,11,17,18
 
-Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk8+)
+Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
 | Distr        | Test enabled platforms | Note |
 |--------------|:----------------------:|:----:|
