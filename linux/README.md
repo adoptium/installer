@@ -178,7 +178,7 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 ### RPM (RedHat and Suse)
 Supported JDK version 8,11,17,18
 
-Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk8+)
+Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
 SRPM also available.
 
 | Distr            | Test enabled platforms | Note |
