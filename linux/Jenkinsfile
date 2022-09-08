@@ -63,8 +63,8 @@ pipeline {
                     when  {
                         beforeAgent true
                         anyOf {
-                            expression{ params.DISTRO == 'all' }  // trigger debian build
-                            expression{ params.DISTRO == 'Debian' }
+                            expression{ params.DISTRO == 'all' }  
+                            expression{ params.DISTRO == 'Debian' } // only trigger debian build
                         }
                     }
                     agent {
@@ -90,8 +90,8 @@ pipeline {
                     when  {
                         beforeAgent true
                         anyOf {
-                            expression{ params.DISTRO == 'all' }  // trigger debian build
-                            expression{ params.DISTRO == 'RedHat' }
+                            expression{ params.DISTRO == 'all' }
+                            expression{ params.DISTRO == 'RedHat' }  // only trigger redhat build
                         }
                     }
                     steps{
@@ -114,8 +114,8 @@ pipeline {
                     when  {
                         beforeAgent true // do condition when before allocate to agent
                         anyOf {
-                            expression{ params.DISTRO == 'all' }  // trigger debian build
-                            expression{ params.DISTRO == 'Suse' }
+                            expression{ params.DISTRO == 'all' }
+                            expression{ params.DISTRO == 'Suse' } // only trigger suse build
                         }
                     }
                     steps{
