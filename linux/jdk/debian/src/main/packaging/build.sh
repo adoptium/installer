@@ -13,7 +13,7 @@ dpkgExtraARG="-us -uc" # ignore building with a gpg key
 
 echo "DEBUG: building Debian arch ${buildArch}"
 if [[ "${buildArch}" == "all" ]]; then
-	dpkgExtraARG="${dpkgExtraARG} -b" # equal to --build=any,all|--build=binary
+    dpkgExtraARG="${dpkgExtraARG} -b" # equal to --build=any,all|--build=binary
 else
     dpkgExtraARG="${dpkgExtraARG} --build=any"
 fi
