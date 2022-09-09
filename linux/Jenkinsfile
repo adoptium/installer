@@ -73,15 +73,7 @@ pipeline {
                     steps{
                         dir('linuxDebian') {
                             script {
-                                DISTRO = "Debian"
-                                echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
-                                setup("${DISTRO}", "${ARCH}")
-                                unstash 'installercode'
-                                buildAndTest("${DISTRO}", "${ARCH}")
-                                if (params.uploadPackage.toBoolean()) {
-                                    echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
-                                    uploadArtifacts("${DISTRO}", "${ARCH}")
-                                }
+                                jenkinsStep("Debian")
                             }
                         }
                     }
@@ -98,14 +90,7 @@ pipeline {
                         dir('linuxRedHat') {
                             script {
                                 DISTRO = "RedHat"
-                                echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
-                                setup("${DISTRO}", "${ARCH}")
-                                unstash 'installercode'
-                                buildAndTest("${DISTRO}", "${ARCH}")
-                                if (params.uploadPackage.toBoolean()) {
-                                    echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
-                                    uploadArtifacts("${DISTRO}", "${ARCH}")
-                                }
+                                jenkinsStep("RedHat")
                             }
                         }
                     }
@@ -121,15 +106,7 @@ pipeline {
                     steps{
                         dir('linuxSuse') {
                             script {
-                                DISTRO = "Suse"
-                                echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
-                                setup("${DISTRO}", "${ARCH}")
-                                unstash 'installercode'
-                                buildAndTest("${DISTRO}", "${ARCH}")
-                                if (params.uploadPackage.toBoolean()) {
-                                    echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
-                                    uploadArtifacts("${DISTRO}", "${ARCH}")
-                                }
+                                jenkinsStep("Suse")
                             }
                         }
                     }
@@ -148,6 +125,17 @@ def setup(DISTRO, buildArch) {
     env.DOCKER_BUILDKIT = buildArch == "s390x" ? '0' : '1'
     env.COMPOSE_DOCKER_CLI_BUILD=1
     env._JAVA_OPTIONS =  (buildArch == "armv7l" && DISTRO == "Debian")? "" : "-Xmx4g"
+}
+
+def jenkinsStep(DISTRO){
+    echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
+    setup("${DISTRO}", "${ARCH}")
+    unstash 'installercode'
+    buildAndTest("${DISTRO}", "${ARCH}")
+    if (params.uploadPackage.toBoolean()) {
+        echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
+        uploadArtifacts("${DISTRO}", "${ARCH}")
+    }
 }
 
 def buildAndTest(DISTRO, buildArch) {
