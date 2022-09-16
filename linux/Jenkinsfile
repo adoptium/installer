@@ -25,8 +25,8 @@ pipeline {
         choice(name: 'VERSION', choices: ['8', '11', '17', '19'], description: 'Build for specific JDK VERSION')
         choice(name: 'ARCH', choices: ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: "Build for specific platform\n s300x not for VERSION 8\n")
         choice(name: 'DISTRO', choices: ['all', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
-        booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files exlude src.rpm to Artifactory')
-        booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload the src.rpm files to Artifactory')
+        booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
+        booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
         string(name: 'gitrepo', defaultValue: 'https://github.com/adoptium/installer', description: 'Do not modify unless want to build from a specific gitrepo')
         string(name: 'gitbranch', defaultValue: 'master', description: 'Do not change unless want to build on a specific branch from above gitrepo')
         booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
@@ -242,11 +242,12 @@ def uploadRPMArtifacts(DISTRO) {
         "armv7l": "armv7hl",
         "aarch64": "aarch64",
         "ppc64le": "ppc64le",
-        "source" : "src",  // here we need src in the list to be able to upload
         "s390x"  : "s390x"
     ]
     // Enable upload src.rpm
-    if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all'){   rpmArchList.put("Source","src") }
+    if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {
+        rpmArchList.put("source","src")
+    }
 
     packageDirs.each {
         packageDir ->
