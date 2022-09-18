@@ -4,15 +4,19 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
-# Build all spec files we can find.
+echo "DEBUG: building Suse arch ${buildArch} with version ${buildVersion}"
+# Build specified target or build all (not s390x on jdk8)
+if [ "${buildArch}" != "all" ]; then
+	targets=${buildArch}
+elif [ ${buildVersion} != "8" ]; then
+	targets="x86_64 ppc64le aarch64 armv7hl s390x"
+else
+	targets="x86_64 ppc64le aarch64 armv7hl"
+fi
 
-targets="x86_64 ppc64le s390x aarch64 armv7hl"
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 	rpmdev-spectool -g -R "$spec";
 	rpmbuild --nodeps -bs "$spec";
-	if [[ "$spec" =~ "temurin-8-jdk" ]]; then
-		targets="x86_64 ppc64le aarch64 armv7hl"
-	fi
 	for target in $targets; do
 		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm;
 	done;

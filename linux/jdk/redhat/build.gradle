@@ -55,6 +55,7 @@ task packageJdkRedHat {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
+	def arch = getArch()
 
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
@@ -89,7 +90,10 @@ task packageJdkRedHat {
 
 		project.exec {
 			workingDir getRootDir()
-			commandLine "docker", "run", "--rm",
+			commandLine "docker", "run",
+				"--rm",
+				"-e", "buildArch=${arch}",
+				"-e", "buildVersion=${productVersion}",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-redhat:latest"
@@ -109,15 +113,14 @@ task checkJdkRedHat(type: Test) {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
-
-
+	def arch = getArch()
 	
 	environment "PACKAGE", "$product-$productVersion-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
 		println "We set the gpgkey!"
 	}
-
+	environment "testArch", "$arch"
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"

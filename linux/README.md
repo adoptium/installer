@@ -30,7 +30,7 @@ You'll want to make sure you've set the exact versions of the binaries you want 
 
 In all of the examples below you'll need to replace the following variables:
 
-* Replace `<version>` with `8|11|17|18`
+* Replace `<version>` with `8|11|17|19`
 * Replace `<vendor>` with `temurin|dragonwell`
 * Replace `<platform>` with `Debian|RedHat|Suse`
 
@@ -56,7 +56,7 @@ _src/packageTest/java/packaging_ on them.
 
 ### Build a Debian specific package for a version
 
-- replace `<version>` with `8|11|17|18`
+- replace `<version>` with `8|11|17|19`
 - replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
@@ -78,7 +78,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a SUSE specific package for a version
 
-- replace `<version>` with `8|11|17|18`
+- replace `<version>` with `8|11|17|19`
 - replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
@@ -160,9 +160,9 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 ## Supported packages
 
 ### DEB
-Supported JDK version 8,11,17,18 
+Supported JDK version 8,11,17,18,19
 
-Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk11+)  
+Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
 | Distr        | Test enabled platforms | Note |
 |--------------|:----------------------:|:----:|
@@ -176,9 +176,9 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 | ubuntu/18.04 |         x86_64         |      |
 
 ### RPM (RedHat and Suse)
-Supported JDK version 8,11,17,18
+Supported JDK version 8,11,17,18,19
 
-Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk11+)
+Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
 SRPM also available.
 
 | Distr            | Test enabled platforms | Note |

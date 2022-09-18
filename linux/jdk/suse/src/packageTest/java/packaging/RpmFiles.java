@@ -34,11 +34,19 @@ final class RpmFiles {
 	}
 
 	static Path hostRpmPath() {
-		return findBuildOutputOnHost(System.getenv("PACKAGE") + "*.x86_64.rpm");
+		// convert filter when build with ARCH == all, only test on x86_64
+		String rpmFilter = "";
+		if (System.getenv("testArch").equals("all")) {
+			rpmFilter = System.getenv("PACKAGE") + "*.x86_64.rpm";
+		} else {
+			rpmFilter = System.getenv("PACKAGE") + "*." + System.getenv("testArch") + ".rpm";
+		}
+		System.out.println(rpmFilter);
+		return findBuildOutputOnHost(rpmFilter);
 	}
 
 	private static Path findBuildOutputOnHost(String pattern) {
-		Path outputDirectory = Paths.get("build", "ospackage");
+		Path outputDirectory = Paths.get("build", "ospackage"); // same as in container /home/builder/out
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(outputDirectory, pattern)) {
 			for (Path candidateFile : stream) {
 				return candidateFile;

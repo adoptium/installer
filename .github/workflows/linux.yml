@@ -69,7 +69,7 @@ jobs:
           architecture: x64
           distribution: 'temurin'
 
-      - name: Build
+      - name: Build # only simulate in Jenkins when select ARCH="all"
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
           export DOCKER_BUILDKIT=1
