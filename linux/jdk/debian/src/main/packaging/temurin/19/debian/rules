@@ -3,15 +3,15 @@
 pkg_name = temurin-19-jdk
 priority = 1811
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK18U-jdk_x64_linux_hotspot_19_36.tar.gz
+amd64_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_x64_linux_hotspot_19_36.tar.gz
 amd64_checksum = d10becfc1ea6586180246455ee8d462875f97655416a7d7c5a1c60d0570dbc8f
 arm64_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_aarch64_linux_hotspot_19_36.tar.gz
 arm64_checksum = 9b5de40b0f6fe0ab32e8d035720dbbc87bf41b758ed67351ad781ca6505f5294
-armhf_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK18U-jdk_arm_linux_hotspot_19_36.tar.gz
+armhf_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_arm_linux_hotspot_19_36.tar.gz
 armhf_checksum = 34a786548033391de80b857fe02a9c7bd42fcb94243e7273e89012df73f1adef
-ppc64el_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK18U-jdk_ppc64le_linux_hotspot_19_36.tar.gz
+ppc64el_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_ppc64le_linux_hotspot_19_36.tar.gz
 ppc64el_checksum = 55cc9382227433fa7cc1486a12af59d5bcbea9c40eaeae9608278e056b7d86db
-s390x_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK18U-jdk_s390x_linux_hotspot_19_36.tar.gz
+s390x_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_s390x_linux_hotspot_19_36.tar.gz
 s390x_checksum = tbd
 
 d = debian/$(pkg_name)
