@@ -31,49 +31,33 @@ import static packaging.TestContainersUtil.runShell;
 /**
  * Checks whether the built package can be installed, uninstalled, and so on using apt.
  *
- * @author Andreas Ahlenstorf
+ * @author George Adams
  */
-class AptOperationsTest {
+class ApkOperationsTest {
 
 	@ParameterizedTest(name = "{0}:{1}")
-	@ArgumentsSource(DebianFlavours.class)
+	@ArgumentsSource(AlpineFlavours.class)
 	void packageSuccessfullyInstalled(String distribution, String codename) throws Exception {
-		Path certificatesHostDeb = Paths.get(getClass().getResource("/dependencies/deb/adoptium-ca-certificates_1.0.0-1_all.deb").toURI());
-		Path hostDeb = DebFiles.hostDebPath();
+		Path hostApk = ApkFiles.hostApkPath();
 
-		assertThat(hostDeb).exists();
-		assertThat(certificatesHostDeb).exists();
+		assertThat(hostApk).exists();
 
-		File containerDeb = new File("", hostDeb.toFile().getName());
-		File certificatesDeb = new File("", certificatesHostDeb.toFile().getName());
+		File containerApk = new File("", hostApk.toFile().getName());
 
 		try (GenericContainer<?> container = new GenericContainer<>(String.format("%s:%s", distribution, codename))) {
-			container.withCommand("/bin/bash", "-c", "while true; do sleep 10; done")
-				.withCopyFileToContainer(MountableFile.forHostPath(hostDeb), containerDeb.toString())
-				.withCopyFileToContainer(MountableFile.forHostPath(certificatesHostDeb), certificatesDeb.toString())
+			container.withCommand("/bin/sh", "-c", "while true; do sleep 10; done")
+				.withCopyFileToContainer(MountableFile.forHostPath(hostApk), containerApk.toString())
 				.start();
 
 			Container.ExecResult result;
 
-			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get update");
+			result = runShell(container, "apk add " + containerApk + " --allow-untrusted");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
-			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y apt-utils");
-			assertThat(result.getExitCode()).isEqualTo(0);
-
-			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + certificatesDeb);
-			assertThat(result.getExitCode()).isEqualTo(0);
-
-			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y " + containerDeb);
-			assertThat(result.getExitCode()).isEqualTo(0);
-
-			result = runShell(container, "apt-cache show " + System.getenv("PACKAGE"));
+			result = runShell(container, "apk info --license " + System.getenv("PACKAGE"));
 			assertThat(result.getExitCode()).isEqualTo(0);
 			assertThat(result.getStdout())
-				.contains("Package: " + System.getenv("PACKAGE"))
-				.contains("Priority: optional")
-				.contains("Section: java")
-				.contains("Status: install ok installed");
+				.contains("GPL-2.0-with-classpath-exception");
 		}
 	}
 }

@@ -23,26 +23,21 @@ import org.junit.jupiter.params.provider.ArgumentsProvider;
 import java.util.stream.Stream;
 
 /**
- * @author Andreas Ahlenstorf
- * @author luozhenyu
+ * @author George Adams
  */
-public class DebianFlavours implements ArgumentsProvider {
+public class AlpineFlavours implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 		/*
-		 * Debian policy: Oldest, newest and development version.
-		 *     (https://www.debian.org/releases/)
-		 * Ubuntu policy: Oldest LTS, newest LTS, and development version.
-		 *     (https://wiki.ubuntu.com/Releases)
+		 * Alpine policy: Oldest, newest and development version.
+		 *     (https://hub.docker.com/_/alpine/)
 		 */
 		return Stream.of(
-			Arguments.of("debian", "buster"),
-			Arguments.of("debian", "bullseye"),
-			Arguments.of("debian", "bookworm"),
-			Arguments.of("ubuntu", "bionic"),
-			Arguments.of("ubuntu", "focal"),
-			Arguments.of("ubuntu", "jammy"),
-			Arguments.of("ubuntu", "kinetic")
+			Arguments.of("alpine", "edge"),
+			Arguments.of("alpine", "latest"),
+			Arguments.of("alpine", "3.15"),
+			Arguments.of("alpine", "3.14"),
+			Arguments.of("alpine", "3.13")
 		);
 	}
 }

@@ -21,7 +21,7 @@ import org.testcontainers.containers.Container;
 import java.io.IOException;
 
 /**
- * @author Andreas Ahlenstorf
+ * @author George Adams
  */
 public final class TestContainersUtil {
 	private TestContainersUtil() {
@@ -40,7 +40,7 @@ public final class TestContainersUtil {
 	}
 
 	public static Container.ExecResult runShell(Container<?> container, String command) {
-		String[] shellCmd = new String[]{"/bin/bash", "-c", command};
+		String[] shellCmd = new String[]{"/bin/sh", "-c", command};
 		try {
 			Container.ExecResult result = container.execInContainer(shellCmd);
 			System.out.print(result.getStdout());

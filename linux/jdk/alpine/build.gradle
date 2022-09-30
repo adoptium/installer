@@ -19,7 +19,7 @@ version "1.0.0-SNAPSHOT"
  * The versions list defines the Alpine versions that this package is uploaded to.
  *
  * If a version like sid is missing here, the package won't be included in the sid repository and therefore not
- * installable via apt. Never use suite names like testing or unstable. This list is usually bigger than the list
+ * installable via apk. Never use suite names like testing or unstable. This list is usually bigger than the list
  * of versions we test with as defined by the class AlpineFlavours in the source set packageTest.
  *
  * **Attention**: If you alter the list, check if the class AlpineFlavours needs to be updated, too.
@@ -66,6 +66,7 @@ task packageJdkAlpine {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
 	def arch = getArch()
 
 	doLast {
@@ -77,14 +78,24 @@ task packageJdkAlpine {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
-		project.exec {
-			workingDir "src/main/packaging"
-			commandLine "docker", "build",
-				"-t", "adoptium-packages-linux-jdk-alpine",
-				"-f", "Dockerfile",
-				getProjectDir().absolutePath + "/src/main/packaging"
+		if (gpgKey) {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build",
+					"-t", "adoptium-packages-linux-jdk-alpine",
+					"--secret", "id=gpg,src=${gpgKey}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		} else {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build",
+					"-t", "adoptium-packages-linux-jdk-alpine",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
 		}
-
 		project.exec {
 			workingDir getRootDir()
 			commandLine "docker", "run",
@@ -108,8 +119,13 @@ task checkJdkAlpine(type: Test) {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
 
 	environment "PACKAGE", "${product}-${productVersion}-jdk"
+	if (gpgKey != null) {
+		environment "JDKGPG", "$gpgKey"
+		println "We set the gpgkey!"
+	}
 
 	useJUnitPlatform()
 	testLogging {

@@ -24,17 +24,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
- * Utility methods to interact with deb files.
+ * Utility methods to interact with apk files.
  *
- * @author Andreas Ahlenstorf
+ * @author George Adams
  */
-final class DebFiles {
-	private DebFiles() {
+final class ApkFiles {
+	private ApkFiles() {
 		// no instances
 	}
 
-	static Path hostDebPath() {
-		return findBuildOutputOnHost(System.getenv("PACKAGE") + "*.deb");
+	static Path hostApkPath() {
+		return findBuildOutputOnHost(System.getenv("PACKAGE") + "*.apk");
 	}
 
 	private static Path findBuildOutputOnHost(String pattern) {

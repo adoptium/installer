@@ -3,11 +3,13 @@ ENV GOSU_VERSION 1.14
 
 RUN set -eux; \
 	\
-	apk add --no-cache --virtual .gosu-deps \
+	apk add \
 		alpine-sdk \
+		bash \
 		ca-certificates \
 		dpkg \
 		gnupg \
+		tini \
 	; \
 	\
 	dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
@@ -20,10 +22,6 @@ RUN set -eux; \
 	gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
 	command -v gpgconf && gpgconf --kill all || :; \
 	rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-	\
-# clean up fetch dependencies
-	apk del --no-network .gosu-deps; \
-	\
 	chmod +x /usr/local/bin/gosu; \
 # verify that the binary works
 	gosu --version; \
@@ -31,12 +29,24 @@ RUN set -eux; \
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
-RUN adduser -D -h /home/builder -u 10000 builder \
-	&& addgroup builder abuild
+RUN adduser -D -h /home/builder -u 10000 builder
+RUN addgroup builder abuild
+
+# Add GPG key
+USER builder
+RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.gpg \
+	if [[ -f /tmp/private.gpg ]]; then \
+		mkdir /home/builder/.abuild; \
+		printf 'PACKAGER_PRIVKEY=/tmp/private.gpg'\
+>> /home/builder/.abuild/abuild.conf; \
+	else \
+		abuild-keygen -a -n; \
+	fi
 
 # Prepare entrypoint and build scripts
 ADD entrypoint.sh /entrypoint.sh
 ADD build.sh /home/builder/build.sh
+USER root
 RUN chmod +x /home/builder/build.sh
 
-ENTRYPOINT ["/usr/bin/tini", "--", "/bin/bash", "/entrypoint.sh" ]
+ENTRYPOINT ["/sbin/tini", "--", "/bin/bash", "/entrypoint.sh" ]
