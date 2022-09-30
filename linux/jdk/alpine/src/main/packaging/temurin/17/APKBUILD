@@ -1,0 +1,80 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-17
+pkgver=17.0.4.1_p1
+_pkgver=${pkgver%_p*}_1
+_pkgverplus=${pkgver%_p*}+1
+_pkgvername=17.0.4.1%2B1
+pkgrel=0
+pkgdesc="Eclipse Temurin 17"
+provider_priority=17
+url="https://adoptium.net"
+arch="x86_64"
+license="GPL-2.0-with-classpath-exception"
+makedepends=""
+depends=""
+subpackages="$pkgname-src:_src:noarch
+    $pkgname-jdk:_jdk"
+source="https://github.com/adoptium/temurin17-binaries/releases/download/jdk-$_pkgvername/OpenJDK17U-jdk-sources_$_pkgver.tar.gz
+    https://github.com/adoptium/temurin17-binaries/releases/download/jdk-$_pkgvername/OpenJDK17U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+
+	HelloWorld.java
+	TestECDSA.java
+	TestCryptoLevel.java
+"
+
+_java_home="/usr/lib/jvm/java-17-temurin"
+
+ldpath="$_java_home/lib:$_java_home/lib/server"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus/bin"
+
+	# 1) compile and run a simple hello world
+	$_java_bin/javac -d . "$srcdir"/HelloWorld.java
+	$_java_bin/java HelloWorld
+
+	# 2) compile and run a testcase for unlimited policy
+	$_java_bin/javac -d . "$srcdir"/TestCryptoLevel.java
+	$_java_bin/java -cp . --add-opens java.base/javax.crypto=ALL-UNNAMED TestCryptoLevel
+
+	# 3) compile and run a testcase for ECDSA signatures
+	$_java_bin/javac -d . "$srcdir"/TestECDSA.java
+	$_java_bin/java TestECDSA
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus"/* "$pkgdir/$_java_home"
+}
+
+_jdk() {
+	pkgdesc="Eclipse Temurin 17 (JDK)"
+	depends="java-common java-cacerts alsa-lib freetype"
+	provides=java-jdk
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin" "$_toroot"
+	mv "$_fromroot/lib" "$_toroot"
+	mv "$_fromroot/include" "$_toroot"
+}
+
+_src() {
+	pkgdesc="Eclipse Temurin 17 (sources)"
+	mkdir -p "$subpkgdir/$_java_home"/lib
+	mv "$pkgdir"/$_java_home/lib/src.zip \
+		"$subpkgdir"/$_java_home/lib/
+}
+
+sha256sums="
+0583e39652126c739078ad8836eedb08c0e323cc3871392d6df632ed11e7d93c  OpenJDK17U-jdk-sources_17.0.4.1_1.tar.gz
+1a1706304c26da0d8d2e05127c5aa7dba00e5401b2c0228c8ae894d2812beee0  OpenJDK17U-jdk_x64_alpine-linux_hotspot_17.0.4.1_1.tar.gz
+e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
+22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
+9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java
+"
