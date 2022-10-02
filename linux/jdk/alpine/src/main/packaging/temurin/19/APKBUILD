@@ -1,13 +1,15 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
-pkgname=temurin-17
-pkgver=17.0.4.1_p1
+pkgname=temurin-19
+pkgver=19.0.0_p36
 # replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
+# _pkgver=${pkgver/_p/_}
+_pkgver=19_36 # remove this line and uncomment the above line when the next version is released
+# _pkgverplus=${pkgver/_p/+}
+_pkgverplus=19+36 # remove this line and uncomment the above line when the next version is released
 _pkgvername=${_pkgverplus/+/%2B}
 pkgrel=0
-pkgdesc="Eclipse Temurin 17"
-provider_priority=17
+pkgdesc="Eclipse Temurin 19"
+provider_priority=19
 url="https://adoptium.net"
 arch="x86_64"
 license="GPL-2.0-with-classpath-exception"
@@ -24,14 +26,14 @@ makedepends="
 depends="$pkgname-jdk" # for the virtual package
 subpackages="$pkgname-src:_src:noarch
 	$pkgname-jdk:_jdk"
-source="https://github.com/adoptium/temurin17-binaries/releases/download/jdk-$_pkgvername/OpenJDK17U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+source="https://github.com/adoptium/temurin19-binaries/releases/download/jdk-$_pkgvername/OpenJDK19U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 
 	HelloWorld.java
 	TestECDSA.java
 	TestCryptoLevel.java
 "
 
-_java_home="/usr/lib/jvm/java-17-temurin"
+_java_home="/usr/lib/jvm/java-19-temurin"
 
 ldpath="$_java_home/lib:$_java_home/lib/server"
 
@@ -61,14 +63,14 @@ package() {
 }
 
 _src() {
-	pkgdesc="Eclipse Temurin 17 (sources)"
+	pkgdesc="Eclipse Temurin 19 (sources)"
 	mkdir -p "$subpkgdir/$_java_home"/lib
 	mv "$pkgdir"/$_java_home/lib/src.zip \
 		"$subpkgdir"/$_java_home/lib/
 }
 
 _jdk() {
-	pkgdesc="Eclipse Temurin 17 (JDK)"
+	pkgdesc="Eclipse Temurin 19 (JDK)"
 	provides="java-jdk java-jre"
 	depends="java-common java-cacerts"
 	_fromroot="$pkgdir/$_java_home"
@@ -86,7 +88,7 @@ _jdk() {
 }
 
 sha256sums="
-1a1706304c26da0d8d2e05127c5aa7dba00e5401b2c0228c8ae894d2812beee0  OpenJDK17U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+2a073c3cc977317baf7c0c4995be38d33e3ed74e9fa4ac075933016e68f18252  OpenJDK19U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
 22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
 9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java

@@ -34,10 +34,11 @@ RUN addgroup builder abuild
 
 # Add GPG key
 USER builder
-RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.gpg \
-	if [[ -f /tmp/private.gpg ]]; then \
+RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.rsa \
+	if [[ -f /tmp/private.rsa ]]; then \
 		mkdir /home/builder/.abuild; \
-		printf 'PACKAGER_PRIVKEY=/tmp/private.gpg'\
+		cp /tmp/private.rsa /home/builder/.abuild; \
+		printf 'PACKAGER_PRIVKEY=/home/builder/.abuild/private.rsa'\
 >> /home/builder/.abuild/abuild.conf; \
 	else \
 		abuild-keygen -a -n; \
