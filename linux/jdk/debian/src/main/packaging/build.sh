@@ -11,12 +11,10 @@ cp -R /home/builder/build/generated/packaging /home/builder/workspace
 debVersionList="buster bullseye bionic focal jammy"
 dpkgExtraARG="-us -uc" # ignore building with a gpg key
 
+# the target package is only based on the host machine's ARCH
+# ${buildArch} is only used for debug purpose what really matter is the label on the jenkins agent
 echo "DEBUG: building Debian arch ${buildArch}"
-if [[ "${buildArch}" == "all" ]]; then
-    dpkgExtraARG="${dpkgExtraARG} -b" # equal to --build=any,all|--build=binary
-else
-    dpkgExtraARG="${dpkgExtraARG} --build=any"
-fi
+dpkgExtraARG="${dpkgExtraARG} --build=any"
 
 # Build package and set distributions it supports
 cd /home/builder/workspace/packaging
