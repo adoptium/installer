@@ -12,7 +12,7 @@ armhf_checksum = 34a786548033391de80b857fe02a9c7bd42fcb94243e7273e89012df73f1ade
 ppc64el_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_ppc64le_linux_hotspot_19_36.tar.gz
 ppc64el_checksum = 55cc9382227433fa7cc1486a12af59d5bcbea9c40eaeae9608278e056b7d86db
 s390x_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19%2B36/OpenJDK19U-jdk_s390x_linux_hotspot_19_36.tar.gz
-s390x_checksum = tbd
+s390x_checksum = a5452599d0172ff6a72ae92436042ee8ce0598583197d6ca5c3501a1b379eb0c
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
