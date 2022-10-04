@@ -33,7 +33,8 @@ source="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-$_p
 
 _java_home="/usr/lib/jvm/java-11-temurin"
 
-ldpath="$_java_home/lib:$_java_home/lib/server"
+ldpath="$_java_home/lib:$_java_home/lib/jli:$_java_home/lib/server"
+sonameprefix="$pkgname:"
 
 prepare() {
 	default_prepare

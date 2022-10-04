@@ -36,6 +36,7 @@ source="https://github.com/adoptium/temurin19-binaries/releases/download/jdk-$_p
 _java_home="/usr/lib/jvm/java-19-temurin"
 
 ldpath="$_java_home/lib:$_java_home/lib/server"
+sonameprefix="$pkgname:"
 
 prepare() {
 	default_prepare
