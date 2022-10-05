@@ -10,8 +10,7 @@ source      src         -           only for SRPM and no need specify as option 
 s390x       s390x       s390x       only for jdk8+
 */
 
-env.NODE_LABEL_RPM = 'dockerBuild&&linux&&x64' // RedHat + Suse + Debian x64
-env.NODE_LABEL_DEB = "docker&&linux&&${ARCH}"  // Debian non-x64
+env.NODE_LABEL_RPM = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
 env.PRODUCT = 'temurin'
 
 pipeline {
@@ -67,9 +66,7 @@ pipeline {
                             expression { params.DISTRO == 'Debian' } // only trigger debian build
                         }
                     }
-                    agent {
-                        label "${ARCH}" == 'x86_64' || "${ARCH}" == 'all' ? "${env.NODE_LABEL_RPM}" : "${env.NODE_LABEL_DEB}"
-                    }
+                    // specific jenkins agent will be assigned inside of jenkinsSepDeb() per ARCH
                     steps {
                         dir('linuxDebian') {
                             script {
