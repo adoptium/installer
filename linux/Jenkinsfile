@@ -10,12 +10,12 @@ source      src         -           only for SRPM and no need specify as option 
 s390x       s390x       s390x       only for jdk8+
 */
 
-env.NODE_LABEL_RPM = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
+env.NODE_LABEL = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
 env.PRODUCT = 'temurin'
 
 pipeline {
     agent {
-        label NODE_LABEL_RPM
+        label NODE_LABEL
     }
     options {
         timeout(time: 2, unit: 'HOURS')
