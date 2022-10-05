@@ -164,7 +164,7 @@ def setup(DISTRO, buildArch) {
     // env.DOCKER_BUILDKIT = buildArch == "s390x" ? '0' : '1'
     env.DOCKER_BUILDKIT = 1
     env.COMPOSE_DOCKER_CLI_BUILD = 1
-    env._JAVA_OPTIONS =  (buildArch == 'armv7l' && DISTRO == 'Debian') ? '' : '-Xmx4g'
+    env._JAVA_OPTIONS = (buildArch == 'armv7l' && DISTRO == 'Debian') ? '' : '-Xmx4g'
 }
 
 // common function regardless DISTRO
