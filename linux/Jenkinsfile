@@ -62,17 +62,14 @@ pipeline {
                     when  {
                         beforeAgent true
                         anyOf {
-                            expression{ params.DISTRO == 'all' }  
-                            expression{ params.DISTRO == 'Alpine' } // only trigger debian build
+                            expression { params.DISTRO == 'all' }
+                            expression { params.DISTRO == 'Alpine' } // only trigger debian build
                         }
-                    }
-                    agent {
-                        label "${ARCH}" == "x86_64" ? "${env.NODE_LABEL_RPM}": "${env.NODE_LABEL_DEB}"
                     }
                     steps{
                         dir('linuxDebian') {
                             script {
-                                jenkinsStep("Alpine")
+                                jenkinsStepNonDeb("Alpine")
                             }
                         }
                     }
