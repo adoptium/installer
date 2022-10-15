@@ -10,20 +10,19 @@ source      src         -           only for SRPM and no need specify as option 
 s390x       s390x       s390x       only for jdk8+
 */
 
-env.NODE_LABEL_RPM = "dockerBuild&&linux&&x64" // RedHat + Suse + Debian x64
-env.NODE_LABEL_DEB = "docker&&linux&&${ARCH}"  // Debian non-x64 
-env.PRODUCT = "temurin"
+env.NODE_LABEL = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
+env.PRODUCT = 'temurin'
 
 pipeline {
     agent {
-        label NODE_LABEL_RPM
+        label NODE_LABEL
     }
     options {
-        timeout(time: 2, unit: 'HOURS') 
+        timeout(time: 2, unit: 'HOURS')
     }
     parameters {
         choice(name: 'VERSION', choices: ['8', '11', '17', '19'], description: 'Build for specific JDK VERSION')
-        choice(name: 'ARCH', choices: ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: "Build for specific platform\n s300x not for VERSION 8\n")
+        choice(name: 'ARCH', choices: ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
@@ -33,15 +32,15 @@ pipeline {
     }
     tools {
         // this is set in the jenkins global tool
-        jdk "jdk-11.0.13+8"
+        jdk 'jdk-11.0.13+8'
     }
     stages {
-        stage ("Prepare Build"){
-            steps{
-                script{
+        stage('Prepare Build') {
+            steps {
+                script {
                     currentBuild.displayName =  "jdk${VERSION} - ${ARCH} - ${DISTRO}"
                     currentBuild.description = env.BUILD_USER_ID
-                    sh("docker --version")
+                    sh('docker --version')
                 }
                 checkout(
                     [
@@ -51,12 +50,12 @@ pipeline {
                         userRemoteConfigs: [[url: "$gitrepo"]]
                     ]
                 )
-                dir("linux") {
-                    stash name: "installercode", includes: "**"
+                dir('linux') {
+                    stash name: 'installercode', includes: '**'
                 }
             }
         }
-        stage ("BUILD")
+        stage('BUILD')
         {
             parallel{
                 stage('Build Installer for Alpine') {
@@ -82,17 +81,15 @@ pipeline {
                     when  {
                         beforeAgent true
                         anyOf {
-                            expression{ params.DISTRO == 'all' }  
-                            expression{ params.DISTRO == 'Debian' } // only trigger debian build
+                            expression { params.DISTRO == 'all' }
+                            expression { params.DISTRO == 'Debian' } // only trigger debian build
                         }
                     }
-                    agent {
-                        label "${ARCH}" == "x86_64" ? "${env.NODE_LABEL_RPM}": "${env.NODE_LABEL_DEB}"
-                    }
-                    steps{
+                    // specific jenkins agent will be assigned inside of jenkinsSepDeb() per ARCH
+                    steps {
                         dir('linuxDebian') {
                             script {
-                                jenkinsStep("Debian")
+                                jenkinsStepDeb()
                             }
                         }
                     }
@@ -101,15 +98,15 @@ pipeline {
                     when  {
                         beforeAgent true
                         anyOf {
-                            expression{ params.DISTRO == 'all' }
-                            expression{ params.DISTRO == 'RedHat' }  // only trigger redhat build
+                            expression { params.DISTRO == 'all' }
+                            expression { params.DISTRO == 'RedHat' }  // only trigger redhat build
                         }
                     }
-                    steps{
+                    steps {
                         dir('linuxRedHat') {
                             script {
-                                DISTRO = "RedHat"
-                                jenkinsStep("RedHat")
+                                DISTRO = 'RedHat'
+                                jenkinsStepNonDeb('RedHat')
                             }
                         }
                     }
@@ -118,14 +115,14 @@ pipeline {
                     when  {
                         beforeAgent true // do condition when before allocate to agent
                         anyOf {
-                            expression{ params.DISTRO == 'all' }
-                            expression{ params.DISTRO == 'Suse' } // only trigger suse build
+                            expression { params.DISTRO == 'all' }
+                            expression { params.DISTRO == 'Suse' } // only trigger suse build
                         }
                     }
-                    steps{
+                    steps {
                         dir('linuxSuse') {
                             script {
-                                jenkinsStep("Suse")
+                                jenkinsStepNonDeb('Suse')
                             }
                         }
                     }
@@ -138,16 +135,37 @@ pipeline {
 /*
 * Common Functions
 */
-def setup(DISTRO, buildArch) {
-    cleanWs()
-    // Docker --mount option requires BuildKit
-//    env.DOCKER_BUILDKIT = buildArch == "s390x" ? '0' : '1'
-    env.DOCKER_BUILDKIT = 1 
-    env.COMPOSE_DOCKER_CLI_BUILD=1
-    env._JAVA_OPTIONS =  (buildArch == "armv7l" && DISTRO == "Debian")? "" : "-Xmx4g"
+
+// function only handle debian as DISTRO
+def jenkinsStepDeb() {
+    echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - Debian"
+    // for one single ARCH
+    def debArchAllList = "${ARCH}"
+    // when ARCH = all, rewrite list
+    if ("${ARCH}" == 'all') {
+        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
+    }
+    debArchAllList.each { DebARCH ->
+        // special handle: no label x86_64 only x64 for debian agent
+        def debLabel = "${DebARCH}&&docker"
+        if ("${DebARCH}" == 'x86_64') {
+            debLabel = 'x64&&dockerBuild'
+        }
+        // reallocate jenkins agent per element in list
+        node("linux&&${debLabel}") {
+            setup('Debian', "${DebARCH}")
+            unstash 'installercode'
+            buildAndTest('Debian', "${DebARCH}")
+            if (params.uploadPackage.toBoolean()) {
+                echo "Upload artifacts for ${VERSION} - ${DebARCH} - Debian"
+                uploadArtifacts('Debian', "${DebARCH}")
+            }
+        }
+    }
 }
 
-def jenkinsStep(DISTRO){
+// function handle both RedHat and Suse as DISTRO
+def jenkinsStepNonDeb(DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
     setup("${DISTRO}", "${ARCH}")
     unstash 'installercode'
@@ -158,6 +176,16 @@ def jenkinsStep(DISTRO){
     }
 }
 
+// common function regardless DISTRO
+def setup(DISTRO, buildArch) {
+    cleanWs()
+    // Docker --mount option requires BuildKit
+    env.DOCKER_BUILDKIT = 1
+    env.COMPOSE_DOCKER_CLI_BUILD = 1
+    env._JAVA_OPTIONS = (buildArch == 'armv7l' && DISTRO == 'Debian') ? '' : '-Xmx4g'
+}
+
+// common function regardless DISTRO
 def buildAndTest(DISTRO, buildArch) {
     try {
         if (DISTRO != "Debian") { // for RPM based: RedHat / Suse / Alpine
@@ -168,24 +196,24 @@ def buildAndTest(DISTRO, buildArch) {
             // Install Adoptium GPG key for RPM signing
             withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
                 def buildCLI = "./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}"
-                buildCLI = params.enableDebug.toBoolean() ? buildCLI + " --stacktrace" : buildCLI
+                buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
                 sh("$buildCLI")
             }
         } else {
             def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
             def debArchList = [
-                "x86_64" : "amd64",
-                "armv7l": "armhf",
-                "aarch64": "arm64",
-                "ppc64le": "ppc64el",
-                "s390x"  : "s390x"
+                'x86_64' : 'amd64',
+                'armv7l': 'armhf',
+                'aarch64': 'arm64',
+                'ppc64le': 'ppc64el',
+                's390x'  : 's390x'
             ]
             def buildCLI = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
-            buildCLI = params.enableDebug.toBoolean() ? buildCLI + " --stacktrace" : buildCLI
+            buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
             sh("$buildCLI")
         }
     } catch (Exception ex) {
-        echo 'Exception in buildAndTest: ' + ex.toString() 
+        echo 'Exception in buildAndTest: ' + ex
         currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
     } finally {
         archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: true
@@ -224,25 +252,25 @@ def uploadAlpineArtifacts(buildArch) {
 def uploadDebArtifacts(buildArch) {
     // full list of all platforms, up to user to opt out s390x+jdk8
     def debArchList = [
-        "x86_64" : "amd64",
-        "armv7l": "armhf",
-        "aarch64": "arm64",
-        "ppc64le": "ppc64el",
-        "s390x"  : "s390x"
+        'x86_64' : 'amd64',
+        'armv7l': 'armhf',
+        'aarch64': 'arm64',
+        'ppc64le': 'ppc64el',
+        's390x'  : 's390x'
     ]
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04
         add more into list when avaiable for release
         also update linux/jdk/debian/main/packing/build.sh
     */
-    def deb_versions = ["buster", "bullseye", "bionic", "focal", "jammy"]
-    def distro_list = ""
+    def deb_versions = ['buster', 'bullseye', 'bionic', 'focal', 'jammy']
+    def distro_list = ''
     deb_versions.each { deb_version ->
         // Creates list like deb.distribution=stretch;deb.distribution=buster;
         distro_list += "deb.distribution=${deb_version};"
     }
 
-    rtUpload ( //artifactory plugin
+    rtUpload( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
         failNoOp: true,
         spec: """{
@@ -282,21 +310,21 @@ def uploadRPMArtifacts(DISTRO) {
     def packageDirs = distro_Package[DISTRO.toLowerCase()]
     // full list of all platforms, up to user to opt out s390x+jdk8 from input
     def rpmArchList = [
-        "x86_64" : "x86_64",
-        "armv7l": "armv7hl",
-        "aarch64": "aarch64",
-        "ppc64le": "ppc64le",
-        "s390x"  : "s390x"
+        'x86_64' : 'x86_64',
+        'armv7l': 'armv7hl',
+        'aarch64': 'aarch64',
+        'ppc64le': 'ppc64le',
+        's390x'  : 's390x'
     ]
     // Enable upload src.rpm
     if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {
-        rpmArchList.put("source","src")
+        rpmArchList.put('source', 'src')
     }
 
     packageDirs.each {
         packageDir ->
             rpmArchList.each {
-                entry -> rtUpload (
+                entry -> rtUpload(
                     serverId: 'adoptium.jfrog.io',
                     failNoOp: true,
                     spec: """{
