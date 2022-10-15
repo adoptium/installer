@@ -25,6 +25,7 @@ makedepends="
 depends="
 	java-common
 	java-cacerts
+	ttf-dejavu
 "
 source="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$_pkgvername/OpenJDK8U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 

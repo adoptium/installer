@@ -13,6 +13,7 @@ arch="x86_64"
 license="GPL-2.0-with-classpath-exception"
 makedepends="
 	alsa-lib-dev
+	freetype-dev
 	libffi-dev
 	libjpeg-turbo-dev
 	libx11-dev
