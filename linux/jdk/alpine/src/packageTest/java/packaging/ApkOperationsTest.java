@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static packaging.TestContainersUtil.runShell;
 
 /**
- * Checks whether the built package can be installed, uninstalled, and so on using apt.
+ * Checks whether the built package can be installed, uninstalled, and so on using apk.
  *
  * @author George Adams
  */
