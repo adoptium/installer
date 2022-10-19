@@ -8,5 +8,5 @@ on:
     types: [created]
 
 jobs:
-  automerge:
+  codefreeze:
     uses: adoptium/.github/.github/workflows/code-freeze.yml@main
