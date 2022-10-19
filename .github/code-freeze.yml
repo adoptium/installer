@@ -10,5 +10,3 @@ on:
 jobs:
   automerge:
     uses: adoptium/.github/.github/workflows/code-freeze.yml@main
-    with:
-      allowed-author: eclipse-temurin-bot
