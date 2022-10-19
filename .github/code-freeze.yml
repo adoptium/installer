@@ -1,0 +1,14 @@
+name: Code Freeze Bot
+
+# Controls when the workflow will run
+on:
+  pull_request_target:
+    branches: [ "main" ]
+  issue_comment:
+    types: [created]
+
+jobs:
+  automerge:
+    uses: adoptium/.github/.github/workflows/code-freeze.yml@main
+    with:
+      allowed-author: eclipse-temurin-bot
