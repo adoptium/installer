@@ -51,9 +51,6 @@ class YumOperationsTest {
 
 			Container.ExecResult result;
 
-			result = runShell(container, "yum update -y");
-			assertThat(result.getExitCode()).isEqualTo(0);
-
 			// below part: only test x86_64 rpm package in docker container
 			if (System.getenv("testArch") == "x86_64" || System.getenv("testArch") == "all") {
 				result = runShell(container, "yum install -y " + containerRpm);
