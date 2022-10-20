@@ -1,0 +1,23 @@
+temurin-18-jdk (18.0.2.1+1) STABLE; urgency=medium
+
+  * Eclipse Temurin 18.0.2.1+1 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> Fri, 26 Aug 2022 17:28:00 +0000
+ 
+temurin-18-jdk (18.0.2+9) STABLE; urgency=medium
+
+  * Eclipse Temurin 18.0.2+9 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> Tue, 2 Aug 2022 17:28:00 +0000
+ 
+temurin-18-jdk (18.0.1+10) UNRELEASED; urgency=medium
+
+  * Eclipse Temurin 18.0.1+10 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 4 May 2022 13:28:00 +0000
+
+temurin-18-jdk (18+36) UNRELEASED; urgency=medium
+
+  * Eclipse Temurin 18+36 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 30 Mar 2022 16:32:30 +0000

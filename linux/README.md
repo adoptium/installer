@@ -1,222 +1,204 @@
-# Packaging AdoptOpenJDK for Linux
+# Linux Packages of Eclipse Adoptium
+
+We package for Debian, Red Hat, SUSE (e.g. DEB and RPM based) Linux distributions.
+
+The current implementation to build the packages involves using Gradle to call a small Java program.
+That Java program spins up a Docker container, installing the base O/S and its packaging tools,
+and then looping over configuration to create the various packages and signing them as appropriate
+with the (Eclipse Foundation as a default) signing service.
+
+TODO You can then optionally upload those packages to a package repository of your choice.
+The default Adoptium package repository is https://packages.adoptium.net/ui/packages. The packages are built and uploaded by Jenkins pipeline job defined by [Jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile)
 
 ## Prerequisites
 
-Note: Linux packages can be created on any Linux distribution and macOS and on any CPU architecture. The package manager which the packages are going to be built for is not required to be present.
+To run this locally
 
-### Linux
+* You will need to have Docker 20.10+ installed and running.
+* You will need to have Java 8+ installed.
+* You will need to have a minimum of 8GB of RAM on your system (the build required 4GB).
 
-* [fpm](https://fpm.readthedocs.io/en/latest/installing.html)
-* JDK 11 or newer
-* Ruby
-* RubyGems
-* rpmbuild
+## Building the Packages
 
-### macOS
+Builds take at least ~5-15 minutes to complete on a modern machine.  Please ensure that you have Docker installed and running.
 
-* [fpm](https://fpm.readthedocs.io/en/latest/installing.html)
-* JDK 11 or newer
-* Ruby
-* RubyGems
-* gnutar
-* rpmbuild
+You'll want to make sure you've set the exact versions of the binaries you want package in the:
 
-## Packaging
+* **Debian Based** - _jdk/debian/src/main/packaging/\<vendor>\/\<version>\/debian/rules_ files.
+* **Red Hat Based** - _jdk/redhat/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
+* **SUSE Based** - _jdk/suse/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
 
-It is possible to simultaneously build Debian and RPM packages by using `./gradlew build` and specifying all properties (`-P`) that are required by the various package formats.
+In all of the examples below you'll need to replace the following variables:
 
-### Deb packages
+* Replace `<version>` with `8|11|17|19`
+* Replace `<vendor>` with `temurin|dragonwell`
+* Replace `<platform>` with `Debian|RedHat|Suse`
 
-Deb packages for Debian and Ubuntu (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm:
+### Build all packages for a version
 
-```
-./gradlew buildDebPackage \
-    -PJDK_DISTRIBUTION_TYPE=<JDK|JRE> \
-    -PJDK_DISTRIBUTION_DIR=/path/to/jdk \
-    -PJDK_MAJOR_VERSION=<majorversion> \
-    -PJDK_VERSION=<versionstring> \
-    -PJDK_VM=<vm> \
-    -PJDK_ARCHITECTURE=<architecture>
+```shell
+export DOCKER_BUILDKIT=1
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean package checkPackage -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
-`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
+The scripts roughly work as follows:
 
-Example:
+* **Gradle Kickoff** - The various `packageJdk<platform>` tasks in subdirectories under the _jdk_ directory all have a dependency on the `packageJDK` task,
+which in turn has a dependency on the `package` task (this is how Gradle knows to trigger each of those in turn).
+* **packageJdk&lt;platform&gt; Tasks** - These tasks are responsible for building the various packages for the given platform.  They fire up the Docker container
+(A _Dockerfile_ is included in each subdirectory), mount some file locations (so you can get to the output) and then run packaging commands in that container.
+* **checkJdk&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
+_src/packageTest/java/packaging_ on them.
 
-```
-./gradlew buildDebPackage \
-    -PJDK_DISTRIBUTION_TYPE=JDK \
-    -PJDK_DISTRIBUTION_DIR=/path/to/jdk-11.0.2+9 \
-    -PJDK_MAJOR_VERSION=11 \
-    -PJDK_VERSION="11.0.2+9" \
-    -PJDK_VM=hotspot \
-    -PJDK_ARCHITECTURE=x64
-```
+[task package](https://github.com/adoptium/installer/blob/master/linux/build.gradle) --> [task packageJdk](https://github.com/adoptium/installer/blob/master/linux/jdk/build.gradle) --> [task packageJdk\<DISTRO\>](jdk/\<vendor\>/build.gradle )
+[task checkPackage](https://github.com/adoptium/installer/blob/master/linux/build.gradle)  --> [task checkJdkPackage](https://github.com/adoptium/installer/blob/master/linux/jdk/build.gradle) --> [task checkJdk\<DISTRO\>](jdk/\<vendor\>/build.gradle )
 
-#### Optional Arguments
+### Build a Debian specific package for a version
 
-* `-PPACKAGE_NAME=pkg_name` - Specify the name of the output package, defaults to `adoptopenjdk`
-* `-PVENDOR=vendor_name` - Specify a custom vendor name, defaults to `AdoptOpenJDK`
-* `-PVENDOR_HOMEPAGE="https://example.com/"` - specify a custom link to vendor homepage
-* `-PVENDOR_SOURCE_URL="https://example.com/"` - specify a custom link to source code
-* `-PDEBIAN_ITERATION=1` - specify the iteration
+- replace `<version>` with `8|11|17|19`
+- replace `<vendor>` with `temurin|dragonwell`
 
-3rd party vendors can choose to populate the above optional arguments to customize package metadata. Please note that vendor name should be included in the JDK_VERSION.
-
-Example:
-
-```bash
-./gradlew buildDebPackage \
-    -PJDK_DISTRIBUTION_TYPE=JDK \
-    -PPACKAGE_NAME=openjdk \
-    -PVENDOR=Vendor \
-    -PVENDOR_HOMEPAGE="https://homepage.com" \
-    -PJDK_DISTRIBUTION_DIR=path-to/jdk-11.0.8+2 \
-    -PJDK_MAJOR_VERSION=11 \
-    -PJDK_VERSION=11.0.8+2~vendor \
-    -PJDK_VM=hotspot \
-    -PJDK_ARCHITECTURE=x64 \
-    -PDEBIAN_ITERATION=5
+```shell
+export DOCKER_BUILDKIT=1
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
-will produce `openjdk-11-hotspot_11.0.8+2~vendor-5_amd64.deb` with the following metadata:
+### Build a Red Hat specific package for a version
 
-```
- new Debian package, version 2.0.
- Package: openjdk-11-hotspot
- Version: 11.0.8+2~vendor-5
- Vendor: Vendor
- Maintainer: Vendor
- Homepage: https://homepage.com
- Description: OpenJDK Development Kit 11 (JDK) with Hotspot by Vendor
- ...
+- replace `<version>` with `8|11|17|18`
+- replace `<vendor>` with `temurin|dragonwell`
 
+```shell
+export DOCKER_BUILDKIT=1
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
-Table with arguments:
+### Build a SUSE specific package for a version
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM                          | JDK\_ARCHITECTURE                           |
-|--------|---------------------|------------------|----------------------------------|---------------------------------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 13 | 13                  | e.g. `13.0.1+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 14 | 14                  | e.g. `14+15`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 15 | 15                  | e.g. `15+10`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 16 | 16                  | e.g. `16+4`      | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+- replace `<version>` with `8|11|17|19`
+- replace `<vendor>` with `temurin|dragonwell`
 
-### RPM packages
-
-RPM packages for CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) (see section *Support Matrix* below for supported combinations) can be packaged with the help of Gradle and fpm:
-
-```
-./gradlew buildRpmPackage \
-    -PJDK_DISTRIBUTION_TYPE=<JDK|JRE> \
-    -PJDK_DISTRIBUTION_DIR=/path/to/jdk \
-    -PJDK_MAJOR_VERSION=<majorversion> \
-    -PJDK_VERSION=<versionstring> \
-    -PJDK_VM=<vm> \
-    -PJDK_ARCHITECTURE=<architecture> \
-    -PSIGN_PACKAGE=<true|false>
+```shell
+export DOCKER_BUILDKIT=1
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
-`JDK_DISTRIBUTION_DIR` must point to a directory with a binary distribution of AdoptOpenJDK (for example an expanded tarball downloaded from https://adoptopenjdk.net/). Use a JDK distribution to create a JDK package, use a JRE distribution to create a JRE package.
+## GPG Signing RPMs
 
-Example:
+In order to GPG sign the generated RPMs you must add the following argument to the gradlew command:
+- replace `<DISTRO>` with `RedHat|Suse|Debian`
+- replace `<version>` with `8|11|17|18`
+- replace `<vendor>` with `temurin|dragonwell`
 
-```
-./gradlew buildRpmPackage \
-    -PJDK_DISTRIBUTION_TYPE=JRE \
-    -PJDK_DISTRIBUTION_DIR=/path/to/jdk-11.0.2+9 \
-    -PJDK_MAJOR_VERSION=11 \
-    -PJDK_VERSION="11.0.2+9" \
-    -PJDK_VM=hotspot \
-    -PJDK_ARCHITECTURE=amd64
-    -PSIGN_PACKAGE=true
+```shell
+./gradlew packageJdk<DISTRO> --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PGPG_KEY=</path/to/private/gpg/key>
 ```
 
-|        | JDK\_MAJOR\_VERSION | JDK\_VERSION     | JDK\_VM                          | JDK\_ARCHITECTURE                           |
-|--------|---------------------|------------------|----------------------------------|---------------------------------------------|
-| JDK 8  | 8                   | e.g. `8u202`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 9  | 9                   | e.g. `9.0.4+11`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 10 | 10                  | e.g. `10.0.2+13` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 11 | 11                  | e.g. `11.0.2+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 12 | 12                  | e.g. `12.0.1+12` | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 13 | 13                  | e.g. `13.0.1+9`  | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 14 | 14                  | e.g. `14+15`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 15 | 15                  | e.g. `15+10`     | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
-| JDK 16 | 16                  | e.g. `16+4`      | `hotspot`, `openj9`, `openj9_xl` | `x64`, `s390x`, `ppc64le`, `arm`, `aarch64` |
+## Building SRPMs and RPMs Directly
 
-RPMs are automatically signed if `SIGN_PACKAGE` is set to `true`. Signing requires the file  `~/.rpmmacros` to be present with the following signing configuration (change values as necessary):
+If you do not require testing or advanced build support, it is perfectly fine to eschew the Gradle-based build and to
+directly build SRPMs and RPMs using the spec files in the repository.
+
+In this example, we are using the existing spec files for the Temurin 11 JDK to create an SRPM and then rebuild that
+SRPM into a binary RPM. It supports building it for the current target architecture or for a different one than the host
+system by specifying `vers_arch`.
+
+Prerequisites: `rpm-build` and `rpmdevtools` packages are installed. For example:
 
 ```
-%_signature gpg
-%_gpg_path /path/to/.gnupg
-%_gpg_name KEY_ID
-%__gpg /usr/bin/gpg
+$ rpm -q rpmdevtools rpm-build
+rpmdevtools-9.3-3.fc33.noarch
+rpm-build-4.16.1.3-1.fc33.x86_64
 ```
 
-## Upload to Package Repositories
+### Produce a Source/Binary RPM for x86_64
 
-Gradle tasks are included to upload Debian and RPM packages to Artifactory. To upload all package formats, run:
+Consider this RPM build where x86_64 is the build hosts' architecture.
+Download the release blobs and associated sources.
+Suppose build rpm for jdk11 for target architecture `x86_64`
 
+```shell
+cd linux/jdk/redhat/src/main/packaging/temurin/11
+mkdir temurin_x86_64
+pushd temurin_x86_64
+spec=$(pwd)/temurin-11-jdk.spec
+spectool --gf ${spec}
+sha256sum -c *.sha256.txt
 ```
-./gradlew upload \
-    -PJDK_MAJOR_VERSION=<majorversion> \
-    -PJDK_VERSION=<versionstring> \
-    -PJDK_ARCHITECTURE=<architecture> \
-    -PARTIFACTORY_USER=<user> \
-    -PARTIFACTORY_PASSWORD=<apikey> \
-    -PARTIFACTORY_REPOSITORY_DEB=<name-of-debian-repository> \
-    -PARTIFACTORY_REPOSITORY_RPM=<name-of-rpm-repository>
+
+Create a SRPM:
+
+```shell
+rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
+         --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
+         --define "_rpmdir $(pwd)" --nodeps -bs ${spec}
 ```
 
-By specifying all build properties (see above) building and uploading can be done at once. The `upload` tasks depends on the respective `build` tasks. Run `./gradlew tasks` for a full list of tasks.
+Build the binary from the SRPM:
 
-**Attention**: When setting up an Artifactory repository for RPM packages, the *YUM metadata folder depth* must be set to 3.
+```shell
+rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
+         --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
+         --define "_rpmdir $(pwd)" --rebuild *.src.rpm
+```
 
-## Support Matrix
+### Building for a different architecture 
 
-### Deb packages
+In order to produce RPMs on an x86_64 build host for the s390x target architecture, use the `--target` switch to `rpm-build` so as to build for a different
+archicture. Suppose the host architecture is `x86_64` and we want to build for target architecture `s390x`:
 
-All packages can be installed on Debian, Raspbian (armhf/arm64 only) and Ubuntu without further changes. They are available for amd64, s390x, ppc64el, armhf and arm64 unless otherwise noted. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained.
+```shell
+rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
+         --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
+         --define "_rpmdir $(pwd)" --target s390x --rebuild *.src.rpm
+```
 
-| OpenJDK                  | Debian                                  | Ubuntu                                                                         |
-|--------------------------|-----------------------------------------|--------------------------------------------------------------------------------|
-| JDK 8 (Hotspot, OpenJ9)  | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 9 (Hotspot, OpenJ9)  | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 10 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 11 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 12 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 13 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 14 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 15 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
-| JDK 16 (Hotspot, OpenJ9) | 9 (stretch), 10 (buster), 11 (bullseye) | 16.04 (xenial), 18.04 (bionic), 20.04 (focal), 20.10 (groovy), 21.04 (hirsute) |
+## Supported packages
 
-* [Debian releases and support timeframe](https://wiki.debian.org/DebianReleases)
-* [Ubuntu releases and support timeframe](https://wiki.ubuntu.com/Releases)
+### DEB
+Supported JDK version 8,11,17,18,19
 
-### RPM packages
+Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
-All packages can be installed on Amazon Linux, CentOS, Fedora, Red Hat Enterprise Linux (RHEL) as well as OpenSUSE and SUSE Enterprise Linux (SLES) without further changes. All major versions as well as JDKs and JREs can be installed side by side. JDKs and JREs have no dependencies on each other and are completely self-contained. Packages for Amazon Linux 1, Fedora and OpenSUSE are only available for x86_64. Amazon Linux 2 supports aarch64, too. The packages for all other distributions are available for x86_64, s390x, ppc64le and aarch64.
+| Distr        | Test enabled platforms | Note |
+|--------------|:----------------------:|:----:|
+| debian/12    |         x86_64         |      |
+| debian/11    |         x86_64         |      |
+| debian/10    |         x86_64         |      |   
+| ubuntu/22.10 |         x86_64         |      |
+| ubuntu/22.04 |         x86_64         |      |
+| ubuntu/21.10 |         x86_64         |      |
+| ubuntu/20.04 |         x86_64         |      |
+| ubuntu/18.04 |         x86_64         |      |
 
-| OpenJDK                  | Amazon  | CentOS  | Fedora     | RHEL    | OpenSUSE   | SLES   |
-|--------------------------|---------|---------|------------|---------|------------|--------|
-| JDK 8 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 9 (Hotspot, OpenJ9)  | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 10 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 11 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 12 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 13 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 14 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 15 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
-| JDK 16 (Hotspot, OpenJ9) | 1, 2    | 6, 7, 8 | 32, 33, 34 | 6, 7, 8 | 15.1, 15.2 | 12, 15 |
+### RPM (RedHat and Suse)
+Supported JDK version 8,11,17,18,19
 
-* Amazon Linux releases and support timeframe: [Amazon Linux 1](https://aws.amazon.com/de/amazon-linux-ami/faqs/#how_long), [Amazon Linux 2](https://aws.amazon.com/de/amazon-linux-2/faqs/#Long_Term_Support)
-* [CentOS releases and support timeframe](https://wiki.centos.org/Download)
-* [Fedora releases and support timeframe](https://fedoraproject.org/wiki/Releases)
-* [Red Hat Enterprise Linux releases and support timeframe](https://access.redhat.com/support/policy/updates/errata/)
-* [OpenSUSE releases and support timeframe](https://en.opensuse.org/Lifetime)
-* [Suse Linux Enterprise releases and support timeframe](https://www.suse.com/lifecycle/)
+Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
+SRPM also available.
+
+| Distr            | Test enabled platforms | Note |
+| ---------------- |:----------------------:|:----:|
+| amazonlinux/2    | x86_64     |                |
+| centos/7         | x86_64     |                |
+| rpm/fedora/35    | x86_64     |                |
+| rpm/fedora/36    | x86_64     |                |
+| rpm/fedora/37    | x86_64     |                |
+| oraclelinux/7    | x86_64     |                |
+| oraclelinux/8    | x86_64     |                |
+| opensuse/15.3    | x86_64     |                |
+| opensuse/15.4    | x86_64     |                |
+| rocky/8          | x86_64     |                |
+| rpm/rhel/7       | x86_64     |                |
+| rpm/rhel/8       | x86_64     |                |
+| rpm/rhel/9       | x86_64     |                |
+| sles/12          | Null       | Need subscription to even run zypper update|
+| sles/15          | x86_64     |                |
+
+## Install the packages
+
+See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://adoptium.net/installation/linux/)

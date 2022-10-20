@@ -1,157 +1,49 @@
-import net.adoptopenjdk.installer.Architecture
-import net.adoptopenjdk.installer.VirtualMachine
-
-buildscript {
-    repositories {
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
 plugins {
-    id "base"
-}
-
-allprojects {
-    apply plugin: "base"
-
-    repositories {
-        mavenCentral()
-    }
-}
-
-tasks.wrapper {
-    distributionType = Wrapper.DistributionType.ALL
+	id "java"
 }
 
 ext {
-    jdkMajorVersion = getJdkMajorVersion()
-    jdkVersion = JDK_VERSION
-    pkgMetadata = [
-        architecture: getJdkArchitecture(),
-        vm          : getJdkVirtualMachine(),
-        description : "${jdkDistributionType.description} ${jdkMajorVersion} (${jdkDistributionType.name()}) with ${getJdkVirtualMachine().description()} by ${getVendor()}",
-        homepage    : getVendorHomePage(),
-        vcsUrl   : getVendorSourceURL(),
-        debianIteration: getDebianIteration(),
-        rpmIteration: getRPMIteration(),
-        license     : "GPL-2.0+CE",
-        maintainer  : getVendor(),
-        vendor      : getVendor(),
-        packageName : "${getPackageName()}-${jdkMajorVersion}-${getJdkVirtualMachine().packageQualifier}${jdkDistributionType.pkgNameSuffix}"
-    ]
-    artifactory = [
-        url       : "https://adoptopenjdk.jfrog.io/adoptopenjdk/",
-        user      : project.hasProperty("ARTIFACTORY_USER") ? ARTIFACTORY_USER : null,
-        password  : project.hasProperty("ARTIFACTORY_PASSWORD") ? ARTIFACTORY_PASSWORD : null,
-        repository: [
-            deb: project.hasProperty("ARTIFACTORY_REPOSITORY_DEB") ? ARTIFACTORY_REPOSITORY_DEB : null,
-            rpm: project.hasProperty("ARTIFACTORY_REPOSITORY_RPM") ? ARTIFACTORY_REPOSITORY_RPM : null,
-        ],
-    ]
-    jdkDistributionDir = JDK_DISTRIBUTION_DIR
-    jdkDistributionType = getJdkDistributionType()
+	junitVersion = "5.7.0"
+	testcontainersVersion = "1.15.1"
+	assertjCoreVersion = "3.18.1"
 }
 
-
-task buildRpmPackage {
-    // empty task that subprojects can use to attach specific tasks.
+repositories {
+	mavenCentral()
 }
 
-build.dependsOn(buildRpmPackage)
+group "org.adoptium"
+version "1.0.0-SNAPSHOT"
 
-tasks.register("uploadRpmPackage") {
-    group = "upload"
-    description = "Uploads all RPM packages"
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
-tasks.register("upload") {
-    group = "upload"
-    description = "Uploads all linux packages"
-    dependsOn uploadRpmPackage
+tasks.register("package") {
+	group = "packaging"
+	description = "Creates Linux packages."
 }
 
-def getDebianIteration () {
-    return hasProperty("DEBIAN_ITERATION") ? Integer.parseInt(DEBIAN_ITERATION) : 3
+tasks.register("checkPackage") {
+	description = "Tests the generated packages."
+	group = "verification"
 }
 
-def getRPMIteration () {
-    return hasProperty("RPM_ITERATION") ? Integer.parseInt(RPM_ITERATION) : 3
+check.dependsOn(checkPackage)
+
+def getProduct() {
+	return hasProperty("PRODUCT") ? PRODUCT.toString().toLowerCase(Locale.US) : null
 }
 
-def getJdkDistributionType() {
-    return hasProperty("JDK_DISTRIBUTION_TYPE") ?
-        DistributionType.valueOf(JDK_DISTRIBUTION_TYPE.toUpperCase(Locale.US)) :
-        DistributionType.JDK
+def getProductVersion() {
+	return hasProperty("PRODUCT_VERSION") ? Integer.parseInt(PRODUCT_VERSION) : null
 }
 
-def getJdkVirtualMachine() {
-    return VirtualMachine.valueOf(JDK_VM.toUpperCase(Locale.US))
+def getGPGKey() {
+	return hasProperty("GPG_KEY") ? GPG_KEY.toString() : null
 }
 
-def getJdkArchitecture() {
-    return hasProperty("JDK_ARCHITECTURE") ?
-        Architecture.valueOf(JDK_ARCHITECTURE.toUpperCase(Locale.US)) :
-        Architecture.X64
-}
-
-def getVendor() {
-    return hasProperty("VENDOR") ? VENDOR : "AdoptOpenJDK"
-}
-
-def getPackageName() {
-    return hasProperty("PACKAGE_NAME") ? PACKAGE_NAME : "adoptopenjdk"
-}
-
-def getVendorHomePage() {
-    return hasProperty("VENDOR_HOMEPAGE") ? VENDOR_HOMEPAGE : "https://adoptopenjdk.net/"
-}
-
-def getVendorSourceURL() {
-    return hasProperty("VENDOR_SOURCE_URL") ? VENDOR_SOURCE_URL : "https://github.com/AdoptOpenJDK/openjdk-jdk${jdkMajorVersion}u"
-}
-
-def getJdkMajorVersion() {
-    def versionString = hasProperty("JDK_MAJOR_VERSION") ? JDK_MAJOR_VERSION : ""
-    if (!versionString.matches("^[0-9]+\$")) {
-        throw new IllegalArgumentException("Unparsable JDK major version '$versionString'")
-    }
-    int version = Integer.valueOf(versionString)
-
-    // Do not change the numbers without updating the metadata declarations
-    // (dependencies, jinfo priorities)!
-    if (version < 8 || version > 16) {
-        throw new IllegalArgumentException("Building packages for JDK $version is not supported")
-    }
-    return version
-}
-
-enum DistributionType {
-    JDK("", "OpenJDK Development Kit"),
-    JRE("jre", "OpenJDK Runtime Environment")
-
-    private final String suffix
-
-    private final String description
-
-    DistributionType(suffix, description) {
-        this.suffix = suffix
-        this.description = description
-    }
-
-    String getSuffix() {
-        return suffix
-    }
-
-    String getPkgNameSuffix() {
-        if (suffix.empty) {
-            return ""
-        }
-
-        return "-${this.suffix}"
-    }
-
-    String getDescription() {
-        return description
-    }
+def getArch() {
+	return hasProperty("ARCH") ? ARCH.toString() : "all"
 }

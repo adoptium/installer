@@ -27,7 +27,7 @@ IF NOT DEFINED PRODUCT_CATEGORY SET ERR=9
 IF NOT %ERR% == 0 ( ECHO Missing args/variable ERR:%ERR% && GOTO FAILED )
 
 REM default vendor information
-IF NOT DEFINED VENDOR SET VENDOR=Temurin
+IF NOT DEFINED VENDOR SET VENDOR=Eclipse Adoptium
 IF NOT DEFINED VENDOR_BRANDING SET VENDOR_BRANDING=Eclipse Temurin
 IF NOT DEFINED VENDOR_BRANDING_LOGO SET VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
 IF NOT DEFINED VENDOR_BRANDING_BANNER SET VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.bmp
@@ -69,6 +69,10 @@ IF NOT "%ARCH%" == "x64" (
         )
 	)
 )
+
+REM Update to handle the change of build variant until implications
+REM of setting this to Temurin can be evaluated
+IF "%JVM%" == "temurin" SET JVM=hotspot
 
 IF NOT "%JVM%" == "hotspot" (
 	IF NOT "%JVM%" == "openj9" (

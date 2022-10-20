@@ -1,0 +1,5 @@
+adoptium-ca-certificates (1.0.0-1) UNRELEASED; urgency=medium
+
+  * Create package.
+
+ -- Andreas Ahlenstorf <andreas@ahlenstorf.ch>  Wed, 29 Jul 2020 13:35:00 +0000

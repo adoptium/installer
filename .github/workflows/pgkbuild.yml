@@ -7,37 +7,39 @@ on:
       - pkgbuild/**
 jobs:
   pkgbuild:
+    strategy:
+      matrix:
+        architecture: [x64, aarch64]
     name: pkgbuild
     runs-on: macos-latest
     steps:
 
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install dependencies
       run: brew install --cask packages
 
     - name: Setup environment variables
-      uses: allenevans/set-env@v2.0.0
+      uses: allenevans/set-env@v2.2.0
       with:
-        MAJOR_VERSION: 8
-        FULL_VERSION: 1.8.0_265
-        TAG: jdk8u265-b01
-        SUB_TAG: 8u265b01
+        MAJOR_VERSION: 17
+        FULL_VERSION: 17.0.3_7
+        TAG: jdk-17.0.3+7
+        SUB_TAG: 17.0.3_7
         JVM: hotspot
 
     - name: Download prebuilt binaries
       run: |
         mkdir -p workspace/target/
         cd workspace/target/
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
-        wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jre_x64_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
+        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_${{ matrix.architecture }}_mac_${{ env.JVM }}_${{ env.SUB_TAG }}.tar.gz"
 
     - name: Create Package
       run: |
         export WORKSPACE=$PWD
         bash pkgbuild/create-installer-mac.sh
-        
-    - uses: actions/upload-artifact@v2
+
+    - uses: actions/upload-artifact@v3
       with:
-        name: macOS
+        name: macOS_${{ matrix.architecture }}
         path: workspace/target/*.pkg

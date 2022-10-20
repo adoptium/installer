@@ -1,0 +1,160 @@
+x64
+===
+
+Job adoptium-ca-certificates/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean :ca-certificates:package --parallel
+
+Job Temurin JDK 11/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=11
+
+Job Temurin JDK 11/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=11
+
+Job Temurin JDK 11/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=11
+
+Job Dragonwell JDK 11/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=dragonwell -PPRODUCT_VERSION=11
+
+Job Dragonwell JDK 11/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=dragonwell -PPRODUCT_VERSION=11
+
+Job Dragonwell JDK 11/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=dragonwell -PPRODUCT_VERSION=11
+
+Job Temurin JDK 16/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 16/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 16/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 17/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+aarch64
+=======
+
+Job Temurin JDK 11/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=11
+
+Job Temurin JDK 11/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=11
+
+Job Temurin JDK 11/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=11
+
+Job Dragonwell JDK 11/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=dragonwell -PPRODUCT_VERSION=11
+
+Job Dragonwell JDK 11/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=dragonwell -PPRODUCT_VERSION=11
+
+Job Dragonwell JDK 11/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=dragonwell -PPRODUCT_VERSION=11
+
+Job Temurin JDK 16/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 16/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 16/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=16
+
+Job Temurin JDK 17/Debian:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/RedHat:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Job Temurin JDK 17/SUSE:
+
+export _JAVA_OPTIONS="-Xmx4g"
+export TESTCONTAINERS_RYUK_DISABLED=true
+export TESTCONTAINERS_CHECKS_DISABLE=true
+./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=temurin -PPRODUCT_VERSION=17
+
+Notes:
+
+* For regular testing `./gradlew clean package checkPackage -PPRODUCT=temurin -PPRODUCT_VERSION=11` and `./gradlew clean package checkPackage -PPRODUCT=temurin -PPRODUCT_VERSION=16` do all we need. Each command can replace 3 of the jobs listed above.
+* Collect */*/build/ospackage/* (that's we have to upload somewhere later), and ideally */*/build/reports/** (test reports to investigate if something goes wrong).
+* Expect dozens of additional jobs (additional platforms like arm32, s390x), JREs (not all versions), additional JDKs like Dragonwell (not all versions or platforms), more products (JMC, jtreg, ...).

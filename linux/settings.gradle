@@ -1,1 +1,8 @@
-include ":deb", ":rpm", ":suse-rpm"
+rootProject.name = "adoptium-packages-linux"
+
+include "ca-certificates",
+	"ca-certificates:debian",
+	"jdk",
+	"jdk:debian",
+	"jdk:redhat",
+	"jdk:suse"

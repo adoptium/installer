@@ -1,0 +1,49 @@
+name=@pkg_alias@
+alias=@pkg_alias@
+priority=@priority@
+section=contrib
+
+jdk appletviewer /usr/lib/jvm/@jvm_dir@/bin/appletviewer
+jdkhl clhsdb /usr/lib/jvm/@jvm_dir@/bin/clhsdb
+jdkhl extcheck /usr/lib/jvm/@jvm_dir@/bin/extcheck
+jdkhl hsdb /usr/lib/jvm/@jvm_dir@/bin/hsdb
+jdkhl idlj /usr/lib/jvm/@jvm_dir@/bin/idlj
+jdkhl jar /usr/lib/jvm/@jvm_dir@/bin/jar
+jdkhl jarsigner /usr/lib/jvm/@jvm_dir@/bin/jarsigner
+hl java /usr/lib/jvm/@jvm_dir@/bin/java
+jdkhl javac /usr/lib/jvm/@jvm_dir@/bin/javac
+jdkhl javadoc /usr/lib/jvm/@jvm_dir@/bin/javadoc
+jdkhl javah /usr/lib/jvm/@jvm_dir@/bin/javah
+jdkhl javap /usr/lib/jvm/@jvm_dir@/bin/javap
+jdkhl jcmd /usr/lib/jvm/@jvm_dir@/bin/jcmd
+jdk jconsole /usr/lib/jvm/@jvm_dir@/bin/jconsole
+jdkhl jdb /usr/lib/jvm/@jvm_dir@/bin/jdb
+jdkhl jdeps /usr/lib/jvm/@jvm_dir@/bin/jdeps
+jdkhl jfr /usr/lib/jvm/@jvm_dir@/bin/jfr
+jdkhl jhat /usr/lib/jvm/@jvm_dir@/bin/jhat
+jdkhl jinfo /usr/lib/jvm/@jvm_dir@/bin/jinfo
+hl jjs /usr/lib/jvm/@jvm_dir@/bin/jjs
+jdkhl jmap /usr/lib/jvm/@jvm_dir@/bin/jmap
+jdkhl jps /usr/lib/jvm/@jvm_dir@/bin/jps
+hl jrunscript /usr/lib/jvm/@jvm_dir@/bin/jrunscript
+jdkhl jsadebugd /usr/lib/jvm/@jvm_dir@/bin/jsadebugd
+jdkhl jstack /usr/lib/jvm/@jvm_dir@/bin/jstack
+jdkhl jstat /usr/lib/jvm/@jvm_dir@/bin/jstat
+jdkhl jstatd /usr/lib/jvm/@jvm_dir@/bin/jstatd
+hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
+jdkhl native2ascii /usr/lib/jvm/@jvm_dir@/bin/native2ascii
+hl orbd /usr/lib/jvm/@jvm_dir@/bin/orbd
+hl pack200 /usr/lib/jvm/@jvm_dir@/bin/pack200
+jre policytool /usr/lib/jvm/@jvm_dir@/bin/policytool
+jdkhl rmic /usr/lib/jvm/@jvm_dir@/bin/rmic
+hl rmid /usr/lib/jvm/@jvm_dir@/bin/rmid
+hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry
+jdkhl schemagen /usr/lib/jvm/@jvm_dir@/bin/schemagen 
+jdkhl serialver /usr/lib/jvm/@jvm_dir@/bin/serialver
+hl servertool /usr/lib/jvm/@jvm_dir@/bin/servertool
+hl tnameserv /usr/lib/jvm/@jvm_dir@/bin/tnameserv
+hl unpack200 /usr/lib/jvm/@jvm_dir@/bin/unpack200
+jdkhl wsgen /usr/lib/jvm/@jvm_dir@/bin/wsgen
+jdkhl wsimport /usr/lib/jvm/@jvm_dir@/bin/wsimport
+jdkhl xjc /usr/lib/jvm/@jvm_dir@/bin/xjc
+hl jexec /usr/lib/jvm/@jvm_dir@/lib/jexec

@@ -1,0 +1,114 @@
+plugins {
+	id "java"
+}
+
+ext {
+	junitVersion = "5.9.1"
+	testcontainersVersion = "1.17.5"
+	assertjCoreVersion = "3.23.1"
+}
+
+repositories {
+	mavenCentral()
+}
+
+group "org.adoptium"
+version "1.0.0-SNAPSHOT"
+
+/*
+ * The versions list defines the Debian and Ubuntu versions that this package is uploaded to.
+ *
+ * If a version like sid is missing here, the package won't be included in the sid repository and therefore not
+ * installable via apt. Never use suite names like testing or unstable. This list is usually bigger than the list
+ * of versions we test with as defined by the class DebianFlavours in the source set packageTest.
+ *
+ * **Attention**: If you alter the list, check if the class DebianFlavours needs to be updated, too.
+ */
+def deb_versions = ["buster", "bullseye", "bionic", "focal", "jammy"]
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+	packageTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	packageTestImplementation.extendsFrom implementation
+	packageTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
+	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
+	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+task packageDebian {
+	dependsOn "assemble"
+
+	group = "packaging"
+	description = "Creates ca-certificate deb package for Debian flavours."
+
+	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
+	outputs.dir(outputDir)
+
+	doLast {
+		project.copy {
+			from("src/main/packaging/")
+			into("${buildDir}/generated/packaging")
+		}
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build",
+				"-t", "adoptium-packages-linux-cacerts-debian",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+		}
+
+		project.exec {
+			workingDir getRootDir()
+			commandLine "docker", "run", "--rm",
+				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
+				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
+				"-e", "VERSIONS=${String.join(" ", deb_versions)}",
+				"adoptium-packages-linux-cacerts-debian:latest"
+		}
+	}
+}
+
+task checkDebianPackage(type: Test) {
+	dependsOn packageDebian
+
+	description = 'Tests the generated ca-certificate Debian packages.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.packageTest.output.classesDirs
+	classpath = sourceSets.packageTest.runtimeClasspath
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+
+	environment "PACKAGE", "adoptium-ca-certificates"
+
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+parent.package.dependsOn(packageDebian)
+parent.checkPackage.dependsOn(checkDebianPackage)

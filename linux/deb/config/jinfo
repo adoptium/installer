@@ -1,8 +1,0 @@
-name={{ jdkDirectoryName }}
-alias={{ jdkDirectoryName }}
-priority={{ priority }}
-section=contrib
-
-{{ #tools }}
-{{ type }} {{ name}} {{ prefix }}/{{ jdkDirectoryName }}/{{ path }}
-{{ /tools }}
