@@ -50,9 +50,6 @@ class DnfOperationsTest {
 
 			Container.ExecResult result;
 
-			result = runShell(container, "dnf update -y");
-			assertThat(result.getExitCode()).isEqualTo(0);
-
 			// below part: only test x86_64 rpm package in docker container
 			if (System.getenv("testArch") == "x86_64" || System.getenv("testArch") == "all") {
 				result = runShell(container, "dnf install -y " + containerRpm);
