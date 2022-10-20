@@ -10,3 +10,4 @@ on:
 jobs:
   codefreeze:
     uses: adoptium/.github/.github/workflows/code-freeze.yml@main
+    secrets: inherit
