@@ -33,7 +33,7 @@ In all of the examples below you'll need to replace the following variables:
 
 * Replace `<version>` with `8|11|17|19`
 * Replace `<vendor>` with `temurin|dragonwell`
-* Replace `<platform>` with `Debian|RedHat|Suse`
+* Replace `<platform>` with `Alpine|Debian|RedHat|Suse`
 
 ### Build all packages for a version
 
