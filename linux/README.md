@@ -24,6 +24,7 @@ Builds take at least ~5-15 minutes to complete on a modern machine.  Please ensu
 
 You'll want to make sure you've set the exact versions of the binaries you want package in the:
 
+* **Alpine Based** - _jdk/alpine/src/main/packaging/\<vendor>\/\<version>\/AKKBUILD_ files.
 * **Debian Based** - _jdk/debian/src/main/packaging/\<vendor>\/\<version>\/debian/rules_ files.
 * **Red Hat Based** - _jdk/redhat/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
 * **SUSE Based** - _jdk/suse/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
@@ -87,10 +88,10 @@ export _JAVA_OPTIONS="-Xmx4g"
 ./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
-## GPG Signing RPMs
+## GPG Signing RPMs/APKs
 
-In order to GPG sign the generated RPMs you must add the following argument to the gradlew command:
-- replace `<DISTRO>` with `RedHat|Suse|Debian`
+In order to GPG sign the generated RPMs/APKs you must add the following argument to the gradlew command:
+- replace `<DISTRO>` with `Alpine|RedHat|Suse`
 - replace `<version>` with `8|11|17|18`
 - replace `<vendor>` with `temurin|dragonwell`
 
@@ -158,6 +159,15 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 ```
 
 ## Supported packages
+
+### APK (Alpine)
+Supported JDK version 8,11,17,19
+
+Supported platform amd64
+
+| Distr        | Test enabled platforms | Note |
+|--------------|:----------------------:|:----:|
+| alpine/3.x.x |         x86_64         |      |
 
 ### DEB
 Supported JDK version 8,11,17,18,19
