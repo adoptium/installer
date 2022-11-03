@@ -60,3 +60,4 @@ The following documentation describes how to create and publish these Linux inst
       - For rpm:
         - under sub-folder "\<distro>/\<os_version>/\<arch>/Packages/"
         - file "temurin-\<MAJOR_VERSION>-jdk-*.\<arch>.rpm" exist, e.g: temurin-18-jdk-18.0.1.0.0.10-1.armv7hl.rpm for jdk-18.0.1 hotspot JDK
+        
