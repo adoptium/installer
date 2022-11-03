@@ -168,6 +168,7 @@
               <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\.jnlp" Type="string" Name="Content Type" Value="application/jnlp" KeyPath="no" />
 
               <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\{vendor}.jnlpfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaws.exe&quot; -jnlp &quot;%1&quot; %*" KeyPath="no" />
+              <RegistryValue Root="HKLM" Key="SOFTWARE\Classes\MIME\Database\Content Type\application/x-java-jnlp-file" Type="string" Name="Extension" Value=".jnlp" KeyPath="no" />
             </Component>
           <?endif?>
         <?endif?>
