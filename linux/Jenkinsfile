@@ -282,7 +282,7 @@ def uploadDebArtifacts(buildArch) {
     )
 }
 
-def uploadRPMArtifacts(DISTRO) {
+def uploadRpmArtifacts(DISTRO) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
@@ -308,7 +308,7 @@ def uploadRPMArtifacts(DISTRO) {
     // full list of all platforms, up to user to opt out s390x+jdk8 from input
     def rpmArchList = [
         'x86_64' : 'x86_64',
-        'armv7l': 'armv7hl',
+        'armv7hl': 'armv7hl',
         'aarch64': 'aarch64',
         'ppc64le': 'ppc64le',
         's390x'  : 's390x'
