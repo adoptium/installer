@@ -282,7 +282,7 @@ def uploadDebArtifacts(buildArch) {
     )
 }
 
-def uploadRPMArtifacts(DISTRO) {
+def uploadRpmArtifacts(DISTRO) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
