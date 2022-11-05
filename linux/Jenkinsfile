@@ -234,6 +234,7 @@ def uploadArtifacts(DISTRO, buildArch) {
 }
 
 def uploadAlpineArtifacts(buildArch) {
+    sleep 5
     rtUpload ( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
         failNoOp: true,
@@ -268,7 +269,7 @@ def uploadDebArtifacts(buildArch) {
         // Creates list like deb.distribution=stretch;deb.distribution=buster;
         distro_list += "deb.distribution=${deb_version};"
     }
-
+    sleep 5
     rtUpload( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
         failNoOp: true,
@@ -296,7 +297,7 @@ def uploadRpmArtifacts(DISTRO) {
             'rpm/fedora/36',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
-            'rpm/amazonlinux/2',
+            'rpm/amazonlinux/2'
 
         ],
         'suse'   : [
@@ -320,10 +321,10 @@ def uploadRpmArtifacts(DISTRO) {
         rpmArchList.put('source', 'src')
     }
 
-    packageDirs.each {
-        packageDir ->
-            rpmArchList.each {
-                entry -> rtUpload(
+    packageDirs.each { packageDir ->
+            rpmArchList.each { entry ->
+                    sleep 5
+                    rtUpload(
                     serverId: 'adoptium.jfrog.io',
                     failNoOp: true,
                     spec: """{
