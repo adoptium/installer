@@ -49,9 +49,6 @@ class ZypperOperationsTest {
 
 			Container.ExecResult result;
 
-			result = runShell(container, "zypper update -y");
-			assertThat(result.getExitCode()).isEqualTo(0);
-
 			// below part: only test x86_64 rpm package in docker container
 			if (System.getenv("testArch") == "x86_64" || System.getenv("testArch") == "all") {
 				if (System.getenv("JDKGPG") != null) {
