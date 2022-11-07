@@ -234,6 +234,10 @@ def uploadArtifacts(DISTRO, buildArch) {
 }
 
 def uploadAlpineArtifacts(buildArch) {
+    /*
+        workaround for error when upload to artifactory: No files were affected in the upload process
+        might be caused by 1) slow response from artifactory server 2) archive just done by jenkins job
+    */
     sleep 5
     rtUpload ( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
@@ -269,6 +273,10 @@ def uploadDebArtifacts(buildArch) {
         // Creates list like deb.distribution=stretch;deb.distribution=buster;
         distro_list += "deb.distribution=${deb_version};"
     }
+    /*
+        workaround for error when upload to artifactory: No files were affected in the upload process
+        might be caused by 1) slow response from artifactory server 2) archive just done by jenkins job
+    */
     sleep 5
     rtUpload( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
@@ -323,6 +331,10 @@ def uploadRpmArtifacts(DISTRO) {
 
     packageDirs.each { packageDir ->
             rpmArchList.each { entry ->
+                /*
+                    workaround for error when upload to artifactory: No files were affected in the upload process
+                    might be caused by 1) slow response from artifactory server 2) archive just done by jenkins job
+                */
                     sleep 5
                     rtUpload(
                     serverId: 'adoptium.jfrog.io',
