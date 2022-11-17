@@ -214,6 +214,9 @@ def buildAndTest(DISTRO, buildArch) {
     } catch (Exception ex) {
         echo 'Exception in buildAndTest: ' + ex
         currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
+    } finally {
+        // should not allow empty archive, otherwsie nothing created in the previous step: package and test result( not needed )
+        archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: false
     }
 }
 
@@ -318,21 +321,28 @@ def uploadRpmArtifacts(DISTRO) {
         rpmArchList.put('source', 'src')
     }
 
-    packageDirs.each {
-        packageDir ->
-            rpmArchList.each {
-                entry -> rtUpload(
-                    serverId: 'adoptium.jfrog.io',
-                    failNoOp: true,
-                    spec: """{
-                        "files": [
-                            {
-                            "pattern": "**/build/ospackage/*.${entry.value}.rpm",
-                            "target": "${packageDir}/${entry.key}/Packages/"
-                            }
-                        ]
-                    }"""
-                )
+    packageDirs.each { packageDir ->
+        rpmArchList.each { entry ->
+            for (int i = 0; i < 5; i++) { // loop 5 times at most
+                echo "Prepare for ${entry.value}.rpm"
+                if(findFiles(glob: "**/build/ospackage/*.${entry.value}.rpm").length == 0) {
+                    sleep 2  // sleep 2 seconds
+                } else {
+                    rtUpload(
+                        serverId: 'adoptium.jfrog.io',
+                        failNoOp: true,
+                        spec: """{
+                            "files": [
+                                {
+                                "pattern": "**/build/ospackage/*.${entry.value}.rpm",
+                                "target": "${packageDir}/${entry.key}/Packages/"
+                                }
+                            ]
+                        }"""
+                    )
+                    break
+                }
             }
+        }
     }
 }
