@@ -163,7 +163,7 @@ def jenkinsStepDeb() {
     }
 }
 
-// function handle both RedHat and Suse as DISTRO
+// function handle both Alpine, RedHat and Suse as DISTRO
 def jenkinsStepNonDeb(DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
     setup("${DISTRO}", "${ARCH}")
@@ -215,7 +215,8 @@ def buildAndTest(DISTRO, buildArch) {
         echo 'Exception in buildAndTest: ' + ex
         currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
     } finally {
-        archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: true
+        // should not allow empty archive, otherwsie nothing created in the previous step: package and test result( not needed )
+        archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: false
     }
 }
 
@@ -228,12 +229,13 @@ def uploadArtifacts(DISTRO, buildArch) {
             uploadAlpineArtifacts(buildArch);
             break;
         default:
-            uploadRpmArtifacts(DISTRO);
+            uploadRpmArtifacts(DISTRO,buildArch);
             break;
     }
 }
 
 def uploadAlpineArtifacts(buildArch) {
+    // currently only support x64 as buildArch
     rtUpload ( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
         failNoOp: true,
@@ -268,23 +270,35 @@ def uploadDebArtifacts(buildArch) {
         // Creates list like deb.distribution=stretch;deb.distribution=buster;
         distro_list += "deb.distribution=${deb_version};"
     }
-
-    rtUpload( //artifactory plugin
-        serverId: 'adoptium.jfrog.io',
-        failNoOp: true,
-        spec: """{
-            "files": [
-                {
-                "pattern": "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb",
-                "target": "deb/pool/main/t/temurin-${VERSION}/",
-                "props": "${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}"
-                }
-            ]
-        }""",
-    )
+    
+    for (int i = 0; i < 5; i++) { // loop 5 times at most
+        echo "Prepare for ${debArchList[buildArch]}.deb"
+        if(findFiles(glob: "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb").length == 0) {
+            /*
+            workaround for error when upload to artifactory: No files were affected in the upload process
+            might be caused by slow archive done by jenkins
+            */
+            sleep 2
+        } else {
+            rtUpload( //artifactory plugin
+                serverId: 'adoptium.jfrog.io',
+                failNoOp: true,
+                spec: """{
+                    "files": [
+                        {
+                        "pattern": "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb",
+                        "target": "deb/pool/main/t/temurin-${VERSION}/",
+                        "props": "${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}"
+                        }
+                    ]
+                }""",
+            )
+            break
+        }
+    }
 }
 
-def uploadRpmArtifacts(DISTRO) {
+def uploadRpmArtifacts(DISTRO, rpmArch) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
@@ -296,7 +310,7 @@ def uploadRpmArtifacts(DISTRO) {
             'rpm/fedora/36',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
-            'rpm/amazonlinux/2',
+            'rpm/amazonlinux/2'
 
         ],
         'suse'   : [
@@ -308,33 +322,48 @@ def uploadRpmArtifacts(DISTRO) {
     ]
     def packageDirs = distro_Package[DISTRO.toLowerCase()]
     // full list of all platforms, up to user to opt out s390x+jdk8 from input
-    def rpmArchList = [
+    def rpmArchList=[
         'x86_64' : 'x86_64',
         'armv7hl': 'armv7hl',
         'aarch64': 'aarch64',
         'ppc64le': 'ppc64le',
         's390x'  : 's390x'
     ]
+    if ("${rpmArch}" != 'all') {
+        // when only build and upload one arch, reset
+        rpmArchList = ["${rpmArch}": "${rpmArchList[rpmArch]}"]
+    }
     // Enable upload src.rpm
     if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {
         rpmArchList.put('source', 'src')
     }
 
-    packageDirs.each {
-        packageDir ->
-            rpmArchList.each {
-                entry -> rtUpload(
-                    serverId: 'adoptium.jfrog.io',
-                    failNoOp: true,
-                    spec: """{
-                        "files": [
-                            {
-                            "pattern": "**/build/ospackage/*.${entry.value}.rpm",
-                            "target": "${packageDir}/${entry.key}/Packages/"
-                            }
-                        ]
-                    }"""
-                )
+    packageDirs.each { packageDir ->
+        rpmArchList.each { entry ->
+            for (int i = 0; i < 5; i++) { // loop 5 times at most
+                echo "Prepare for ${entry.value}.rpm"
+                if(findFiles(glob: "**/build/ospackage/*.${entry.value}.rpm").length == 0) {
+                   /*
+                    workaround for error when upload to artifactory: No files were affected in the upload process
+                    might be caused by slow archive done by jenkins
+                    */
+                    sleep 2
+                } else {
+                    rtUpload(
+                        serverId: 'adoptium.jfrog.io',
+                        failNoOp: true,
+                        spec: """{
+                            "files": [
+                                {
+                                "pattern": "**/build/ospackage/*.${entry.value}.rpm",
+                                "target": "${packageDir}/${entry.key}/Packages/"
+                                }
+                            ]
+                        }"""
+                    )
+                    break
+                }
             }
+        }
     }
 }
