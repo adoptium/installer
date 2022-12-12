@@ -1,4 +1,4 @@
-name: Check Linux Packages
+name: Publish ca-certificates
 on:
   push:
     branches: [ master ]
@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   publish-ca-certificates:
-    # if: github.repository == 'adoptium/installer'
+    if: github.repository == 'adoptium/installer'
     name: "Publish ca-certificates"
     runs-on: ubuntu-latest
     defaults:
@@ -32,16 +32,17 @@ jobs:
       - name: Build
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
-          ./gradlew --parallel :ca-certificates:check --stacktrace
+          ./gradlew --parallel :ca-certificates:package --stacktrace
 
       - name: Check if deb file exists in Artifactory
         id: check-deb
         run: |
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
-          curl -s -o /dev/null -w "%{http_code}" https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/${FILE}
+          CODE=$(curl -s -o /dev/null -w "%{http_code}\n" https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE}))
+          echo "status=$CODE" >> GITHUB_OUTPUT
 
       - name: Upload deb file to Artifactory
-        if: steps.check-deb.outputs.stdout == 404
+        if: steps.check-deb.outputs.status == '404'
         run: |
           debVersionList=("buster" "bullseye" "bionic" "focal" "jammy" "kinetic")
           for debVersion in "${debVersionList[@]}"; do
@@ -49,7 +50,7 @@ jobs:
           done
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
           curl -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} \
-          -X PUT -T $FILE "https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/${FILE};${distroList}"
+          -X PUT -T $FILE "https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main;${distroList}"
         env:
           ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
           ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
