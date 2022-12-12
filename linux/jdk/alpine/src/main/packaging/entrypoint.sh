@@ -6,7 +6,7 @@ set -euox pipefail
 # add the user builder to the group with the same GID as the host user.
 HOST_USER_GID=$(stat -c "%g" /home/builder/out)
 getent group "$HOST_USER_GID" || (addgroup -g "$HOST_USER_GID" hostusrg && addgroup builder hostusrg)
-chmod g+w /home/builder/out
+chmod 0755 /home/builder/out
 
 # Drop root privileges and build the package.
 gosu builder /home/builder/build.sh
