@@ -30,6 +30,7 @@ RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.rsa \
 	fi
 
 # Prepare entrypoint
+RUN sudo chown -R builder /home/builder
 COPY --chown=builder:abuild entrypoint.sh /home/builder/entrypoint.sh
 RUN chmod +x /home/builder/entrypoint.sh
 
