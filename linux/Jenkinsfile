@@ -260,11 +260,11 @@ def uploadDebArtifacts(buildArch) {
         's390x'  : 's390x'
     ]
     /*
-        Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04
+        Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
         add more into list when avaiable for release
         also update linux/jdk/debian/main/packing/build.sh
     */
-    def deb_versions = ['buster', 'bullseye', 'bionic', 'focal', 'jammy']
+    def deb_versions = ['buster', 'bullseye', 'bionic', 'focal', 'jammy', 'kinetic']
     def distro_list = ''
     deb_versions.each { deb_version ->
         // Creates list like deb.distribution=stretch;deb.distribution=buster;

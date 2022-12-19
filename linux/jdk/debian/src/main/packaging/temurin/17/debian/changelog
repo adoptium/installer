@@ -1,3 +1,9 @@
+temurin-17-jdk (17.0.5.0.0+8-1) STABLE; urgency=medium
+
+  * Add Ubuntu Kinetic (22.10) to the list of supported Ubuntu releases.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 06 Dec 2022 15:42:00 +0000
+
 temurin-17-jdk (17.0.5.0.0+8) STABLE; urgency=medium
 
   * Eclipse Temurin 17.0.5.0.0+8 release.
