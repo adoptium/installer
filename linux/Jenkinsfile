@@ -308,6 +308,7 @@ def uploadRpmArtifacts(DISTRO, rpmArch) {
             'rpm/rhel/9',
             'rpm/fedora/35',
             'rpm/fedora/36',
+            'rpm/fedora/37',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2'
