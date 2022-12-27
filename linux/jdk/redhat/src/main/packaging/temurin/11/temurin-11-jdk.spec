@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
 %global spec_version 11.0.17.0.0.8
-%global spec_release 1
+%global spec_release 2
 %global priority 1111
 
 %global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
@@ -184,9 +184,6 @@ popd
 %{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
 echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
-
-%pretrans
-# noop
 
 %post
 if [ $1 -ge 1 ] ; then
