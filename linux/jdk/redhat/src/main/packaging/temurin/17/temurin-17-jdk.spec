@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 #  17.0.1.0.0___12 == 17.0.1.0.0+12
 %global spec_version 17.0.5.0.0.8
-%global spec_release 1
+%global spec_release 2
 %global priority 1161
 
 %global source_url_base https://github.com/adoptium/temurin17-binaries/releases/download
@@ -184,9 +184,6 @@ popd
 %{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
 echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
-
-%pretrans
-# noop
 
 %post
 if [ $1 -ge 1 ] ; then
