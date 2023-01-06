@@ -135,11 +135,11 @@ pipeline {
 
 // This makes it easier to run the builds from a different repository (for testing purposes) by default
 private String getCurrentRepoUrl() {
-    return scm.getUserRemoteConfigs()[0].getUrl() ?: 'https://github.com/adoptium/installer'
+    return scm.getUserRemoteConfigs().first().getUrl() ?: 'https://github.com/adoptium/installer'
 }
 
 private String getCurrentBranch() {
-    return scm.branches[0].name ?: 'master'
+    return scm.branches.first().name ?: 'master'
 }
 
 // function only handle debian as DISTRO
