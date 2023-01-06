@@ -173,7 +173,7 @@ def jenkinsStepDeb() {
 }
 
 // function handle both Alpine, RedHat and Suse as DISTRO
-def jenkinsStepNonDeb(DISTRO) {
+def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
     setup("${DISTRO}", "${ARCH}")
     unstash 'installercode'
@@ -185,7 +185,7 @@ def jenkinsStepNonDeb(DISTRO) {
 }
 
 // common function regardless DISTRO
-def setup(DISTRO, buildArch) {
+def setup(String DISTRO, String buildArch) {
     cleanWs()
     // Docker --mount option requires BuildKit
     env.DOCKER_BUILDKIT = 1
@@ -194,7 +194,7 @@ def setup(DISTRO, buildArch) {
 }
 
 // common function regardless DISTRO
-def buildAndTest(DISTRO, buildArch) {
+def buildAndTest(String DISTRO, String buildArch) {
     try {
         if (DISTRO != "Debian") { // for RPM based: RedHat / Suse / Alpine
             def privateKey = 'adoptium-artifactory-gpg-key'
@@ -229,7 +229,7 @@ def buildAndTest(DISTRO, buildArch) {
     }
 }
 
-def uploadArtifacts(DISTRO, buildArch) {
+def uploadArtifacts(String DISTRO, String buildArch) {
     switch(DISTRO) {
         case "Debian":
             uploadDebArtifacts(buildArch);
@@ -243,7 +243,7 @@ def uploadArtifacts(DISTRO, buildArch) {
     }
 }
 
-def uploadAlpineArtifacts(buildArch) {
+def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
     rtUpload ( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
@@ -259,7 +259,7 @@ def uploadAlpineArtifacts(buildArch) {
     )
 }
 
-def uploadDebArtifacts(buildArch) {
+def uploadDebArtifacts(String buildArch) {
     // full list of all platforms, up to user to opt out s390x+jdk8
     def debArchList = [
         'x86_64' : 'amd64',
@@ -307,7 +307,7 @@ def uploadDebArtifacts(buildArch) {
     }
 }
 
-def uploadRpmArtifacts(DISTRO, rpmArch) {
+def uploadRpmArtifacts(String DISTRO, String rpmArch) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
