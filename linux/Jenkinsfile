@@ -26,8 +26,8 @@ pipeline {
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
-        string(name: 'gitrepo', defaultValue: 'https://github.com/adoptium/installer', description: 'Do not modify unless want to build from a specific gitrepo')
-        string(name: 'gitbranch', defaultValue: 'master', description: 'Do not change unless want to build on a specific branch from above gitrepo')
+        string(name: 'gitrepo', defaultValue: getCurrentRepoUrl(), description: 'Do not modify unless want to build from a specific gitrepo')
+        string(name: 'gitbranch', defaultValue: getCurrentBranch(), description: 'Do not change unless want to build on a specific branch from above gitrepo')
         booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
     }
     tools {
@@ -132,6 +132,15 @@ pipeline {
 /*
 * Common Functions
 */
+
+// This makes it easier to run the builds from a different repository (for testing purposes) by default
+private String getCurrentRepoUrl() {
+    return scm.getUserRemoteConfigs()[0].getUrl() ?: 'https://github.com/adoptium/installer'
+}
+
+private String getCurrentBranch() {
+    return scm.branches[0].name ?: 'master'
+}
 
 // function only handle debian as DISTRO
 def jenkinsStepDeb() {
