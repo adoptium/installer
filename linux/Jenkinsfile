@@ -224,7 +224,7 @@ def buildAndTest(String DISTRO, String buildArch) {
         echo 'Exception in buildAndTest: ' + ex
         currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
     } finally {
-        // should not allow empty archive, otherwsie nothing created in the previous step: package and test result( not needed )
+        // should not allow empty archive, otherwise nothing created in the previous step: package and test result( not needed )
         archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: false
     }
 }
@@ -270,7 +270,7 @@ def uploadDebArtifacts(String buildArch) {
     ]
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
-        add more into list when avaiable for release
+        add more into list when available for release
         also update linux/jdk/debian/main/packing/build.sh
     */
     def deb_versions = ['buster', 'bullseye', 'bionic', 'focal', 'jammy', 'kinetic']
