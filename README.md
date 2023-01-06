@@ -38,15 +38,15 @@ The following documentation describes how to create and publish these Linux inst
         - SUB_TAG: 8u292b10
     - When MAJOR_VERSION >= 11 && is Feature release:
       - Hotspot jdk\<MAJOR_VERSION>:
-        - VERSION: \<MAJOR_VERSION>.0.0+\<PRE-RLEASE_VERSION>
+        - VERSION: \<MAJOR_VERSION>.0.0+\<PRE-RELEASE_VERSION>
         - MAJOR_VERSION: <MAJOR_VERSION>
         - RELEASE_TYPE: Release
         - JVM: hotspot
-        - TAG: jdk-\<MAJOR_VERSION>+\<PRE-RLEASE_VERSION>
-        - SUB_TAG: \<MAJOR_VERSION>_\<PRE-RLEASE_VERSION>
+        - TAG: jdk-\<MAJOR_VERSION>+\<PRE-RELEASE_VERSION>
+        - SUB_TAG: \<MAJOR_VERSION>_\<PRE-RELEASE_VERSION>
     - When MAJOR_VERSION >= 11 && is CPU release:
       - Hotspot jdk\<MAJOR_VERSION>:
-        - VERSION: \<MAJOR_VERSION>.\<MINOR_VERSION>.\<PATCH_VERSION>+\<PRE-RLEASE_VERSION>
+        - VERSION: \<MAJOR_VERSION>.\<MINOR_VERSION>.\<PATCH_VERSION>+\<PRE-RELEASE_VERSION>
         - MAJOR_VERSION: \<MAJOR_VERSION>
         - RELEASE_TYPE: Release
         - JVM: hotspot
