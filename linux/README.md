@@ -68,7 +68,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a Red Hat specific package for a version
 
-- replace `<version>` with `8|11|17|18`
+- replace `<version>` with `8|11|17|19`
 - replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
@@ -92,7 +92,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 In order to GPG sign the generated RPMs/APKs you must add the following argument to the gradlew command:
 - replace `<DISTRO>` with `Alpine|RedHat|Suse`
-- replace `<version>` with `8|11|17|18`
+- replace `<version>` with `8|11|17|19`
 - replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
@@ -170,7 +170,7 @@ Supported platform amd64
 | alpine/3.x.x |         x86_64         |      |
 
 ### DEB
-Supported JDK version 8,11,17,18,19
+Supported JDK version 8,11,17,19
 
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
@@ -186,7 +186,7 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 | ubuntu/18.04 |         x86_64         |      |
 
 ### RPM (RedHat and Suse)
-Supported JDK version 8,11,17,18,19
+Supported JDK version 8,11,17,19
 
 Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
 SRPM also available.
