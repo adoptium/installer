@@ -232,14 +232,14 @@ def buildAndTest(String DISTRO, String buildArch) {
 def uploadArtifacts(String DISTRO, String buildArch) {
     switch(DISTRO) {
         case "Debian":
-            uploadDebArtifacts(buildArch);
-            break;
+            uploadDebArtifacts(buildArch)
+            break
         case "Alpine":
-            uploadAlpineArtifacts(buildArch);
-            break;
+            uploadAlpineArtifacts(buildArch)
+            break
         default:
-            uploadRpmArtifacts(DISTRO,buildArch);
-            break;
+            uploadRpmArtifacts(DISTRO,buildArch)
+            break
     }
 }
 
