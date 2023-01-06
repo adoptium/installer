@@ -341,7 +341,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
     ]
     if ("${rpmArch}" != 'all') {
         // when only build and upload one arch, reset
-        rpmArchList = ["${rpmArch}": "${rpmArchList[rpmArch]}"]
+        rpmArchList = [("${rpmArch}" as String): "${rpmArchList[rpmArch]}"]
     }
     // Enable upload src.rpm
     if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {
