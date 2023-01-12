@@ -29,7 +29,7 @@ You'll want to make sure you've set the exact versions of the binaries you want 
 * **Red Hat Based** - _jdk/redhat/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
 * **SUSE Based** - _jdk/suse/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
 
-In all of the examples below you'll need to replace the following variables:
+In all the examples below you'll need to replace the following variables:
 
 * Replace `<version>` with `8|11|17|19`
 * Replace `<vendor>` with `temurin|dragonwell`
@@ -149,8 +149,8 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 
 ### Building for a different architecture 
 
-In order to produce RPMs on an x86_64 build host for the s390x target architecture, use the `--target` switch to `rpm-build` so as to build for a different
-archicture. Suppose the host architecture is `x86_64` and we want to build for target architecture `s390x`:
+In order to produce RPMs on an x86_64 build host for the s390x target architecture, use the `--target` switch to `rpm-build` to build for a different
+architecture. Suppose the host architecture is `x86_64` and we want to build for target architecture `s390x`:
 
 ```shell
 rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
@@ -165,7 +165,7 @@ Supported JDK version 8,11,17,19
 
 Supported platform amd64
 
-| Distr        | Test enabled platforms | Note |
+| Distro       | Test enabled platforms | Note |
 |--------------|:----------------------:|:----:|
 | alpine/3.x.x |         x86_64         |      |
 
@@ -174,7 +174,7 @@ Supported JDK version 8,11,17,19
 
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
-| Distr        | Test enabled platforms | Note |
+| Distro       | Test enabled platforms | Note |
 |--------------|:----------------------:|:----:|
 | debian/12    |         x86_64         |      |
 | debian/11    |         x86_64         |      |
@@ -191,23 +191,23 @@ Supported JDK version 8,11,17,19
 Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
 SRPM also available.
 
-| Distr            | Test enabled platforms | Note |
-| ---------------- |:----------------------:|:----:|
-| amazonlinux/2    | x86_64     |                |
-| centos/7         | x86_64     |                |
-| rpm/fedora/35    | x86_64     |                |
-| rpm/fedora/36    | x86_64     |                |
-| rpm/fedora/37    | x86_64     |                |
-| oraclelinux/7    | x86_64     |                |
-| oraclelinux/8    | x86_64     |                |
-| opensuse/15.3    | x86_64     |                |
-| opensuse/15.4    | x86_64     |                |
-| rocky/8          | x86_64     |                |
-| rpm/rhel/7       | x86_64     |                |
-| rpm/rhel/8       | x86_64     |                |
-| rpm/rhel/9       | x86_64     |                |
-| sles/12          | Null       | Need subscription to even run zypper update|
-| sles/15          | x86_64     |                |
+| Distro        | Test enabled platforms |                    Note                     |
+|---------------|:----------------------:|:-------------------------------------------:|
+| amazonlinux/2 |         x86_64         |                                             |
+| centos/7      |         x86_64         |                                             |
+| rpm/fedora/35 |         x86_64         |                                             |
+| rpm/fedora/36 |         x86_64         |                                             |
+| rpm/fedora/37 |         x86_64         |                                             |
+| oraclelinux/7 |         x86_64         |                                             |
+| oraclelinux/8 |         x86_64         |                                             |
+| opensuse/15.3 |         x86_64         |                                             |
+| opensuse/15.4 |         x86_64         |                                             |
+| rocky/8       |         x86_64         |                                             |
+| rpm/rhel/7    |         x86_64         |                                             |
+| rpm/rhel/8    |         x86_64         |                                             |
+| rpm/rhel/9    |         x86_64         |                                             |
+| sles/12       |          Null          | Need subscription to even run zypper update |
+| sles/15       |         x86_64         |                                             |
 
 ## Install the packages
 
