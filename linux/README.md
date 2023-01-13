@@ -24,16 +24,21 @@ Builds take at least ~5-15 minutes to complete on a modern machine.  Please ensu
 
 You'll want to make sure you've set the exact versions of the binaries you want package in the:
 
-* **Alpine Based** - _jdk/alpine/src/main/packaging/\<vendor>\/\<version>\/AKKBUILD_ files.
-* **Debian Based** - _jdk/debian/src/main/packaging/\<vendor>\/\<version>\/debian/rules_ files.
-* **Red Hat Based** - _jdk/redhat/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
-* **SUSE Based** - _jdk/suse/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
+* **Alpine Based** - _{jdk,jre}/alpine/src/main/packaging/\<vendor>\/\<version>\/AKKBUILD_ files.
+* **Debian Based** - _{jdk,jre,ca-certificates}/debian/src/main/packaging/\<vendor>\/\<version>\/debian/rules_ files.
+* **Red Hat Based** - _{jdk,jre}/redhat/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
+* **SUSE Based** - _{jdk,jre}/suse/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
 
 In all the examples below you'll need to replace the following variables:
 
 * Replace `<version>` with `8|11|17|19`
 * Replace `<vendor>` with `temurin|dragonwell`
 * Replace `<platform>` with `Alpine|Debian|RedHat|Suse`
+* Replace `<type>` with `Jdk|Jre` (or `CaCertificates` for the `Debian` platform)
+
+**Notes:** 
+* Not all combinations are possible, i.e., for some vendors we might only provide certain versions, or types.
+* For `Debian` we provide a separate package with _Certification Authority_ certificates. 
 
 ### Build all packages for a version
 
@@ -45,25 +50,26 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 The scripts roughly work as follows:
 
-* **Gradle Kickoff** - The various `packageJdk<platform>` tasks in subdirectories under the _jdk_ directory all have a dependency on the `packageJDK` task,
+* **Gradle Kickoff** - The various `package<type><platform>` tasks in subdirectories under the _jdk_ (or _jre_) directory all have a dependency on the `packageJDK` (`packageJRE`) task,
 which in turn has a dependency on the `package` task (this is how Gradle knows to trigger each of those in turn).
-* **packageJdk&lt;platform&gt; Tasks** - These tasks are responsible for building the various packages for the given platform.  They fire up the Docker container
+* **package<type>&lt;platform&gt; Tasks** - These tasks are responsible for building the various packages for the given platform.  They fire up the Docker container
 (A _Dockerfile_ is included in each subdirectory), mount some file locations (so you can get to the output) and then run packaging commands in that container.
-* **checkJdk&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
+* **check<type>&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
 _src/packageTest/java/packaging_ on them.
 
-[task package](https://github.com/adoptium/installer/blob/master/linux/build.gradle) --> [task packageJdk](https://github.com/adoptium/installer/blob/master/linux/jdk/build.gradle) --> [task packageJdk\<DISTRO\>](jdk/\<vendor\>/build.gradle )
-[task checkPackage](https://github.com/adoptium/installer/blob/master/linux/build.gradle)  --> [task checkJdkPackage](https://github.com/adoptium/installer/blob/master/linux/jdk/build.gradle) --> [task checkJdk\<DISTRO\>](jdk/\<vendor\>/build.gradle )
+- [task package](build.gradle) --> [task package\<type\>](<type>/build.gradle) --> [task package\<type>\<DISTRO\>](<type>/\<vendor\>/build.gradle )
+- [task checkPackage](build.gradle)  --> [task check\<type\>Package](<type>/build.gradle) --> [task check\<type>\<DISTRO\>](<type>/\<vendor\>/build.gradle )
 
 ### Build a Debian specific package for a version
 
 - replace `<version>` with `8|11|17|19`
 - replace `<vendor>` with `temurin|dragonwell`
+- Replace `<type>` with `Jdk|Jre`
 
 ```shell
 export DOCKER_BUILDKIT=1
 export _JAVA_OPTIONS="-Xmx4g"
-./gradlew clean packageJdkDebian checkJdkDebian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
+./gradlew clean package<type>Debian check<type>Debian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
 ```
 
 ### Build a Red Hat specific package for a version
