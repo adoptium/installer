@@ -13,6 +13,17 @@ s390x       s390x       s390x       only for jdk8+
 env.NODE_LABEL = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
 env.PRODUCT = 'temurin'
 
+class Types {
+    final static String JDK = 'Jdk'
+    final static String CA_CERTIFICATES = 'CaCertificates'
+
+    final static List<String> ALL = [JDK, CA_CERTIFICATES]
+
+    static String displayName(TYPE, VERSION, ARCH, DISTRO) {
+        return TYPE != CA_CERTIFICATES ? "${TYPE.toLowerCase()}${VERSION} - ${ARCH} - ${DISTRO}" : "${TYPE} - ${DISTRO}"
+    }
+}
+
 pipeline {
     agent {
         label NODE_LABEL
@@ -21,6 +32,7 @@ pipeline {
         timeout(time: 2, unit: 'HOURS')
     }
     parameters {
+        choice(name: 'TYPE', choices: Types.ALL, description: 'Build either JDK, or CA Certificates\n  CA Certificates only on Debian possible (ARCH/VERSION irrelevant)')
         choice(name: 'VERSION', choices: ['8', '11', '17', '19'], description: 'Build for specific JDK VERSION')
         choice(name: 'ARCH', choices: ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
@@ -38,7 +50,7 @@ pipeline {
         stage('Prepare Build') {
             steps {
                 script {
-                    currentBuild.displayName =  "jdk${VERSION} - ${ARCH} - ${DISTRO}"
+                    currentBuild.displayName = Types.displayName(TYPE, VERSION, ARCH, DISTRO)
                     currentBuild.description = env.BUILD_USER_ID
                     sh('docker --version')
                 }
@@ -144,7 +156,12 @@ private String getCurrentBranch() {
 
 // function only handle debian as DISTRO
 def jenkinsStepDeb() {
-    echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - Debian"
+    def temurinVersion = TYPE != Types.CA_CERTIFICATES ? "${TYPE.toLowerCase()} ${VERSION} - ${ARCH}" : TYPE
+    echo "Installer Job for Temurin ${temurinVersion} - Debian"
+    // Build CA-Certificates on x86_64 only (currently)
+    if (TYPE == Types.CA_CERTIFICATES) {
+        ARCH = 'x86_64'
+    }
     //make sure this is an array not a string
     def debArchAllList = []
     // for one single ARCH add into array
@@ -203,12 +220,12 @@ def buildAndTest(String DISTRO, String buildArch) {
             }
             // Install Adoptium GPG key for RPM signing
             withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
-                def buildCLI = "./gradlew packageJdk${DISTRO} checkJdk${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}"
+                def buildCLI = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}"
                 buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
                 sh("$buildCLI")
             }
         } else {
-            def gBuildTask = (buildArch == 'x86_64') ? "packageJdk${DISTRO} checkJdk${DISTRO}" : "packageJdk${DISTRO}"
+            def gBuildTask = (buildArch == 'x86_64') ? "package${TYPE}${DISTRO} check${TYPE}${DISTRO}" : "package${TYPE}${DISTRO}"
             def debArchList = [
                 'x86_64' : 'amd64',
                 'armv7l': 'armhf',
