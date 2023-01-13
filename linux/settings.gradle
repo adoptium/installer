@@ -2,8 +2,12 @@ rootProject.name = "adoptium-packages-linux"
 
 include "ca-certificates",
 	"ca-certificates:debian",
+
 	"jdk",
 	"jdk:alpine",
 	"jdk:debian",
 	"jdk:redhat",
-	"jdk:suse"
+	"jdk:suse",
+
+	"jre",
+	"jre:debian"

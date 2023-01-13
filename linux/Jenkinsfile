@@ -15,9 +15,10 @@ env.PRODUCT = 'temurin'
 
 class Types {
     final static String JDK = 'Jdk'
+    final static String JRE = 'Jre'
     final static String CA_CERTIFICATES = 'CaCertificates'
 
-    final static List<String> ALL = [JDK, CA_CERTIFICATES]
+    final static List<String> ALL = [JDK, JRE, CA_CERTIFICATES]
 
     static String displayName(TYPE, VERSION, ARCH, DISTRO) {
         return TYPE != CA_CERTIFICATES ? "${TYPE.toLowerCase()}${VERSION} - ${ARCH} - ${DISTRO}" : "${TYPE} - ${DISTRO}"
@@ -277,7 +278,7 @@ def uploadAlpineArtifacts(String buildArch) {
 }
 
 def uploadDebArtifacts(String buildArch) {
-    // full list of all platforms, up to user to opt out s390x+jdk8
+    // full list of all platforms, up to user to opt out s390x+jdk8/jre8
     def debArchList = [
         'x86_64' : 'amd64',
         'armv7l': 'armhf',
@@ -288,7 +289,7 @@ def uploadDebArtifacts(String buildArch) {
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
         add more into list when available for release
-        also update linux/jdk/debian/main/packing/build.sh
+        also update linux/{jdk,jre}/debian/main/packing/build.sh
     */
     def deb_versions = [
             "bookworm", // Debian/12

@@ -1,0 +1,16 @@
+name=@pkg_alias@
+alias=@pkg_alias@
+priority=@priority@
+section=contrib
+
+hl java /usr/lib/jvm/@jvm_dir@/bin/java
+hl jjs /usr/lib/jvm/@jvm_dir@/bin/jjs
+hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
+hl orbd /usr/lib/jvm/@jvm_dir@/bin/orbd
+hl pack200 /usr/lib/jvm/@jvm_dir@/bin/pack200
+hl rmid /usr/lib/jvm/@jvm_dir@/bin/rmid
+hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry
+jre policytool /usr/lib/jvm/@jvm_dir@/bin/policytool
+hl servertool /usr/lib/jvm/@jvm_dir@/bin/servertool
+hl tnameserv /usr/lib/jvm/@jvm_dir@/bin/tnameserv
+hl unpack200 /usr/lib/jvm/@jvm_dir@/bin/unpack200
