@@ -8,7 +8,7 @@ cp -R /home/builder/build/generated/packaging /home/builder/workspace
 
 
 # $ and $ARCH are env variables passing in from "docker run"
-debVersionList="buster bullseye bionic focal jammy kinetic"
+debVersionList="bookworm bullseye buster kinetic jammy focal bionic"
 
 # the target package is only based on the host machine's ARCH
 # ${buildArch} is only used for debug purpose what really matter is the label on the jenkins agent
