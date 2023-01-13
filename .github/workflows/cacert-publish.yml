@@ -44,7 +44,7 @@ jobs:
       - name: Upload deb file to Artifactory
         if: steps.check-deb.outputs.status == '404'
         run: |
-          debVersionList=("buster" "bullseye" "bionic" "focal" "jammy" "kinetic")
+          debVersionList=("bookworm" "bullseye" "buster" "kinetic" "jammy" "focal" "bionic")
           for debVersion in "${debVersionList[@]}"; do
             distroList+="deb.distribution=${debVersion};"
           done

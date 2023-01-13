@@ -174,16 +174,18 @@ Supported JDK version 8,11,17,19
 
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
-| Distro       | Test enabled platforms | Note |
-|--------------|:----------------------:|:----:|
-| debian/12    |         x86_64         |      |
-| debian/11    |         x86_64         |      |
-| debian/10    |         x86_64         |      |   
-| ubuntu/22.10 |         x86_64         |      |
-| ubuntu/22.04 |         x86_64         |      |
-| ubuntu/21.10 |         x86_64         |      |
-| ubuntu/20.04 |         x86_64         |      |
-| ubuntu/18.04 |         x86_64         |      |
+| Distro                       | Test enabled platforms | Note |
+|------------------------------|:----------------------:|:----:|
+| debian/12 (bookworm/testing) |         x86_64         |      |
+| debian/11 (bullseye/stable)  |         x86_64         |      |
+| debian/10 (buster/oldstable) |         x86_64         |      |   
+| ubuntu/22.10 (kinetic)       |         x86_64         |      |
+| ubuntu/22.04 (jammy)         |         x86_64         |      |
+| ubuntu/20.04 (focal)         |         x86_64         |      |
+| ubuntu/18.04 (bionic)        |         x86_64         |      |
+
+- Debian Releases: https://www.debian.org/releases/index.en.html
+- Ubuntu Releases: https://ubuntu.com/about/release-cycle
 
 ### RPM (RedHat and Suse)
 Supported JDK version 8,11,17,19

@@ -290,7 +290,15 @@ def uploadDebArtifacts(String buildArch) {
         add more into list when available for release
         also update linux/jdk/debian/main/packing/build.sh
     */
-    def deb_versions = ['buster', 'bullseye', 'bionic', 'focal', 'jammy', 'kinetic']
+    def deb_versions = [
+            "bookworm", // Debian/12
+            "bullseye", // Debian/11
+            "buster",   // Debian/10
+            "kinetic",  // Ubuntu/22.10
+            "jammy",    // Ubuntu/22.04 (LTS)
+            "focal",    // Ubuntu/20.04 (LTS)
+            "bionic",   // Ubuntu/18.04 (LTS)
+    ]
     def distro_list = ''
     deb_versions.each { deb_version ->
         // Creates list like deb.distribution=stretch;deb.distribution=buster;
