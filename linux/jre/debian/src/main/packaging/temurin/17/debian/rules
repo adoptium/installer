@@ -1,0 +1,71 @@
+#!/usr/bin/make -f
+
+pkg_name = temurin-17-jre
+priority = 1712
+jvm_tools = java jfr jrunscript keytool rmiregistry
+amd64_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jre_x64_linux_hotspot_17.0.6_10.tar.gz
+amd64_checksum = fe669935609086e76cb0b829e92808766cbf8cb7bda57a76b47813b08584bfd2
+arm64_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jre_aarch64_linux_hotspot_17.0.6_10.tar.gz
+arm64_checksum = 3797815cb853616b6415e1b8875cda4eaa004887561ea4ea2090d726b8d8582f
+armhf_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jre_arm_linux_hotspot_17.0.6_10.tar.gz
+armhf_checksum = bf7ef7ba477dc278f913e64174e76be9ae7f014c767352eae83b3f9581494fce
+ppc64el_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jre_ppc64le_linux_hotspot_17.0.6_10.tar.gz
+ppc64el_checksum = f11b86bfd7fa4d7a0d05040ea235102296f03eaf064253f76d7ab94baa0352e3
+s390x_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.6+10/OpenJDK17U-jre_s390x_linux_hotspot_17.0.6_10.tar.gz
+s390x_checksum = 21a7156a29e7921bc7c6eadecb8ee4ac7161921cea85b75b61f0376f9c725caa
+
+d = debian/$(pkg_name)
+jvm_home = usr/lib/jvm
+jvm_dir = $(pkg_name)-$(DEB_HOST_ARCH)
+pkg_alias = $(pkg_name)-$(DEB_HOST_ARCH)
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+override_dh_auto_test:
+override_dh_auto_build:
+override_dh_strip:
+override_dh_auto_install:
+	# Download and verify checksum of JRE
+	wget --progress=dot:mega -O jre.tar.gz $($(DEB_HOST_ARCH)_tarball_url)
+	echo '$($(DEB_HOST_ARCH)_checksum) jre.tar.gz' > jre.tar.gz.sha256.txt
+	sha256sum -c jre.tar.gz.sha256.txt
+
+	# Substitute variables.
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/jinfo.in > debian/jinfo
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/postinst.in > debian/postinst
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/prerm.in > debian/prerm
+
+	# Unpack JRE.
+	dh_installdirs \
+		$(jvm_home) \
+		$(jvm_home)/$(jvm_dir)
+	tar --strip-components=1 -C "$(d)/$(jvm_home)/$(jvm_dir)" -xf jre.tar.gz
+
+	# Add jinfo file (alternatives support).
+	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
+
+	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
+	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+
+override_dh_gencontrol:
+	dh_gencontrol --
