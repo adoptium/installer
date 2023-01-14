@@ -1,5 +1,10 @@
 name: Check Linux Packages
 on:
+  push:
+    branches: [ master, 'feature/**', 'bugfix/**' ]
+    paths:
+      - 'linux/**'
+      - '.github/workflows/linux.yml'
   pull_request:
     branches: [ master ]
     paths:
@@ -45,7 +50,7 @@ jobs:
           path: '**/build/test-results/**/TEST-*.xml'
 
   check-jdk-packages:
-    name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
+    name: "Check JDK on ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -91,7 +96,7 @@ jobs:
           path: '**/build/test-results/**/TEST-*.xml'
 
   check-jre-packages:
-    name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
+    name: "Check JRE on ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
     runs-on: ubuntu-latest
     defaults:
       run:

@@ -1,7 +1,7 @@
 name: Publish ca-certificates
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 'feature/**', 'bugfix/**' ]
     paths:
       - 'linux/ca-certificates/**'
       - '.github/workflows/cacert-publish.yml'
