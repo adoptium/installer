@@ -102,6 +102,7 @@ jobs:
         distro: [Debian]
         product: [
           { name: temurin, version: 8 },
+          { name: temurin, version: 11 },
         ]
 
     steps:
