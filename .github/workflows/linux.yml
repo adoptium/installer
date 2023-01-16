@@ -38,7 +38,7 @@ jobs:
           export _JAVA_OPTIONS="-Xmx4G"
           ./gradlew --parallel :ca-certificates:check --stacktrace
 
-      - uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # v3.1.1
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         if: always() # always run even if the previous step fails
         with:
           name: test-results
@@ -84,7 +84,7 @@ jobs:
           mkdir ${{ matrix.product.version }}
           mv jdk ${{ matrix.product.version }}
 
-      - uses: actions/upload-artifact@83fd05a356d7e2593de66fc9913b3002723633cb # v3.1.1
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         if: always() # always run even if the previous step fails
         with:
           name: test-results
