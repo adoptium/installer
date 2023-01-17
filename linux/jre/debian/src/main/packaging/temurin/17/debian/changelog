@@ -1,0 +1,5 @@
+temurin-17-jre (17.0.5+8) STABLE; urgency=medium
+
+  * Eclipse Temurin 17.0.5.0.0+8 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 17 Jan 2023 06:06:00 +0000

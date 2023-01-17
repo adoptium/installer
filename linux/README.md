@@ -177,7 +177,7 @@ Supported platform amd64
 
 ### DEB
 - Supported JDK version 8,11,17,19
-- Supported JRE version 8,11
+- Supported JRE version 8,11,17
 
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
