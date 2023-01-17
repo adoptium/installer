@@ -104,6 +104,7 @@ jobs:
           { name: temurin, version: 8 },
           { name: temurin, version: 11 },
           { name: temurin, version: 17 },
+          { name: temurin, version: 19 },
         ]
 
     steps:

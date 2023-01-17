@@ -1,0 +1,5 @@
+temurin-19-jre (19.0.1.0.0+10-1) STABLE; urgency=medium
+
+  * Eclipse Temurin 19.0.1.0.0+10 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 17 Jan 2023 07:18:00 +0000
