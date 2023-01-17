@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 pkg_name = temurin-19-jdk
-priority = 1811
+priority = 1911
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
 amd64_tarball_url = https://github.com/adoptium/temurin19-binaries/releases/download/jdk-19.0.1%2B10/OpenJDK19U-jdk_x64_linux_hotspot_19.0.1_10.tar.gz
 amd64_checksum = 163da7ea140210bae97c6a4590c757858ab4520a78af0e3e33129863d4087552
@@ -63,7 +63,6 @@ override_dh_auto_install:
 	# Add jinfo file (alternatives support).
 	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
 
-	# Strip bundled Freetype and use OS package instead.
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
 
 	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
