@@ -167,7 +167,8 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 ## Supported packages
 
 ### APK (Alpine)
-Supported JDK version 8,11,17,19
+- Supported JDK version 8,11,17,19
+- Supported JRE version 8,11,17,19
 
 Supported platform amd64
 
