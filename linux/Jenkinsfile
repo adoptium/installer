@@ -40,6 +40,7 @@ pipeline {
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
         string(name: 'gitrepo', defaultValue: getCurrentRepoUrl(), description: 'Do not modify unless want to build from a specific gitrepo')
         string(name: 'gitbranch', defaultValue: getCurrentBranch(), description: 'Do not change unless want to build on a specific branch from above gitrepo')
+        booleanParam(name: 'enableGpgSigning', defaultValue: true, description: 'Require GPG Signing')
         booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
     }
     tools {
@@ -214,11 +215,13 @@ def buildAndTest(String DISTRO, String buildArch) {
             if (DISTRO == "Alpine") {
                 privateKey = 'adoptium-artifactory-rsa-key'
             }
-            // Install Adoptium GPG key for RPM signing
-            withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
-                def buildCLI = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PGPG_KEY=${GPG_KEY} -PARCH=${buildArch}"
-                buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
-                sh("$buildCLI")
+            if (params.enableGpgSigning) {
+                // Use Adoptium GPG key for signing
+                withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
+                    buildCLi(DISTRO, buildArch, GPG_KEY)
+                }
+            } else {
+                buildCLi(DISTRO, buildArch)
             }
         } else {
             def gBuildTask = (buildArch == 'x86_64') ? "package${TYPE}${DISTRO} check${TYPE}${DISTRO}" : "package${TYPE}${DISTRO}"
@@ -240,6 +243,15 @@ def buildAndTest(String DISTRO, String buildArch) {
         // should not allow empty archive, otherwise nothing created in the previous step: package and test result( not needed )
         archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: false
     }
+}
+
+private void buildCLi(String DISTRO, String buildArch, String GPG_KEY = null) {
+    def buildCLI = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${buildArch}"
+    if (GPG_KEY) {
+        buildCli += " -PGPG_KEY=${GPG_KEY}"
+    }
+    buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
+    sh("$buildCLI")
 }
 
 def uploadArtifacts(String DISTRO, String buildArch) {
