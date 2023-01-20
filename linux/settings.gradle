@@ -11,4 +11,5 @@ include "ca-certificates",
 
 	"jre",
 	"jre:alpine",
-	"jre:debian"
+	"jre:debian",
+	"jre:redhat"
