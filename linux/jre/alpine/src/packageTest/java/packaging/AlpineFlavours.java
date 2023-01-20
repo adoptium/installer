@@ -29,15 +29,16 @@ public class AlpineFlavours implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 		/*
-		 * Alpine policy: Oldest, newest and development version.
-		 *     (https://hub.docker.com/_/alpine/)
+		 * Alpine policy: current (alive) releases and development version.
+		 *     (https://alpinelinux.org/releases/)
 		 */
 		return Stream.of(
 			Arguments.of("alpine", "edge"),
 			Arguments.of("alpine", "latest"),
+			Arguments.of("alpine", "3.17"),
+			Arguments.of("alpine", "3.16"),
 			Arguments.of("alpine", "3.15"),
-			Arguments.of("alpine", "3.14"),
-			Arguments.of("alpine", "3.13")
+			Arguments.of("alpine", "3.14")
 		);
 	}
 }
