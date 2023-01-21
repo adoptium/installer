@@ -1,5 +1,9 @@
 name: Check Linux Packages
 on:
+  push:
+    paths:
+      - 'linux/**'
+      - '.github/workflows/linux.yml'
   pull_request:
     branches: [ master ]
     paths:
@@ -17,6 +21,7 @@ permissions:
 jobs:
   check-ca-certificates:
     name: "Check ca-certificates"
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -46,6 +51,7 @@ jobs:
 
   check-packages:
     name: "Check ${{ matrix.image_type }} on ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -94,6 +100,7 @@ jobs:
   # Ensures we don't accept a Gradle Wrapper update that has been tampered with.
   validation:
     name: "Validate Gradle Wrapper"
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
