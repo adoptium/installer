@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 #  17.0.1.0.0___12 == 17.0.1.0.0+12
 %global spec_version 17.0.6.0.0.10
-%global spec_release 2
+%global spec_release 1
 %global priority 1712
 
 %global source_url_base https://github.com/adoptium/temurin17-binaries/releases/download
@@ -79,7 +79,7 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: /usr/lib/jvm/%{name}
+Prefix: %{_libdir}/jvm/%{name}
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -87,15 +87,15 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
-Requires: libX11%{?_isa}
-Requires: libXext%{?_isa}
-Requires: libXi%{?_isa}
-Requires: libXrender%{?_isa}
-Requires: libXtst%{?_isa}
-Requires: alsa-lib%{?_isa}
+Requires: dejavu-fonts
+Requires: libX11-6%{?_isa}
+Requires: libXext6%{?_isa}
+Requires: libXi6%{?_isa}
+Requires: libXrender1%{?_isa}
+Requires: libXtst6%{?_isa}
+Requires: libasound2%{?_isa}
 Requires: glibc%{?_isa}
-Requires: zlib%{?_isa}
+Requires: libz1%{?_isa}
 Requires: fontconfig%{?_isa}
 
 Provides: jre
@@ -123,12 +123,6 @@ Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_ar
 Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
-# Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
-# is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
-# lists the available options.
-%define _source_payload w7.xzdio
-%define _binary_payload w7.xzdio
-
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
 %global __brp_strip %{nil}
@@ -155,14 +149,11 @@ tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_n
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
+ln -s /var/lib/ca-certificates/java-cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
 
-# Ensure systemd-tmpfiles-clean does not remove pid files
-# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
-%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
-echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
-echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+%pretrans
+# noop
 
 %post
 if [ $1 -ge 1 ] ; then
@@ -182,7 +173,6 @@ fi
 %files
 %defattr(-,root,root)
 %{prefix}
-/usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
 * Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10.adopt0

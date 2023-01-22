@@ -99,7 +99,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        distro: [Alpine, Debian, Redhat]
+        distro: [Alpine, Debian, Redhat, Suse]
         product: [
           { name: temurin, version: 8 },
           { name: temurin, version: 11 },
