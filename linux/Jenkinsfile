@@ -26,8 +26,8 @@ pipeline {
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
-        string(name: 'gitrepo', defaultValue: 'https://github.com/adoptium/installer', description: 'Do not modify unless want to build from a specific gitrepo')
-        string(name: 'gitbranch', defaultValue: 'master', description: 'Do not change unless want to build on a specific branch from above gitrepo')
+        string(name: 'gitrepo', defaultValue: getCurrentRepoUrl(), description: 'Do not modify unless want to build from a specific gitrepo')
+        string(name: 'gitbranch', defaultValue: getCurrentBranch(), description: 'Do not change unless want to build on a specific branch from above gitrepo')
         booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
     }
     tools {
@@ -133,6 +133,15 @@ pipeline {
 * Common Functions
 */
 
+// This makes it easier to run the builds from a different repository (for testing purposes) by default
+private String getCurrentRepoUrl() {
+    return scm.getUserRemoteConfigs().first().getUrl() ?: 'https://github.com/adoptium/installer'
+}
+
+private String getCurrentBranch() {
+    return scm.branches.first().name ?: 'master'
+}
+
 // function only handle debian as DISTRO
 def jenkinsStepDeb() {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - Debian"
@@ -164,7 +173,7 @@ def jenkinsStepDeb() {
 }
 
 // function handle both Alpine, RedHat and Suse as DISTRO
-def jenkinsStepNonDeb(DISTRO) {
+def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
     setup("${DISTRO}", "${ARCH}")
     unstash 'installercode'
@@ -176,7 +185,7 @@ def jenkinsStepNonDeb(DISTRO) {
 }
 
 // common function regardless DISTRO
-def setup(DISTRO, buildArch) {
+def setup(String DISTRO, String buildArch) {
     cleanWs()
     // Docker --mount option requires BuildKit
     env.DOCKER_BUILDKIT = 1
@@ -185,7 +194,7 @@ def setup(DISTRO, buildArch) {
 }
 
 // common function regardless DISTRO
-def buildAndTest(DISTRO, buildArch) {
+def buildAndTest(String DISTRO, String buildArch) {
     try {
         if (DISTRO != "Debian") { // for RPM based: RedHat / Suse / Alpine
             def privateKey = 'adoptium-artifactory-gpg-key'
@@ -215,26 +224,26 @@ def buildAndTest(DISTRO, buildArch) {
         echo 'Exception in buildAndTest: ' + ex
         currentBuild.result = 'FAILURE'  // set the whole pipeline 'red' if build or test fail. Do not use "error" that will not call "finally"
     } finally {
-        // should not allow empty archive, otherwsie nothing created in the previous step: package and test result( not needed )
+        // should not allow empty archive, otherwise nothing created in the previous step: package and test result( not needed )
         archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', onlyIfSuccessful:false, allowEmptyArchive: false
     }
 }
 
-def uploadArtifacts(DISTRO, buildArch) {
+def uploadArtifacts(String DISTRO, String buildArch) {
     switch(DISTRO) {
         case "Debian":
-            uploadDebArtifacts(buildArch);
-            break;
+            uploadDebArtifacts(buildArch)
+            break
         case "Alpine":
-            uploadAlpineArtifacts(buildArch);
-            break;
+            uploadAlpineArtifacts(buildArch)
+            break
         default:
-            uploadRpmArtifacts(DISTRO,buildArch);
-            break;
+            uploadRpmArtifacts(DISTRO,buildArch)
+            break
     }
 }
 
-def uploadAlpineArtifacts(buildArch) {
+def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
     rtUpload ( //artifactory plugin
         serverId: 'adoptium.jfrog.io',
@@ -250,7 +259,7 @@ def uploadAlpineArtifacts(buildArch) {
     )
 }
 
-def uploadDebArtifacts(buildArch) {
+def uploadDebArtifacts(String buildArch) {
     // full list of all platforms, up to user to opt out s390x+jdk8
     def debArchList = [
         'x86_64' : 'amd64',
@@ -261,7 +270,7 @@ def uploadDebArtifacts(buildArch) {
     ]
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
-        add more into list when avaiable for release
+        add more into list when available for release
         also update linux/jdk/debian/main/packing/build.sh
     */
     def deb_versions = ['buster', 'bullseye', 'bionic', 'focal', 'jammy', 'kinetic']
@@ -298,7 +307,7 @@ def uploadDebArtifacts(buildArch) {
     }
 }
 
-def uploadRpmArtifacts(DISTRO, rpmArch) {
+def uploadRpmArtifacts(String DISTRO, String rpmArch) {
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
@@ -332,7 +341,7 @@ def uploadRpmArtifacts(DISTRO, rpmArch) {
     ]
     if ("${rpmArch}" != 'all') {
         // when only build and upload one arch, reset
-        rpmArchList = ["${rpmArch}": "${rpmArchList[rpmArch]}"]
+        rpmArchList = [("${rpmArch}" as String): "${rpmArchList[rpmArch]}"]
     }
     // Enable upload src.rpm
     if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {

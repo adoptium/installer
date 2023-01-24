@@ -24,7 +24,7 @@ The following documentation describes how to create and publish these Linux inst
   - jdk8 : https://github.com/adoptium/temurin8-binaries/releases/latest
   - jdk11 : https://github.com/adoptium/temurin11-binaries/releases/latest
   - jdk17 : https://github.com/adoptium/temurin17-binaries/releases/latest
-  - jdk18 : https://github.com/adoptium/temurin18-binaries/releases/latest
+  - jdk19 : https://github.com/adoptium/temurin19-binaries/releases/latest
 2. For each jdk version and JVM variant, run the following [Jenkins job](https://ci.adoptopenjdk.net/job/build-scripts/job/release/jobs/) (Restricted auth permission) to create and publish Linux installers to Artifactory:
   - ensure values are specified in the correct format, using examples below
   - for new feature release use the full 3 dotted value e.g.jdk19 use "19.0.0" for VERSION
@@ -38,15 +38,15 @@ The following documentation describes how to create and publish these Linux inst
         - SUB_TAG: 8u292b10
     - When MAJOR_VERSION >= 11 && is Feature release:
       - Hotspot jdk\<MAJOR_VERSION>:
-        - VERSION: \<MAJOR_VERSION>.0.0+\<PRE-RLEASE_VERSION>
+        - VERSION: \<MAJOR_VERSION>.0.0+\<PRE-RELEASE_VERSION>
         - MAJOR_VERSION: <MAJOR_VERSION>
         - RELEASE_TYPE: Release
         - JVM: hotspot
-        - TAG: jdk-\<MAJOR_VERSION>+\<PRE-RLEASE_VERSION>
-        - SUB_TAG: \<MAJOR_VERSION>_\<PRE-RLEASE_VERSION>
+        - TAG: jdk-\<MAJOR_VERSION>+\<PRE-RELEASE_VERSION>
+        - SUB_TAG: \<MAJOR_VERSION>_\<PRE-RELEASE_VERSION>
     - When MAJOR_VERSION >= 11 && is CPU release:
       - Hotspot jdk\<MAJOR_VERSION>:
-        - VERSION: \<MAJOR_VERSION>.\<MINOR_VERSION>.\<PATCH_VERSION>+\<PRE-RLEASE_VERSION>
+        - VERSION: \<MAJOR_VERSION>.\<MINOR_VERSION>.\<PATCH_VERSION>+\<PRE-RELEASE_VERSION>
         - MAJOR_VERSION: \<MAJOR_VERSION>
         - RELEASE_TYPE: Release
         - JVM: hotspot
@@ -56,8 +56,8 @@ The following documentation describes how to create and publish these Linux inst
     - Verify:
       - For deb:
         - under sub-folder "temurin-<MAJOR_VERSION>"
-        - file "temurin-<MAJOR_VERSION>-jdk_*_\<arch>.deb" exist, e.g temurin-18-jdk-18.0.1.0.0.10-1.armv7hl.rpm for jdk-18.0.1 hotspot JDK
+        - file "temurin-<MAJOR_VERSION>-jdk_*_\<arch>.deb" exist, e.g temurin-19-jdk-19.0.1.0.0.10-1.armv7hl.rpm for jdk-19.0.1 hotspot JDK
       - For rpm:
         - under sub-folder "\<distro>/\<os_version>/\<arch>/Packages/"
-        - file "temurin-\<MAJOR_VERSION>-jdk-*.\<arch>.rpm" exist, e.g: temurin-18-jdk-18.0.1.0.0.10-1.armv7hl.rpm for jdk-18.0.1 hotspot JDK
+        - file "temurin-\<MAJOR_VERSION>-jdk-*.\<arch>.rpm" exist, e.g: temurin-19-jdk-19.0.1.0.0.10-1.armv7hl.rpm for jdk-19.0.1 hotspot JDK
         
