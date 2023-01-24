@@ -8,18 +8,18 @@ RUN set -eux; \
 		bash \
 		ca-certificates \
 		dpkg \
-		sudo
+		doas
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
 RUN adduser -D -h /home/builder builder \
     && addgroup builder abuild \
-    && echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+	&& echo 'permit builder as root' > /etc/doas.d/doas.conf
 
 # Add GPG key
 USER builder
 WORKDIR /home/builder
-RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.rsa \
+RUN --mount=type=secret,id=gpg,gid=1000,uid=1000,dst=/tmp/private.rsa \
 	if [[ -f /tmp/private.rsa ]]; then \
 		mkdir /home/builder/.abuild; \
 		cp /tmp/private.rsa /home/builder/.abuild; \

@@ -7,7 +7,7 @@ mkdir /home/builder/workspace
 cp -R /home/builder/build/generated/packaging /home/builder/workspace
 
 # Set permssions
-sudo chown -R builder /home/builder/out
+chown -R builder /home/builder/out
 
 # Build package and set distributions it supports
 cd /home/builder/workspace/packaging
