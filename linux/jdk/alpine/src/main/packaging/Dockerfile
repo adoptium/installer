@@ -15,6 +15,7 @@ RUN set -eux; \
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
 RUN adduser -D -h /home/builder builder \
     && addgroup builder abuild \
+	&& echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
 	&& echo 'permit builder as root' > /etc/doas.d/doas.conf
 
 # Add GPG key
