@@ -8,6 +8,7 @@ RUN set -eux; \
 		bash \
 		ca-certificates \
 		dpkg \
+		sudo \
 		doas
 
 # Create unprivileged user for building, see
@@ -28,6 +29,7 @@ RUN --mount=type=secret,id=gpg,gid=1000,uid=1000,dst=/tmp/private.rsa \
 	else \
 		abuild-keygen -a -n; \
 	fi
+
 
 # Prepare entrypoint
 COPY --chown=builder:abuild entrypoint.sh /home/builder/entrypoint.sh
