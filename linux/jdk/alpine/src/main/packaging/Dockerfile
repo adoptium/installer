@@ -7,9 +7,10 @@ RUN set -eux; \
 		alpine-sdk \
 		bash \
 		ca-certificates \
+		doas \
 		dpkg \
 		sudo \
-		doas
+		wget
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
@@ -27,6 +28,7 @@ RUN --mount=type=secret,id=gpg,gid=1000,uid=1000,dst=/tmp/private.rsa \
 		cp /tmp/private.rsa /home/builder/.abuild; \
 		printf 'PACKAGER_PRIVKEY=/home/builder/.abuild/private.rsa'\
 >> /home/builder/.abuild/abuild.conf; \
+		wget -o /home/builder/.abuild/private.rsa.pub https://packages.adoptium.net/artifactory/api/security/keypair/public/repositories/apk
 	else \
 		abuild-keygen -a -n; \
 	fi
