@@ -16,8 +16,8 @@ RUN set -eux; \
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
 RUN adduser -D -h /home/builder builder \
     && addgroup builder abuild \
-	&& echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
-	&& echo 'permit builder as root' > /etc/doas.d/doas.conf
+    && echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && echo 'permit builder as root' > /etc/doas.d/doas.conf
 
 # Add GPG key
 USER builder
@@ -32,7 +32,6 @@ RUN --mount=type=secret,id=gpg,gid=1000,uid=1000,dst=/tmp/private.rsa \
 	else \
 		abuild-keygen -a -n; \
 	fi
-
 
 # Prepare entrypoint
 COPY --chown=builder:abuild entrypoint.sh /home/builder/entrypoint.sh
