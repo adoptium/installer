@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 19.0.0.0.0___19.0.0.0.0+36
 #  19.0.0.0.0___36 == 19.0.0.0.0+36
 %global spec_version 19.0.2.0.0.7
-%global spec_release 2
+%global spec_release 1
 %global priority 1161
 
 %global source_url_base https://github.com/adoptium/temurin19-binaries/releases/download
