@@ -9,7 +9,7 @@ amd64_checksum = 1486a792fb224611ce0cd0e83d4aacd3503b56698549f8e9a9f0a6ebb83bdba
 arm64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u362-b09/OpenJDK8U-jdk_aarch64_linux_hotspot_8u362b09.tar.gz
 arm64_checksum = 9290a8beefd7a94f0eb030f62d402411a852100482b9c5b63714bacc57002c2a
 armhf_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u362-b09/OpenJDK8U-jdk_arm_linux_hotspot_8u362b09.tar.gz
-armhf_checksum =
+armhf_checksum = 039843c200d0773fe927fa07c368f23d1d74ae58edd09138c97aa1f5e2007b28
 ppc64el_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u362-b09/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u362b09.tar.gz
 ppc64el_checksum = 69658dd316c6a160915655971573179766e19c6610ea03880c1e578a0e518f74
 
