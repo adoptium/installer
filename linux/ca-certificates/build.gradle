@@ -1,12 +1,12 @@
-tasks.register("package") {
+tasks.register("packageCaCertificates") {
 	group = "packaging"
-	description = "Creates Linux packages."
+	description = "Creates Linux packages of Adoptium CA Certificates."
 }
 
-tasks.register("checkPackage") {
-	description = "Tests the generated Linux package."
+tasks.register("checkCaCertificatesPackage") {
+	description = "Tests the generated Linux Adoptium CA Certificates package."
 	group = "verification"
 }
 
-rootProject.package.dependsOn(project.package)
-rootProject.checkPackage.dependsOn(project.checkPackage)
+rootProject.package.dependsOn(project.packageCaCertificates)
+rootProject.checkPackage.dependsOn(project.checkCaCertificatesPackage)

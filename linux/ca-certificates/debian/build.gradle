@@ -65,7 +65,7 @@ test {
 	}
 }
 
-task packageDebian {
+task packageCaCertificatesDebian {
 	dependsOn "assemble"
 
 	group = "packaging"
@@ -98,17 +98,14 @@ task packageDebian {
 	}
 }
 
-task checkDebianPackage(type: Test) {
-	dependsOn packageDebian
+task checkCaCertificatesDebian(type: Test) {
+	dependsOn packageCaCertificatesDebian
 
 	description = 'Tests the generated ca-certificate Debian packages.'
 	group = 'verification'
 
 	testClassesDirs = sourceSets.packageTest.output.classesDirs
 	classpath = sourceSets.packageTest.runtimeClasspath
-
-	def product = getProduct()
-	def productVersion = getProductVersion()
 
 	environment "PACKAGE", "adoptium-ca-certificates"
 
@@ -118,5 +115,5 @@ task checkDebianPackage(type: Test) {
 	}
 }
 
-parent.package.dependsOn(packageDebian)
-parent.checkPackage.dependsOn(checkDebianPackage)
+parent.packageCaCertificates.dependsOn(packageCaCertificatesDebian)
+parent.checkCaCertificatesPackage.dependsOn(checkCaCertificatesDebian)
