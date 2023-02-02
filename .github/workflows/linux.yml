@@ -1,5 +1,9 @@
 name: Check Linux Packages
 on:
+  push:
+    paths:
+      - 'linux/**'
+      - '.github/workflows/linux.yml'
   pull_request:
     branches: [ master ]
     paths:
@@ -17,6 +21,7 @@ permissions:
 jobs:
   check-ca-certificates:
     name: "Check ca-certificates"
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -44,8 +49,9 @@ jobs:
           name: test-results
           path: '**/build/test-results/**/TEST-*.xml'
 
-  check-jdk-packages:
-    name: "Check ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
+  check-packages:
+    name: "Check ${{ matrix.image_type }} on ${{ matrix.product.name }} ${{ matrix.product.version }} ${{ matrix.distro }}"
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -53,6 +59,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        image_type: [JDK, JRE]
         distro: [Alpine, Debian, RedHat, Suse]
         product: [
           { name: temurin, version: 8 },
@@ -76,13 +83,13 @@ jobs:
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
           export DOCKER_BUILDKIT=1
-          ./gradlew --parallel packageJdk${{ matrix.distro }} checkJdk${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
+          ./gradlew --parallel package$( echo "${{ matrix.image_type }}" | tr [DKRE] [dkre] )${{ matrix.distro }} check${{ matrix.image_type }}${{ matrix.distro }} -PPRODUCT=${{ matrix.product.name }} -PPRODUCT_VERSION=${{ matrix.product.version }} --stacktrace
 
       - name: Relocate test results
         if: always() # always run even if the previous step fails
         run: |
           mkdir ${{ matrix.product.version }}
-          mv jdk ${{ matrix.product.version }}
+          mv $( echo "${{ matrix.image_type }}" | tr [:upper:] [:lower:] ) ${{ matrix.product.version }}
 
       - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         if: always() # always run even if the previous step fails
@@ -93,6 +100,7 @@ jobs:
   # Ensures we don't accept a Gradle Wrapper update that has been tampered with.
   validation:
     name: "Validate Gradle Wrapper"
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0

@@ -24,7 +24,15 @@ version "1.0.0-SNAPSHOT"
  *
  * **Attention**: If you alter the list, check if the class DebianFlavours needs to be updated, too.
  */
-def deb_versions = ["buster", "bullseye", "bionic", "focal", "jammy", "kinetic"]
+def deb_versions = [
+		"bookworm", // Debian/12
+		"bullseye", // Debian/11
+		"buster",   // Debian/10
+		"kinetic",  // Ubuntu/22.10
+		"jammy",    // Ubuntu/22.04 (LTS)
+		"focal",    // Ubuntu/20.04 (LTS)
+		"bionic",   // Ubuntu/18.04 (LTS)
+]
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_1_8
@@ -57,7 +65,7 @@ test {
 	}
 }
 
-task packageDebian {
+task packageCaCertificatesDebian {
 	dependsOn "assemble"
 
 	group = "packaging"
@@ -90,17 +98,14 @@ task packageDebian {
 	}
 }
 
-task checkDebianPackage(type: Test) {
-	dependsOn packageDebian
+task checkCaCertificatesDebian(type: Test) {
+	dependsOn packageCaCertificatesDebian
 
 	description = 'Tests the generated ca-certificate Debian packages.'
 	group = 'verification'
 
 	testClassesDirs = sourceSets.packageTest.output.classesDirs
 	classpath = sourceSets.packageTest.runtimeClasspath
-
-	def product = getProduct()
-	def productVersion = getProductVersion()
 
 	environment "PACKAGE", "adoptium-ca-certificates"
 
@@ -110,5 +115,5 @@ task checkDebianPackage(type: Test) {
 	}
 }
 
-parent.package.dependsOn(packageDebian)
-parent.checkPackage.dependsOn(checkDebianPackage)
+parent.packageCaCertificates.dependsOn(packageCaCertificatesDebian)
+parent.checkCaCertificatesPackage.dependsOn(checkCaCertificatesDebian)
