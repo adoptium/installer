@@ -40,7 +40,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   set PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
   set VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
   set VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.bmp
-  set VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.bmp
+  set VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.png
   ```
 
  `Build.OpenJDK_generic.cmd` statically depend on this SDK version (edit if needed):
