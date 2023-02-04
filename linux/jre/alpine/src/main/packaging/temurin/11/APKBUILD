@@ -1,0 +1,71 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-11
+pkgver=11.0.18_p10
+# replace _p1 with _1
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
+_pkgvername=${_pkgverplus/+/%2B}
+pkgrel=0
+pkgdesc="Eclipse Temurin 11"
+provider_priority=11
+url="https://adoptium.net"
+arch="x86_64"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+depends="$pkgname-jre" # for the virtual package
+subpackages="$pkgname-jre:_jre"
+source="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-$_pkgvername/OpenJDK11U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+"
+
+_java_home="/usr/lib/jvm/java-11-temurin-jre"
+
+ldpath="$_java_home/lib:$_java_home/lib/jli:$_java_home/lib/server"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+
+	# 1) check that java -version works
+	$_java_bin/java -version
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+}
+
+_jre() {
+	pkgdesc="Eclipse Temurin 11 (JRE)"
+	provides="java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin" "$_toroot"
+	mv "$_fromroot/lib" "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+
+sha256sums="
+81e51ec2da61b227c522881313c7e2a090b29d6cc4171b5e1db3f3d17d863e44  OpenJDK11U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+"
