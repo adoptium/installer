@@ -214,10 +214,10 @@ def buildAndTest(String DISTRO, String buildArch) {
             if (params.enableGpgSigning) {
                 // Use Adoptium GPG key for signing
                 withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
-                    buildCLi(DISTRO, buildArch, GPG_KEY)
+                    buildCli(DISTRO, buildArch, GPG_KEY)
                 }
             } else {
-                buildCLi(DISTRO, buildArch)
+                buildCli(DISTRO, buildArch)
             }
         } else {
             def gBuildTask = (buildArch == 'x86_64') ? "package${TYPE}${DISTRO} check${TYPE}${DISTRO}" : "package${TYPE}${DISTRO}"
@@ -228,9 +228,9 @@ def buildAndTest(String DISTRO, String buildArch) {
                 'ppc64le': 'ppc64el',
                 's390x'  : 's390x'
             ]
-            def buildCLI = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
-            buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
-            sh("$buildCLI")
+            def buildCli = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
+            buildCli = params.enableDebug.toBoolean() ? buildCli + ' --stacktrace' : buildCli
+            sh("$buildCli")
         }
     } catch (Exception ex) {
         echo 'Exception in buildAndTest: ' + ex
@@ -241,13 +241,15 @@ def buildAndTest(String DISTRO, String buildArch) {
     }
 }
 
-private void buildCLi(String DISTRO, String buildArch, String GPG_KEY = null) {
-    def buildCLI = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${buildArch}"
+private void buildCli(String DISTRO, String buildArch, String GPG_KEY = null) {
+    def buildCli = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${buildArch}"
     if (GPG_KEY) {
         buildCli += " -PGPG_KEY=${GPG_KEY}"
     }
-    buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
-    sh("$buildCLI")
+    if (params.enableDebug.toBoolean()) {
+        buildCli += " --stacktrace"
+    }
+    sh(buildCli)
 }
 
 def uploadArtifacts(String DISTRO, String buildArch) {
