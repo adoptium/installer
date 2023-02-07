@@ -248,7 +248,7 @@ def buildAndTest(String DISTRO, String buildArch) {
 def buildCLi(String DISTRO, String buildArch, String GPG_KEY = null) {
     def buildCLI = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${buildArch}"
     if (GPG_KEY) {
-        buildCli += " -PGPG_KEY=${GPG_KEY}"
+        buildCLI += " -PGPG_KEY=${GPG_KEY}"
     }
     buildCLI = params.enableDebug.toBoolean() ? buildCLI + ' --stacktrace' : buildCLI
     sh("$buildCLI")
