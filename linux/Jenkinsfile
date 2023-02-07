@@ -43,10 +43,6 @@ pipeline {
         booleanParam(name: 'enableGpgSigning', defaultValue: true, description: 'Require GPG Signing')
         booleanParam(name: 'enableDebug', defaultValue: false, description: 'Tick to enable --stacktrace for gradle build')
     }
-    tools {
-        // this is set in the jenkins global tool
-        jdk 'jdk-11.0.13+8'
-    }
     stages {
         stage('Prepare Build') {
             steps {
