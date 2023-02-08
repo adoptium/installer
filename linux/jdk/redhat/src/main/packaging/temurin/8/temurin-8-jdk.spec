@@ -276,8 +276,10 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+# tag::changelog-current[]
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9.adopt0
 - Eclipse Temurin 8.0.362-b09 release.
+# end::changelog-current[]
 * Thu Nov 03 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.352.0.0.8.adopt0
 - Eclipse Temurin 8.0.352-b08 release.
 * Thu Aug 08 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.345.0.0.1.adopt0

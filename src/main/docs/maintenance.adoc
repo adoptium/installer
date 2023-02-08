@@ -1,0 +1,215 @@
+= Maintenance
+// Change these attributes if desired
+:jdk8-full-version:  8.0.362.0.0+9-1
+:jdk11-full-version: 11.0.18.0.0+10
+:jdk17-full-version: 17.0.6.0.0+10
+:jdk19-full-version: 19.0.2.0.0+7-1
+
+Temurin installers need frequent maintenance activities, e.g.,
+
+* When a new JDK version is released, either
+** As <<sec:add-new-major-jdk,new major JDK release>>, or
+** As <<sec:update-jdk,an update to an existing JDK>>;
+* When the current version of a Linux distro (or other supported OS) is at the end of its support window;
+* When <<sec:add-new-os,a new OS is added>>, or an existing one will no longer be supported.
+
+In each of these cases a number of actions must be performed.
+Even if we automate most of these tasks in the future, they still need to be reviewed.
+Hence, the guide will not only help to perform the necessary changes, but to also make sure it's done in a unique way.
+
+As a developer:: you can use this file to navigate to the respective changelog files and add the new entry.
+As a reviewer:: you can compare the heads of all changelogs whether they were consistently extended by the developer.
+
+
+[[sec:add-new-major-jdk]]
+== Adding a new major JDK/JRE release
+
+[IMPORTANT]
+====
+Adding a new major JDK release, e.g., JDK 20, in many cases means to drop the support for an older release (as long as it's no LTS version).
+Therefore, you may perform the reverse actions to remove the outdated version as you do to add the new major release.
+====
+
+TBD
+
+[[sec:update-jdk]]
+== Updating an existing JDK/JRE
+
+=== Update URLs and fingerprints
+
+TBD
+
+=== Change/Review the ChangeLogs
+
+Almost any distro maintains its own source for the change log.
+When a new release is created for the upstream tarballs, a new entry needs to be prepended to the existing changelogs.
+
+==== Alpine ChangeLogs
+
+Alpine packages do not contain a change log -> Nothing to do here.
+
+[[sec:debian-changelogs]]
+==== Debian/Ubuntu ChangeLogs
+
+The changelog for a new JDK or JRE release should read something like this
+
+[source]
+----
+temurin-<java-major-version>-{jdk,jre} (<java-full-version>) STABLE; urgency=medium // <1>
+
+  * Eclipse Temurin <java-full-version> release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  <release-date in UTC> // <2>
+----
+<1> Question: Where do the exact _full version_ and the appendix like _STABLE; urgency=medium_ come from
+<2> The Release date should be the (rough) datetime when the file was updated
+
+A sample entry for Temurin JDK 8 should be
+
+[source, subs="attributes"]
+----
+temurin-8-jdk ({jdk8-full-version}) STABLE; urgency=medium
+
+  * Eclipse Temurin 8.0.362.0.0+9-1 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 18 Jan 2023 09:43:20 +0000
+----
+
+The respective file entries are
+
+JDK 8::
++
+[source]
+.JDK 8: Full-Version should be `{jdk8-full-version}`
+----
+include::../../../linux/jdk/debian/src/main/packaging/temurin/8/debian/changelog[lines=1..5]
+----
+
+JRE 8::
++
+[source]
+.JRE 8: Full-Version should be `{jdk8-full-version}`
+----
+include::../../../linux/jre/debian/src/main/packaging/temurin/8/debian/changelog[lines=1..5]
+----
+
+JDK 11::
++
+[source]
+.JDK 11: Full-Version should be `{jdk11-full-version}`
+----
+include::../../../linux/jdk/debian/src/main/packaging/temurin/11/debian/changelog[lines=1..5]
+----
+
+JRE 11::
++
+[source]
+.JRE 11: Full-Version should be `{jdk11-full-version}`
+----
+include::../../../linux/jre/debian/src/main/packaging/temurin/11/debian/changelog[lines=1..5]
+----
+
+JDK 17::
++
+[source]
+.JDK 17: Full-Version should be `{jdk17-full-version}`
+----
+include::../../../linux/jdk/debian/src/main/packaging/temurin/17/debian/changelog[lines=1..5]
+----
+
+JRE 17::
++
+[source]
+.JRE 17: Full-Version should be `{jdk17-full-version}`
+----
+include::../../../linux/jre/debian/src/main/packaging/temurin/17/debian/changelog[lines=1..5]
+----
+
+JDK 19::
++
+[source]
+.JDK 19: Full-Version should be `{jdk19-full-version}`
+----
+include::../../../linux/jdk/debian/src/main/packaging/temurin/19/debian/changelog[lines=1..5]
+----
+
+JRE 19::
++
+[source]
+.JRE 19: Full-Version should be `{jdk19-full-version}`
+----
+include::../../../linux/jre/debian/src/main/packaging/temurin/19/debian/changelog[lines=1..5]
+----
+
+
+==== RPM ChangeLogs
+
+New entries for RPM ChangeLogs (for distros Red Hat and SuSE) should have the following form
+
+[source]
+----
+* Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9.adopt0 <1>
+- Eclipse Temurin 8.0.362-b09 release. <2>
+----
+<1> {nbsp}
+* The Release date should be the date only (no time) when the file was updated
+* Question: Why do we have here another flavor as with <<sec:debian-changelogs,Debian>> (`adopt0` appended)?
+<2> Question: Why do we have again a slightly different (but nevertheless duplicate) form of the full version here?
+
+The concrete current entry for
+
+Red Hat JDK 8::
++
+[source]
+.JDK 8: Full-Version should be `{jdk8-full-version}`
+----
+include::../../../linux/jdk/redhat/src/main/packaging/temurin/8/temurin-8-jdk.spec[tag=changelog-current]
+----
+
++
+[source]
+.JRE 8: Full-Version should be `{jdk8-full-version}`
+----
+include::../../../linux/jre/redhat/src/main/packaging/temurin/8/temurin-8-jre.spec[tag=changelog-current]
+----
+
+SuSE JDK 8::
++
+[source]
+.JDK 8: Full-Version should be `{jdk8-full-version}`
+----
+include::../../../linux/jdk/suse/src/main/packaging/temurin/8/temurin-8-jdk.spec[tag=changelog-current]
+----
+
+Red Hat JRE 8:: TBD
+SuSE JRE 8:: TBD
+
+Red Hat JDK 11::
++
+[source]
+.JDK 11: Full-Version should be `{jdk11-full-version}`
+----
+include::../../../linux/jdk/redhat/src/main/packaging/temurin/11/temurin-11-jdk.spec[tag=changelog-current]
+----
+
+SuSE JDK 11::
++
+[source]
+.JDK 11: Full-Version should be `{jdk11-full-version}`
+----
+include::../../../linux/jdk/suse/src/main/packaging/temurin/11/temurin-11-jdk.spec[tag=changelog-current]
+----
+
+Red Hat JRE 11:: TBD
+SuSE JRE 11:: TBD
+
+[[sec:update-distro-version]]
+== Update/Remove existing OS distribution
+
+TBD
+
+[[sec:add-new-os]]
+== Adding a new OS distribution or removing one
+
+TBD
+
