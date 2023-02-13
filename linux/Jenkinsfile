@@ -349,8 +349,8 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
             'rpm/fedora/35',
             'rpm/fedora/36',
             'rpm/fedora/37',
-            'rpm/oraclelinux/7',
-            'rpm/oraclelinux/8',
+            'rpm/oraclelinux/7Server',
+            'rpm/oraclelinux/8Server',
             'rpm/amazonlinux/2'
 
         ],
