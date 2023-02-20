@@ -14,7 +14,7 @@ If a package is documented here but is not present on the Temurin OpenJDK downlo
 See the [CONFIGURATION.md](./CONFIGURATION.md) file for the details of each package.
 
 ## Releasing Mac and Windows Installer packages
-Run from Jenkins job [Create Installer Mac](https://ci.adoptopenjdk.net/job/build-scripts/job/release/job/create_installer_mac/) and [Create Installer  Windows](https://ci.adoptopenjdk.net/job/build-scripts/job/release/job/create_installer_windows/)
+Run from Jenkins job [Create Installer Mac](https://ci.adoptium.net/job/build-scripts/job/release/job/create_installer_mac/) and [Create Installer  Windows](https://ci.adoptium.net/job/build-scripts/job/release/job/create_installer_windows/)
 
 ## Releasing Linux Installer packages
 During a Release the Linux installers (deb,rpm) are not created as part of the build job, but are instead created manually after the production binaries have been published to `https://github.com/adoptium/temurin{XX}-binaries/releases`.
@@ -25,7 +25,7 @@ The following documentation describes how to create and publish these Linux inst
   - jdk11 : https://github.com/adoptium/temurin11-binaries/releases/latest
   - jdk17 : https://github.com/adoptium/temurin17-binaries/releases/latest
   - jdk19 : https://github.com/adoptium/temurin19-binaries/releases/latest
-2. For each jdk version and JVM variant, run the following [Jenkins job](https://ci.adoptopenjdk.net/job/build-scripts/job/release/jobs/) (Restricted auth permission) to create and publish Linux installers to Artifactory:
+2. For each jdk version and JVM variant, run the following [Jenkins job](https://ci.adoptium.net/job/build-scripts/job/release/jobs/) (Restricted auth permission) to create and publish Linux installers to Artifactory:
   - ensure values are specified in the correct format, using examples below
   - for new feature release use the full 3 dotted value e.g.jdk19 use "19.0.0" for VERSION
     - When MAJOR_VERSION == 8(replace minor and patch version accordingly)
