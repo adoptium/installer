@@ -79,7 +79,7 @@ task packageJreDebian {
 		}
 		project.exec {
 			workingDir "src/main/packaging"
-			commandLine "docker", "build",
+			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"

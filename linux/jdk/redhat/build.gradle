@@ -72,7 +72,7 @@ task packageJdkRedHat {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build",
+				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-redhat",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"-f", "Dockerfile",
@@ -81,7 +81,7 @@ task packageJdkRedHat {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build",
+				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-redhat",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
@@ -114,7 +114,7 @@ task checkJdkRedHat(type: Test) {
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
 	def arch = getArch()
-	
+
 	environment "PACKAGE", "$product-$productVersion-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"

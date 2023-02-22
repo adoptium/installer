@@ -81,7 +81,7 @@ task packageJdkAlpine {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build",
+				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"-f", "Dockerfile",
@@ -90,7 +90,7 @@ task packageJdkAlpine {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build",
+				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
