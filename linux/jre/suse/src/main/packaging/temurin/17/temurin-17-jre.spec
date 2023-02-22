@@ -175,7 +175,7 @@ fi
 %{prefix}
 
 %changelog
-* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10.adopt0
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10-2.adopt0
 - Eclipse Temurin JRE 17.0.6+10 release 2.
 * Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10.adopt0
 - Eclipse Temurin JRE 17.0.6+10 release.

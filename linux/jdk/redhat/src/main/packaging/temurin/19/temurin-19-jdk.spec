@@ -253,7 +253,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7.adopt0
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7-2.adopt0
 - Eclipse Temurin 19.0.2+7 release 2.
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7.adopt0
 - Eclipse Temurin 19.0.2+7 release.
