@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 20.0.0.0.0___20.0.0.0.0+36
 #  20.0.0.0.0___1 == 20.0.0.0.0+36
 %global spec_version 20.0.0.0.0.36
-%global spec_release 1
+%global spec_release 2
 %global priority 1161
 
 %global source_url_base https://github.com/adoptium/temurin20-binaries/releases/download
@@ -143,15 +143,11 @@ popd
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
-                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
-                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
                         --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry \
                         --slave %{_bindir}/jexec jexec %{prefix}/lib/jexec \
                         --slave %{_bindir}/jspawnhelper jspawnhelper %{prefix}/lib/jspawnhelper \
                         --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
-                        --slave  %{_mandir}/man1/jfr.1 jfr.1 %{prefix}/man/man1/jfr.1 \
-                        --slave  %{_mandir}/man1/jrunscript.1 jrunscript.1 %{prefix}/man/man1/jrunscript.1 \
                         --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
                         --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
 
@@ -165,6 +161,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jdb jdb %{prefix}/bin/jdb \
                         --slave %{_bindir}/jdeprscan jdeprscan %{prefix}/bin/jdeprscan \
                         --slave %{_bindir}/jdeps jdeps %{prefix}/bin/jdeps \
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
                         --slave %{_bindir}/jhsdb jhsdb %{prefix}/bin/jhsdb \
                         --slave %{_bindir}/jimage jimage %{prefix}/bin/jimage \
                         --slave %{_bindir}/jinfo jinfo %{prefix}/bin/jinfo \
@@ -173,6 +170,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jmod jmod %{prefix}/bin/jmod \
                         --slave %{_bindir}/jpackage jpackage %{prefix}/bin/jpackage \
                         --slave %{_bindir}/jps jps %{prefix}/bin/jps \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/jshell jshell %{prefix}/bin/jshell \
                         --slave %{_bindir}/jstack jstack %{prefix}/bin/jstack \
                         --slave %{_bindir}/jstat jstat %{prefix}/bin/jstat \
@@ -189,6 +187,7 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/jdb.1 jdb.1 %{prefix}/man/man1/jdb.1 \
                         --slave  %{_mandir}/man1/jdeprscan.1 jdeprscan.1 %{prefix}/man/man1/jdeprscan.1 \
                         --slave  %{_mandir}/man1/jdeps.1 jdeps.1 %{prefix}/man/man1/jdeps.1 \
+                        --slave  %{_mandir}/man1/jfr.1 jfr.1 %{prefix}/man/man1/jfr.1 \
                         --slave  %{_mandir}/man1/jhsdb.1 jhsdb.1 %{prefix}/man/man1/jhsdb.1 \
                         --slave  %{_mandir}/man1/jinfo.1 jinfo.1 %{prefix}/man/man1/jinfo.1 \
                         --slave  %{_mandir}/man1/jlink.1 jlink.1 %{prefix}/man/man1/jlink.1 \
@@ -196,6 +195,7 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/jmod.1 jmod.1 %{prefix}/man/man1/jmod.1 \
                         --slave  %{_mandir}/man1/jpackage.1 jpackage.1 %{prefix}/man/man1/jpackage.1 \
                         --slave  %{_mandir}/man1/jps.1 jps.1 %{prefix}/man/man1/jps.1 \
+                        --slave  %{_mandir}/man1/jrunscript.1 jrunscript.1 %{prefix}/man/man1/jrunscript.1 \
                         --slave  %{_mandir}/man1/jshell.1 jshell.1 %{prefix}/man/man1/jshell.1 \
                         --slave  %{_mandir}/man1/jstack.1 jstack.1 %{prefix}/man/man1/jstack.1 \
                         --slave  %{_mandir}/man1/jstat.1 jstat.1 %{prefix}/man/man1/jstat.1 \
@@ -215,5 +215,7 @@ fi
 %{prefix}
 
 %changelog
+* Tue Apr 11 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.36-2.adopt0
+- Fix alternative linking
 * Wed Mar 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.36-1.adopt0
 - Eclipse Temurin 20.0.0+36 release 1.

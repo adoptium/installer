@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
 %global spec_version 11.0.18.0.0.10
-%global spec_release 2
+%global spec_release 3
 %global priority 1111
 
 %global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
@@ -182,9 +182,7 @@ popd
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
-                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
                         --slave %{_bindir}/jjs jjs %{prefix}/bin/jjs \
-                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
                         --slave %{_bindir}/pack200 pack200 %{prefix}/bin/pack200 \
                         --slave %{_bindir}/rmid rmid %{prefix}/bin/rmid \
@@ -194,7 +192,6 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jspawnhelper jspawnhelper %{prefix}/lib/jspawnhelper \
                         --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
                         --slave  %{_mandir}/man1/jjs.1 jjs.1 %{prefix}/man/man1/jjs.1 \
-                        --slave  %{_mandir}/man1/jrunscript.1 jrunscript.1 %{prefix}/man/man1/jrunscript.1 \
                         --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
                         --slave  %{_mandir}/man1/pack200.1 pack200.1 %{prefix}/man/man1/pack200.1 \
                         --slave  %{_mandir}/man1/rmid.1 rmid.1 %{prefix}/man/man1/rmid.1 \
@@ -212,6 +209,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jdb jdb %{prefix}/bin/jdb \
                         --slave %{_bindir}/jdeprscan jdeprscan %{prefix}/bin/jdeprscan \
                         --slave %{_bindir}/jdeps jdeps %{prefix}/bin/jdeps \
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
                         --slave %{_bindir}/jhsdb jhsdb %{prefix}/bin/jhsdb \
                         --slave %{_bindir}/jimage jimage %{prefix}/bin/jimage \
                         --slave %{_bindir}/jinfo jinfo %{prefix}/bin/jinfo \
@@ -219,6 +217,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jmap jmap %{prefix}/bin/jmap \
                         --slave %{_bindir}/jmod jmod %{prefix}/bin/jmod \
                         --slave %{_bindir}/jps jps %{prefix}/bin/jps \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/jshell jshell %{prefix}/bin/jshell \
                         --slave %{_bindir}/jstack jstack %{prefix}/bin/jstack \
                         --slave %{_bindir}/jstat jstat %{prefix}/bin/jstat \
@@ -237,6 +236,7 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/jinfo.1 jinfo.1 %{prefix}/man/man1/jinfo.1 \
                         --slave  %{_mandir}/man1/jmap.1 jmap.1 %{prefix}/man/man1/jmap.1 \
                         --slave  %{_mandir}/man1/jps.1 jps.1 %{prefix}/man/man1/jps.1 \
+                        --slave  %{_mandir}/man1/jrunscript.1 jrunscript.1 %{prefix}/man/man1/jrunscript.1 \
                         --slave  %{_mandir}/man1/jstack.1 jstack.1 %{prefix}/man/man1/jstack.1 \
                         --slave  %{_mandir}/man1/jstat.1 jstat.1 %{prefix}/man/man1/jstat.1 \
                         --slave  %{_mandir}/man1/jstatd.1 jstatd.1 %{prefix}/man/man1/jstatd.1 \
@@ -255,6 +255,8 @@ fi
 %{prefix}
 
 %changelog
+* Thu Mar 2 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10-3.adopt0
+- Fix alternatives linking
 * Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10-2.adopt0
 - Eclipse Temurin 11.0.18+10 release 2.
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10.adopt0
