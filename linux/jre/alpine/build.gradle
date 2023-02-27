@@ -5,7 +5,7 @@ plugins {
 ext {
 	junitVersion = "5.9.2"
 	testcontainersVersion = "1.17.6"
-	assertjCoreVersion = "3.24.1"
+	assertjCoreVersion = "3.24.2"
 }
 
 repositories {
