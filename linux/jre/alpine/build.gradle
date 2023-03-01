@@ -5,7 +5,7 @@ plugins {
 ext {
 	junitVersion = "5.9.2"
 	testcontainersVersion = "1.17.6"
-	assertjCoreVersion = "3.24.1"
+	assertjCoreVersion = "3.24.2"
 }
 
 repositories {
@@ -81,7 +81,7 @@ task packageJreAlpine {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build",
+				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"-f", "Dockerfile",
@@ -90,7 +90,7 @@ task packageJreAlpine {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build",
+				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"

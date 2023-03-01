@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 #  17.0.3.0.0___7 == 17.0.3.0.0+7
 %global spec_version 17.0.6.0.0.10
-%global spec_release 1
+%global spec_release 2
 %global priority 1161
 
 %global source_url_base https://github.com/adoptium/temurin17-binaries/releases/download
@@ -249,6 +249,8 @@ fi
 %{prefix}
 
 %changelog
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10-2.adopt0
+- Eclipse Temurin 17.0.6+10 release 2.
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10.adopt0
 - Eclipse Temurin 17.0.6+10 release.
 * Thu Oct 25 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.5.0.0.8.adopt0

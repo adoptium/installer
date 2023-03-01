@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 19.0.0.0.0___19.0.0.0.0+36
 #  19.0.0.0.0___36 == 19.0.0.0.0+36
 %global spec_version 19.0.2.0.0.7
-%global spec_release 2
+%global spec_release 3
 %global priority 1912
 
 %global source_url_base https://github.com/adoptium/temurin19-binaries/releases/download
@@ -186,5 +186,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7-3.adopt0
+- Eclipse Temurin JRE 19.0.2+7 release 3.
 * Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 19.0.2.0.0.7.adopt0
 - Eclipse Temurin JRE 19.0.2+7 release.
