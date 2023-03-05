@@ -23,7 +23,7 @@ makedepends="
 	libxt-dev
 	libxtst-dev
 "
-depends="$pkgname-jdk" # for the virtual package
+depends=""
 subpackages="$pkgname-src:_src:noarch
 	$pkgname-jdk:_jdk"
 source="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-$_pkgvername/OpenJDK11U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
@@ -78,9 +78,15 @@ _jdk() {
 	_toroot="$subpkgdir/$_java_home"
 
 	mkdir -p "$_toroot"
-	mv "$_fromroot/bin" "$_toroot"
-	mv "$_fromroot/lib" "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
 	mv "$_fromroot/include" "$_toroot"
+	mv "$_fromroot/jmods"   "$_toroot"
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	mv "$_fromroot/man"     "$_toroot"
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
 
 	# symlink to shared cacerts store
 	rm "$_toroot/lib/security/cacerts"
