@@ -11,7 +11,7 @@ pkgrel=0
 pkgdesc="Eclipse Temurin 19"
 provider_priority=19
 url="https://adoptium.net"
-arch="x86_64"
+arch="noarch"
 license="GPL-2.0-with-classpath-exception"
 makedepends="
 	alsa-lib-dev
@@ -26,7 +26,7 @@ makedepends="
 	libxtst-dev
 "
 depends=""
-subpackages="$pkgname-jre:_jre"
+subpackages="$pkgname-jre:_jre:x86_64"
 source="https://github.com/adoptium/temurin19-binaries/releases/download/jdk-$_pkgvername/OpenJDK19U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 "
 
