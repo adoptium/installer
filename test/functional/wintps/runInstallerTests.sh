@@ -15,11 +15,10 @@
 set -x
 set -eo pipefail
 
-export RESULTS_FOLDER=$1/result
-export INPUT_FOLDER=$1/input
+mkdir input
 
-#mkdir $RESULTS_FOLDER
-mkdir $INPUT_FOLDER
+export RESULTS_FOLDER=$1/result
+export INPUT_FOLDER=`$pwd/input`
 export JDK_VERSION=$2
 export MSI_VENDOR="Adoptium"
 export CURRENT_USER_NAME='jenkins'
