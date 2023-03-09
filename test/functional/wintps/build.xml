@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+
+<!--
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+-->
+
+<project name="WinTPS Installer tests" default="build" basedir=".">
+	<taskdef resource="net/sf/antcontrib/antlib.xml" />
+	<description>
+		WinTPS Installer tests
+	</description>
+
+	<!-- set global properties for this build -->
+	<property name="DEST" value="${BUILD_ROOT}/functional/wintps" />
+	
+	<!--Properties for this particular build-->
+	<property name="src" location="./" />
+	
+	<target name="wintpsTest.check">
+		<condition property="wintpsTestdir.exists">
+			<available file="WinTPSTest" type="dir"/>
+		</condition>
+	</target>
+
+	<target name="getWinTPSTest" depends="wintpsTest.check" unless="wintpsTestdir.exists">
+		<exec executable="git" failonerror="true">
+			<arg value="clone" />
+			<arg value="https://github.com/rh-openjdk/WindowsTPS" />
+		</exec>
+	</target>
+
+	<target name="init">
+		<mkdir dir="${DEST}" />
+	</target>
+	
+	<target name="dist" depends="init,getWinTPSTest" description="generate the distribution">
+		<copy todir="${DEST}">
+			<fileset dir="${src}" includes="*.xml,*.sh" />
+		</copy>
+	</target>
+
+	<target name="clean" depends="dist" description="clean up">
+		<!-- Delete the ${build} directory trees -->
+		<delete dir="${build}" />
+	</target>
+
+	<target name="build" >
+		<antcall target="clean" inheritall="true" />
+	</target>
+</project>
