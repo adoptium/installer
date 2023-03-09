@@ -18,7 +18,7 @@ set -eo pipefail
 mkdir input
 
 export RESULTS_FOLDER=$1/result
-export INPUT_FOLDER=`$pwd/input`
+export INPUT_FOLDER="$(pwd)/input"
 export JDK_VERSION=$2
 export MSI_VENDOR="Adoptium"
 export CURRENT_USER_NAME='jenkins'

@@ -35,7 +35,7 @@
 	<target name="getWinTPSTest" depends="wintpsTest.check" unless="wintpsTestdir.exists">
 		<exec executable="git" failonerror="true">
 			<arg value="clone" />
-			<arg value="https://github.com/RadekCap/WindowsTPS" />
+			<arg value="https://github.com/rh-openjdk/WindowsTPS" />
 		</exec>
 	</target>
 
