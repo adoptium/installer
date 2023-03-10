@@ -11,7 +11,7 @@ pkgrel=0
 pkgdesc="Eclipse Temurin 20"
 provider_priority=20
 url="https://adoptium.net"
-arch="x86_64"
+arch="noarch"
 license="GPL-2.0-with-classpath-exception"
 makedepends="
 	alsa-lib-dev
@@ -25,8 +25,8 @@ makedepends="
 	libxt-dev
 	libxtst-dev
 "
-depends="$pkgname-jre" # for the virtual package
-subpackages="$pkgname-jre:_jre"
+depends=""
+subpackages="$pkgname-jre:_jre:x86_64"
 source="https://github.com/adoptium/temurin20-binaries/releases/download/jdk-$_pkgvername/OpenJDK20U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 "
 
@@ -59,8 +59,12 @@ _jre() {
 	_toroot="$subpkgdir/$_java_home"
 
 	mkdir -p "$_toroot"
-	mv "$_fromroot/bin" "$_toroot"
-	mv "$_fromroot/lib" "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
 
 	# symlink to shared cacerts store
 	rm "$_toroot/lib/security/cacerts"
