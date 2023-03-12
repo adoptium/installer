@@ -14,13 +14,13 @@ jobs:
     runs-on: macos-latest
     steps:
 
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
     - name: Install dependencies
       run: brew install --cask packages
 
     - name: Setup environment variables
-      uses: allenevans/set-env@v2.2.0
+      uses: allenevans/set-env@c4f231179ef63887be707202a295d9cb1c687eb9 # v2.2.0
       with:
         MAJOR_VERSION: 17
         FULL_VERSION: 17.0.3_7
@@ -39,7 +39,7 @@ jobs:
         export WORKSPACE=$PWD
         bash pkgbuild/create-installer-mac.sh
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
       with:
         name: macOS_${{ matrix.architecture }}
         path: workspace/target/*.pkg

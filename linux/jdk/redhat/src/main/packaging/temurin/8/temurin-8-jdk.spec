@@ -1,11 +1,11 @@
-%global upstream_version 8u345-b01
+%global upstream_version 8u362-b09
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 8.0.312.0.1___8 8.0.312.0.0+7
 #  8.0.312.0.0___7 == 8.0.312.0.0+7
-%global spec_version 8.0.345.0.0.1
-%global spec_release 1
+%global spec_version 8.0.362.0.0.9
+%global spec_release 2
 %global priority 1081
 
 %global source_url_base https://github.com/adoptium/temurin8-binaries/releases/download
@@ -47,7 +47,7 @@
 %global src_num 6
 %global sha_src_num 7
 # jdk8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
-%global upstream_version 8u345-ga-aarch32-20220802
+%global upstream_version 8u362-b09-aarch32-20230119
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -173,9 +173,6 @@ popd
 echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 
-%pretrans
-# noop
-
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
@@ -279,6 +276,12 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-2.adopt0
+- Eclipse Temurin 8.0.362-b09 release 2.
+* Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9.adopt0
+- Eclipse Temurin 8.0.362-b09 release.
+* Thu Nov 03 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.352.0.0.8.adopt0
+- Eclipse Temurin 8.0.352-b08 release.
 * Thu Aug 08 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.345.0.0.1.adopt0
 - Eclipse Temurin 8.0.345-b01 release.
 * Thu May 05 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.332.0.0.9.adopt0

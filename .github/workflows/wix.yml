@@ -10,44 +10,56 @@ jobs:
   wix:
     strategy:
       matrix:
-        jdk: [8, 11]
+        jdk: [8, 11, 17]
         include:
         - jdk: 8
           ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
           PRODUCT_MAJOR_VERSION: 8
           PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 265
+          PRODUCT_MAINTENANCE_VERSION: 362
           PRODUCT_PATCH_VERSION: 0
-          PRODUCT_BUILD_NUMBER: "01"
-          MSI_PRODUCT_VERSION: 8.0.265.1
+          PRODUCT_BUILD_NUMBER: "09"
+          MSI_PRODUCT_VERSION: 8.0.362.9
           ARCH: x64
-          TAG: jdk8u265-b01
-          SUB_TAG: 8u265b01
+          TAG: jdk8u362-b09
+          SUB_TAG: 8u362b09
           JVM: hotspot
         - jdk: 11
           ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 11
           PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 9
-          PRODUCT_PATCH_VERSION: 1
-          PRODUCT_BUILD_NUMBER: 11
-          MSI_PRODUCT_VERSION: 11.0.9.1
+          PRODUCT_MAINTENANCE_VERSION: 18
+          PRODUCT_PATCH_VERSION: 0
+          PRODUCT_BUILD_NUMBER: 10
+          MSI_PRODUCT_VERSION: 11.0.18.10
           ARCH: x64
-          TAG: jdk-11.0.9+11.1
-          SUB_TAG: 11.0.9_11
+          TAG: jdk-11.0.18+10
+          SUB_TAG: 11.0.18_10
+          JVM: hotspot
+        - jdk: 17
+          ICEDTEA_WEB_VERSION: ""
+          PRODUCT_MAJOR_VERSION: 17
+          PRODUCT_MINOR_VERSION: 0
+          PRODUCT_MAINTENANCE_VERSION: 6
+          PRODUCT_PATCH_VERSION: 0
+          PRODUCT_BUILD_NUMBER: 10
+          MSI_PRODUCT_VERSION: 17.0.6.10
+          ARCH: x64
+          TAG: jdk-17.0.6+10
+          SUB_TAG: 17.0.6_10
           JVM: hotspot
 
     name: wix
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c # v3.3.0
 
       - name: Install dependencies
         run: |
           choco install --no-progress wget
 
       - name: Setup environment variables
-        uses: allenevans/set-env@v2.2.0
+        uses: allenevans/set-env@c4f231179ef63887be707202a295d9cb1c687eb9 # v2.2.0
         with:
           PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
           PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
@@ -70,8 +82,8 @@ jobs:
       - name: Download Prebuilt JDK/JRE
         run: |
           cd wix\SourceDir
-          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          wget -q "https://github.com/AdoptOpenJDK/openjdk${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
           ./CreateSourceFolder.AdoptOpenJDK.ps1
 
       - name: Create JDK Installer
@@ -88,7 +100,7 @@ jobs:
           call Build.OpenJDK_generic.cmd
         shell: cmd
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@0b7f8abb1508181956e8e162db84b466c27e18ce # v3.1.2
         with:
           name: windows
           path: wix/ReleaseDir/*.msi

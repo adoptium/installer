@@ -3,9 +3,9 @@ plugins {
 }
 
 ext {
-	junitVersion = "5.9.1"
-	testcontainersVersion = "1.17.5"
-	assertjCoreVersion = "3.23.1"
+	junitVersion = "5.9.2"
+	testcontainersVersion = "1.17.6"
+	assertjCoreVersion = "3.24.2"
 }
 
 repositories {
@@ -79,7 +79,7 @@ task packageJdkDebian {
 		}
 		project.exec {
 			workingDir "src/main/packaging"
-			commandLine "docker", "build",
+			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"

@@ -34,12 +34,25 @@ final class DebFiles {
 	}
 
 	static Path hostDebPath() {
-		return Paths.get("build", "ospackage", "adoptium-ca-certificates_1.0.0-1_all.deb");
+		return findBuildOutputOnHost(System.getenv("PACKAGE") + "*.deb");
+	}
+
+	private static Path findBuildOutputOnHost(String pattern) {
+		Path outputDirectory = Paths.get("build", "ospackage");
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(outputDirectory, pattern)) {
+			for (Path candidateFile : stream) {
+				return candidateFile;
+			}
+		} catch (IOException x) {
+			throw new UncheckedIOException(x);
+		}
+
+		throw new RuntimeException("Could not find file with pattern " + pattern + " in " + outputDirectory.toString());
 	}
 
 	static Path hostChangesPath() {
 		Path outputDirectory = Paths.get("build", "ospackage");
-		String changesFilePattern = "adoptium-ca-certificates_1.0.0-1_*.changes";
+		String changesFilePattern = "adoptium-ca-certificates*.changes";
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(outputDirectory, changesFilePattern)) {
 			for (Path candidateFile : stream) {
 				return candidateFile;

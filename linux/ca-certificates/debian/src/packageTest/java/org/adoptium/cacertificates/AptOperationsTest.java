@@ -60,7 +60,7 @@ class AptOperationsTest {
 			assertThat(result.getExitCode()).isEqualTo(0);
 			assertThat(result.getStdout())
 				.contains("Package: adoptium-ca-certificates")
-				.contains("Version: 1.0.0-1")
+				.contains("Version: 1.0.1-1")
 				.contains("Priority: optional")
 				.contains("Architecture: all")
 				.contains("Status: install ok installed");

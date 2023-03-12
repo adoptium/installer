@@ -1,3 +1,21 @@
+temurin-19-jdk (19.0.2.0.0+7) STABLE; urgency=medium
+
+  * Eclipse Temurin 19.0.2.0.0+7 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 18 Jan 2023 09:43:20 +0000
+
+temurin-19-jdk (19.0.1.0.0+10-1) STABLE; urgency=medium
+
+  * Add Ubuntu Kinetic (22.10) to the list of supported Ubuntu releases.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 06 Dec 2022 15:42:00 +0000
+
+temurin-19-jdk (19.0.1.0.0+10) STABLE; urgency=medium
+
+  * Eclipse Temurin 19.0.1.0.0+10 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Sat, 05 Nov 2022 09:25:40 +0000
+
 temurin-19-jdk (19+36) STABLE; urgency=medium
 
   * Eclipse Temurin 19+36 release.

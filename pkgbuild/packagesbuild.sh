@@ -29,7 +29,7 @@ while test $# -gt 0; do
     -h|--help)
       echo "options:"
       echo "-h, --help               show brief help"
-      echo "--major_version          <8,11,17,18>"
+      echo "--major_version          <8,11,17,19>"
       echo "--full_version           17.0.3_7"
       echo "-i, --input_directory    path to extracted jdk"
       echo "-o, --output_directory   name of the pkg file"

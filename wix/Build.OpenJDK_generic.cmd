@@ -30,11 +30,11 @@ REM default vendor information
 IF NOT DEFINED VENDOR SET VENDOR=Eclipse Adoptium
 IF NOT DEFINED VENDOR_BRANDING SET VENDOR_BRANDING=Eclipse Temurin
 IF NOT DEFINED VENDOR_BRANDING_LOGO SET VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
-IF NOT DEFINED VENDOR_BRANDING_BANNER SET VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.bmp
-IF NOT DEFINED VENDOR_BRANDING_DIALOG SET VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.bmp
+IF NOT DEFINED VENDOR_BRANDING_BANNER SET VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.png
+IF NOT DEFINED VENDOR_BRANDING_DIALOG SET VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.png
 IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/adoptium/adoptium-support/issues/new/choose
-IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support.html
-IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/releases.html
+IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support
+IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
 
 REM This needs tidying up, it's got out of control now
 IF NOT "%ARCH%" == "x64" (

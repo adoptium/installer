@@ -31,12 +31,22 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class ChangesVerificationTest {
 
+	private static String[] versionsList = {
+			"bookworm", // Debian/12
+			"bullseye", // Debian/11
+			"buster",   // Debian/10
+			"kinetic",  // Ubuntu/22.10
+			"jammy",    // Ubuntu/22.04 (LTS)
+			"focal",    // Ubuntu/20.04 (LTS)
+			"bionic",   // Ubuntu/18.04 (LTS)
+	};
+
 	@Test
 	void allDistributionsListedInChangesFile() throws IOException {
 		Path changesFile = DebFiles.hostChangesPath();
 		assertThat(changesFile).exists();
 
 		List<String> lines = Files.readAllLines(changesFile, StandardCharsets.UTF_8);
-		assertThat(lines).contains("Distribution: buster bullseye bionic focal jammy");
+		assertThat(lines).contains("Distribution: " + String.join(" ", versionsList));
 	}
 }

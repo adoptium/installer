@@ -1,0 +1,73 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-19
+pkgver=19.0.2_p7
+# replace _p1 with _1
+_pkgver=${pkgver/_p/_}
+# _pkgver=19_36 # remove this line and uncomment the above line when the next version is released
+_pkgverplus=${pkgver/_p/+}
+# _pkgverplus=19+36 # remove this line and uncomment the above line when the next version is released
+_pkgvername=${_pkgverplus/+/%2B}
+pkgrel=0
+pkgdesc="Eclipse Temurin 19"
+provider_priority=19
+url="https://adoptium.net"
+arch="x86_64"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+depends="$pkgname-jre" # for the virtual package
+subpackages="$pkgname-jre:_jre"
+source="https://github.com/adoptium/temurin19-binaries/releases/download/jdk-$_pkgvername/OpenJDK19U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+"
+
+_java_home="/usr/lib/jvm/java-19-temurin-jre"
+
+ldpath="$_java_home/lib:$_java_home/lib/server"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+
+	# 1) check that java -version works
+	$_java_bin/java -version
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+}
+
+_jre() {
+	pkgdesc="Eclipse Temurin 19 (JRE)"
+	provides="java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin" "$_toroot"
+	mv "$_fromroot/lib" "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+
+sha256sums="
+6c0ce0ead2e7ce3e0f06b9578447499c8bd0509306c95fcd81dbecb634228933  OpenJDK19U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+"
