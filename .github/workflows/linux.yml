@@ -1,5 +1,6 @@
 name: Check Linux Packages
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'linux/**'
