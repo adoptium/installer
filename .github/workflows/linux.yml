@@ -48,6 +48,15 @@ jobs:
           # Generate the matrix based on the changed files
           # Loop through the changed files and generate a matrix of jobs to run
           # The matrix is a JSON string that is used in the next step
+
+          # Set test versions if version cannot be determined from the path
+          versions_to_test=(
+            "8"
+            "11"
+            "17"
+            "20"
+          )
+
           matrix='['
           for file in $(echo ${{ steps.changes.outputs.all }} | tr " " "\n")
           do
@@ -60,24 +69,23 @@ jobs:
               fi
             }
             case $file in
-              linux/jdk/*)
+              linux/jdk/*|linux/jre/*)
                 # extract values from the path
+                type=$(echo $file | cut -d'/' -f 2 | tr '[a-z]' '[A-Z]')
                 distro=$(echo $file | cut -d'/' -f 3)
                 distro=$(capitalize $distro)
                 name=$(echo $file | cut -d'/' -f 7)
                 version=$(echo $file | cut -d'/' -f 8)
-                # add to the matrix
-                matrix+='{"image_type":"JDK","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
-                ;;
-              linux/jre/*)
-                # extract values from the path
-                distro=$(echo $file | cut -d'/' -f 3)
-                distro=$(capitalize $distro)
-                name=$(echo $file | cut -d'/' -f 7)
-                version=$(echo $file | cut -d'/' -f 8)
-                # add to the matrix
-                matrix+='{"image_type":"JRE","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
-                ;;
+                # test if version is a number and otherwise use versions_to_test
+                if ! [[ $version =~ ^[0-9]+$ ]]; then
+                  for version in "${versions_to_test[@]}"
+                  do
+                    matrix+='{"image_type":"'"$type"'","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
+                  done
+                else
+                  matrix+='{"image_type":"'"$type"'","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
+                fi
+              ;;
             esac
           done
           # remove trailing comma
