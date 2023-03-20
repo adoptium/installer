@@ -168,7 +168,6 @@ fi
 %preun
 if [ $1 -eq 0 ]; then
     update-alternatives --remove java %{prefix}/bin/java
-    update-alternatives --remove javac %{prefix}/bin/javac
 fi
 
 %files
