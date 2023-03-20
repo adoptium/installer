@@ -29,12 +29,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@24cb9080177205b6e8c946b17badbe402adc938f # v3.4.0
+        with:
+          fetch-depth: 0
 
       - name: Get changed files
         id: changes
         # Set outputs using the command.
         run: |
           changed_files=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | xargs)
+          echo $changed_files
           echo "all=$changed_files" >> $GITHUB_OUTPUT
           cacerts=$(git diff --name-only --diff-filter=ACMRT ${{ github.event.pull_request.base.sha }} ${{ github.sha }} | grep ca-certificates | xargs)
           echo "cacerts=$cacerts" >> $GITHUB_OUTPUT
@@ -45,7 +48,7 @@ jobs:
           # Generate the matrix based on the changed files
           # Loop through the changed files and generate a matrix of jobs to run
           # The matrix is a JSON string that is used in the next step
-          matrix='{"include":['
+          matrix='['
           for file in $(echo ${{ steps.changes.outputs.all }} | tr " " "\n")
           do
             # capitalize distro unless it's redhat (set as RedHat)
@@ -64,7 +67,7 @@ jobs:
                 name=$(echo $file | cut -d'/' -f 7)
                 version=$(echo $file | cut -d'/' -f 8)
                 # add to the matrix
-                matrix+='{"image_type":"JDK","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}}'
+                matrix+='{"image_type":"JDK","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
                 ;;
               linux/jre/*)
                 # extract values from the path
@@ -73,11 +76,13 @@ jobs:
                 name=$(echo $file | cut -d'/' -f 7)
                 version=$(echo $file | cut -d'/' -f 8)
                 # add to the matrix
-                matrix+='{"image_type":"JRE","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}}'
+                matrix+='{"image_type":"JRE","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
                 ;;
             esac
           done
-          matrix+=']}'
+          # remove trailing comma
+          matrix=${matrix%?}
+          matrix+=']'
           echo "matrix=$matrix" >> $GITHUB_OUTPUT
 
   check-ca-certificates:
@@ -121,7 +126,8 @@ jobs:
         working-directory: ./linux
     strategy:
       fail-fast: false
-      matrix: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+      matrix:
+        include: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
 
     steps:
       - name: Checkout
