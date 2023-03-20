@@ -82,7 +82,7 @@ AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
 
 BuildRequires:  tar
-BuildRequires:  wgetasas
+BuildRequires:  wget
 
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives

@@ -11,7 +11,7 @@ purge)
 remove | upgrade | failed-upgrade | abort-install | abort-upgrade | disappear | deconfigure)
 	for tool in $tools; do
 		for tool_path in "$jdk_base_dir/bin/$tool" "$jdk_base_dir/lib/$tool"; do
-			if [ ! -e "$tool_path" ]; thenss
+			if [ ! -e "$tool_path" ]; then
 				continue
 			fi
 

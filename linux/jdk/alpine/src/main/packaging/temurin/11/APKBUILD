@@ -17,7 +17,7 @@ makedepends="
 	libffi-dev
 	libjpeg-turbo-dev
 	libx11-dev
-	libxext-devs
+	libxext-dev
 	libxrandr-dev
 	libxrender-dev
 	libxt-dev
