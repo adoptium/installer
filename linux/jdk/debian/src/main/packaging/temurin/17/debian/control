@@ -67,7 +67,7 @@ Provides: java-compiler,
           java7-runtime,
           java8-runtime,
           java9-runtime,
-          java10-runtime-headless,
+          java10-runtime-headless,sss
           java11-runtime-headless,
           java12-runtime-headless,
           java13-runtime-headless,
