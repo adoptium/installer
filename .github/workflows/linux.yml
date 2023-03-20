@@ -78,6 +78,7 @@ jobs:
                 version=$(echo $file | cut -d'/' -f 8)
                 # test if version is a number and otherwise use versions_to_test
                 if ! [[ $version =~ ^[0-9]+$ ]]; then
+                  name="temurin"
                   for version in "${versions_to_test[@]}"
                   do
                     matrix+='{"image_type":"'"$type"'","distro":"'"$distro"'","product":{"name":"'"$name"'","version":"'"$version"'"}},'
