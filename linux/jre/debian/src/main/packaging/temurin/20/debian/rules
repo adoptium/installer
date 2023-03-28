@@ -3,16 +3,12 @@
 pkg_name = temurin-20-jre
 priority = 1912
 jvm_tools = java jfr jrunscript jwebserver keytool rmiregistry
-amd64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0+1/OpenJDK20U-jre_x64_linux_hotspot_20.0.0_1.tar.gz
-amd64_checksum = 7386e10c74f00a4382be0540bc0494854804ad79427d8a50ac77a4c7208ff348
-arm64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0+1/OpenJDK20U-jre_aarch64_linux_hotspot_20.0.0_1.tar.gz
-arm64_checksum = 3653f9e5ad21e4744e5a655e243fba2895651029bee23f3d2366d5debc41a736
-armhf_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0+1/OpenJDK20U-jre_arm_linux_hotspot_20.0.0_1.tar.gz
-armhf_checksum = d4588e8c01ca60da2ceed68b7d43d2fd9ec3350b93043f0dabd0eb6cb03cb23d
-ppc64el_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0+1/OpenJDK20U-jre_ppc64le_linux_hotspot_20.0.0_1.tar.gz
-ppc64el_checksum = a30203431c7c21602227d39368c5af6e7abd20000d6da5562de7f3f5c57cbad5
-s390x_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0+1/OpenJDK20U-jre_s390x_linux_hotspot_20.0.0_1.tar.gz
-s390x_checksum = 59463543feb858dc2eabeea344491897806da5d09c3cbf5b7c93e86269e32a02
+amd64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jre_x64_linux_hotspot_20_36.tar.gz
+amd64_checksum = f41be99b1fd21873b0fa1436bb206119706922e9c4b32298538faf3d1b632a72
+arm64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jre_aarch64_linux_hotspot_20_36.tar.gz
+arm64_checksum = b226140b8efacf21d256203cc8f919549e295cb9bac88b24c15fb8e53a66b545
+ppc64el_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jre_ppc64le_linux_hotspot_20_36.tar.gz
+ppc64el_checksum = a1c5a16d5a438ce7da4563cd51ff6778cdf62331c00a3096ab2388a916e076d2
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm

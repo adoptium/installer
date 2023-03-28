@@ -3,16 +3,12 @@
 pkg_name = temurin-20-jdk
 priority = 1911
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0%2B1/OpenJDK20U-jdk_x64_linux_hotspot_20.0.0_1.tar.gz
-amd64_checksum = 3a3ba7a3f8c3a5999e2c91ea1dca843435a0d1c43737bd2f6822b2f02fc52165
-arm64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0%2B1/OpenJDK20U-jdk_aarch64_linux_hotspot_20.0.0_1.tar.gz
-arm64_checksum = 1c4be9aa173cb0deb0d215643d9509c8900e5497290b29eee4bee335fa57984f
-armhf_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0%2B1/OpenJDK20U-jdk_arm_linux_hotspot_20.0.0_1.tar.gz
-armhf_checksum = 6a51cb3868b5a3b81848a0d276267230ff3f8639f20ba9ae9ef1d386440bf1fd
-ppc64el_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0%2B1/OpenJDK20U-jdk_ppc64le_linux_hotspot_20.0.0_1.tar.gz
-ppc64el_checksum = 173d1256dfb9d13d309b5390e6bdf72d143b512201b0868f9d349d5ed3d64072
-s390x_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20.0.0%2B1/OpenJDK20U-jdk_s390x_linux_hotspot_20.0.0_1.tar.gz
-s390x_checksum = f2512f9a8e9847dd5d3557c39b485a8e7a1ef37b601dcbcb748d22e49f44815c
+amd64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jdk_x64_linux_hotspot_20_36.tar.gz
+amd64_checksum = fb6000faf47fffcda8caf01f60097d582728a6fffb6c1b85c8075c674f0c9281
+arm64_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jdk_aarch64_linux_hotspot_20_36.tar.gz
+arm64_checksum = 980156d37580bd6fec142e02900497984e94c4b819a0c0eb7ce790bfc7c7d920
+ppc64el_tarball_url = https://github.com/adoptium/temurin20-binaries/releases/download/jdk-20%2B36/OpenJDK20U-jdk_ppc64le_linux_hotspot_20_36.tar.gz
+ppc64el_checksum = 45dde71faf8cbb78fab3c976894259655c8d3de827347f23e0ebe5710921dded
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
