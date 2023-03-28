@@ -92,7 +92,9 @@ jobs:
           # remove trailing comma
           matrix=${matrix%?}
           matrix+=']'
-          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          # remove any duplicate entries
+          matrix=$(echo $matrix | jq -S 'unique')
+          echo "matrix<<EOF"$'\n'"$matrix"$'\n'EOF >> $GITHUB_OUTPUT
 
   check-ca-certificates:
     name: "Check ca-certificates"

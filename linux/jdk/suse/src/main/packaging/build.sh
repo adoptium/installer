@@ -8,10 +8,12 @@ echo "DEBUG: building Suse arch ${buildArch} with version ${buildVersion}"
 # Build specified target or build all (not s390x on jdk8)
 if [ "${buildArch}" != "all" ]; then
 	targets=${buildArch}
-elif [ ${buildVersion} != "8" ]; then
-	targets="x86_64 ppc64le aarch64 armv7hl s390x"
-else
+elif [ "${buildVersion}" = "8" ]; then
 	targets="x86_64 ppc64le aarch64 armv7hl"
+elif [ "${buildVersion}" = "20" ]; then
+	targets="x86_64 ppc64le aarch64"
+else
+	targets="x86_64 ppc64le aarch64 armv7hl s390x"
 fi
 
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do

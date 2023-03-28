@@ -8,10 +8,12 @@ echo "DEBUG: building RH arch ${buildArch} with jdk version ${buildVersion}"
 # Build specified target or build all (not s390x on jdk8)
 if [ "${buildArch}" != "all" ]; then
 	targets=${buildArch}
-elif [ "${buildVersion}" != "8" ]; then
-	targets="x86_64 ppc64le aarch64 armv7hl s390x"
-else
+elif [ "${buildVersion}" = "8" ]; then
 	targets="x86_64 ppc64le aarch64 armv7hl"
+elif [ "${buildVersion}" = "20" ]; then
+	targets="x86_64 ppc64le aarch64"
+else
+	targets="x86_64 ppc64le aarch64 armv7hl s390x"
 fi
 
 # loop spec file originally from src/main/packaging/$product/$productVersion/*.spec
@@ -28,4 +30,4 @@ find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.r
 # Sign generated RPMs with rpmsign.
 if grep -q %_gpg_name /home/builder/.rpmmacros; then
 	rpmsign --addsign /home/builder/out/*.rpm
-fi;
+fi
