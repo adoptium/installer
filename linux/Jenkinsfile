@@ -283,7 +283,6 @@ def uploadAlpineArtifacts(String buildArch) {
 }
 
 def uploadDebArtifacts(String buildArch) {
-    // full list of all platforms, up to user to opt out s390x+jdk8/jre8
     def debArchList = [
         'x86_64' : 'amd64',
         'armv7l': 'armhf',
@@ -291,6 +290,15 @@ def uploadDebArtifacts(String buildArch) {
         'ppc64le': 'ppc64el',
         's390x'  : 's390x'
     ]
+    // if VERSION is 8 or 20 remove s390x from the list
+    if (VERSION == '8' || VERSION == '20') {
+        debArchList.remove('s390x')
+    }
+    // if VERSION is 20 remove armv7l from the list
+    if (VERSION == '20') {
+        debArchList.remove('armv7l')
+    }
+
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
         add more into list when available for release
@@ -362,7 +370,6 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         ]
     ]
     def packageDirs = distro_Package[DISTRO.toLowerCase()]
-    // full list of all platforms, up to user to opt out s390x+jdk8 from input
     def rpmArchList=[
         'x86_64' : 'x86_64',
         'armv7hl': 'armv7hl',
@@ -370,6 +377,15 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         'ppc64le': 'ppc64le',
         's390x'  : 's390x'
     ]
+    // if VERSION is 8 or 20 remove s390x from the list
+    if (VERSION == '8' || VERSION == '20') {
+        rpmArchList.remove('s390x')
+    }
+    // if VERSION is 20 remove armv7hl from the list
+    if (VERSION == '20') {
+        rpmArchList.remove('armv7hl')
+    }
+
     if ("${rpmArch}" != 'all') {
         // when only build and upload one arch, reset
         rpmArchList = [("${rpmArch}" as String): "${rpmArchList[rpmArch]}"]

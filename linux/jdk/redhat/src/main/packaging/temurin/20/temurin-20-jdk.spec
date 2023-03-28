@@ -1,10 +1,10 @@
-%global upstream_version 20.0.2+7
+%global upstream_version 20+36
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 20.0.0.0.0___20.0.0.0.0+1
-#  20.0.0.0.0___1 == 20.0.0.0.0+1
-%global spec_version 20.0.0.0.0.1
+#  20.0.0.0.0___1 == 20.0.0.0.0+36
+%global spec_version 20.0.0.0.0.36
 %global spec_release 1
 %global priority 1161
 
@@ -19,47 +19,23 @@
 %ifarch x86_64
 %global vers_arch x64
 %global vers_arch2 ppc64le
-%global vers_arch3 s390x
-%global vers_arch4 aarch64
-%global vers_arch5 arm
+%global vers_arch3 aarch64
 %global src_num 0
 %global sha_src_num 1
 %endif
 %ifarch ppc64le
 %global vers_arch x64
 %global vers_arch2 ppc64le
-%global vers_arch3 s390x
-%global vers_arch4 aarch64
-%global vers_arch5 arm
+%global vers_arch3 aarch64
 %global src_num 2
 %global sha_src_num 3
-%endif
-%ifarch s390x
-%global vers_arch x64
-%global vers_arch2 ppc64le
-%global vers_arch3 s390x
-%global vers_arch4 aarch64
-%global vers_arch5 arm
-%global src_num 4
-%global sha_src_num 5
 %endif
 %ifarch aarch64
 %global vers_arch x64
 %global vers_arch2 ppc64le
-%global vers_arch3 s390x
-%global vers_arch4 aarch64
-%global vers_arch5 arm
-%global src_num 6
-%global sha_src_num 7
-%endif
-%ifarch %{arm}
-%global vers_arch x64
-%global vers_arch2 ppc64le
-%global vers_arch3 s390x
-%global vers_arch4 aarch64
-%global vers_arch5 arm
-%global src_num 8
-%global sha_src_num 9
+%global vers_arch3 aarch64
+%global src_num 4
+%global sha_src_num 5
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -123,15 +99,9 @@ Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_ar
 # Second architecture (ppc64le)
 Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
-# Third architecture (s390x)
+# Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
-# Fourth architecture (aarch64)
-Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
-# Fifth architecture (arm32)
-Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
@@ -253,5 +223,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Wed Mar 23 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.1-1.adopt0
-- Eclipse Temurin 20.0.0+1 release 1.
+* Wed Mar 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.36-1.adopt0
+- Eclipse Temurin 20.0.0+36 release 1.
