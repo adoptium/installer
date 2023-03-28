@@ -99,7 +99,7 @@ Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_ar
 # Second architecture (ppc64le)
 Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
-# Fourth architecture (aarch64)
+# Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
