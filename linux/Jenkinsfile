@@ -163,6 +163,14 @@ def jenkinsStepDeb() {
     if ("${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
     }
+    // remove s390x for JDK8 and JDK20
+    if ("${VERSION}" == '8' || "${VERSION}" == '20') {
+        debArchAllList.remove('s390x')
+    }
+    // remove armv7l for JDK20
+    if ("${VERSION}" == '20') {
+        debArchAllList.remove('armv7l')
+    }
     debArchAllList.each { DebARCH ->
         // special handle: no label x86_64 only x64 for debian agent
         def debLabel = "${DebARCH}&&docker"
