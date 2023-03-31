@@ -57,7 +57,6 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 			builder.add(Arguments.of("registry.access.redhat.com/ubi7/ubi", "latest"));
 		}
 
-
 		return builder.build();
 	}
 }
