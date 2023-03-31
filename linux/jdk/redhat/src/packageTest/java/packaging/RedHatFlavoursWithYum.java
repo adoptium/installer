@@ -34,8 +34,9 @@ import java.util.stream.Stream;
 public class RedHatFlavoursWithYum implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-		String arch = System.getProperty("os.arch");
-		boolean ubi7_supported = "x86-64".equalsIgnoreCase(arch) || "amd64".equalsIgnoreCase(arch) || "ppc64le".equalsIgnoreCase(arch) || "s390x".equalsIgnoreCase(arch);
+		// get arch with only alphanumeric chars
+		String normalized_arch = System.getProperty("os.arch").toLowerCase().replaceAll("[^a-z0-9]+", "");
+		boolean ubi7_supported = "x8664".equalsIgnoreCase(normalized_arch) || "amd64".equalsIgnoreCase(normalized_arch) || "ppc64le".equalsIgnoreCase(normalized_arch) || "s390x".equalsIgnoreCase(normalized_arch);
 		Stream.Builder<Arguments> builder = Stream.builder();
 		/*
 		 * Amazon Linux: All supported versions until long-term support runs out
