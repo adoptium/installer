@@ -34,6 +34,10 @@ import java.util.stream.Stream;
 public class RedHatFlavoursWithYum implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+		// get arch with only alphanumeric chars
+		String normalized_arch = System.getProperty("os.arch").toLowerCase().replaceAll("[^a-z0-9]+", "");
+		boolean ubi7_supported = "x8664".equalsIgnoreCase(normalized_arch) || "amd64".equalsIgnoreCase(normalized_arch) || "ppc64le".equalsIgnoreCase(normalized_arch) || "s390x".equalsIgnoreCase(normalized_arch);
+		Stream.Builder<Arguments> builder = Stream.builder();
 		/*
 		 * Amazon Linux: All supported versions until long-term support runs out
 		 *     (https://aws.amazon.com/amazon-linux-2/faqs/).
@@ -42,11 +46,18 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 * Oracle Linux: All supported versions until premier support runs out
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
 		 */
-		return Stream.of(
-			Arguments.of("amazonlinux", "2"),
-			Arguments.of("centos", "7"),
-			Arguments.of("registry.access.redhat.com/ubi7/ubi", "latest"),
-			Arguments.of("oraclelinux", "7")
-		);
+		builder.add(Arguments.of("amazonlinux", "2"));
+		builder.add(Arguments.of("centos", "7"));
+		builder.add(Arguments.of("oraclelinux", "7"));
+
+		/*
+		 * Redhat UBI7: Does not currently suport aarch64 architecture
+		 *     (https://catalog.redhat.com/software/containers/ubi7/ubi/5c3592dcd70cc534b3a37814?container-tabs=technical-information).
+		 */
+		if (ubi7_supported) {
+			builder.add(Arguments.of("registry.access.redhat.com/ubi7/ubi", "latest"));
+		}
+
+		return builder.build();
 	}
 }
