@@ -60,7 +60,7 @@ jobs:
 
           # If this job is being run on a pull request, only run the matrix for the changed files
           if [[ "${{ github.event_name }}" == "pull_request" ]]; then
-            changed_files=${{ steps.changes.outputs.all }}
+            changed_files="${{ steps.changes.outputs.all }}"
           else
             changed_files=$(git ls-files linux)
           fi
