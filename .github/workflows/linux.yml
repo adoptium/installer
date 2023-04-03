@@ -21,6 +21,7 @@ permissions:
 
 jobs:
   generate-matrix:
+    if: github.event_name == 'pull_request' || github.repository_owner != 'adoptium'
     runs-on: ubuntu-latest
     # Map a step output to a job output
     outputs:
@@ -57,8 +58,15 @@ jobs:
             "20"
           )
 
+          # If this job is being run on a pull request, only run the matrix for the changed files
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            changed_files=${{ steps.changes.outputs.all }}
+          else
+            changed_files=$(git ls-files linux)
+          fi
+
           matrix='['
-          for file in $(echo ${{ steps.changes.outputs.all }} | tr " " "\n")
+          for file in $(echo ${changed_files} | tr " " "\n")
           do
             # capitalize distro unless it's redhat (set as RedHat)
             capitalize () {
@@ -73,8 +81,16 @@ jobs:
                 # extract values from the path
                 type=$(echo $file | cut -d'/' -f 2 | tr '[a-z]' '[A-Z]')
                 distro=$(echo $file | cut -d'/' -f 3)
+                # if distro = build.gradle skip it
+                if [[ $distro == "build.gradle" ]]; then
+                  continue
+                fi
                 distro=$(capitalize $distro)
                 name=$(echo $file | cut -d'/' -f 7)
+                # if name != temurin skip it
+                if [[ $name != "temurin" ]]; then
+                  continue
+                fi
                 version=$(echo $file | cut -d'/' -f 8)
                 # test if version is a number and otherwise use versions_to_test
                 if ! [[ $version =~ ^[0-9]+$ ]]; then
@@ -92,8 +108,14 @@ jobs:
           # remove trailing comma
           matrix=${matrix%?}
           matrix+=']'
-          # remove any duplicate entries
-          matrix=$(echo $matrix | jq -S 'unique')
+          # check if matrix is empty
+          if [[ $matrix == ']' ]]; then
+            echo "No jobs to run"
+            matrix='[]'
+          else
+            # remove any duplicate entries
+            matrix=$(echo $matrix | jq -S 'unique')
+          fi
           echo "matrix<<EOF"$'\n'"$matrix"$'\n'EOF >> $GITHUB_OUTPUT
 
   check-ca-certificates:
