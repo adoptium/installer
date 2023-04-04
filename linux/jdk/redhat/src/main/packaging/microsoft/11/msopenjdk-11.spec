@@ -123,9 +123,7 @@ applications and components using the programming language Java.
 
 %prep
 pushd "%{_sourcedir}"
-if [ "%{sha_src_num}" != "-1" ]; then
-    sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
-fi
+sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
 popd
 
 %setup -n jdk-%{upstream_version} -T -b %{src_num}
