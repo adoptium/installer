@@ -59,4 +59,4 @@ Provides: java-compiler,
           java9-runtime-headless
 Description: Microsoft Build of OpenJDK 11
  Microsoft Build of OpenJDK is an OpenJDK-based development environment to create
- applications and components using the programming language Java.
+ applications and components using the Java programming language.
