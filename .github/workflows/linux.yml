@@ -87,8 +87,8 @@ jobs:
                 fi
                 distro=$(capitalize $distro)
                 name=$(echo $file | cut -d'/' -f 7)
-                # if name != temurin skip it
-                if [[ $name != "temurin" ]]; then
+                # if name != temurin and !microsoft skip it
+                if [[ $name != "temurin" && $name != "microsoft" ]]; then
                   continue
                 fi
                 version=$(echo $file | cut -d'/' -f 8)
