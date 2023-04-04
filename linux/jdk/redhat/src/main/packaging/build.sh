@@ -4,7 +4,9 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
+buildLocalFlag=false
 if [ -d /home/builder/build/jdk/ ]; then
+	buildLocalFlag=true
 	# Copy all sha256 files into SOURCE directory
 	count=1
 	for sha in $(ls /home/builder/build/jdk/*.sha256*.txt); do
@@ -38,7 +40,8 @@ fi
 # loop spec file originally from src/main/packaging/$product/$productVersion/*.spec
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 	spectool -g -R "$spec";
-	rpmbuild --nodeps -bs "$spec"; # build src.rpm
+	rpmbuild --define "local_build ${buildLocalFlag}" \
+				--nodeps -bs "$spec"; # build src.rpm
 	# if buildArch == all, extract ExclusiveArch from the spec file
 	if [ "${buildArch}" = "all" ]; then
 		# extract the ExclusiveArch from the spec file
@@ -48,7 +51,9 @@ for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 		[ -n "$ExclusiveArch" ] && targets="${ExclusiveArch}"
 	fi
 	for target in $targets; do
-		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm; # build binary package from src.rpm
+		rpmbuild --target "$target" \
+					--define "local_build ${buildLocalFlag}" \
+					--rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm; # build binary package from src.rpm
 	done;
 done;
 
