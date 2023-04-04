@@ -57,6 +57,9 @@ task packageJdkRedHat {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	def compressed_jdk_distribution_dir = getCompressedJdkDistributionDir()
+
+
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
@@ -64,11 +67,30 @@ task packageJdkRedHat {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
 		}
+		if (compressed_jdk_distribution_dir != null && !file(compressed_jdk_distribution_dir).exists()) {
+			throw new IllegalArgumentException("JDK distribution tar file '$compressed_jdk_distribution_dir' not found")
+		}
 
 		project.copy {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
+		if (compressed_jdk_distribution_dir != null) {
+			// copy jdk's tarfile to build dir
+			copy {
+				from("$compressed_jdk_distribution_dir")
+				into("${buildDir}/jdk")
+				include("*.tar.gz")
+			}
+
+			// copy jdk's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$compressed_jdk_distribution_dir")
+				into("${buildDir}/jdk")
+				include("*.sha256*.txt")
+			}
+		}
+
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"

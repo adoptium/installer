@@ -68,6 +68,8 @@ task packageJdkDebian {
 	def productVersion = getProductVersion()
 	def arch = getArch()
 
+	def compressed_jdk_distribution_dir = getCompressedJdkDistributionDir()
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -77,6 +79,22 @@ task packageJdkDebian {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
+		if (compressed_jdk_distribution_dir != null) {
+			// copy jdk's tarfile to build dir
+			copy {
+				from("$compressed_jdk_distribution_dir")
+				into("${buildDir}/jdk")
+				include("*.tar.gz")
+			}
+
+			// copy jdk's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$compressed_jdk_distribution_dir")
+				into("${buildDir}/jdk")
+				include("*.sha256*.txt")
+			}
+		}
+
 		project.exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",

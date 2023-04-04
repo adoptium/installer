@@ -4,6 +4,29 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
+if [ -d /home/builder/build/jdk/ ]; then
+	# Copy all sha256 files into SOURCE directory
+	count=1
+	for sha in $(ls /home/builder/build/jdk/*.sha256*.txt); do
+		cp $sha /home/builder/rpmbuild/SOURCES/local_build_jdk${count}.tar.gz.sha256.txt
+		count=$((count + 1))
+	done;
+	# Copy all source tar files into SOURCE directory
+	count=1
+	for jdk in $(ls /home/builder/build/jdk/*.tar.gz); do
+		cp $jdk /home/builder/rpmbuild/SOURCES/local_build_jdk${count}.tar.gz
+
+		# Change name of *.tar.gz in .sha256.txt contents to match new name (local_build_jdk#.tar.gz)
+		# Example:
+		# f579751fdcd627552a550e37ee00f8ff7a04e53bb385154ac17a0fb1fbb6ed12  <vendor>-jdk-17.0.7-linux-x64.tar.gz
+		# To
+		# f579751fdcd627552a550e37ee00f8ff7a04e53bb385154ac17a0fb1fbb6ed12  local_build_jdk1.tar.gz
+		sed -i "s/$(basename $jdk)/local_build_jdk${count}.tar.gz/" /home/builder/rpmbuild/SOURCES/local_build_jdk${count}.tar.gz.sha256.txt
+
+		count=$((count + 1))
+	done;
+fi
+
 echo "DEBUG: building RH arch ${buildArch} with jdk version ${buildVersion}"
 # Build specified target or build all
 if [ "${buildArch}" != "all" ]; then
