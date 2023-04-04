@@ -13,7 +13,7 @@
 # Above is upstream_version before the '+'
 %global java_provides openjdk
 
-%global local_build %(if [ `ls /home/builder/rpmbuild/SOURCES/local_build_jdk*.tar.gz | wc -l` -ge 1 ]; then echo "true"; else echo "false"; fi)
+%global local_build %(if [ `ls /home/builder/rpmbuild/SOURCES/ | grep -E local_build_jdk.*[.]tar[.]gz | wc -l` -ge 1 ]; then echo "true"; else echo "false"; fi)
 # Above checks if there is atleast 1 local build jdk in the Sources folder
 # (If so, initiate local build)
 %global override_arch_ %{?override_arch}%{!?override_arch:0}
