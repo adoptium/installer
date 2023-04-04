@@ -59,7 +59,6 @@ task packageJdkRedHat {
 
 	def compressed_jdk_distribution_dir = getCompressedJdkDistributionDir()
 
-
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
