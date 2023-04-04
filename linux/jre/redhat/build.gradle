@@ -57,6 +57,8 @@ task packageJreRedHat {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	def input_dir = getInputDir()
+
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
@@ -64,11 +66,30 @@ task packageJreRedHat {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
 		}
+		if (input_dir != null && !file(input_dir).exists()) {
+			throw new IllegalArgumentException("Input directory '$input_dir' not found")
+		}
 
 		project.copy {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
+		if (input_dir != null) {
+			// copy jre's tarfile to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jre")
+				include("*.tar.gz")
+			}
+
+			// copy jre's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jre")
+				include("*.sha256*.txt")
+			}
+		}
+
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
