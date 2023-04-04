@@ -9,6 +9,7 @@ HOST_USER_GID=$(stat -c "%g" /home/builder/out)
 export GPG_TTY=$(tty)
 getent group "$HOST_USER_GID" || groupadd -g "$HOST_USER_GID" hostusrg
 usermod -a -G "$HOST_USER_GID" builder
+chown builder /home/builder/out
 chmod g+w /home/builder/out
 
 # Drop root privileges and build the package.
