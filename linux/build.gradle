@@ -48,6 +48,6 @@ def getArch() {
 	return hasProperty("ARCH") ? ARCH.toString() : "all"
 }
 
-def getCompressedJdkDistributionDir() {
-	return hasProperty("COMPRESSED_JDK_DISTRIBUTION_DIR") ? COMPRESSED_JDK_DISTRIBUTION_DIR.toString() : null
+def getInputDir() {
+	return hasProperty("INPUT_DIR") ? INPUT_DIR.toString() : null
 }

@@ -107,11 +107,11 @@ In order to GPG sign the generated RPMs/APKs you must add the following argument
 
 ## Building from local files
 
-In order to build a jdk package for RPM or DEB from local `tar.gz` file(s), put both the `tar.gz` and the `sha256.txt` files in an empty input directory. Then specify this directory when running `./gradlew clean`
+In order to build a jdk/jre package for RPM or DEB from local `tar.gz` file(s), put both the `tar.gz` and the `sha256.txt` files in an empty input directory. If the vendor supports building locally, then one can specify this directory when running `./gradlew clean` using the `-PINPUT_DIR` flag
 
-Like so:
+Example:
 ```shell
-./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PARCH=<architecture> -PCOMPRESSED_JDK_DISTRIBUTION_DIR=<path/to/input/directory>
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PARCH=<architecture> -PINPUT_DIR=<path/to/input/directory>
 ```
 
 ## Building SRPMs and RPMs Directly
