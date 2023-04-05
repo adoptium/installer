@@ -61,6 +61,8 @@ Packager:    Microsoft Package Maintainers <openjdk@microsoft.com>
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
 
+ExclusiveArch: x86_64 aarch64
+
 BuildRequires:  tar
 BuildRequires:  wget
 
