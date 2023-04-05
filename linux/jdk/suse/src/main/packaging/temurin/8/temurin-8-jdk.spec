@@ -69,6 +69,8 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: %{_libdir}/jvm/%{name}
 
+ExclusiveArch: x86_64 ppc64le aarch64 %{arm}
+
 BuildRequires:  tar
 BuildRequires:  wget
 
