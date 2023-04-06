@@ -51,3 +51,7 @@ def getArch() {
 def getInputDir() {
 	return hasProperty("INPUT_DIR") ? INPUT_DIR.toString() : null
 }
+
+def getLocalBuildStatus() {
+	return hasProperty("INPUT_DIR") ? "true" : "false"
+}

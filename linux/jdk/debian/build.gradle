@@ -69,6 +69,7 @@ task packageJdkDebian {
 	def arch = getArch()
 
 	def input_dir = getInputDir()
+	def buildLocalFlag = getLocalBuildStatus()
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -82,7 +83,7 @@ task packageJdkDebian {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
-		if (input_dir != null) {
+		if ("$buildLocalFlag" == "true") {
 			// copy jdk's tarfile to build dir
 			copy {
 				from("$input_dir")
@@ -111,6 +112,7 @@ task packageJdkDebian {
 			commandLine "docker", "run",
 				"--rm",
 				"-e", "buildArch=${arch}",
+				"-e", "buildLocalFlag=${buildLocalFlag}",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-debian:latest"

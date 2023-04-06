@@ -13,12 +13,11 @@
 # Above is upstream_version before the '+'
 %global java_provides openjdk
 
-%global local_build %(if [ `ls /home/builder/rpmbuild/SOURCES/ | grep -E local_build_jdk.*[.]tar[.]gz | wc -l` -ge 1 ]; then echo "true"; else echo "false"; fi)
-# Above checks if there is atleast 1 local build jdk in the Sources folder
-# (If so, initiate local build)
+%global local_build_ %{?local_build}%{!?local_build:0}
 %global override_arch_ %{?override_arch}%{!?override_arch:0}
 # Above var evaluate to the value held in override_arch if defined,
 # else evaluates to 0 (meaning: we will build for the actual system architecture)
+# Same explanation for local_build_
 
 # Map architecture to the expected value in the download URL; Allow for a
 # pre-defined value of vers_arch and use that if it's defined
@@ -27,7 +26,7 @@
 %global vers_arch2 aarch64
 
 # Use override_arch_ if defined with correct value, else use system arch
-%if "%{local_build}" == "true"
+%if "%{local_build_}" == "true"
 %global src_num 4
 %global sha_src_num 5
 %elif "%{override_arch_}" == "aarch64"
@@ -104,7 +103,7 @@ Source1: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_a
 Source2: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch2}.tar.gz
 Source3: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch2}.tar.gz.sha256sum.txt
 
-%if "%{local_build}" == "true"
+%if "%{local_build_}" == "true"
 Source4: local_build_jdk1.tar.gz
 Source5: local_build_jdk1.tar.gz.sha256.txt
 %endif

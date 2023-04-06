@@ -6,7 +6,7 @@ set -euxo pipefail
 mkdir /home/builder/workspace
 cp -R /home/builder/build/generated/packaging /home/builder/workspace
 
-if [ -d /home/builder/build/jdk/ ]; then
+if [ "$buildLocalFlag" == "true" ]; then
 	# Copy sha256sum.txt file into SOURCE directory
 	# It is worth noting that DEB will only ever build 1 package at a time
 	for sha in $(ls /home/builder/build/jdk/*.sha256*.txt); do

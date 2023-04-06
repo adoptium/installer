@@ -4,9 +4,7 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
-buildLocalFlag=false
-if [ -d /home/builder/build/jdk/ ]; then
-	buildLocalFlag=true
+if [ "$buildLocalFlag" == "true" ]; then
 	# Copy all sha256 files into SOURCE directory
 	count=1
 	for sha in $(ls /home/builder/build/jdk/*.sha256*.txt); do
