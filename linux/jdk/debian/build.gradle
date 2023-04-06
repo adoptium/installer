@@ -4,7 +4,7 @@ plugins {
 
 ext {
 	junitVersion = "5.9.2"
-	testcontainersVersion = "1.17.6"
+	testcontainersVersion = "1.18.0"
 	assertjCoreVersion = "3.24.2"
 }
 
@@ -130,7 +130,12 @@ task checkJdkDebian(type: Test) {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 
-	environment "PACKAGE", "${product}-${productVersion}-jdk"
+	// If product is microsoft set it as msopenjdk
+	if (product == "microsoft") {
+		environment "PACKAGE", "msopenjdk-$productVersion"
+	} else {
+		environment "PACKAGE", "$product-$productVersion-jdk"
+	}
 
 	useJUnitPlatform()
 	testLogging {
