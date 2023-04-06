@@ -114,6 +114,12 @@ Example:
 ./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PARCH=<architecture> -PINPUT_DIR=<path/to/input/directory>
 ```
 
+**NOTE if building an RPM**:
+Make sure to update global variables `upstream_version` and `spec_version` in the corresponding spec-file to match the version number of the jdk/jre RPM that you are building. (This is how RPM determines the version number of the resulting package)
+
+**Note if building an DEB**:
+Make sure to update the `changelog` file in the corresponding vendor's debian folder so the most recent entry is about the version number of the jdk/jre DEB that you are building. (This is how DEB determines the version number of the resulting package)
+
 ## Building SRPMs and RPMs Directly
 
 If you do not require testing or advanced build support, it is perfectly fine to eschew the Gradle-based build and to
