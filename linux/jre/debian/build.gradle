@@ -68,15 +68,37 @@ task packageJreDebian {
 	def productVersion = getProductVersion()
 	def arch = getArch()
 
+	def input_dir = getInputDir()
+	def buildLocalFlag = getLocalBuildStatus()
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+		if (input_dir != null && !file(input_dir).exists()) {
+			throw new IllegalArgumentException("Input directory '$input_dir' not found")
 		}
 
 		project.copy {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
+		if ("$buildLocalFlag" == "true") {
+			// copy jre's tarfile to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jre")
+				include("*.tar.gz")
+			}
+
+			// copy jre's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jre")
+				include("*.sha256*.txt")
+			}
+		}
+
 		project.exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
@@ -90,6 +112,7 @@ task packageJreDebian {
 			commandLine "docker", "run",
 				"--rm",
 				"-e", "buildArch=${arch}",
+				"-e", "buildLocalFlag=${buildLocalFlag}",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-debian:latest"

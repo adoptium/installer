@@ -105,6 +105,21 @@ In order to GPG sign the generated RPMs/APKs you must add the following argument
 ./gradlew packageJdk<DISTRO> --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PGPG_KEY=</path/to/private/gpg/key>
 ```
 
+## Building from local files
+
+In order to build a jdk/jre package for RPM or DEB from local `tar.gz` file(s), put both the `tar.gz` and the `sha256.txt` files in an empty input directory. If the vendor supports building locally, then one can specify this directory when running `./gradlew clean` using the `-PINPUT_DIR` flag
+
+Example:
+```shell
+./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PARCH=<architecture> -PINPUT_DIR=<path/to/input/directory>
+```
+
+**NOTE if building an RPM**:
+Make sure to update global variables `upstream_version` and `spec_version` in the corresponding spec-file to match the version number of the jdk/jre RPM that you are building. (This is how RPM determines the version number of the resulting package)
+
+**Note if building an DEB**:
+Make sure to update the `changelog` file in the corresponding vendor's debian folder so the most recent entry is about the version number of the jdk/jre DEB that you are building. (This is how DEB determines the version number of the resulting package)
+
 ## Building SRPMs and RPMs Directly
 
 If you do not require testing or advanced build support, it is perfectly fine to eschew the Gradle-based build and to
