@@ -1,0 +1,80 @@
+#!/usr/bin/make -f
+
+pkg_name = msopenjdk-11
+priority = 1111
+jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jjs jlink jmap jmod jps jrunscript jshell jstack jstat jstatd keytool pack200 rmic rmid rmiregistry serialver unpack200 jexec jspawnhelper
+amd64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-11.0.18-linux-x64.tar.gz
+amd64_checksum = 1d68fe846f28ac391454f5f74936b6baa0cbe6766463875ca43254ddc837de50
+arm64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-11.0.18-linux-aarch64.tar.gz
+arm64_checksum = fe54cc106653f934e0ee14dc3551d531de8045799e34eedf201734f7b113bbca
+
+d = debian/$(pkg_name)
+jvm_home = usr/lib/jvm
+jvm_dir = $(pkg_name)-$(DEB_HOST_ARCH)
+pkg_alias = $(pkg_name)-$(DEB_HOST_ARCH)
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+override_dh_auto_test:
+override_dh_auto_build:
+override_dh_strip:
+override_dh_auto_install:
+	# Download JDK if not building locally
+	if [ ! -f jdk.tar.gz ]; then \
+		wget --progress=dot:mega -O jdk.tar.gz $($(DEB_HOST_ARCH)_tarball_url); \
+		echo '$($(DEB_HOST_ARCH)_checksum) jdk.tar.gz' > jdk.tar.gz.sha256.txt; \
+	fi
+	# Verify checksum of JDK
+	sha256sum -c jdk.tar.gz.sha256.txt
+
+	# Substitute variables.
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/jinfo.in > debian/jinfo
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/postinst.in > debian/postinst
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/prerm.in > debian/prerm
+
+	# Unpack JDK.
+	dh_installdirs \
+		$(jvm_home) \
+		$(jvm_home)/$(jvm_dir)
+	tar --strip-components=1 -C "$(d)/$(jvm_home)/$(jvm_dir)" -xf jdk.tar.gz
+
+	# Add jinfo file (alternatives support).
+	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
+
+	# Strip bundled Freetype and use OS package instead.
+	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
+
+	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
+	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+
+	# Ensure src.zip is present in the root folder of the JDK.
+	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
+		if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/src.zip" ] ; then \
+			echo "Missing src.zip in binary distribution"; \
+			exit 1; \
+		fi; \
+		ln -s lib/src.zip "$(d)/$(jvm_home)/$(jvm_dir)/src.zip"; \
+	fi;
+
+override_dh_gencontrol:
+	dh_gencontrol --
