@@ -1,10 +1,10 @@
-%global upstream_version 17.0.6+10
+%global upstream_version 17.0.7+7
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 #  17.0.1.0.0___12 == 17.0.1.0.0+12
-%global spec_version 17.0.6.0.0.10
+%global spec_version 17.0.7.0.0.7
 %global spec_release 1
 %global priority 1161
 
@@ -69,16 +69,18 @@ Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
 Requires: dejavu-sans-fonts
-Requires: libX11%{?_isa}
-Requires: libXext%{?_isa}
-Requires: libXi%{?_isa}
-Requires: libXrender%{?_isa}
-Requires: libXtst%{?_isa}
 Requires: alsa-lib%{?_isa}
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
-Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
+
+Recommends: libX11%{?_isa}
+Recommends: libXext%{?_isa}
+Recommends: libXi%{?_isa}
+Recommends: libXrender%{?_isa}
+Recommends: libXtst%{?_isa}
+Recommends: fontconfig%{?_isa}
+Recommends: freetype%{?_isa}
+Recommends: libasound%{?_isa}
 
 Provides: java
 Provides: java-17
@@ -226,5 +228,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Tue Apr 18 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.7.0.0.7
+- Microsoft 17.0.7+7 initial release.
 * Fri Mar 10 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.6.0.0.10
 - Microsoft 17.0.6+10 initial release.
