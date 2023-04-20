@@ -1,10 +1,10 @@
-%global upstream_version 11.0.18+10
+%global upstream_version 11.0.19+7
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
-%global spec_version 11.0.18.0.0.10
+%global spec_version 11.0.19.0.0.7
 %global spec_release 3
 %global priority 1111
 
@@ -68,17 +68,19 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
-Requires: libX11%{?_isa}
-Requires: libXext%{?_isa}
-Requires: libXi%{?_isa}
-Requires: libXrender%{?_isa}
-Requires: libXtst%{?_isa}
 Requires: alsa-lib%{?_isa}
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
-Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
+
+Recommends: dejavu-sans-fonts
+Recommends: libX11%{?_isa}
+Recommends: libXext%{?_isa}
+Recommends: libXi%{?_isa}
+Recommends: libXrender%{?_isa}
+Recommends: libXtst%{?_isa}
+Recommends: fontconfig%{?_isa}
+Recommends: freetype%{?_isa}
+Recommends: libasound%{?_isa}
 
 Provides: java
 Provides: java-11
@@ -229,5 +231,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 # Make below specific 
 %changelog
+* Tue Apr 18 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.19.0.0.7
+- Microsoft 11.0.19+7 initial release.
 * Mon Apr 3 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.18.0.0.10-3
 - Microsoft 11.0.18+10 initial release.
