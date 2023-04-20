@@ -3,10 +3,11 @@
 pkg_name = msopenjdk-17
 priority = 1711
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd keytool rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-17.0.6-linux-x64.tar.gz
-amd64_checksum = 04b31119c200945a6e668fcf4bb6303d1add2fbd188849970c0962e154f6dd8f
-arm64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-17.0.6-linux-aarch64.tar.gz
-arm64_checksum = 0525b8024e2338c27cea6b958f3685cc87a18540745d5bb0415de47d8371ddc6
+url_version = 17.0.7
+amd64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz
+amd64_checksum_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz.sha256sum.txt
+arm64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-aarch64.tar.gz
+arm64_checksum = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-aarch64.tar.gz.sha256sum.txt
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
@@ -24,7 +25,8 @@ override_dh_auto_install:
 	# Download JDK if not building locally
 	if [ ! -f jdk.tar.gz ]; then \
 		wget --progress=dot:mega -O jdk.tar.gz $($(DEB_HOST_ARCH)_tarball_url); \
-		echo '$($(DEB_HOST_ARCH)_checksum) jdk.tar.gz' > jdk.tar.gz.sha256.txt; \
+		wget --progress=dot:mega -O jdk.tar.gz.sha256.txt $($(DEB_HOST_ARCH)_checksum_url); \
+		sed -i -nE '/(.*) /{s/ .+/ jdk.tar.gz/;p;}' jdk.tar.gz.sha256.txt; \
 	fi
 	# Verify checksum of JDK
 	sha256sum -c jdk.tar.gz.sha256.txt
