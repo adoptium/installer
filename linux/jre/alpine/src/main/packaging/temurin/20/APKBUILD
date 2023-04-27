@@ -2,10 +2,8 @@
 pkgname=temurin-20
 pkgver=20.0.1_p36
 # replace _p1 with _1
-# _pkgver=${pkgver/_p/_}
-_pkgver=20_36 # remove this line and uncomment the above line when the next version is released
-# _pkgverplus=${pkgver/_p/+}
-_pkgverplus=20+36 # remove this line and uncomment the above line when the next version is released
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
 _pkgvername=${_pkgverplus/+/%2B}
 pkgrel=0
 pkgdesc="Eclipse Temurin 20"
