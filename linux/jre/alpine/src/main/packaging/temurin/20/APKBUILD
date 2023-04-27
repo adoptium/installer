@@ -1,6 +1,6 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-20
-pkgver=20.0.1_p36
+pkgver=20.0.1_p9
 # replace _p1 with _1
 _pkgver=${pkgver/_p/_}
 _pkgverplus=${pkgver/_p/+}
