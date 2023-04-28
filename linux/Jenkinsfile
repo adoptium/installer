@@ -284,15 +284,7 @@ def uploadAlpineArtifacts(String buildArch) {
                 {
                 "pattern": "**/build/ospackage/temurin-*j*.apk",
                 "target": "apk/alpine/main/${buildArch}/"
-                }
-            ]
-        }""",
-    )
-    rtUpload ( //artifactory plugin
-        serverId: 'adoptium.jfrog.io',
-        failNoOp: true,
-        spec: """{
-            "files": [
+                },
                 {
                 "pattern": "**/build/ospackage/temurin-*src*.apk",
                 "target": "apk/alpine/main/${buildArch}/"
