@@ -25,6 +25,8 @@ RUN --mount=type=secret,id=gpg,gid=10001,uid=10000,dst=/tmp/private.rsa \
 		cp /tmp/private.rsa /home/builder/.abuild; \
 		printf 'PACKAGER_PRIVKEY=/home/builder/.abuild/private.rsa'\
 >> /home/builder/.abuild/abuild.conf; \
+		wget -o /home/builder/.abuild/private.rsa.pub https://packages.adoptium.net/artifactory/api/security/keypair/public/repositories/apk; \
+
 	else \
 		abuild-keygen -a -n; \
 	fi
