@@ -4,7 +4,7 @@
 # also not very intuitive:
 #  $ rpmdev-vercmp 20.0.0.0.0___20.0.0.0.0+36
 #  20.0.0.0.0___1 == 20.0.0.0.0+36
-%global spec_version 20.0.0.0.0.36
+%global spec_version 20.0.1.0.0.9
 %global spec_release 2
 %global priority 1161
 
@@ -215,7 +215,9 @@ fi
 %{prefix}
 
 %changelog
-* Tue Apr 11 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.36-2.adopt0
-- Fix alternative linking
+* Thu May 4 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.1.0.0.9-2.adopt0
+- Fix alternative linking.
+* Wed Apr 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.1.0.0.9-1.adopt0
+- Eclipse Temurin 20.0.1+9 release 1.
 * Wed Mar 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 20.0.0.0.0.36-1.adopt0
 - Eclipse Temurin 20.0.0+36 release 1.

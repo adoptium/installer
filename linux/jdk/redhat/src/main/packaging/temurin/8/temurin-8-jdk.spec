@@ -4,8 +4,8 @@
 # also not very intuitive:
 #  $ rpmdev-vercmp 8.0.312.0.1___8 8.0.312.0.0+7
 #  8.0.312.0.0___7 == 8.0.312.0.0+7
-%global spec_version 8.0.362.0.0.9
-%global spec_release 3
+%global spec_version 8.0.372.0.0.7
+%global spec_release 2
 %global priority 1081
 
 %global source_url_base https://github.com/adoptium/temurin8-binaries/releases/download
@@ -278,8 +278,10 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Thu Mar 2 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-3.adopt0
-- Fix alternatives linking
+* Thu May 4 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-2.adopt0
+- Fix alternatives linking.
+* Mon Apr 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-1.adopt0
+- Eclipse Temurin 8.0.372-b07 release 1.
 * Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-2.adopt0
 - Eclipse Temurin 8.0.362-b09 release 2.
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9.adopt0
