@@ -330,7 +330,7 @@ def uploadDebArtifacts(String buildArch) {
         // Creates list like deb.distribution=stretch;deb.distribution=buster;
         distro_list += "deb.distribution=${deb_version};"
     }
-    
+
     for (int i = 0; i < 5; i++) { // loop 5 times at most
         echo "Prepare for ${debArchList[buildArch]}.deb"
         if(findFiles(glob: "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb").length == 0) {
@@ -369,6 +369,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
             'rpm/fedora/35',
             'rpm/fedora/36',
             'rpm/fedora/37',
+            'rpm/fedora/38',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2'

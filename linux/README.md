@@ -36,9 +36,9 @@ In all the examples below you'll need to replace the following variables:
 * Replace `<platform>` with `Alpine|Debian|RedHat|Suse`
 * Replace `<type>` with `Jdk|Jre` (or `CaCertificates` for the `Debian` platform)
 
-**Notes:** 
+**Notes:**
 * Not all combinations are possible, i.e., for some vendors we might only provide certain versions, or types.
-* For `Debian` we provide a separate package with _Certification Authority_ certificates. 
+* For `Debian` we provide a separate package with _Certification Authority_ certificates.
 
 ### Build all packages for a version
 
@@ -168,7 +168,7 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
          --define "_rpmdir $(pwd)" --rebuild *.src.rpm
 ```
 
-### Building for a different architecture 
+### Building for a different architecture
 
 In order to produce RPMs on an x86_64 build host for the s390x target architecture, use the `--target` switch to `rpm-build` to build for a different
 architecture. Suppose the host architecture is `x86_64` and we want to build for target architecture `s390x`:
@@ -201,7 +201,7 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 |------------------------------|:----------------------:|:----:|
 | debian/12 (bookworm/testing) |         x86_64         |      |
 | debian/11 (bullseye/stable)  |         x86_64         |      |
-| debian/10 (buster/oldstable) |         x86_64         |      |   
+| debian/10 (buster/oldstable) |         x86_64         |      |
 | ubuntu/22.10 (kinetic)       |         x86_64         |      |
 | ubuntu/22.04 (jammy)         |         x86_64         |      |
 | ubuntu/20.04 (focal)         |         x86_64         |      |
@@ -224,6 +224,7 @@ SRPM also available.
 | rpm/fedora/35 |         x86_64         |                                             |
 | rpm/fedora/36 |         x86_64         |                                             |
 | rpm/fedora/37 |         x86_64         |                                             |
+| rpm/fedora/38 |         x86_64         |                                             |
 | oraclelinux/7 |         x86_64         |                                             |
 | oraclelinux/8 |         x86_64         |                                             |
 | opensuse/15.3 |         x86_64         |                                             |
