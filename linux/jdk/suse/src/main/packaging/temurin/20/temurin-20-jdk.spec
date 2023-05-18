@@ -1,4 +1,4 @@
-%global upstream_version 20+36
+%global upstream_version 20.0.1+9
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -57,7 +57,7 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: %{_libdir}/jvm/%{name}
 
-ExclusiveArch: x86_64 ppc64le aarch64
+ExclusiveArch: x86_64 aarch64
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -99,8 +99,8 @@ Provides: java-sdk-%{java_provides}
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Second architecture (ppc64le)
-Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+#Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+#Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK20U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt

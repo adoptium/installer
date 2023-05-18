@@ -1,11 +1,9 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-20
-pkgver=20.0.0_p36
+pkgver=20.0.1_p9
 # replace _p1 with _1
-# _pkgver=${pkgver/_p/_}
-_pkgver=20_36 # remove this line and uncomment the above line when the next version is released
-# _pkgverplus=${pkgver/_p/+}
-_pkgverplus=20+36 # remove this line and uncomment the above line when the next version is released
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
 _pkgvername=${_pkgverplus/+/%2B}
 pkgrel=0
 pkgdesc="Eclipse Temurin 20"
@@ -73,5 +71,5 @@ _jre() {
 }
 
 sha256sums="
-0f4b1b45d8a14a7010b270ce01540f555ae19ce25905999047f9f55fba76124e  OpenJDK20U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+0e95fa3719f7989908dfcc77ef701c6fe1111c4195ee3c6858faab5fd37525c5  OpenJDK20U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 "

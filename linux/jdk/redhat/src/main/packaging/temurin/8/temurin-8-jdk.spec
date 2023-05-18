@@ -1,4 +1,4 @@
-%global upstream_version 8u362-b09
+%global upstream_version 8u372-b07
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -47,7 +47,7 @@
 %global src_num 6
 %global sha_src_num 7
 # jdk8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
-%global upstream_version 8u362-b09-aarch32-20230119
+%global upstream_version 8u372-b07-aarch32-20230426
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch

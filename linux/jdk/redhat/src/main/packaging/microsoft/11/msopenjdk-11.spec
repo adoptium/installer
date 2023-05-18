@@ -1,11 +1,8 @@
-%global upstream_version 11.0.18+10
+%global upstream_version 11.0.19+7
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
-# also not very intuitive:
-#  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
-#  11.0.13.0.0___8 == 11.0.13.0.0+8
-%global spec_version 11.0.18.0.0.10
-%global spec_release 3
+%global spec_version 11.0.19
+%global spec_release 1
 %global priority 1111
 
 %global source_url_base https://aka.ms/download-jdk
@@ -52,7 +49,7 @@ Release:     %{spec_release}
 Summary:     Microsoft Build of OpenJDK 11
 
 Group:       java
-License:     GPLv2 with exceptions
+License:     GPLv2 with Classpath Exception
 Vendor:      Microsoft
 URL:         https://www.microsoft.com/openjdk
 Packager:    Microsoft Package Maintainers <openjdk@microsoft.com>
@@ -68,17 +65,19 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
-Requires: libX11%{?_isa}
-Requires: libXext%{?_isa}
-Requires: libXi%{?_isa}
-Requires: libXrender%{?_isa}
-Requires: libXtst%{?_isa}
-Requires: alsa-lib%{?_isa}
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
-Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
+
+Recommends: dejavu-sans-fonts
+Recommends: alsa-lib%{?_isa}
+Recommends: libX11%{?_isa}
+Recommends: libXext%{?_isa}
+Recommends: libXi%{?_isa}
+Recommends: libXrender%{?_isa}
+Recommends: libXtst%{?_isa}
+Recommends: fontconfig%{?_isa}
+Recommends: freetype%{?_isa}
+Recommends: libasound%{?_isa}
 
 Provides: java
 Provides: java-11
@@ -229,5 +228,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 # Make below specific 
 %changelog
-* Mon Apr 3 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.18.0.0.10-3
+* Tue Apr 18 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.19-1
+- Microsoft 11.0.19+7 initial release.
+* Mon Apr 3 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.18-1
 - Microsoft 11.0.18+10 initial release.

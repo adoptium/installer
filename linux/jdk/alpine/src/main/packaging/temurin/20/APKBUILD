@@ -1,11 +1,9 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-20
-pkgver=20.0.0_p36
+pkgver=20.0.1_p9
 # replace _p1 with _1
-# _pkgver=${pkgver/_p/_}
-_pkgver=20_36 # remove this line and uncomment the above line when the next version is released
-# _pkgverplus=${pkgver/_p/+}
-_pkgverplus=20+36 # remove this line and uncomment the above line when the next version is released
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
 _pkgvername=${_pkgverplus/+/%2B}
 pkgrel=0
 pkgdesc="Eclipse Temurin 20"
@@ -97,7 +95,7 @@ _jdk() {
 }
 
 sha256sums="
-328c8cbfe3433a4556f68329323c671929bd9082b1113fa8a87892a1b1563ec7  OpenJDK20U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+68d0f0c468064e944e304cab64fc162335d4d9bc0ddab7e6ff7a395a0bceda74  OpenJDK20U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
 22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
 9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java

@@ -282,7 +282,11 @@ def uploadAlpineArtifacts(String buildArch) {
         spec: """{
             "files": [
                 {
-                "pattern": "**/build/ospackage/temurin-*.apk",
+                "pattern": "**/build/ospackage/temurin-*j*.apk",
+                "target": "apk/alpine/main/${buildArch}/"
+                },
+                {
+                "pattern": "**/build/ospackage/temurin-*src*.apk",
                 "target": "apk/alpine/main/${buildArch}/"
                 }
             ]
