@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 8.0.312.0.1___8 8.0.312.0.0+7
 #  8.0.312.0.0___7 == 8.0.312.0.0+7
 %global spec_version 8.0.372.0.0.7
-%global spec_release 1
+%global spec_release 2
 %global priority 1081
 
 %global source_url_base https://github.com/adoptium/temurin8-binaries/releases/download
@@ -170,7 +170,6 @@ popd
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
                         --slave %{_bindir}/jjs jjs %{prefix}/bin/jjs \
-                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
                         --slave %{_bindir}/orbd orbd %{prefix}/bin/orbd \
                         --slave %{_bindir}/pack200 pack200 %{prefix}/bin/pack200 \
@@ -183,7 +182,6 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jexec jexec %{prefix}/lib/jexec \
                         --slave %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
                         --slave %{_mandir}/man1/jjs.1 jjs.1 %{prefix}/man/man1/jjs.1 \
-                        --slave %{_mandir}/man1/jrunscript.1 jrunscript.1 %{prefix}/man/man1/jrunscript.1 \
                         --slave %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
                         --slave %{_mandir}/man1/orbd.1 orbd.1 %{prefix}/man/man1/orbd.1 \
                         --slave %{_mandir}/man1/pack200.1 pack200.1 %{prefix}/man/man1/pack200.1 \
@@ -214,6 +212,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jinfo jinfo %{prefix}/bin/jinfo \
                         --slave %{_bindir}/jmap jmap %{prefix}/bin/jmap \
                         --slave %{_bindir}/jps jps %{prefix}/bin/jps \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/jsadebugd jsadebugd %{prefix}/bin/jsadebugd \
                         --slave %{_bindir}/jstack jstack %{prefix}/bin/jstack \
                         --slave %{_bindir}/jstat jstat %{prefix}/bin/jstat \
@@ -244,6 +243,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_mandir}/man1/jinfo.1 jinfo.1 %{prefix}/man/man1/jinfo.1 \
                         --slave %{_mandir}/man1/jmap.1 jmap.1 %{prefix}/man/man1/jmap.1 \
                         --slave %{_mandir}/man1/jps.1 jps.1 %{prefix}/man/man1/jps.1 \
+                        --slave %{_mandir}/man1/jrunscript.1 jrunscript.1 %{prefix}/man/man1/jrunscript.1 \
                         --slave %{_mandir}/man1/jsadebugd.1 jsadebugd.1 %{prefix}/man/man1/jsadebugd.1 \
                         --slave %{_mandir}/man1/jstack.1 jstack.1 %{prefix}/man/man1/jstack.1 \
                         --slave %{_mandir}/man1/jstat.1 jstat.1 %{prefix}/man/man1/jstat.1 \
@@ -268,6 +268,8 @@ fi
 %{prefix}
 
 %changelog
+* Thu May 4 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-2.adopt0
+- Fix alternatives linking.
 * Mon Apr 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-1.adopt0
 - Eclipse Temurin 8.0.372-b07 release 1.
 * Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-2.adopt0
