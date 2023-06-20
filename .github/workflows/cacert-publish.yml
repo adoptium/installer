@@ -38,7 +38,9 @@ jobs:
         id: check-deb
         run: |
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
+          echo "File to upload: ${FILE}"
           CODE=$(curl -s -o /dev/null -w "%{http_code}\n" https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE}))
+          echo "Status Code received: ${CODE}"
           echo "status=$CODE" >> GITHUB_OUTPUT
 
       - name: Upload deb file to Artifactory
