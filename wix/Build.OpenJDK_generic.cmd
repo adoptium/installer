@@ -246,8 +246,8 @@ FOR %%A IN (%ARCH%) DO (
                 SET BUNDLE_ICEDTEAWEB=true
                 SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
                 SET ITW_WIXOBJ=%WORKDIR%IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj
-                ECHO HEAT
-                "!WIX!bin\heat.exe" dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
+                ECHO HARVEST
+                "!WIX!bin\harvest.exe" dir "!ICEDTEAWEB_DIR!" -out "!ITW_WXS!" -pog:Content -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -var var.IcedTeaWebDir -dr INSTALLDIR
                 IF ERRORLEVEL 1 (
                     ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
@@ -258,9 +258,9 @@ FOR %%A IN (%ARCH%) DO (
         )
     )
     
-    ECHO HEAT
+    ECHO HARVEST
     @ECHO ON
-    "!WIX!bin\heat.exe" dir "!REPRO_DIR!" -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    "!WIX!bin\harvest.exe" dir "!REPRO_DIR!" -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -pog:Content -platform !PLATFORM! -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR
     IF ERRORLEVEL 1 (
         ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
         GOTO FAILED
