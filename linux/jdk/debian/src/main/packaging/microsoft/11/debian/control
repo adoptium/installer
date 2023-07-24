@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 11), lsb-release
 
 Package: msopenjdk-11
 Architecture: amd64 arm64
-Depends: adoptium-ca-certificates,
+Depends: ca-certificates,
          java-common,
          libc6,
          zlib1g
