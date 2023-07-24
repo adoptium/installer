@@ -9,6 +9,7 @@ Architecture: amd64 arm64
 Depends: ca-certificates,
          java-common,
          libc6,
+         p11-kit,
          zlib1g
 Recommends: libasound2,
             libx11-6,

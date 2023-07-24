@@ -65,9 +65,12 @@ override_dh_auto_install:
 	# Strip bundled Freetype and use OS package instead.
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
 
-	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
-	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
-	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+	# Update "cacerts" bundle to use Debian's CA certificates and make sure it stays up-to-date with changes to Debian's store.
+	echo '\#!/usr/bin/env bash' > /etc/ca-certificates/update.d/docker-openjdk;
+	echo 'set -Eeuo pipefail' >> /etc/ca-certificates/update.d/docker-openjdk;
+	echo 'trust extract --overwrite --format=java-cacerts --filter=ca-anchors --purpose=server-auth "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"' >> /etc/ca-certificates/update.d/docker-openjdk;
+	chmod +x /etc/ca-certificates/update.d/docker-openjdk;
+	/etc/ca-certificates/update.d/docker-openjdk;
 
 	# Ensure src.zip is present in the root folder of the JDK.
 	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
