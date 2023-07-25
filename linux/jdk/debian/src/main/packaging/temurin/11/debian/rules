@@ -3,16 +3,16 @@
 pkg_name = temurin-11-jdk
 priority = 1111
 jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jjs jlink jmap jmod jps jrunscript jshell jstack jstat jstatd keytool pack200 rmic rmid rmiregistry serialver unpack200 jexec jspawnhelper
-amd64_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_x64_linux_hotspot_11.0.19_7.tar.gz
-amd64_checksum = 5f19fb28aea3e28fcc402b73ce72f62b602992d48769502effe81c52ca39a581
-arm64_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.19_7.tar.gz
-arm64_checksum = 0c7763a19b4af4ef5fbae831781b5184e988d6f131d264482399eeaf51b6e254
-armhf_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_arm_linux_hotspot_11.0.19_7.tar.gz
-armhf_checksum = be07af349f0d2e1ffb7e01e1e8bac8bffd76e22f6cc1354e5b627222e3395f41
-ppc64el_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_ppc64le_linux_hotspot_11.0.19_7.tar.gz
-ppc64el_checksum = 1e3704c8e155f8f894953c2a6708a52e6f449bbf5a85450be6fbb2ec76581700
-s390x_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.19%2B7/OpenJDK11U-jdk_s390x_linux_hotspot_11.0.19_7.tar.gz
-s390x_checksum = a21e2c30e48df0b7238691833316c008167cbedd4e2f1e677bcb81638420d273
+amd64_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.20%2B8/OpenJDK11U-jdk_x64_linux_hotspot_11.0.20_8.tar.gz
+amd64_checksum = 7a99258af2e3ee9047e90f1c0c1775fd6285085759501295358d934d662e01f9
+arm64_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.20%2B8/OpenJDK11U-jdk_aarch64_linux_hotspot_11.0.20_8.tar.gz
+arm64_checksum = eb821c049c2d2f7c3fbf8ddcce2d608d3aa7d488700e76bfbbebabba93021748
+armhf_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.20%2B8/OpenJDK11U-jdk_arm_linux_hotspot_11.0.20_8.tar.gz
+armhf_checksum = fdf98d94ac3fd49a73a534fd88cf60e757e885c04791d15f76ccfcecb43a25e0
+ppc64el_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.20%2B8/OpenJDK11U-jdk_ppc64le_linux_hotspot_11.0.20_8.tar.gz
+ppc64el_checksum = 1125931b3a38e6e305a1932fc6cfd0b023a0fbec2cab10e835a2ee2c50848b42
+s390x_tarball_url = https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.20%2B8/OpenJDK11U-jdk_s390x_linux_hotspot_11.0.20_8.tar.gz
+s390x_checksum = 688c83d9edf2204220df94ce5bab4a6d19f3d91bc0e500f31dda41e16d9a383f
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
