@@ -65,10 +65,6 @@ override_dh_auto_install:
 	# Strip bundled Freetype and use OS package instead.
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
 
-	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
-	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
-	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
-
 	# Ensure src.zip is present in the root folder of the JDK.
 	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
 		if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/src.zip" ] ; then \
