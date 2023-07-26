@@ -1,3 +1,9 @@
+temurin-20-jdk (20.0.2.0.0+9) STABLE; urgency=medium
+
+  * Eclipse Temurin 20.0.2.0.0+9 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 25 Jul 2023 11:59:00 +0000
+
 temurin-20-jdk (20.0.1.0.0+9) STABLE; urgency=medium
 
   * Eclipse Temurin 20.0.1.0.0+9 release.
