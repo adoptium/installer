@@ -1,6 +1,6 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-8-jdk
-pkgver=8.372.07
+pkgver=8.382.05
 # replace 8. with 8u and .01 with b-01
 _pkgver=${pkgver/8./8u}
 _pkgver=${_pkgver%.*}b${_pkgver#*.}
@@ -68,6 +68,6 @@ package() {
 }
 
 sha256sums="
-cfdf8e07c8eeb087b7a2895b90fc0a19986bcff85006f1e2b708e3964909aa8e  OpenJDK8U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+6cf2d4925c387c4cdc0bf2e71de3690527141b5244695d0b3109ce83a8512235  OpenJDK8U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
 "
