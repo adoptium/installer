@@ -62,9 +62,6 @@ override_dh_auto_install:
 	# Add jinfo file (alternatives support).
 	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
 
-	# Strip bundled Freetype and use OS package instead.
-	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
-
 	# Ensure src.zip is present in the root folder of the JDK.
 	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
 		if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/src.zip" ] ; then \
