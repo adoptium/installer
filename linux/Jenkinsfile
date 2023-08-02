@@ -193,7 +193,7 @@ def jenkinsStepDeb() {
 // function handle both Alpine, RedHat and Suse as DISTRO
 def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
-    if (("${DISTRO}" == 'RedHat' || "${DISTRO}" == 'Suse') &&  ("${ARCH}" == 'armv7l')) {
+    if (("${DISTRO}" == 'RedHat' || "${DISTRO}" == 'Suse') && "${ARCH}" == 'armv7l') {
       ARCH = 'armv7hl'
     }
     setup("${DISTRO}", "${ARCH}")
@@ -388,7 +388,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
     def packageDirs = distro_Package[DISTRO.toLowerCase()]
     def rpmArchList=[
         'x86_64' : 'x86_64',
-        'armv7l': 'armv7hl',
+        'armv7hl': 'armv7hl',
         'aarch64': 'aarch64',
         'ppc64le': 'ppc64le',
         's390x'  : 's390x'
