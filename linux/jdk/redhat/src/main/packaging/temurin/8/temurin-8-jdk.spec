@@ -290,7 +290,7 @@ fi
 - Eclipse Temurin 8.0.362-b09 release.
 * Thu Nov 03 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.352.0.0.8.adopt0
 - Eclipse Temurin 8.0.352-b08 release.
-* Thu Aug 08 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.345.0.0.1.adopt0
+* Thu Aug 18 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.345.0.0.1.adopt0
 - Eclipse Temurin 8.0.345-b01 release.
 * Thu May 05 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.332.0.0.9.adopt0
 - Eclipse Temurin 8.0.332-b09 release.
