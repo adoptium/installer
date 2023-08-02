@@ -34,7 +34,7 @@ pipeline {
     parameters {
         choice(name: 'TYPE', choices: Types.ALL, description: 'Build JDK or JRE')
         choice(name: 'VERSION', choices: ['8', '11', '17', '20'], description: 'Build for specific JDK VERSION')
-        choice(name: 'ARCH', choices: ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n')
+        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
@@ -193,9 +193,6 @@ def jenkinsStepDeb() {
 // function handle both Alpine, RedHat and Suse as DISTRO
 def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
-    if (("${DISTRO}" == 'RedHat' || "${DISTRO}" == 'Suse') && "${ARCH}" == 'armv7l') {
-      ARCH = 'armv7hl'
-    }
     setup("${DISTRO}", "${ARCH}")
     unstash 'installercode'
     buildAndTest("${DISTRO}", "${ARCH}")
@@ -234,7 +231,7 @@ def buildAndTest(String DISTRO, String buildArch) {
             def gBuildTask = (buildArch == 'x86_64') ? "package${TYPE}${DISTRO} check${TYPE}${DISTRO}" : "package${TYPE}${DISTRO}"
             def debArchList = [
                 'x86_64' : 'amd64',
-                'armv7l': 'armv7hl',
+                'armv7l': 'armhf',
                 'aarch64': 'arm64',
                 'ppc64le': 'ppc64el',
                 's390x'  : 's390x'
@@ -388,7 +385,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
     def packageDirs = distro_Package[DISTRO.toLowerCase()]
     def rpmArchList=[
         'x86_64' : 'x86_64',
-        'armv7l': 'armv7hl',
+        'armv7hl': 'armv7hl',
         'aarch64': 'aarch64',
         'ppc64le': 'ppc64le',
         's390x'  : 's390x'
