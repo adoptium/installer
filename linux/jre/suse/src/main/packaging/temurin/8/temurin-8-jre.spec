@@ -47,7 +47,7 @@
 %global src_num 6
 %global sha_src_num 7
 # jre8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
-%global upstream_version 8u372-b07-aarch32-20230426
+%global upstream_version 8u382-b05-aarch32-20230719
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -185,7 +185,7 @@ fi
 %changelog
 * Tue Jul 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.382.0.0.5.adopt0
 - Eclipse Temurin 8.0.382-b05 release.
-* Mon Apr 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-1.adopt0
+* Mon Apr 24 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-1.adopt0
 - Eclipse Temurin 8.0.372-b07 release 1.
 * Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-2.adopt0
 - Eclipse Temurin 8.0.362-b09 release 2.
