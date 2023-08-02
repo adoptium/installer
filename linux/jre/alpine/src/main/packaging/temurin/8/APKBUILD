@@ -1,6 +1,6 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-8-jre
-pkgver=8.372.07
+pkgver=8.382.05
 # replace 8. with 8u and .01 with b-01
 _pkgver=${pkgver/8./8u}
 _pkgver=${_pkgver%.*}b${_pkgver#*.}
@@ -16,7 +16,6 @@ makedepends="
 	libpng-dev
 	libxcomposite-dev
 	libxinerama-dev
-	libxp-dev
 	libxrender-dev
 	libxslt
 	libxt-dev
@@ -61,5 +60,5 @@ ls ${srcdir}
 }
 
 sha256sums="
-95d8cb8b5375ec00a064ed728eb60d925d44c1a79fe92f6ca7385b5863d4f78c  OpenJDK8U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+7040d865493f13204194c5a1add63e22516b1fa4481264baa6a5b2614a275a0e  OpenJDK8U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 "
