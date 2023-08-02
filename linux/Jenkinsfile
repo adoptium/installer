@@ -34,7 +34,7 @@ pipeline {
     parameters {
         choice(name: 'TYPE', choices: Types.ALL, description: 'Build JDK or JRE')
         choice(name: 'VERSION', choices: ['8', '11', '17', '20'], description: 'Build for specific JDK VERSION')
-        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n')
+        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n Use armv7l for DebARM32 armv7hl for RH/Suse')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
