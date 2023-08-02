@@ -193,6 +193,9 @@ def jenkinsStepDeb() {
 // function handle both Alpine, RedHat and Suse as DISTRO
 def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
+    if ("${ARCH}" == 'armv7l') {
+        ARCH = 'armv7hl'
+    }
     setup("${DISTRO}", "${ARCH}")
     unstash 'installercode'
     buildAndTest("${DISTRO}", "${ARCH}")
