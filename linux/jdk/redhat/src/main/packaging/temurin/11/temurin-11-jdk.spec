@@ -274,7 +274,7 @@ fi
 - Eclipse Temurin 11.0.18+10 release 3.
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10.adopt0
 - Eclipse Temurin 11.0.18+10 release.
-* Thu Oct 25 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.17.0.0.8.adopt0
+* Thu Oct 27 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.17.0.0.8.adopt0
 - Eclipse Temurin 11.0.17+8 release.
 * Tue Aug 23 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.16.1.0.1.adopt0
 - Eclipse Temurin 11.0.16.1+1 release.

@@ -184,7 +184,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
                         --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry \
                         --slave %{_bindir}/jexec jexec %{prefix}/lib/jexec \
-                        --slave %{_bindir}/jspawnhelper jspawnhelper %{prefix}/lib/jspawnhelper \ 
+                        --slave %{_bindir}/jspawnhelper jspawnhelper %{prefix}/lib/jspawnhelper \
                         --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
                         --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
                         --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
@@ -261,7 +261,7 @@ fi
 - Eclipse Temurin 17.0.6+10 release 2.
 * Wed Jan 18 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.6.0.0.10.adopt0
 - Eclipse Temurin 17.0.6+10 release.
-* Thu Oct 25 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.5.0.0.8.adopt0
+* Thu Oct 27 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.5.0.0.8.adopt0
 - Eclipse Temurin 17.0.5+8 release.
 * Tue Aug 23 2022 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.4.1.0.1.adopt0
 - Eclipse Temurin 17.0.4.1+8 release.
