@@ -190,11 +190,11 @@ fi
 %{prefix}
 
 %changelog
-* Tue Jul 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.20.0.0.8.adopt0
+* Tue Jul 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.20.0.0.8-1
 - Eclipse Temurin 11.0.20+8 release.
-* Wed Apr 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.19.0.0.7.adopt0
+* Wed Apr 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.19.0.0.7-1
 - Eclipse Temurin JRE 11.0.19+7 release.
-* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-2.adopt0
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10-2
 - Eclipse Temurin JRE 11.0.18+10 release 2.
-* Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10.adopt0
+* Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.18.0.0.10-1
 - Eclipse Temurin JRE 11.0.18+10 release.
