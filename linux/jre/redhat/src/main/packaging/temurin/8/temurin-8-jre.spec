@@ -192,11 +192,11 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Tue Jul 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.382.0.0.5.adopt0
+* Tue Jul 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.382.0.0.5-1
 - Eclipse Temurin 8.0.382-b05 release.
-* Mon Apr 24 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-1.adopt0
+* Mon Apr 24 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.372.0.0.7-1
 - Eclipse Temurin 8.0.372-b07 release 1.
-* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-3.adopt0
+* Wed Feb 22 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-3
 - Eclipse Temurin 8.0.362-b09 release 3.
-* Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9.adopt0
+* Mon Jan 30 2023 11:35:00 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.362.0.0.9-1
 - Eclipse Temurin JRE 8.0.362-b09 release.
