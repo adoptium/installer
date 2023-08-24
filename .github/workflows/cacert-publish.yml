@@ -29,6 +29,12 @@ jobs:
           architecture: x64
           distribution: 'temurin'
 
+      - uses: jfrog/setup-jfrog-cli@v3
+        env:
+          JF_URL: https://packages.adoptium.net
+          JF_USER: ${{ secrets.ARTIFACTORY_USER }}
+          JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
       - name: Build
         run: |
           export _JAVA_OPTIONS="-Xmx4G"
@@ -39,22 +45,18 @@ jobs:
         run: |
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
           echo "File to upload: ${FILE}"
-          CODE=$(curl -s -o /dev/null -w "%{http_code}\n" https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE}))
-          echo "status=$CODE" >> "$GITHUB_OUTPUT"
-
-      - name: Log Status Code
-        run: echo "Status code ${{ steps.check-deb.outputs.status }}"
+          if jf rt s "deb/pool/main/a/adoptium-ca-certificates/$(basename $FILE)" > /dev/null; then
+            echo file_exists=true >> "$GITHUB_OUTPUT"
+          else
+            echo file_exists=false >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Upload deb file to Artifactory
-        if: steps.check-deb.outputs.status == '404'
+        if: steps.check-deb.outputs.file_exists == 'false'
         run: |
           debVersionList=("bookworm" "bullseye" "buster" "kinetic" "jammy" "focal" "bionic")
           for debVersion in "${debVersionList[@]}"; do
             distroList+="deb.distribution=${debVersion};"
           done
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
-          curl -u ${ARTIFACTORY_USER}:${ARTIFACTORY_PASSWORD} \
-          -X PUT -T $FILE "https://packages.adoptium.net/artifactory/deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main;${distroList}"
-        env:
-          ARTIFACTORY_USER: ${{ secrets.ARTIFACTORY_USER }}
-          ARTIFACTORY_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
+          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main;${distroList}"
