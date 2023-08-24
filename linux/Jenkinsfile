@@ -279,8 +279,8 @@ def uploadArtifacts(String DISTRO, String buildArch) {
 
 def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
-    jf rt u "**/build/ospackage/temurin-*j*.apk" "apk/alpine/main/${buildArch}/"
-    jf rt u "**/build/ospackage/temurin-*src*.apk" "apk/alpine/main/${buildArch}/"
+    jf "rt u '**/build/ospackage/temurin-*j*.apk' 'apk/alpine/main/${buildArch}/' --flat=true"
+    jf "rt u '**/build/ospackage/temurin-*src*.apk' 'apk/alpine/main/${buildArch}/' --flat=true"
 }
 
 def uploadDebArtifacts(String buildArch) {
@@ -329,7 +329,7 @@ def uploadDebArtifacts(String buildArch) {
             */
             sleep 2
         } else {
-            jf rt u "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb" "deb/pool/main/t/temurin-${VERSION}/" --props="${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}"
+            jf "rt u '**/build/ospackage/temurin-*${debArchList[buildArch]}.deb' 'deb/pool/main/t/temurin-${VERSION}/' --props='${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}' --flat=true"
             break
         }
     }
@@ -396,7 +396,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                     */
                     sleep 2
                 } else {
-                    jf rt u "**/build/ospackage/*.${entry.value}.rpm" "${packageDir}/${entry.key}/Packages/"
+                    jf "rt u '**/build/ospackage/*.${entry.value}.rpm' '${packageDir}/${entry.key}/Packages/' --flat=true"
                     break
                 }
             }

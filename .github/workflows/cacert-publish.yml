@@ -59,4 +59,4 @@ jobs:
             distroList+="deb.distribution=${debVersion};"
           done
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
-          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main;${distroList}"
+          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main;${distroList}" --flat=true
