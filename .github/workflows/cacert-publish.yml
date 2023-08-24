@@ -31,7 +31,7 @@ jobs:
 
       - uses: jfrog/setup-jfrog-cli@v3
         env:
-          JF_URL: https://packages.adoptium.net
+          JF_URL: https://adoptium.jfrog.io
           JF_USER: ${{ secrets.ARTIFACTORY_USER }}
           JF_PASSWORD: ${{ secrets.ARTIFACTORY_PASSWORD }}
 
