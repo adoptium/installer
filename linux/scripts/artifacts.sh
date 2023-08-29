@@ -18,21 +18,28 @@ for EACHTYPE in "${TYPE[@]}"; do
             if [ "$EACHDIST" = "apk" ]; then
                 ARCH=("x86_64")
             else
-                ARCH=("x86_64" "armv7hl" "armv7l" "aarch64" "ppc64le" "s390x")
-            fi
-            for EACHARCH in "${ARCH[@]}"; do
+                # Exclude specific architectures based on conditions
+                ARCH=("x86_64" "aarch64" "ppc64le")
                 if [ "$EACHDIST" = "deb" ]; then
+                    if [ "$EACHVERS" != "8.0.382.0.0.5-1" ]; then
+                        ARCH+=("armv7l")
+                    fi
                     for EACHDEB in "${DEBDISTS[@]}"; do
                         echo TYPE = $EACHTYPE, $EACHVERS, $EACHDIST, $EACHARCH, $EACHDEB
                     done
                 fi
 
                 if [ "$EACHDIST" = "rpm" ]; then
+                    if [ "$EACHVERS" != "8.0.382.0.0.5-1" ]; then
+                        ARCH+=("armv7hl")
+                    fi
                     for EACHRPM in "${RPMDISTS[@]}"; do
                         echo TYPE = $EACHTYPE, $EACHVERS, $EACHDIST, $EACHARCH, $EACHRPM
                     done
                 fi
+            fi
 
+            for EACHARCH in "${ARCH[@]}"; do
                 if [ "$EACHDIST" = "apk" ]; then
                     echo TYPE = $EACHTYPE, $EACHVERS, $EACHDIST, $EACHARCH
                 fi
