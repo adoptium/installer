@@ -279,9 +279,8 @@ def uploadArtifacts(String DISTRO, String buildArch) {
 
 def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
-    jf 'rt ping'
-    jf 'rt u **/build/ospackage/temurin-*j*.apk "apk/alpine/main/${buildArch}/" --flat=true'
-    jf 'rt u **/build/ospackage/temurin-*src*.apk "apk/alpine/main/${buildArch}/" --flat=true'
+    jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/$buildArch/ --flat=true'
+    jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/$buildArch/ --flat=true'
 }
 
 def uploadDebArtifacts(String buildArch) {
