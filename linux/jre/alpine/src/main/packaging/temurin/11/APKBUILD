@@ -1,11 +1,11 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-11
-pkgver=11.0.20_p8
+pkgver=11.0.20.1_p1
 # replace _p1 with _1
 _pkgver=${pkgver/_p/_}
 _pkgverplus=${pkgver/_p/+}
 _pkgvername=${_pkgverplus/+/%2B}
-pkgrel=0
+pkgrel=1
 pkgdesc="Eclipse Temurin 11"
 provider_priority=11
 url="https://adoptium.net"
@@ -72,5 +72,5 @@ _jre() {
 }
 
 sha256sums="
-ad1645501461a986f6f40ede6a76198f267c694c06150a9ed36ae95e7d012287  OpenJDK11U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+d34ea3d1e3852548546c69d7d73addb873e7926e66147b8596b7c11fad9ee057  OpenJDK11U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 "
