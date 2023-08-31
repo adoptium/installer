@@ -67,8 +67,7 @@ pipeline {
                 }
             }
         }
-        stage('BUILD')
-        {
+        stage('BUILD') {
             parallel{
                 stage('Build Installer for Alpine') {
                     when  {
@@ -183,6 +182,7 @@ def jenkinsStepDeb() {
         // reallocate jenkins agent per element in list
         node("linux&&${debLabel}") {
             setup('Debian', "${DebARCH}")
+            tool name: 'jfrog-cli', type: 'jfrog'
             unstash 'installercode'
             buildAndTest('Debian', "${DebARCH}")
             if (params.uploadPackage.toBoolean()) {
@@ -279,8 +279,11 @@ def uploadArtifacts(String DISTRO, String buildArch) {
 
 def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
-    jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/$buildArch/ --flat=true'
-    jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/$buildArch/ --flat=true'
+    // set BUILDARCH environment variable for ${buildArch}
+    env.BUILDARCH = buildArch
+    jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+    jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+    // unset BUILDARCH environment variable
 }
 
 def uploadDebArtifacts(String buildArch) {
@@ -329,7 +332,9 @@ def uploadDebArtifacts(String buildArch) {
             */
             sleep 2
         } else {
-            jf 'rt u "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb" "deb/pool/main/t/temurin-${VERSION}/" "--props=${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}" --flat=true'
+            env.BUILDARCH = debArchList[buildArch]
+            env.DISTROLIST = distro_list
+            jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
     }
@@ -396,7 +401,10 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                     */
                     sleep 2
                 } else {
-                    jf 'rt u "**/build/ospackage/*.${entry.value}.rpm" "${packageDir}/${entry.key}/Packages/" --flat=true'
+                    env.VALUE = entry.value
+                    env.KEY = entry.key
+                    env.PACKAGEDIR = packageDir
+                    jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
                     break
                 }
             }
