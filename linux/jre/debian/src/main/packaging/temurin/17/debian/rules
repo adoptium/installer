@@ -10,7 +10,7 @@ arm64_checksum = 0a1c5c9ee9d20832c87bd1e99a4c4a96947b59bb35c72683fe895d705f20273
 armhf_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.8.1+1/OpenJDK17U-jre_arm_linux_hotspot_17.0.8.1_1.tar.gz
 armhf_checksum = 8af898c5d356f0b2cee2db67ff9c8e7a8e738c0f6b3a61c383150b3168b9ea58
 ppc64el_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.8.1+1/OpenJDK17U-jre_ppc64le_linux_hotspot_17.0.8.1_1.tar.gz
-ppc64el_checksum = 53f064e32e19072e940b3450d8af1fd447f2c036477890688fcb7249f1e6bfb9
+ppc64el_checksum = 4aadc18e58d20c37c69cf6ec2cc3299b76f5b21073fc8e6101e11268d7a33b5b
 s390x_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.8.1+1/OpenJDK17U-jre_s390x_linux_hotspot_17.0.8.1_1.tar.gz
 s390x_checksum = 5eff8141fd282b3473fd649e04c113ba044cf19f0c513b951b700c28a81c1d6a
 
