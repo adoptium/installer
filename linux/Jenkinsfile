@@ -329,7 +329,7 @@ def uploadDebArtifacts(String buildArch) {
             */
             sleep 2
         } else {
-            jf "rt u '**/build/ospackage/temurin-*${debArchList[buildArch]}.deb' 'deb/pool/main/t/temurin-${VERSION}/' --props='${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]}' --flat=true"
+            jf 'rt u **/build/ospackage/temurin-*${debArchList[buildArch]}.deb deb/pool/main/t/temurin-${VERSION}/ --props=${distro_list}deb.component=main;deb.architecture=${debArchList[buildArch]} --flat=true'
             break
         }
     }
@@ -396,7 +396,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                     */
                     sleep 2
                 } else {
-                    jf "rt u '**/build/ospackage/*.${entry.value}.rpm' '${packageDir}/${entry.key}/Packages/' --flat=true"
+                    jf 'rt u **/build/ospackage/*.${entry.value}.rpm ${packageDir}/${entry.key}/Packages/ --flat=true'
                     break
                 }
             }
