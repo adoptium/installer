@@ -179,6 +179,11 @@ def jenkinsStepDeb() {
         if ("${DebARCH}" == 'x86_64') {
             debLabel = 'x64&&dockerBuild'
         }
+        // special handle: force arm32 on arm 64 dockerhost
+        if ("${DebARCH}" == 'armv7l') {
+            debLabel = 'armv8&&build&&dockerBuild&&dockerhost'
+        }
+
         // reallocate jenkins agent per element in list
         node("linux&&${debLabel}") {
             setup('Debian', "${DebARCH}")

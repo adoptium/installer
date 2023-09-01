@@ -99,13 +99,27 @@ task packageJdkDebian {
 			}
 		}
 
+println "The Value Of ARCH is: $arch"
+
+if ("$arch" == "armhf") {
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"-f", "Dockerfile.arm32",
+				getProjectDir().absolutePath + "/src/main/packaging"
+		}
+	}
+
+if ("$arch" != "armhf") {
 		project.exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
-		}
+     }
+	}
 
 		project.exec {
 			workingDir getRootDir()
