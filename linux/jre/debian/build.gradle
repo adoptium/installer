@@ -104,9 +104,9 @@ task packageJreDebian {
 		if ("$arch" == "armhf") {
 				project.exec {
 					workingDir "src/main/packaging"
-					commandLine "docker", "build", "--no-cache",
+					commandLine "docker", "build", "--build-arg IMAGE=arm32v7/debian:bullseye", "--no-cache",
 						"-t", "adoptium-packages-linux-jdk-debian",
-						"-f", "Dockerfile.arm32",
+						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 				}
 			}
