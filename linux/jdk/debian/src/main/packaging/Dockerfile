@@ -1,4 +1,5 @@
-FROM debian:bullseye
+ARG IMAGE=debian:bullseye
+FROM $IMAGE
 
 # Combine apt-get update with apt-get install to prevent stale package indexes.
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential \
