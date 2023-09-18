@@ -3,9 +3,9 @@
 pkg_name = temurin-21-jre
 priority = 2100
 jvm_tools = java jfr jrunscript jwebserver keytool rmiregistry
-amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B35/OpenJDK21U-jre_x64_linux_hotspot_21.0.0_35.tar.gz
+amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B35/OpenJDK21-jre_x64_linux_hotspot_21.0.0_35.tar.gz
 amd64_checksum = e3592e86290c192804d9c6b5035d42cc32cf04141d1c0b9d1ecb67739826c8c5
-arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.0%2B35/OpenJDK21U-jre_aarch64_linux_hotspot_21.0.0_35.tar.gz
+arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.0%2B35/OpenJDK21-jre_aarch64_linux_hotspot_21.0.0_35.tar.gz
 arm64_checksum = 63a730d5a3b6d21d31f7cba15dc44b019a8a4d8652e13acec45040f98584112c
 
 d = debian/$(pkg_name)

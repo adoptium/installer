@@ -3,9 +3,9 @@
 pkg_name = temurin-21-jdk
 priority = 2100
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.0%2B35/OpenJDK21U-jdk_x64_linux_hotspot_21.0.0_35.tar.gz
+amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.0%2B35/OpenJDK21-jdk_x64_linux_hotspot_21.0.0_35.tar.gz
 amd64_checksum = 3d91842e9c172967ac397076523249d05a82ead51b0006838f5f0315ad52222c
-arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.0%2B35/OpenJDK21U-jdk_aarch64_linux_hotspot_21.0.0_35.tar.gz
+arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.0%2B35/OpenJDK21-jdk_aarch64_linux_hotspot_21.0.0_35.tar.gz
 arm64_checksum = b475bcc23db0bd618c815bb8f11d8e084dc58288ea3bcdf4e7f389ed41c89f56
 
 d = debian/$(pkg_name)
