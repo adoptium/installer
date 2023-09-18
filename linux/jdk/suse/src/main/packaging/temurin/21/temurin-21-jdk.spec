@@ -216,4 +216,4 @@ fi
 
 %changelog
 * Wed Sep 20 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.0.0.0.35-0
-- Eclipse Temurin 21.0.0+0 release 0.
+- Eclipse Temurin 21.0.0+35 release 0.
