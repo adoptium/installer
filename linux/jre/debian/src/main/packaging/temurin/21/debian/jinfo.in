@@ -1,0 +1,11 @@
+name=@pkg_alias@
+alias=@pkg_alias@
+priority=@priority@
+section=contrib
+
+hl java /usr/lib/jvm/@jvm_dir@/bin/java
+hl jfr /usr/lib/jvm/@jvm_dir@/bin/jfr
+hl jrunscript /usr/lib/jvm/@jvm_dir@/bin/jrunscript
+jdkhl jwebserver /usr/lib/jvm/@jvm_dir@/bin/jwebserver
+hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
+hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry

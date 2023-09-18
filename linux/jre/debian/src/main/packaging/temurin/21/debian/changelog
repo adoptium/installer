@@ -1,0 +1,5 @@
+temurin-21-jre (21.0.0.0.0+35) STABLE; urgency=medium
+
+  * Eclipse Temurin 21.0.0.0.0+35 release.
+
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 20 Sep 2023 09:00:00 +0000
