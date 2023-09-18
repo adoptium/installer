@@ -1,0 +1,75 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-20
+pkgver=20.0.2_p9
+# replace _p1 with _1
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
+_pkgvername=${_pkgverplus/+/%2B}
+pkgrel=0
+pkgdesc="Eclipse Temurin 20"
+provider_priority=20
+url="https://adoptium.net"
+arch="noarch"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+depends=""
+subpackages="$pkgname-jre:_jre:x86_64"
+source="https://github.com/adoptium/temurin20-binaries/releases/download/jdk-$_pkgvername/OpenJDK20U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+"
+
+_java_home="/usr/lib/jvm/java-20-temurin-jre"
+
+ldpath="$_java_home/lib:$_java_home/lib/server"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+
+	# 1) check that java -version works
+	$_java_bin/java -version
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+}
+
+_jre() {
+	pkgdesc="Eclipse Temurin 20 (JRE)"
+	provides="java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+
+sha256sums="
+53b34747a3c042a4cccb2b8b78fba3330b105bc523f0861237baa9143dc39115  OpenJDK20U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+"
