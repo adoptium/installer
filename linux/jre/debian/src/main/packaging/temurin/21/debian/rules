@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 pkg_name = temurin-21-jre
-priority = 2100
+priority = 2112
 jvm_tools = java jfr jrunscript jwebserver keytool rmiregistry
 amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B35/OpenJDK21-jre_x64_linux_hotspot_21.0.0_35.tar.gz
 amd64_checksum = e3592e86290c192804d9c6b5035d42cc32cf04141d1c0b9d1ecb67739826c8c5
