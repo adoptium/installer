@@ -33,7 +33,7 @@ source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_p
 	TestCryptoLevel.java
 "
 
-_java_home="/usr/lib/jvm/java-20-temurin"
+_java_home="/usr/lib/jvm/java-21-temurin"
 
 ldpath="$_java_home/lib:$_java_home/lib/server"
 sonameprefix="$pkgname:"

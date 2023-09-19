@@ -28,7 +28,7 @@ subpackages="$pkgname-jre:_jre:x86_64"
 source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
 "
 
-_java_home="/usr/lib/jvm/java-20-temurin-jre"
+_java_home="/usr/lib/jvm/java-21-temurin-jre"
 
 ldpath="$_java_home/lib:$_java_home/lib/server"
 sonameprefix="$pkgname:"
