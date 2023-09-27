@@ -35,7 +35,6 @@ class ChangesVerificationTest {
 			"bookworm", // Debian/12
 			"bullseye", // Debian/11
 			"buster",   // Debian/10
-			"kinetic",  // Ubuntu/22.10
 			"jammy",    // Ubuntu/22.04 (LTS)
 			"focal",    // Ubuntu/20.04 (LTS)
 			"bionic",   // Ubuntu/18.04 (LTS)
