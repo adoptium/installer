@@ -39,7 +39,6 @@ public class DebianFlavours implements ArgumentsProvider {
                 Arguments.of("debian", "bookworm"), // Debian/12 (testing)
                 Arguments.of("debian", "bullseye"), // Debian/11 (stable)
                 Arguments.of("debian", "buster"),   // Debian/10 (oldstable)
-                Arguments.of("ubuntu", "kinetic"),  // Ubuntu/22.10
                 Arguments.of("ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
                 Arguments.of("ubuntu", "focal"),    // Ubuntu/20.04 (LTS)
                 Arguments.of("ubuntu", "bionic")    // Ubuntu/18.04 (LTS)
