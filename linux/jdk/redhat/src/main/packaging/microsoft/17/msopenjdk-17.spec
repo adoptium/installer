@@ -1,7 +1,7 @@
-%global upstream_version 17.0.8+7
+%global upstream_version 17.0.8.1+1
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
-%global spec_version 17.0.8
+%global spec_version 17.0.8.1
 %global spec_release 1
 %global priority 1161
 
@@ -225,6 +225,8 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Wed Aug 23 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.8.1-1
+- Microsoft 17.0.8.1+1 initial release.
 * Fri Jul 07 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.8-1
 - Microsoft 17.0.8+7 initial release.
 * Tue Apr 18 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.7-1
