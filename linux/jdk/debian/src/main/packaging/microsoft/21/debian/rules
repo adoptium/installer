@@ -1,0 +1,75 @@
+#!/usr/bin/make -f
+
+pkg_name = msopenjdk-21
+priority = 2111
+jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
+url_version = 21.0.0
+amd64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz
+amd64_checksum_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz.sha256sum.txt
+arm64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-aarch64.tar.gz
+arm64_checksum = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-aarch64.tar.gz.sha256sum.txt
+
+d = debian/$(pkg_name)
+jvm_home = usr/lib/jvm
+jvm_dir = $(pkg_name)-$(DEB_HOST_ARCH)
+pkg_alias = $(pkg_name)-$(DEB_HOST_ARCH)
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+override_dh_auto_test:
+override_dh_auto_build:
+override_dh_strip:
+override_dh_auto_install:
+	# Download JDK if not building locally
+	if [ ! -f jdk.tar.gz ]; then \
+		wget --progress=dot:mega -O jdk.tar.gz $($(DEB_HOST_ARCH)_tarball_url); \
+		wget --progress=dot:mega -O jdk.tar.gz.sha256.txt $($(DEB_HOST_ARCH)_checksum_url); \
+		sed -i -nE '/(.*) /{s/ .+/ jdk.tar.gz/;p;}' jdk.tar.gz.sha256.txt; \
+	fi
+	# Verify checksum of JDK
+	sha256sum -c jdk.tar.gz.sha256.txt
+
+	# Substitute variables.
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/jinfo.in > debian/jinfo
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/postinst.in > debian/postinst
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/prerm.in > debian/prerm
+
+	# Unpack JDK.
+	dh_installdirs \
+		$(jvm_home) \
+		$(jvm_home)/$(jvm_dir)
+	tar --strip-components=1 -C "$(d)/$(jvm_home)/$(jvm_dir)" -xf jdk.tar.gz
+
+	# Add jinfo file (alternatives support).
+	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
+
+	# Ensure src.zip is present in the root folder of the JDK.
+	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
+		if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/src.zip" ] ; then \
+			echo "Missing src.zip in binary distribution"; \
+			exit 1; \
+		fi; \
+		ln -s lib/src.zip "$(d)/$(jvm_home)/$(jvm_dir)/src.zip"; \
+	fi;
+
+override_dh_gencontrol:
+	dh_gencontrol --
