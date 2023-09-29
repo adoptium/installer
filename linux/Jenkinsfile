@@ -286,8 +286,61 @@ def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
     // set BUILDARCH environment variable for ${buildArch}
     env.BUILDARCH = buildArch
-    jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
-    jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+
+    def PackFiles = findFiles(glob: '**/build/ospackage/temurin-*j*.apk') // List All Packages To Upload
+    def SrcFiles = findFiles(glob: '**/build/ospackage/temurin-*src*.apk') // List All Sources To Upload
+
+    for (PackFile in PackFiles) {
+
+      def FileName = PackFile.name
+      def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
+
+      echo "File : ${PackFile}"
+      echo "Filename : ${FileName}"
+      echo "Target : ${Target}"
+
+      try {
+        // def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStatus: true)
+        def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+        echo "ResponseCode = ${ResponseCode}"
+
+        if ( ResponseCode == '200') {
+          echo "Target Exists - Skipping"
+        } else {
+          echo "Target Doesnt Exist - Upload Files"
+          jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+
+        }
+
+      } catch (Exception e) {
+        error "Error While Checking URL ${Target}: ${e.message}"
+      }
+
+      for (SrcFile in SrcFiles) {
+
+        def FileName = SrcFile.name
+        def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
+
+        echo "File : ${SrcFile}"
+        echo "Filename : ${FileName}"
+        echo "Target : ${Target}"
+
+        try {
+          // def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStatus: true)
+          def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+          echo "ResponseCode = ${ResponseCode}"
+
+          if ( ResponseCode == '200') {
+            echo "Target Exists - Skipping"
+          } else {
+            echo "Target Doesnt Exist - Upload Files"
+            jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+          }
+
+        } catch (Exception e) {
+          error "Error While Checking URL ${Target}: ${e.message}"
+        }
+    }
     // unset BUILDARCH environment variable
 }
 
@@ -338,7 +391,7 @@ def uploadDebArtifacts(String buildArch) {
         } else {
             env.BUILDARCH = debArchList[buildArch]
             env.DISTROLIST = distro_list
-            jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            // jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
     }
@@ -408,7 +461,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                     env.VALUE = entry.value
                     env.KEY = entry.key
                     env.PACKAGEDIR = packageDir
-                    jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+                    // jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
                     break
                 }
             }
