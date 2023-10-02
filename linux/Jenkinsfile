@@ -308,12 +308,12 @@ def uploadAlpineArtifacts(String buildArch) {
         } else {
           echo "Target Doesnt Exist - Upload Files"
           jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
-
         }
 
       } catch (Exception e) {
         error "Error While Checking URL ${Target}: ${e.message}"
       }
+    }
 
       for (SrcFile in SrcFiles) {
 
@@ -338,7 +338,7 @@ def uploadAlpineArtifacts(String buildArch) {
         } catch (Exception e) {
           error "Error While Checking URL ${Target}: ${e.message}"
         }
-    }
+      }
     // unset BUILDARCH environment variable
 }
 
