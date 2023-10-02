@@ -407,7 +407,7 @@ def uploadDebArtifacts(String buildArch) {
                     echo "Target Exists - Skipping"
                   } else {
                     echo "Target Doesnt Exist - Upload Files"
-                    // jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+                    jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                   }
 
                 } catch (Exception e) {
@@ -483,7 +483,33 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                     env.VALUE = entry.value
                     env.KEY = entry.key
                     env.PACKAGEDIR = packageDir
-                    // jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+
+                    def PackFiles = findFiles(glob: "**/build/ospackage/t*.${entry.value}.rpm") // List All Packages To Upload For Temurin
+
+                    for (PackFile in PackFiles) {
+                      def FileName = PackFile.name
+                      def Target = "https://adoptium.jfrog.io/artifactory/${PACKAGEDIR}/${KEY}/Packages/${FileName}"
+
+                      echo "File : ${PackFile}"
+                      echo "Filename : ${FileName}"
+                      echo "Target : ${Target}"
+
+                      try {
+                        def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+                        echo "ResponseCode = ${ResponseCode}"
+
+                        if ( ResponseCode == '200') {
+                          echo "Target Exists - Skipping"
+                        } else {
+                          echo "Target Doesnt Exist - Upload Files"
+                          jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+                        }
+
+                      } catch (Exception e) {
+                        error "Error While Checking URL ${Target}: ${e.message}"
+                      }
+
+                    }
                     break
                 }
             }
