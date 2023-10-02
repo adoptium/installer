@@ -389,10 +389,34 @@ def uploadDebArtifacts(String buildArch) {
         } else {
             env.BUILDARCH = debArchList[buildArch]
             env.DISTROLIST = distro_list
-            // jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+
+            def PackFiles = findFiles(glob: "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb") // List All Packages To Upload
+            for (PackFile in PackFiles) {
+              def FileName = PackFile.name
+              def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
+
+              echo "File : ${PackFile}"
+              echo "Filename : ${FileName}"
+              echo "Target : ${Target}"
+
+              try {
+                  def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+                  echo "ResponseCode = ${ResponseCode}"
+
+                  if ( ResponseCode == '200') {
+                    echo "Target Exists - Skipping"
+                  } else {
+                    echo "Target Doesnt Exist - Upload Files"
+                    // jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+                  }
+
+                } catch (Exception e) {
+                    error "Error While Checking URL ${Target}: ${e.message}"
+                  }
+                }
+          }
             break
         }
-    }
 }
 
 def uploadRpmArtifacts(String DISTRO, String rpmArch) {
