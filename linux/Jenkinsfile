@@ -300,7 +300,6 @@ def uploadAlpineArtifacts(String buildArch) {
       echo "Target : ${Target}"
 
       try {
-        // def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStatus: true)
         def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
         echo "ResponseCode = ${ResponseCode}"
 
@@ -326,7 +325,6 @@ def uploadAlpineArtifacts(String buildArch) {
         echo "Target : ${Target}"
 
         try {
-          // def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStatus: true)
           def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
           echo "ResponseCode = ${ResponseCode}"
 
