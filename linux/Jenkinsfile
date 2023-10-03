@@ -299,44 +299,50 @@ def uploadAlpineArtifacts(String buildArch) {
       echo "Filename : ${FileName}"
       echo "Target : ${Target}"
 
-      try {
-        def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
-        echo "ResponseCode = ${ResponseCode}"
+      if jf rt s "apk/alpine/main/${BUILDARCH}/${FileName}" > /dev/null; then
+        echo file_exists=true >> "$GITHUB_OUTPUT"
+      else
+        echo file_exists=false >> "$GITHUB_OUTPUT"
+      fi
 
-        if ( ResponseCode == '200') {
-          echo "Target Exists - Skipping"
-        } else {
-          echo "Target Doesnt Exist - Upload Files"
-          jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
-        }
-
-      } catch (Exception e) {
-        error "Error While Checking URL ${Target}: ${e.message}"
-      }
+      // try {
+      //   def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+      //   echo "ResponseCode = ${ResponseCode}"
+      //
+      //   if ( ResponseCode == '200') {
+      //     echo "Target Exists - Skipping"
+      //   } else {
+      //     echo "Target Doesnt Exist - Upload Files"
+      //     // jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+      //   }
+      //
+      // } catch (Exception e) {
+      //   error "Error While Checking URL ${Target}: ${e.message}"
+      // }
     }
 
-    for (SrcFile in SrcFiles) {
-      def FileName = SrcFile.name
-      def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
-
-      echo "File : ${SrcFile}"
-      echo "Filename : ${FileName}"
-      echo "Target : ${Target}"
-
-      try {
-        def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
-        echo "ResponseCode = ${ResponseCode}"
-
-        if ( ResponseCode == '200') {
-          echo "Target Exists - Skipping"
-        } else {
-          echo "Target Doesnt Exist - Upload Files"
-          jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
-        }
-      } catch (Exception e) {
-        error "Error While Checking URL ${Target}: ${e.message}"
-      }
-    }
+    // for (SrcFile in SrcFiles) {
+    //   def FileName = SrcFile.name
+    //   def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
+    //
+    //   echo "File : ${SrcFile}"
+    //   echo "Filename : ${FileName}"
+    //   echo "Target : ${Target}"
+    //
+    //   try {
+    //     def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+    //     echo "ResponseCode = ${ResponseCode}"
+    //
+    //     if ( ResponseCode == '200') {
+    //       echo "Target Exists - Skipping"
+    //     } else {
+    //       echo "Target Doesnt Exist - Upload Files"
+    //       // jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+    //     }
+    //   } catch (Exception e) {
+    //     error "Error While Checking URL ${Target}: ${e.message}"
+    //   }
+    // }
     // unset BUILDARCH environment variable
   }
 
@@ -405,7 +411,7 @@ def uploadDebArtifacts(String buildArch) {
                   echo "Target Exists - Skipping"
                 } else {
                   echo "Target Doesnt Exist - Upload Files"
-                  jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+                  // jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                 }
               } catch (Exception e) {
                 error "Error While Checking URL ${Target}: ${e.message}"
@@ -499,7 +505,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                           echo "Target Exists - Skipping"
                         } else {
                           echo "Target Doesnt Exist - Upload Files"
-                          jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+                          //jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
                         }
 
                       } catch (Exception e) {
