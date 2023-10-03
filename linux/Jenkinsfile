@@ -299,11 +299,12 @@ def uploadAlpineArtifacts(String buildArch) {
       echo "Filename : ${FileName}"
       echo "Target : ${Target}"
 
-      if jf rt s "apk/alpine/main/${BUILDARCH}/${FileName}" > /dev/null; then
-        echo file_exists=true >> "$GITHUB_OUTPUT"
-      else
-        echo file_exists=false >> "$GITHUB_OUTPUT"
-      fi
+        if 'jf rt s ${Target}' > /dev/null {
+          echo file_exists=true >> "$GITHUB_OUTPUT"
+        } else {
+          echo file_exists=false >> "$GITHUB_OUTPUT"
+          }
+        }
 
       // try {
       //   def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
