@@ -293,18 +293,21 @@ def uploadAlpineArtifacts(String buildArch) {
     for (PackFile in PackFiles) {
 
       def FileName = PackFile.name
-      def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
+      def Target = "apk/alpine/main/${BUILDARCH}/${FileName}"
 
       echo "File : ${PackFile}"
       echo "Filename : ${FileName}"
       echo "Target : ${Target}"
 
-        if 'jf rt s ${Target}' > /dev/null {
-          echo file_exists=true >> "$GITHUB_OUTPUT"
+      env.TARGET = ${Target}
+
+        if (jf 'rt s $TARGET') {
+          echo file_exists=true
         } else {
-          echo file_exists=false >> "$GITHUB_OUTPUT"
+          echo file_exists=false
           }
         }
+      // }
 
       // try {
       //   def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
@@ -320,7 +323,7 @@ def uploadAlpineArtifacts(String buildArch) {
       // } catch (Exception e) {
       //   error "Error While Checking URL ${Target}: ${e.message}"
       // }
-    }
+    // }
 
     // for (SrcFile in SrcFiles) {
     //   def FileName = SrcFile.name
@@ -345,7 +348,7 @@ def uploadAlpineArtifacts(String buildArch) {
     //   }
     // }
     // unset BUILDARCH environment variable
-  }
+   }
 
 def uploadDebArtifacts(String buildArch) {
     def debArchList = [
