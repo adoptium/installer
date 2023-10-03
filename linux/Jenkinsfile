@@ -315,32 +315,30 @@ def uploadAlpineArtifacts(String buildArch) {
       }
     }
 
-      for (SrcFile in SrcFiles) {
+    for (SrcFile in SrcFiles) {
+      def FileName = SrcFile.name
+      def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
 
-        def FileName = SrcFile.name
-        def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
+      echo "File : ${SrcFile}"
+      echo "Filename : ${FileName}"
+      echo "Target : ${Target}"
 
-        echo "File : ${SrcFile}"
-        echo "Filename : ${FileName}"
-        echo "Target : ${Target}"
+      try {
+        def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+        echo "ResponseCode = ${ResponseCode}"
 
-        try {
-          def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
-          echo "ResponseCode = ${ResponseCode}"
-
-          if ( ResponseCode == '200') {
-            echo "Target Exists - Skipping"
-          } else {
-            echo "Target Doesnt Exist - Upload Files"
-            jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
-          }
-
-        } catch (Exception e) {
-          error "Error While Checking URL ${Target}: ${e.message}"
+        if ( ResponseCode == '200') {
+          echo "Target Exists - Skipping"
+        } else {
+          echo "Target Doesnt Exist - Upload Files"
+          jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
         }
+      } catch (Exception e) {
+        error "Error While Checking URL ${Target}: ${e.message}"
       }
+    }
     // unset BUILDARCH environment variable
-}
+  }
 
 def uploadDebArtifacts(String buildArch) {
     def debArchList = [
@@ -400,24 +398,23 @@ def uploadDebArtifacts(String buildArch) {
               echo "Target : ${Target}"
 
               try {
-                  def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
-                  echo "ResponseCode = ${ResponseCode}"
+                def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+                echo "ResponseCode = ${ResponseCode}"
 
-                  if ( ResponseCode == '200') {
-                    echo "Target Exists - Skipping"
-                  } else {
-                    echo "Target Doesnt Exist - Upload Files"
-                    jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
-                  }
-
-                } catch (Exception e) {
-                    error "Error While Checking URL ${Target}: ${e.message}"
-                  }
+                if ( ResponseCode == '200') {
+                  echo "Target Exists - Skipping"
+                } else {
+                  echo "Target Doesnt Exist - Upload Files"
+                  jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                 }
+              } catch (Exception e) {
+                error "Error While Checking URL ${Target}: ${e.message}"
+              }
+            }
           }
-            break
+          break
         }
-}
+      }
 
 def uploadRpmArtifacts(String DISTRO, String rpmArch) {
     def distro_Package = [
