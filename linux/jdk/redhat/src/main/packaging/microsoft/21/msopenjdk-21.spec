@@ -1,13 +1,11 @@
-%global upstream_version 17.0.8.1+1
+%global upstream_version 21+35
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
-%global spec_version 17.0.8.1
+%global spec_version 21.0.0
 %global spec_release 1
-%global priority 1161
+%global priority 1211
 
 %global source_url_base https://aka.ms/download-jdk
-%global upstream_version_url %(echo %{upstream_version} | cut -d+ -f1)
-# Above is upstream_version before the '+'
 %global java_provides openjdk
 
 %global local_build_ %{?local_build}%{!?local_build:0}
@@ -43,10 +41,10 @@
 %endif
 %endif
 
-Name:        msopenjdk-17
+Name:        msopenjdk-21
 Version:     %{spec_version}
 Release:     %{spec_release}
-Summary:     Microsoft Build of OpenJDK 17
+Summary:     Microsoft Build of OpenJDK 21
 
 Group:       java
 License:     GPLv2 with Classpath Exception
@@ -80,27 +78,30 @@ Recommends: freetype%{?_isa}
 Recommends: libasound%{?_isa}
 
 Provides: java
-Provides: java-17
-Provides: java-17-devel
-Provides: java-17-%{java_provides}
-Provides: java-17-%{java_provides}-devel
+Provides: java-21
+Provides: java-21-devel
+Provides: java-21-%{java_provides}
+Provides: java-21-%{java_provides}-devel
 Provides: java-devel
+Provides: java-devel-%{java_provides}
 Provides: java-%{java_provides}
 Provides: java-%{java_provides}-devel
-Provides: java-sdk-17
-Provides: java-sdk-17-%{java_provides}
+Provides: java-sdk
+Provides: java-sdk-21
+Provides: java-sdk-21-%{java_provides}
+Provides: java-sdk-%{java_provides}
 Provides: jre
-Provides: jre-17
-Provides: jre-17-%{java_provides}
+Provides: jre-21
+Provides: jre-21-%{java_provides}
 Provides: jre-%{java_provides}
 
 # First architecture (x64)
-Source0: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch}.tar.gz
-Source1: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch}.tar.gz.sha256sum.txt
+Source0: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch}.tar.gz
+Source1: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch}.tar.gz.sha256sum.txt
 
 # Second architecture (aarch64)
-Source2: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch2}.tar.gz
-Source3: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch2}.tar.gz.sha256sum.txt
+Source2: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch2}.tar.gz
+Source3: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch2}.tar.gz.sha256sum.txt
 
 %if "%{local_build_}" == "true"
 Source4: local_build_jdk1.tar.gz
@@ -138,12 +139,6 @@ tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_n
 
 # Strip bundled Freetype and use OS package instead.
 rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
-
-# Use cacerts included in OS
-rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
-pushd "%{buildroot}%{prefix}/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
-popd
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
 # https://bugzilla.redhat.com/show_bug.cgi?id=1704608
@@ -188,6 +183,7 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jstack jstack %{prefix}/bin/jstack \
                         --slave %{_bindir}/jstat jstat %{prefix}/bin/jstat \
                         --slave %{_bindir}/jstatd jstatd %{prefix}/bin/jstatd \
+                        --slave %{_bindir}/jwebserver jwebserver %{prefix}/bin/jwebserver \
                         --slave %{_bindir}/serialver serialver %{prefix}/bin/serialver \
                         --slave  %{_mandir}/man1/jar.1 jar.1 %{prefix}/man/man1/jar.1 \
                         --slave  %{_mandir}/man1/jarsigner.1 jarsigner.1 %{prefix}/man/man1/jarsigner.1 \
@@ -210,6 +206,7 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/jstack.1 jstack.1 %{prefix}/man/man1/jstack.1 \
                         --slave  %{_mandir}/man1/jstat.1 jstat.1 %{prefix}/man/man1/jstat.1 \
                         --slave  %{_mandir}/man1/jstatd.1 jstatd.1 %{prefix}/man/man1/jstatd.1 \
+                        --slave  %{_mandir}/man1/jwebserver.1 jwebserver.1 %{prefix}/man/man1/jwebserver.1 \
                         --slave  %{_mandir}/man1/serialver.1 serialver.1 %{prefix}/man/man1/serialver.1
 fi
 
@@ -225,11 +222,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Wed Aug 23 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.8.1-1
-- Microsoft 17.0.8.1+1 initial release.
-* Fri Jul 07 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.8-1
-- Microsoft 17.0.8+7 initial release.
-* Tue Apr 18 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.7-1
-- Microsoft 17.0.7+7 initial release.
-* Fri Mar 10 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.6-1
-- Microsoft 17.0.6+10 initial release.
+* Tue Sep 26 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 21.0.0-1
+- Microsoft 21.0.0+35 initial release.
