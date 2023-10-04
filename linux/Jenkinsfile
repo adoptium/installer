@@ -165,7 +165,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
   env.PACKAGEDIR = PackageDir
   env.KEY = Key
   try {
-    def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}.123", returnStdout: true).trim()
+    def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
     echo "ResponseCode = ${ResponseCode}"
     if ( ResponseCode == '200') {
       echo "Target Exists - Skipping"
