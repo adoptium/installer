@@ -4,7 +4,7 @@ plugins {
 
 ext {
 	junitVersion = "5.10.0"
-	testcontainersVersion = "1.19.0"
+	testcontainersVersion = "1.19.1"
 	assertjCoreVersion = "3.24.2"
 }
 
@@ -28,7 +28,6 @@ def deb_versions = [
 		"bookworm", // Debian/12
 		"bullseye", // Debian/11
 		"buster",   // Debian/10
-		"kinetic",  // Ubuntu/22.10
 		"jammy",    // Ubuntu/22.04 (LTS)
 		"focal",    // Ubuntu/20.04 (LTS)
 		"bionic",   // Ubuntu/18.04 (LTS)

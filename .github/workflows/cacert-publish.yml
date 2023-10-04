@@ -20,9 +20,9 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4.0.0
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
 
-      - uses: actions/setup-java@cd89f46ac9d01407894225f350157564c9c7cee2 # v3.12.0
+      - uses: actions/setup-java@0ab4596768b603586c0de567f2430c30f5b0d2b0 # v3.13.0
         with:
           java-version: '17'
           java-package: jdk
@@ -54,7 +54,7 @@ jobs:
       - name: Upload deb file to Artifactory
         if: steps.check-deb.outputs.file_exists == 'false'
         run: |
-          debVersionList=("bookworm" "bullseye" "buster" "kinetic" "jammy" "focal" "bionic")
+          debVersionList=("bookworm" "bullseye" "buster" "jammy" "focal" "bionic")
           for debVersion in "${debVersionList[@]}"; do
             distroList+="deb.distribution=${debVersion};"
           done
