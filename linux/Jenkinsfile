@@ -479,5 +479,5 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                 }
             }
         }
-      }
+  }
 }
