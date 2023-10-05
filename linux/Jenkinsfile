@@ -337,7 +337,7 @@ def uploadAlpineArtifacts(String buildArch) {
       CheckAndUpload(Target, Distro, buildArch, '', '', '', '', '' )
     }
     // unset BUILDARCH environment variable
-  }
+}
 
 def uploadDebArtifacts(String buildArch) {
     def Distro = "Debian"
