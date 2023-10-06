@@ -161,7 +161,7 @@ popd
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
-                        --slave %{_bindir}/jaotc jfr %{prefix}/bin/jaotc \
+                        --slave %{_bindir}/jaotc jaotc %{prefix}/bin/jaotc \
                         --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
                         --slave %{_bindir}/jjs jjs %{prefix}/bin/jjs \
                         --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
