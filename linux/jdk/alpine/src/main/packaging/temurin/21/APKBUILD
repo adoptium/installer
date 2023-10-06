@@ -28,7 +28,6 @@ makedepends="
 depends=""
 subpackages="$pkgname-src:_src:noarch
 	$pkgname-jdk:_jdk:${CARCH/x86_64/x64}"
-
 source="
 	https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
 
