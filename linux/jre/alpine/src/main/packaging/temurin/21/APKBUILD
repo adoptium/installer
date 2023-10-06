@@ -2,8 +2,10 @@
 pkgname=temurin-21
 pkgver=21.0.0_p35
 # replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
+# _pkgver=${pkgver/_p/_}
+_pkgver=21_35 # remove this line and uncomment the above line when the next version is released
+# _pkgverplus=${pkgver/_p/+}
+_pkgverplus=21+35 # remove this line and uncomment the above line when the next version is released
 _pkgvername=${_pkgverplus/+/%2B}
 pkgrel=0
 pkgdesc="Eclipse Temurin 21"
@@ -24,9 +26,8 @@ makedepends="
 	libxtst-dev
 "
 depends=""
-subpackages="$pkgname-jre:_jre:x86_64"
-source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
-"
+subpackages="$pkgname-jre:_jre:${CARCH/x86_64/x64}"
+source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
 
 _java_home="/usr/lib/jvm/java-21-temurin-jre"
 
@@ -70,6 +71,15 @@ _jre() {
 		"$_toroot/lib/security/cacerts"
 }
 
+case "$CARCH" in
+	x86_64)
+		_arch_sum="b03aced4b7a1c49bc00297e35e45480fd03818862b93e17e1551a3b721e89306"
+		;;
+	aarch64)
+		_arch_sum="b03aced4b7a1c49bc00297e35e45480fd03818862b93e17e1551a3b721e89306"
+		;;
+esac
+
 sha256sums="
-53b34747a3c042a4cccb2b8b78fba3330b105bc523f0861237baa9143dc39115  OpenJDK21-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK21-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
 "
