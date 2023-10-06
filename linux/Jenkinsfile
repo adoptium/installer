@@ -80,7 +80,7 @@ pipeline {
                     steps{
                         dir('linuxDebian') {
                             script {
-                                jenkinsStepNonDeb("Alpine")
+                                jenkinsStepAlpine()
                             }
                         }
                     }
@@ -198,7 +198,44 @@ def jenkinsStepDeb() {
     }
 }
 
-// function handle both Alpine, RedHat and Suse as DISTRO
+// Function to handle Alpine Distro
+def jenkinsStepAlpine() {
+    def temurinVersion = "${TYPE.toLowerCase()} ${VERSION} - ${ARCH}"
+    echo "Installer Job for Temurin ${temurinVersion} - Alpine"
+    //make sure this is an array not a string
+    def apkArchAllList = []
+    // for one single ARCH add into array
+    apkArchAllList.add("${ARCH}")
+    // when ARCH = all, rewrite list
+    if ("${ARCH}" == 'all') {
+        apkArchAllList = ['x86_64', 'aarch64']
+    }
+    // remove aarch64 for JDK20 and below
+    if ("${VERSION}" != '21') {
+        apkArchAllList.remove('aarch64')
+    }
+    apkArchAllList.each { ApkARCH ->
+        // special handle: no label x86_64 only x64 for alpine agent
+        def apkLabel = "${ApkARCH}&&docker"
+        if ("${ApkARCH}" == 'x86_64') {
+            apkLabel = 'x64&&dockerBuild'
+        }
+
+        // reallocate jenkins agent per element in list
+        node("linux&&${apkLabel}") {
+            setup('Alpine', "${ApkARCH}")
+            tool name: 'jfrog-cli', type: 'jfrog'
+            unstash 'installercode'
+            buildAndTest('Alpine', "${ApkARCH}")
+            if (params.uploadPackage.toBoolean()) {
+                echo "Upload artifacts for ${VERSION} - ${ApkARCH} - Alpine"
+                uploadArtifacts('Alpine', "${ApkARCH}")
+            }
+        }
+    }
+}
+
+// function handle both RedHat and Suse as DISTRO
 def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
     setup("${DISTRO}", "${ARCH}")
