@@ -1,3 +1,4 @@
+
 /*
 --------------------------------------------
 buildArch   RPM         DEB         Comments
@@ -151,6 +152,44 @@ private String getCurrentRepoUrl() {
 
 private String getCurrentBranch() {
     return scm.branches.first().name ?: 'master'
+}
+
+// Define Generic Test & Upload Function
+def CheckAndUpload(String Target, String Distro, String BuildArch, String Version, String DistroList, String Value, String PackageDir, String Key) {
+  echo "Entering Check & Upload"
+  // Set Env Vars For Debs & Rpms
+  env.BUILDARCH = BuildArch
+  env.VERSION = Version
+  env.DISTROLIST = DistroList
+  env.VALUE = Value
+  env.PACKAGEDIR = PackageDir
+  env.KEY = Key
+  try {
+    def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
+    echo "ResponseCode = ${ResponseCode}"
+    if ( ResponseCode == '200') {
+      echo "Target Exists - Skipping"
+    } else {
+      echo "Target Doesnt Exist - Upload Files"
+      switch(Distro) {
+           case "Debian":
+               jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+               break
+           case "Alpine":
+               jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+               break
+          case "RPMS":
+              jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              break
+           default:
+              echo "Default Case"
+              jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              break
+       }
+    }
+  } catch (Exception e) {
+    error "Error While Checking URL ${Target}: ${e.message}"
+  }
 }
 
 // function only handle debian as DISTRO
@@ -323,12 +362,22 @@ def uploadAlpineArtifacts(String buildArch) {
     // currently only support x64 as buildArch
     // set BUILDARCH environment variable for ${buildArch}
     env.BUILDARCH = buildArch
-    jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
-    jf 'rt u **/build/ospackage/temurin-*src*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+
+    def Distro = "Alpine"
+    def PackFiles = findFiles(glob: '**/build/ospackage/temurin-*j*.apk') // List All Packages To Upload
+    def SrcFiles = findFiles(glob: '**/build/ospackage/temurin-*src*.apk') // List All Sources To Upload
+    def AllFiles = PackFiles + SrcFiles
+
+    for (PackFile in AllFiles) {
+      def FileName = PackFile.name
+      def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
+      CheckAndUpload(Target, Distro, buildArch, '', '', '', '', '' )
+    }
     // unset BUILDARCH environment variable
 }
 
 def uploadDebArtifacts(String buildArch) {
+    def Distro = "Debian"
     def debArchList = [
         'x86_64' : 'amd64',
         'armv7l': 'armhf',
@@ -375,13 +424,21 @@ def uploadDebArtifacts(String buildArch) {
         } else {
             env.BUILDARCH = debArchList[buildArch]
             env.DISTROLIST = distro_list
-            jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
-            break
+
+            def PackFiles = findFiles(glob: "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb") // List All Packages To Upload
+            for (PackFile in PackFiles) {
+              def FileName = PackFile.name
+              def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
+
+              CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '' )
+            }
+          }
+          break
         }
-    }
 }
 
 def uploadRpmArtifacts(String DISTRO, String rpmArch) {
+    def Distro = "RPM"
     def distro_Package = [
         'redhat' : [
             'rpm/centos/7',
@@ -445,10 +502,18 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                     env.VALUE = entry.value
                     env.KEY = entry.key
                     env.PACKAGEDIR = packageDir
-                    jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+
+                    def PackFiles = findFiles(glob: "**/build/ospackage/t*.${entry.value}.rpm") // List All Packages To Upload For Temurin
+
+                    for (PackFile in PackFiles) {
+                      def FileName = PackFile.name
+                      def Target = "https://adoptium.jfrog.io/artifactory/${PACKAGEDIR}/${KEY}/Packages/${FileName}"
+
+                      CheckAndUpload(Target, Distro, rpmArchList.each, '', '', VALUE , PACKAGEDIR, KEY )
+                    }
                     break
                 }
             }
         }
-    }
+  }
 }
