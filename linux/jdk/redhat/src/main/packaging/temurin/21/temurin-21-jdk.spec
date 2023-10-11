@@ -96,14 +96,14 @@ Provides: java-sdk-21-%{java_provides}
 Provides: java-sdk-%{java_provides}
 
 # First architecture (x86_64)
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21u-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21u-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Second architecture (ppc64le)
-Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21u-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21u-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (aarch64)
-Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21u-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21u-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353

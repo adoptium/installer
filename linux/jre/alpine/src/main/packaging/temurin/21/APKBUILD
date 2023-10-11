@@ -11,7 +11,7 @@ pkgrel=0
 pkgdesc="Eclipse Temurin 21"
 provider_priority=21
 url="https://adoptium.net"
-arch="noarch"
+arch="aarch64 x86_64"
 license="GPL-2.0-with-classpath-exception"
 makedepends="
 	alsa-lib-dev
@@ -26,8 +26,8 @@ makedepends="
 	libxtst-dev
 "
 depends=""
-subpackages="$pkgname-jre:_jre:${CARCH/x86_64/x64}"
-source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
+subpackages="$pkgname-jre:_jre"
+source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
 
 _java_home="/usr/lib/jvm/java-21-temurin-jre"
 
@@ -73,13 +73,13 @@ _jre() {
 
 case "$CARCH" in
 	x86_64)
-		_arch_sum="b03aced4b7a1c49bc00297e35e45480fd03818862b93e17e1551a3b721e89306"
+		_arch_sum="9e7aa5ca9d8819e8fb3ae9f3c146905bee81808b70b875de0984ec55b1bd8559"
 		;;
 	aarch64)
-		_arch_sum="b03aced4b7a1c49bc00297e35e45480fd03818862b93e17e1551a3b721e89306"
+		_arch_sum="ff4102e2aa0b35f337d579f0d19aff1aa4a10bee9ab0951137affdb50dd8f3e2"
 		;;
 esac
 
 sha256sums="
-$_arch_sum  OpenJDK21-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK21u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
 "
