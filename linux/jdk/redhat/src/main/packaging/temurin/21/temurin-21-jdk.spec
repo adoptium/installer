@@ -1,4 +1,4 @@
-%global upstream_version 21.0.0+35
+%global upstream_version 21+35
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -12,6 +12,7 @@
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjdk
+
 
 # Map architecture to the expected value in the download URL; Allow for a
 # pre-defined value of vers_arch and use that if it's defined
@@ -226,4 +227,4 @@ fi
 
 %changelog
 * Wed Sep 20 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.0.0.0.35-1
-- Eclipse Temurin 21.0.0+35 release 0.
+- Eclipse Temurin 21.0.0+35 release 1.
