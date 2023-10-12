@@ -5,7 +5,7 @@ Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 Build-Depends: debhelper (>= 11), lsb-release
 
 Package: temurin-21-jre
-Architecture: amd64 armhf arm64 ppc64el s390x
+Architecture: amd64 arm64 ppc64el
 Depends: adoptium-ca-certificates,
          java-common,
          libasound2,
