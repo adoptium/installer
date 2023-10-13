@@ -18,21 +18,12 @@
 
 %ifarch x86_64
 %global vers_arch x64
-%global vers_arch2 ppc64le
 %global vers_arch3 aarch64
 %global src_num 0
 %global sha_src_num 1
 %endif
-%ifarch ppc64le
-%global vers_arch x64
-%global vers_arch2 ppc64le
-%global vers_arch3 aarch64
-%global src_num 2
-%global sha_src_num 3
-%endif
 %ifarch aarch64
 %global vers_arch x64
-%global vers_arch2 ppc64le
 %global vers_arch3 aarch64
 %global src_num 4
 %global sha_src_num 5
@@ -88,9 +79,6 @@ Provides: jre-%{java_provides}-headless
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
-# Second architecture (ppc64le)
-#Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-#Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
