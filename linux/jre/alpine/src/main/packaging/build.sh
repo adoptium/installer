@@ -10,5 +10,7 @@ cp -R /home/builder/build/generated/packaging /home/builder/workspace
 cd /home/builder/workspace/packaging
 abuild -r
 
+arch=$(abuild -A)
+
 # Copy resulting files into mounted directory where artifacts should be placed.
-mv /home/builder/packages/workspace/x86_64/*.{apk,tar.gz} /home/builder/out
+mv /home/builder/packages/workspace/$arch/*.{apk,tar.gz} /home/builder/out

@@ -1,0 +1,85 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-21
+pkgver=21.0.0_p35
+# replace _p1 with _1
+# _pkgver=${pkgver/_p/_}
+_pkgver=21_35 # remove this line and uncomment the above line when the next version is released
+# _pkgverplus=${pkgver/_p/+}
+_pkgverplus=21+35 # remove this line and uncomment the above line when the next version is released
+_pkgvername=${_pkgverplus/+/%2B}
+pkgrel=0
+pkgdesc="Eclipse Temurin 21"
+provider_priority=21
+url="https://adoptium.net"
+arch="aarch64 x86_64"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+depends=""
+subpackages="$pkgname-jre:_jre"
+source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
+
+_java_home="/usr/lib/jvm/java-21-temurin-jre"
+
+ldpath="$_java_home/lib:$_java_home/lib/server"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+
+	# 1) check that java -version works
+	$_java_bin/java -version
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+}
+
+_jre() {
+	pkgdesc="Eclipse Temurin 21 (JRE)"
+	provides="java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+
+case "$CARCH" in
+	x86_64)
+		_arch_sum="9e7aa5ca9d8819e8fb3ae9f3c146905bee81808b70b875de0984ec55b1bd8559"
+		;;
+	aarch64)
+		_arch_sum="ff4102e2aa0b35f337d579f0d19aff1aa4a10bee9ab0951137affdb50dd8f3e2"
+		;;
+esac
+
+sha256sums="
+$_arch_sum  OpenJDK21u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+"
