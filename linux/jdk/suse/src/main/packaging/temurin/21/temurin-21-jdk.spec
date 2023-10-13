@@ -18,7 +18,7 @@
 
 %ifarch x86_64
 %global vers_arch x64
-%global vers_arch2 ppc64le
+# %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
 %global src_num 0
 %global sha_src_num 1
@@ -32,7 +32,7 @@
 # %endif
 %ifarch aarch64
 %global vers_arch x64
-%global vers_arch2 ppc64le
+# %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
 %global src_num 4
 %global sha_src_num 5
