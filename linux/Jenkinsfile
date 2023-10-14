@@ -155,7 +155,7 @@ private String getCurrentBranch() {
 }
 
 // Define Generic Test & Upload Function
-def CheckAndUpload(String Target, String Distro, String BuildArch, String Version, String DistroList, String Value, String PackageDir, String Key) {
+def CheckAndUpload(String Target, String Distro, String BuildArch, String Version, String DistroList, String Value, String PackageDir, String Key, String FileName) {
   echo "Entering Check & Upload"
   // Set Env Vars For Debs & Rpms
   env.BUILDARCH = BuildArch
@@ -164,6 +164,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
   env.VALUE = Value
   env.PACKAGEDIR = PackageDir
   env.KEY = Key
+  env.FILENAME = FileName
   try {
     def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}", returnStdout: true).trim()
     echo "ResponseCode = ${ResponseCode}"
@@ -176,7 +177,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                break
            case "Alpine":
-               jf 'rt u **/build/ospackage/temurin-*j*.apk apk/alpine/main/${BUILDARCH}/ --flat=true'
+               jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
                break
           case "RPMS":
               jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
@@ -371,8 +372,9 @@ def uploadAlpineArtifacts(String buildArch) {
     for (PackFile in AllFiles) {
       def FileName = PackFile.name
       def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${BUILDARCH}/${FileName}"
-      CheckAndUpload(Target, Distro, buildArch, '', '', '', '', '' )
+      CheckAndUpload(Target, Distro, buildArch, '', '', '', '', '' , FileName)
     }
+
     // unset BUILDARCH environment variable
 }
 
@@ -430,7 +432,7 @@ def uploadDebArtifacts(String buildArch) {
               def FileName = PackFile.name
               def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
 
-              CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '' )
+              CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '', '' )
             }
           }
           break
@@ -509,7 +511,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
                       def FileName = PackFile.name
                       def Target = "https://adoptium.jfrog.io/artifactory/${PACKAGEDIR}/${KEY}/Packages/${FileName}"
 
-                      CheckAndUpload(Target, Distro, rpmArchList.each, '', '', VALUE , PACKAGEDIR, KEY )
+                      CheckAndUpload(Target, Distro, rpmArchList.each, '', '', VALUE , PACKAGEDIR, KEY, '' )
                     }
                     break
                 }
