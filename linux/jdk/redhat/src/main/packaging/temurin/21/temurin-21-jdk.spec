@@ -1,10 +1,10 @@
-%global upstream_version 21+35
+%global upstream_version 21.0.1+12
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 21.0.0.0.0___21.0.0.0.0+1
 #  21.0.0.0.0___1 == 21.0.0.0.0+35
-%global spec_version 21.0.0.0.0.35
+%global spec_version 21.0.1.0.0.12
 %global spec_release 1
 %global priority 1161
 
@@ -19,12 +19,21 @@
 
 %ifarch x86_64
 %global vers_arch x64
+%global vers_arch2 ppc64le
 %global vers_arch3 aarch64
 %global src_num 0
 %global sha_src_num 1
 %endif
+%ifarch ppc64le
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 aarch64
+%global src_num 2
+%global sha_src_num 3
+%endif
 %ifarch aarch64
 %global vers_arch x64
+%global vers_arch2 ppc64le
 %global vers_arch3 aarch64
 %global src_num 4
 %global sha_src_num 5
@@ -49,7 +58,7 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
 
-ExclusiveArch: x86_64 aarch64
+ExclusiveArch: x86_64 ppc64le aarch64
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -90,6 +99,9 @@ Provides: java-sdk-%{java_provides}
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+# Second architecture (ppc64le)
+Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
@@ -214,5 +226,7 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Tue Oct 24 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.1.0.0.12-1
+- Eclipse Temurin 21.0.1+12 release.
 * Wed Sep 20 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.0.0.0.35-1
 - Eclipse Temurin 21.0.0+35 release 1.
