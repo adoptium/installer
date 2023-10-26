@@ -205,12 +205,12 @@ def jenkinsStepDeb() {
     if ("${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
     }
-    // remove s390x for JDK8 and JDK20
-    if ("${VERSION}" == '8' || "${VERSION}" == '20') {
+    // remove s390x for JDK8 and JDK21
+    if ("${VERSION}" == '8' || "${VERSION}" == '21') {
         debArchAllList.remove('s390x')
     }
-    // remove armv7l for JDK20
-    if ("${VERSION}" == '20') {
+    // remove armv7l for JDK21
+    if ("${VERSION}" == '21') {
         debArchAllList.remove('armv7l')
     }
     debArchAllList.each { DebARCH ->
@@ -387,12 +387,12 @@ def uploadDebArtifacts(String buildArch) {
         'ppc64le': 'ppc64el',
         's390x'  : 's390x'
     ]
-    // if VERSION is 8 or 20 remove s390x from the list
-    if (VERSION == '8' || VERSION == '20') {
+    // if VERSION is 8 or 21 remove s390x from the list
+    if (VERSION == '8' || VERSION == '21') {
         debArchList.remove('s390x')
     }
-    // if VERSION is 20 remove armv7l from the list
-    if (VERSION == '20') {
+    // if VERSION is 21 remove armv7l from the list
+    if (VERSION == '21') {
         debArchList.remove('armv7l')
     }
 
@@ -472,12 +472,12 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         'ppc64le': 'ppc64le',
         's390x'  : 's390x'
     ]
-    // if VERSION is 8 or 20 remove s390x from the list
-    if (VERSION == '8' || VERSION == '20') {
+    // if VERSION is 8 or 21 remove s390x from the list
+    if (VERSION == '8' || VERSION == '21') {
         rpmArchList.remove('s390x')
     }
-    // if VERSION is 20 remove armv7hl from the list
-    if (VERSION == '20') {
+    // if VERSION is 21 remove armv7hl from the list
+    if (VERSION == '21') {
         rpmArchList.remove('armv7hl')
     }
 
