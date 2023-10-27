@@ -1,13 +1,11 @@
-%global upstream_version 11.0.20.1+1
+%global upstream_version 11.0.21+9
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
-%global spec_version 11.0.20.1
+%global spec_version 11.0.21
 %global spec_release 1
 %global priority 1111
 
 %global source_url_base https://aka.ms/download-jdk
-%global upstream_version_url %(echo %{upstream_version} | cut -d+ -f1)
-# Above is upstream_version before the '+'
 %global java_provides openjdk
 
 %global local_build_ %{?local_build}%{!?local_build:0}
@@ -95,12 +93,12 @@ Provides: jre-11-%{java_provides}
 Provides: jre-%{java_provides}
 
 # First architecture (x64)
-Source0: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch}.tar.gz
-Source1: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch}.tar.gz.sha256sum.txt
+Source0: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch}.tar.gz
+Source1: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch}.tar.gz.sha256sum.txt
 
 # Second architecture (aarch64)
-Source2: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch2}.tar.gz
-Source3: %{source_url_base}/microsoft-jdk-%{upstream_version_url}-linux-%{vers_arch2}.tar.gz.sha256sum.txt
+Source2: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch2}.tar.gz
+Source3: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch2}.tar.gz.sha256sum.txt
 
 %if "%{local_build_}" == "true"
 Source4: local_build_jdk1.tar.gz
@@ -138,12 +136,6 @@ tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_n
 
 # Strip bundled Freetype and use OS package instead.
 rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
-
-# Use cacerts included in OS
-rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
-pushd "%{buildroot}%{prefix}/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
-popd
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
 # https://bugzilla.redhat.com/show_bug.cgi?id=1704608
@@ -228,6 +220,8 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 # Make below specific 
 %changelog
+* Wed Oct 11 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.21-1
+- Microsoft 11.0.21+9 initial release.
 * Wed Aug 23 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.20.1-1
 - Microsoft 11.0.20.1+1 initial release.
 * Fri Jul 07 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.20-1
