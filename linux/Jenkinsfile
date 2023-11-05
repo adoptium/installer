@@ -196,6 +196,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
 // function only handle debian as DISTRO
 def jenkinsStepDeb() {
     def temurinVersion = "${TYPE.toLowerCase()} ${VERSION} - ${ARCH}"
+    def VERSION = "${VERSION}"
     echo "Installer Job for Temurin ${temurinVersion} - Debian"
     //make sure this is an array not a string
     def debArchAllList = []
@@ -229,7 +230,7 @@ def jenkinsStepDeb() {
             setup('Debian', "${DebARCH}")
             tool name: 'jfrog-cli', type: 'jfrog'
             unstash 'installercode'
-            buildAndTest('Debian', "${DebARCH}")
+            buildAndTest('Debian', "${DebARCH}","${VERSION}")
             if (params.uploadPackage.toBoolean()) {
                 echo "Upload artifacts for ${VERSION} - ${DebARCH} - Debian"
                 uploadArtifacts('Debian', "${DebARCH}")
@@ -241,6 +242,7 @@ def jenkinsStepDeb() {
 // Function to handle Alpine Distro
 def jenkinsStepAlpine() {
     def temurinVersion = "${TYPE.toLowerCase()} ${VERSION} - ${ARCH}"
+    def VERSION = "${VERSION}"
     echo "Installer Job for Temurin ${temurinVersion} - Alpine"
     //make sure this is an array not a string
     def apkArchAllList = []
@@ -254,19 +256,20 @@ def jenkinsStepAlpine() {
     if ("${VERSION}" != '21') {
         apkArchAllList.remove('aarch64')
     }
+
     apkArchAllList.each { ApkARCH ->
         // special handle: no label x86_64 only x64 for alpine agent
         def apkLabel = "${ApkARCH}&&docker"
+
         if ("${ApkARCH}" == 'x86_64') {
             apkLabel = 'x64&&dockerBuild'
         }
-
         // reallocate jenkins agent per element in list
         node("linux&&${apkLabel}") {
             setup('Alpine', "${ApkARCH}")
             tool name: 'jfrog-cli', type: 'jfrog'
             unstash 'installercode'
-            buildAndTest('Alpine', "${ApkARCH}")
+            buildAndTest('Alpine', "${ApkARCH}", "${VERSION}")
             if (params.uploadPackage.toBoolean()) {
                 echo "Upload artifacts for ${VERSION} - ${ApkARCH} - Alpine"
                 uploadArtifacts('Alpine', "${ApkARCH}")
@@ -280,7 +283,7 @@ def jenkinsStepNonDeb(String DISTRO) {
     echo "Installer Job for Temurin jdk ${VERSION} - ${ARCH} - ${DISTRO}"
     setup("${DISTRO}", "${ARCH}")
     unstash 'installercode'
-    buildAndTest("${DISTRO}", "${ARCH}")
+    buildAndTest("${DISTRO}", "${ARCH}", "${VERSION}")
     if (params.uploadPackage.toBoolean()) {
         echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
         uploadArtifacts("${DISTRO}", "${ARCH}")
@@ -297,7 +300,7 @@ def setup(String DISTRO, String buildArch) {
 }
 
 // common function regardless DISTRO
-def buildAndTest(String DISTRO, String buildArch) {
+def buildAndTest(String DISTRO, String buildArch, String VERSION) {
     try {
         if (DISTRO != "Debian") { // for RPM based: RedHat / Suse / Alpine
             def privateKey = 'adoptium-artifactory-gpg-key'
@@ -307,10 +310,10 @@ def buildAndTest(String DISTRO, String buildArch) {
             if (params.enableGpgSigning) {
                 // Use Adoptium GPG key for signing
                 withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
-                    buildCli(DISTRO, buildArch, GPG_KEY)
+                    buildCli(DISTRO, buildArch, GPG_KEY, VERSION)
                 }
             } else {
-                buildCli(DISTRO, buildArch)
+                buildCli(DISTRO, buildArch, VERSION)
             }
         } else {
             def gBuildTask = (buildArch == 'x86_64') ? "package${TYPE}${DISTRO} check${TYPE}${DISTRO}" : "package${TYPE}${DISTRO}"
@@ -334,7 +337,7 @@ def buildAndTest(String DISTRO, String buildArch) {
     }
 }
 
-private void buildCli(String DISTRO, String buildArch, String GPG_KEY = null) {
+private void buildCli(String DISTRO, String buildArch, String GPG_KEY = null, String VERSION) {
     def buildCli = "./gradlew package${TYPE}${DISTRO} check${TYPE}${DISTRO} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${buildArch}"
     if (GPG_KEY) {
         buildCli += " -PGPG_KEY=${GPG_KEY}"
