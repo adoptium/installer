@@ -14,19 +14,24 @@
 # limitations under the License.
 ################################################################################
 
-set -eu
-
 PKG="$1"
 PRIMARY_BUNDLE_ID="$2"
 
 echo "Notarizing $1, this can take a while! Updating status every minute..."
 
-RESPONSE=$(curl -s -X POST -F file=@${PKG} -F 'options={"primaryBundleId": "'${PRIMARY_BUNDLE_ID}'", "staple": true};type=application/json' https://cbi.eclipse.org/macos/xcrun/notarize)
+RESPONSE=$(curl -s -X POST -F file=@${PKG} -F 'options={"primaryBundleId": "'${PRIMARY_BUNDLE_ID}'", "staple": true};type=application/json' https://cbi.eclipse.org/macos/xcrun/notarize 2>&1)
+CURL_RC=$?
+echo "$RESPONSE"
+if [ $CURL_RC -ne 0 ]; then
+    echo "Notarize service curl failed rc=$CURL_RC"
+    exit $CURL_RC
+fi
     
 UUID=$(echo $RESPONSE | grep -Po '"uuid"\s*:\s*"\K[^"]+')
 STATUS=$(echo $RESPONSE | grep -Po '"status"\s*:\s*"\K[^"]+')
 
 while [[ ${STATUS} == 'IN_PROGRESS' ]]; do
+    echo "Waiting for notarize service response..."
     sleep 1m
     RESPONSE=$(curl -s https://cbi.eclipse.org/macos/xcrun/${UUID}/status)
     STATUS=$(echo $RESPONSE | grep -Po '"status"\s*:\s*"\K[^"]+')
@@ -40,3 +45,9 @@ if [[ ${STATUS} != 'COMPLETE' ]]; then
 fi
 
 curl -o "$PKG" https://cbi.eclipse.org/macos/xcrun/${UUID}/download
+CURL_RC=$?
+if [ $CURL_RC -ne 0 ]; then
+    echo "curl download of notarized pkg failed, failed rc=$CURL_RC"
+    exit $CURL_RC
+fi
+
