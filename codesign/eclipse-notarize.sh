@@ -21,9 +21,9 @@ echo "Notarizing $1, this can take a while! Updating status every minute..."
 
 RESPONSE=$(curl -s -X POST -F file=@${PKG} -F 'options={"primaryBundleId": "'${PRIMARY_BUNDLE_ID}'", "staple": true};type=application/json' https://cbi.eclipse.org/macos/xcrun/notarize 2>&1)
 CURL_RC=$?
-echo "$RESPONSE"
 if [ $CURL_RC -ne 0 ]; then
     echo "Notarize service curl failed rc=$CURL_RC"
+    echo "$RESPONSE"
     exit $CURL_RC
 fi
     
