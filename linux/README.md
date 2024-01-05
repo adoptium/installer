@@ -224,6 +224,7 @@ SRPM also available.
 | rpm/fedora/36 |         x86_64         |                                             |
 | rpm/fedora/37 |         x86_64         |                                             |
 | rpm/fedora/38 |         x86_64         |                                             |
+| rpm/fedora/39 |         x86_64         |                                             |
 | oraclelinux/7 |         x86_64         |                                             |
 | oraclelinux/8 |         x86_64         |                                             |
 | opensuse/15.3 |         x86_64         |                                             |
