@@ -27,7 +27,7 @@
     <?define FeatureMainDescription="!(loc.JREFeatureMainDescription)" ?>
 
     <?define ProductCategory="JRE" ?>
-    <?define AppFolder="jre-$(var.ProductVersion)-$(var.JVM)" ?>
+    <?define AppFolder="jre-$(var.ProductMajorVersion)-$(var.JVM)" ?>
   <?else?>
     <?define ProductName="!(loc.JDKProductName)" ?>
     <?define ProductNameWithVersion="!(loc.JDKProductName) $(var.ProductVersionString) $(var.Arch)" ?>
@@ -36,7 +36,7 @@
     <?define FeatureMainDescription="!(loc.JDKFeatureMainDescription)" ?>
 
     <?define ProductCategory="JDK" ?>
-    <?define AppFolder="jdk-$(var.ProductVersion)-$(var.JVM)" ?>
+    <?define AppFolder="jdk-$(var.ProductMajorVersion)-$(var.JVM)" ?>
   <?endif?>
 
   <!-- Registry key change with new numbering format since Java 9 -->
