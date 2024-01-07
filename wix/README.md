@@ -1,7 +1,7 @@
 # Requirements for build environment
 
-1. [Windows Installer XML (WiX) toolset, 3.11 or later](http://wixtoolset.org/releases/)
-2. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
+1. [Windows Installer XML (WiX) toolset, 3.11 or later](http://github.com/wixtoolset/wix3/releases)
+2. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-sdk) for building multi-lingual setups.
 3. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
 4. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
 
@@ -27,7 +27,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   SET ARCH=x64|x86|arm64 or all "x64 x86 arm64"
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
-  cmd /c Build.OpenJDK_generic.cmd
+  SET WIX=C:\Program Files (x86)\WiX Toolset v3.11\
   ```
 
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
