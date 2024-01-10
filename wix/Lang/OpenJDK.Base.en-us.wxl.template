@@ -17,7 +17,7 @@
 	<String Id="FeatureJarFileRunWithDescription">Associate .jar files to run with {vendor_branding}</String>
 	<String Id="DowngradeDenied">"A later version of [ProductName] is already installed. Setup will now exit."</String>
 	<String Id="FeatureOracleJavaSoftName">JavaSoft (Oracle) registry keys</String>
-	<String Id="FeatureOracleJavaSoftDescription">Overwrites the reg keys HKLM\Software\JavaSoft (Oracle). After uninstallation of Temurin, Oracle Java needs to be reinstalled to re-create these registry keys.</String>
+	<String Id="FeatureOracleJavaSoftDescription">Overwrites Oracle's reg key HKLM\Software\JavaSoft. After uninstallation of {vendor_branding}, Oracle Java needs to be reinstalled to re-create these registry keys.</String>
 	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
 	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
 	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>
