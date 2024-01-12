@@ -464,6 +464,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         'suse'   : [
             'rpm/opensuse/15.3',
             'rpm/opensuse/15.4',
+            'rpm/opensuse/15.5',
             'rpm/sles/12',
             'rpm/sles/15'
         ]
