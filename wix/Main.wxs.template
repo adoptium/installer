@@ -11,9 +11,6 @@
     <Property Id="ARPURLUPDATEINFO" Value="!(loc.ProductUrlUpdateInfo)" />
     <Property Id="ALLUSERS" Value="2" /> <!-- Allow per User or per Machine setup -->
     <Property Id="ARPPRODUCTICON" Value="logo.ico" />
-    <Property Id="ORACLE_VERSION_KEY" Value="$(var.OracleVersionKey)" />
-    <Property Id="ORACLE_JAVASOFT_BASE_KEY" Value="$(var.OracleJavasoftBaseKey)" />
-    <Property Id="DLL_PATH" Value="$(var.DllPath)" />
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
     <Icon Id="logo.ico" SourceFile="{vendor_branding_logo}" />
 
@@ -137,17 +134,17 @@
       </Component>
       <Component Id="SetOracleJavaSoftKeysCurrentVersion" Guid="*">
           <Condition><![CDATA[NOT JAVASOFT_CURRENTVERSION OR JAVASOFT_CURRENTVERSION <> "1.8" AND JAVASOFT_CURRENTVERSION < $(var.ProductMajorVersion)]]></Condition>
-          <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]" Name="CurrentVersion" Type="string" Value="[ORACLE_VERSION_KEY]" KeyPath="yes" />
+          <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)" Name="CurrentVersion" Type="string" Value="$(var.OracleVersionKey)" KeyPath="yes" />
       </Component>
       <Component Id="SetOracleJavaSoftKeys" Guid="*">
-        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)\$(var.OracleVersionKey)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
         <?if $(env.PRODUCT_CATEGORY)="jre"?>
-            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\[ORACLE_VERSION_KEY]" Name="RuntimeLib" Type="string" Value="[INSTALLDIR][DLL_PATH]" KeyPath="no" />
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)\$(var.OracleVersionKey)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]$(var.DllPath)" KeyPath="no" />
             <!-- Oracle dont set RuntimeLib for JDK .. because JRE is "private" JRE so no ?else? -->
         <?endif?>
-        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
+        <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)\$(var.ProductVersion)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="no" />
         <?if $(env.PRODUCT_CATEGORY)="jre"?>
-            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]\$(var.ProductVersion)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR][DLL_PATH]" KeyPath="no" />
+            <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)\$(var.ProductVersion)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]$(var.DllPath)" KeyPath="no" />
             <!-- Oracle don't set RuntimeLib for JDK .. because JRE is "private" JRE so no ?else? -->
         <?endif?>
       </Component>
@@ -178,11 +175,11 @@
     <Property Id="JAVASOFT_CURRENTVERSION">
         <RegistrySearch Id="JAVASOFT_CURRENTVERSION"
                         Root="HKLM"
-                        Key="SOFTWARE\JavaSoft\[ORACLE_JAVASOFT_BASE_KEY]"
+                        Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)"
                         Name="CurrentVersion"
                         Type="raw" />
     </Property>
-     
+
     <!-- List of features to install -->
     <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
       <ComponentRef Id="CleanupMainInstallDir" />
