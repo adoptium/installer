@@ -222,6 +222,8 @@ fi
 %changelog
 * Thu Jan 11 2024 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.22-1
 - Microsoft 11.0.22+7 initial release.
+* Wed Oct 11 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.21-1
+- Microsoft 11.0.21+9 initial release.
 * Wed Aug 23 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.20.1-1
 - Microsoft 11.0.20.1+1 initial release.
 * Fri Jul 07 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.20-1

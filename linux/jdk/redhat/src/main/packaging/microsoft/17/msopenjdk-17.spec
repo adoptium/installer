@@ -219,6 +219,8 @@ fi
 %changelog
 * Wed Jan 10 2024 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.10-1
 - Microsoft 17.0.10+7 initial release.
+* Wed Oct 18 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.9-1
+- Microsoft 17.0.9+8 initial release.
 * Wed Aug 23 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.8.1-1
 - Microsoft 17.0.8.1+1 initial release.
 * Fri Jul 07 2023 Microsoft Package Maintainers <openjdk@microsoft.com> 17.0.8-1
