@@ -190,7 +190,7 @@ fi
 %{prefix}
 
 %changelog
-* Tue 23 Jan 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.22.0.0.7-1
+* Tue Jan 23 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.22.0.0.7-1
 - Eclipse Temurin 11.0.22.0+7 release.
 * Thu Oct 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.21.0.0.1-9
 - Eclipse Temurin 11.0.21.0+9 release.
