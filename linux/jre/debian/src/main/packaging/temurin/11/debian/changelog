@@ -1,8 +1,8 @@
-temurin-11-jre (11.0.21.0.0+9) STABLE; urgency=medium
+temurin-11-jre (11.0.22.0.0+7) STABLE; urgency=medium
 
-  * Eclipse Temurin 11.0.20.1.0+1release.
+  * Eclipse Temurin 11.0.22.0.0+7release.
 
- -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 26 Oct 2023 08:00:00 +0000
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Tue, 23 Jan 2024 08:00:00 +0000
  
 temurin-11-jre (11.0.20.1.0+1) STABLE; urgency=medium
 
