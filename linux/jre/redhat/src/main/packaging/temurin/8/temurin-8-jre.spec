@@ -195,7 +195,7 @@ fi
 %changelog
 * Wed Jan 24 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.402.0.0.6-1
 - Eclipse Temurin 8.0.402-b06 release.
-* Thu Oct 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.392.0.0.8-1
+* Wed Oct 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.392.0.0.8-1
 - Eclipse Temurin 8.0.392-b08 release.
 * Tue Jul 25 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.382.0.0.5-1
 - Eclipse Temurin 8.0.382-b05 release.
