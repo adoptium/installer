@@ -211,7 +211,7 @@ def jenkinsStepDeb() {
         debArchAllList.remove('s390x')
     }
     // remove armv7l for JDK20
-    if ("${VERSION}" == '20') {
+    if ("${VERSION}" >= '20') {
         debArchAllList.remove('armv7l')
     }
     debArchAllList.each { DebARCH ->
