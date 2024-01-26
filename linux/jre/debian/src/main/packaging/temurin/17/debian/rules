@@ -11,7 +11,7 @@ armhf_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/down
 armhf_checksum = 0378bdf6769632b182b27ba4e53b17eaefefdbafa3845c15e1bd88a5aeec8442
 ppc64el_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.10%2B7/OpenJDK17U-jre_ppc64le_linux_hotspot_17.0.10_7.tar.gz
 ppc64el_checksum = 4e18b60dba540b5c431ff03f74a1c73b22d83151f93b8768241d264d1a53582d
-s390x_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.10%2B7/OpenJDK17U-jdk_s390x_linux_hotspot_17.0.10_7.tar.gz
+s390x_tarball_url = https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.10%2B7/OpenJDK17U-jre_s390x_linux_hotspot_17.0.10_7.tar.gz
 s390x_checksum = c1b2fd232fc55e814479d7585d7ec45bae952a2f4137084f1d99f958c6880a49
 
 d = debian/$(pkg_name)
