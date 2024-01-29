@@ -184,7 +184,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
               break
            default:
               echo "Default Case"
-              echo jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
               break
        }
     }
