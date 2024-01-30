@@ -4,14 +4,14 @@ pkg_name = temurin-8-jdk
 priority = 1081
 # The list below must be kept in sync with the jinfo.in file
 jvm_tools = appletviewer clhsdb extcheck hsdb idlj jar jarsigner java javac javadoc javah javap jcmd jconsole jdb jdeps jfr jhat jinfo jjs jmap jps jrunscript jsadebugd jstack jstat jstatd keytool native2ascii orbd pack200 policytool rmic rmid rmiregistry schemagen serialver servertool tnameserv unpack200 wsgen wsimport xjc jexec
-amd64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_x64_linux_hotspot_8u392b08.tar.gz
-amd64_checksum = 15d091e22aa0cad12a241acff8c1634e7228b9740f8d19634250aa6fe0c19a33
-arm64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_aarch64_linux_hotspot_8u392b08.tar.gz
-arm64_checksum = 70636c2fa4927913e9e869d471607a99d3a521c1fa3f3687b889c2acba67c493
-armhf_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_arm_linux_hotspot_8u392b08.tar.gz
-armhf_checksum = 9e574cff0b8dba29930e38eeec4cb4350a77a56a27d03fa316fa6b2383eeef9d
-ppc64el_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u392-b08/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u392b08.tar.gz
-ppc64el_checksum = 9d9813d2840360ffdbc449c45e71124e8170c31a3b6cce9151fbb31352064406
+amd64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_x64_linux_hotspot_8u402b06.tar.gz
+amd64_checksum = fcfd08abe39f18e719e391f2fc37b8ac1053075426d10efac4cbf8969e7aa55e
+arm64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_aarch64_linux_hotspot_8u402b06.tar.gz
+arm64_checksum = 241a72d6f0051de30c71e7ade95b34cd85a249c8e5925bcc7a95872bee81fd84
+armhf_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_arm_linux_hotspot_8u402b06.tar.gz
+armhf_checksum = 271f28c7b3592b201b7434292c21d923f520af8ff1c090b6849cb946e34a6bdb
+ppc64el_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u402-b06/OpenJDK8U-jdk_ppc64le_linux_hotspot_8u402b06.tar.gz
+ppc64el_checksum = 64bc05cdffe827c84000177dca2eb4ff0a8ff0021889bb75abff3639d4f51838
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
