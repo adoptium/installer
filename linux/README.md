@@ -229,6 +229,7 @@ SRPM also available.
 | oraclelinux/8 |         x86_64         |                                             |
 | opensuse/15.3 |         x86_64         |                                             |
 | opensuse/15.4 |         x86_64         |                                             |
+| opensuse/15.5 |         x86_64         |                                             |
 | rocky/8       |         x86_64         |                                             |
 | rpm/rhel/7    |         x86_64         |                                             |
 | rpm/rhel/8    |         x86_64         |                                             |
