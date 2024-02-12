@@ -1,3 +1,9 @@
+msopenjdk-11 (11.0.22-1) STABLE; urgency=medium
+
+  * Microsoft 11.0.22-1 release.
+
+ -- Microsoft Package Maintainers <openjdk@microsoft.com>  Thu, 11 Jan 2024 23:25:45 +0000
+
 msopenjdk-11 (11.0.21-1) STABLE; urgency=medium
 
   * Microsoft 11.0.21-1 release.
