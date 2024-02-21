@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 21.0.0.0.0___21.0.0.0.0+1
 #  20.0.0.0.0___1 == 21.0.0.0.0+35
 %global spec_version 21.0.2.0.0.13
-%global spec_release 1
+%global spec_release 2
 %global priority 2100
 
 %global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
@@ -157,6 +157,8 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Wed Feb 21 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-2
+- Eclipse Temurin 21.0.2+13 release.
 * Tue Jan 23 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-1
 - Eclipse Temurin 21.0.2+13 release.
 * Tue Oct 24 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.1.0.0.12-1
