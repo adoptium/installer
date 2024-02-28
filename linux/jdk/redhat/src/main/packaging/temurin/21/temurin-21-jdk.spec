@@ -21,6 +21,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global src_num 0
 %global sha_src_num 1
 %endif
@@ -28,6 +29,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global src_num 2
 %global sha_src_num 3
 %endif
@@ -35,8 +37,17 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global src_num 4
 %global sha_src_num 5
+%endif
+%ifarch s390x
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 aarch64
+%global vers_arch4 s390x
+%global src_num 6
+%global sha_src_num 7
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -58,7 +69,7 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
 
-ExclusiveArch: x86_64 ppc64le aarch64
+ExclusiveArch: x86_64 ppc64le aarch64 s390x
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -105,6 +116,9 @@ Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_ar
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+# Fourth architecture (s390x)
+Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
