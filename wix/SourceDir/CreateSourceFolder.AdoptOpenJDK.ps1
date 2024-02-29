@@ -3,8 +3,12 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   $filename = [System.IO.Path]::GetFileName($_)
   Write-Output "Processing filename : $filename"
 
+  $openjdk_filename_regex = $env:openjdk_filename_regex
+  if ([string]::IsNullOrEmpty($openjdk_filename_regex)) {
+      $openjdk_filename_regex = "^OpenJDK(?<major>\d*)"
+  }
+
   # validate that the zip file is OpenJDK with an optional major version number
-  $openjdk_filename_regex = "^microsoft-(jdk|jre)-(?<major>\d*)"
   $openjdk_found = $filename -match $openjdk_filename_regex
   if (!$openjdk_found) {
     Write-Output "filename : $filename doesn't match regex $openjdk_filename_regex"
@@ -20,10 +24,24 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     $major=$openjdk_basedir + $Matches.major
   }
 
-  $jvm = "hotspot"
+  $jvm_regex = $env:jvm_regex
+  if ([string]::IsNullOrEmpty($jvm_regex)) {
+      $jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)"
+  }
+
+  $jvm_found = $filename -match $jvm_regex
+  if (!$jvm_found) {
+    Write-Output "filename : $filename doesn't match regex $jvm_regex"
+    exit 2
+  }
+  $jvm = $Matches.jvm
+
+  $platform_regex = $env:platform_regex
+  if ([string]::IsNullOrEmpty($platform_regex)) {
+      $platform_regex = "(?<platform>x86-32|x64|aarch64)"
+  }
 
   # Windows Architecture supported
-  $platform_regex = "(?<platform>x86|x64|aarch64)"
   $platform_found = $filename -match $platform_regex
   if (!$platform_found) {
     Write-Output "filename : $filename doesn't match regex $platform_regex"
