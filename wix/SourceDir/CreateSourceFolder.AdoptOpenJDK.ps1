@@ -29,12 +29,17 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
       $jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)"
   }
 
-  $jvm_found = $filename -match $jvm_regex
-  if (!$jvm_found) {
-    Write-Output "filename : $filename doesn't match regex $jvm_regex"
-    exit 2
+  $jvm = $env:jvm
+  if ([string]::IsNullOrEmpty($jvm)) {
+
+    $jvm_found = $filename -match $jvm_regex
+    if (!$jvm_found) {
+      Write-Output "filename : $filename doesn't match regex $jvm_regex"
+      exit 2
+    }
+    $jvm = $Matches.jvm
+
   }
-  $jvm = $Matches.jvm
 
   $platform_regex = $env:platform_regex
   if ([string]::IsNullOrEmpty($platform_regex)) {
@@ -68,7 +73,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     } elseif ( $_.Name -Match "(.*)_(.*)$" ) {
         $NewName = $_.Name -replace "(.*)_(.*)$",'$1'
     }
-    
+
     $Destination = Join-Path -Path $SourcePath -ChildPath $NewName
 
     if (Test-Path $Destination) { Remove-Item $Destination -Recurse; }
