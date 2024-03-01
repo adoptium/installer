@@ -33,15 +33,21 @@ param (
     [string]$validInputs,
     [Parameter(Mandatory = $true)]
     [string]$toValidate,
-    [Parameter(Mandatory = $false)]
-    [string]$delimiter = " "
+    [Parameter(Mandatory = $true)]
+    [string]$delimiter
 )
 
-$validInputArray = $validInputs -split "$delimiter"
+$validInputs = $validInputs.Trim("'")
+$validInputArray = $ -split "$delimiter"
+
+$toValidate = $toValidate.Trim("'")
 $inputArray = $toValidate -split "$delimiter"
+
+
 for ($i = 0; $i -lt $inputArray.Length; $i++) {
     if ($validInputArray -notcontains $inputArray[$i]) {
+        echo $inputArray[$i] ' is an invalid input'
         exit 1 # Invalid input
     }
-    exit 0 # Valid input
 }
+exit 0 # Valid input

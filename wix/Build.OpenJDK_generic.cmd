@@ -38,8 +38,8 @@ IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://ado
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
-    -validInputs 'x64 x86-32 arm64' ^
-    -delimiter ' '
+    -validInputs "x64 x86-32 arm64" ^
+    -delimiter " "
 
 IF %ERRORLEVEL% == 1 (
     ECHO ARCH %ARCH% not supported : valid values are any combination of : x64, x86-32, arm64
@@ -52,8 +52,8 @@ IF "%JVM%" == "temurin" SET JVM=hotspot
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%JVM%' ^
-    -validInputs 'hotspot,openj9,dragonwell,openj9 hotspot,hotspot openj9' ^
-    -delimiter ','
+    -validInputs "hotspot,openj9,dragonwell,openj9 hotspot,hotspot openj9" ^
+    -delimiter ","
 
 IF %ERRORLEVEL% == 1 (
     ECHO JVM "%JVM%" not supported : valid values : hotspot, openj9, dragonwell, hotspot openj9, openj9 hotspot
