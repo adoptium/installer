@@ -1,12 +1,49 @@
+<#
+.SYNOPSIS
+    This script extracts the contents of a zip file to a directory structure that is expected by the Wix toolset.
+
+.DESCRIPTION
+    The script takes a zip file and extracts its contents to a directory structure that is expected by the Wix toolset.
+    The script also performs some cleanup on the extracted files.
+
+.PARAMETER openjdk_filename_regex
+    A regular expression that matches the OpenJDK filename. Default is ^OpenJDK(?<major>\d*).
+
+.PARAMETER jvm_regex
+    A regular expression that matches the JVM. Default is (?<jvm>hotspot|openj9|dragonwell).
+
+.PARAMETER jvm
+    The JVM to be used. If not provided, the script will attempt to extract the JVM from the filename.
+
+.PARAMETER platform_regex
+    A regular expression that matches the platform. Default is (?<platform>x86-32|x64|aarch64).
+
+.NOTES
+    File Name: CreateSourceFolder.AdoptOpenJDK.ps1
+    Author   : AdoptOpenJDK
+    Version  : 1.0
+    Date     : March. 01, 2024
+
+.EXAMPLE
+    PS> .\CreateSourceFolder.AdoptOpenJDK.ps1 -openjdk_filename_regex "^OpenJDK(?<major>\d*)" -platform_regex "(?<platform>x86-32|x64|aarch64)" -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)" -jvm "hotspot"
+
+#>
+
+param (
+    [Parameter(Mandatory = $false)]
+    [string]$openjdk_filename_regex = "^OpenJDK(?<major>\d*)",
+    [Parameter(Mandatory = $false)]
+    [string]$platform_regex = "(?<platform>x86-32|x64|aarch64)",
+    [Parameter(Mandatory = $false)]
+    [string]$jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)",
+    [Parameter(Mandatory = $false)]
+    [string]$jvm = ""
+)
+
 Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   
   $filename = [System.IO.Path]::GetFileName($_)
   Write-Output "Processing filename : $filename"
-
-  $openjdk_filename_regex = $env:openjdk_filename_regex
-  if ([string]::IsNullOrEmpty($openjdk_filename_regex)) {
-      $openjdk_filename_regex = "^OpenJDK(?<major>\d*)"
-  }
 
   # validate that the zip file is OpenJDK with an optional major version number
   $openjdk_found = $filename -match $openjdk_filename_regex
@@ -24,12 +61,6 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     $major=$openjdk_basedir + $Matches.major
   }
 
-  $jvm_regex = $env:jvm_regex
-  if ([string]::IsNullOrEmpty($jvm_regex)) {
-      $jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)"
-  }
-
-  $jvm = $env:jvm
   if ([string]::IsNullOrEmpty($jvm)) {
 
     $jvm_found = $filename -match $jvm_regex
@@ -39,11 +70,6 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     }
     $jvm = $Matches.jvm
 
-  }
-
-  $platform_regex = $env:platform_regex
-  if ([string]::IsNullOrEmpty($platform_regex)) {
-      $platform_regex = "(?<platform>x86-32|x64|aarch64)"
   }
 
   # Windows Architecture supported
