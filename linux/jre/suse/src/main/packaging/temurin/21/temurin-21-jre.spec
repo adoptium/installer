@@ -5,7 +5,7 @@
 #  $ rpmdev-vercmp 21.0.0.0.0___21.0.0.0.0+1
 #  20.0.0.0.0___1 == 21.0.0.0.0+35
 %global spec_version 21.0.2.0.0.13
-%global spec_release 2
+%global spec_release 3
 %global priority 2100
 
 %global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
@@ -20,6 +20,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global src_num 0
 %global sha_src_num 1
 %endif
@@ -27,6 +28,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global src_num 2
 %global sha_src_num 3
 %endif
@@ -34,8 +36,17 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global src_num 4
 %global sha_src_num 5
+%endif
+%ifarch s390x
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 aarch64
+%global vers_arch4 s390x
+%global src_num 6
+%global sha_src_num 7
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -57,7 +68,7 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: %{_libdir}/jvm/%{name}
 
-ExclusiveArch: x86_64 ppc64le aarch64
+ExclusiveArch: x86_64 ppc64le aarch64 s390x
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -89,11 +100,14 @@ Provides: jre-%{java_provides}-headless
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Second architecture (ppc64le)
-Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source2: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch2}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+# Fourth architecture (s390x)
+Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
@@ -147,6 +161,8 @@ fi
 %{prefix}
 
 %changelog
+* Wed Feb 28 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-3
+- Eclipse Temurin 21.0.2+13 release.
 * Wed Feb 21 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-2
 - Eclipse Temurin 21.0.2+13 release.
 * Tue Jan 23 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-1
