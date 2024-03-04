@@ -7,7 +7,7 @@ REM PRODUCT_MAINTENANCE_VERSION=0
 REM PRODUCT_PATCH_VERSION=0
 REM PRODUCT_BUILD_NUMBER=28
 REM MSI_PRODUCT_VERSION=11.0.0.28
-REM ARCH=x64|x86-32|arm64 or all "x64 x86-32 arm64"
+REM ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
 REM JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
@@ -38,7 +38,7 @@ IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://ado
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
-    -validInputs "x64 x86-32 arm64" ^
+    -validInputs "x64 x86-32 x86 arm64" ^
     -delimiter " "
 
 IF %ERRORLEVEL% == 1 (
@@ -120,8 +120,6 @@ FOR %%A IN (%ARCH%) DO (
     IF !PLATFORM! == x86-32 (
         SET PLATFORM=x86
     )
-    @REM Microsoft uses "x86" instead of "x86-32" for the platform folder
-    IF !VENDOR! == Microsoft SET FOLDER_PLATFORM=!PLATFORM!
 
     SET SETUP_RESOURCES_DIR=.\Resources
 
