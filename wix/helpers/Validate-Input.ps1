@@ -38,7 +38,7 @@ param (
 )
 
 $validInputs = $validInputs.Trim("'")
-$validInputArray = $ -split "$delimiter"
+$validInputArray = $validInputs -split "$delimiter"
 
 $toValidate = $toValidate.Trim("'")
 $inputArray = $toValidate -split "$delimiter"
