@@ -120,6 +120,8 @@ FOR %%A IN (%ARCH%) DO (
     IF !PLATFORM! == x86-32 (
         SET PLATFORM=x86
     )
+    @REM Microsoft uses "x86" instead of "x86-32" for the platform folder
+    IF !VENDOR! == Microsoft SET FOLDER_PLATFORM=!PLATFORM!
 
     SET SETUP_RESOURCES_DIR=.\Resources
 
