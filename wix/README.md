@@ -15,6 +15,15 @@
 call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
 ```
 
+If your file structure/names are different than expected, we now support user-input regexes:
+(default values shown below. Note: `-jvm` flag also available, used in place of `-jvm_regex` result )
+```batch
+call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
+  -openjdk_filename_regex "^OpenJDK(?<major>\d*)" ^
+  -platform_regex "(?<platform>x86-32|x64|aarch64)" ^
+  -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)"
+```
+
 3. Export the following environment variables:
 
   Example:
@@ -24,7 +33,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
   SET PRODUCT_MINOR_VERSION=0
   SET PRODUCT_MAINTENANCE_VERSION=2
   SET PRODUCT_PATCH_VERSION=8
-  SET ARCH=x64|x86|arm64 or all "x64 x86 arm64"
+  SET ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
   cmd /c Build.OpenJDK_generic.cmd
