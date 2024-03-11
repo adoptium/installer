@@ -1,24 +1,23 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="es-es" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
-	<String Id="ProductLanguage">3082</String>
-	<String Id="ProductHelpLink">{product_help_link}</String>
-	<String Id="ProductUrlInfoAbout">{product_support_link}</String>
-	<String Id="ProductUrlUpdateInfo">{product_update_info_link}</String>
-	<String Id="OSVersionRequired">Requerido Windows 7 o superior.</String>
-	<String Id="ProductIsNotSupportedOnItanium">Este producto no es compatible con sistemas Itanium de 64 bits.</String>
-	<String Id="FeatureEnvironmentTitle">Añadir al PATH</String>
-	<String Id="FeatureEnvironmentDescription">Añadir a la variable de entorno PATH.</String>
-	<String Id="FeatureJavaHomeTitle">Establecer la variable JAVA_HOME</String>
-	<String Id="FeatureJavaHomeDescription">Establecer la variable de entorno JAVA_HOME.</String>
-	<String Id="FeatureSourceTitle">Código fuente</String>
-	<String Id="FeatureSourceDescription">Código fuente de las clases que componen la API pública de Java.</String>
-	<String Id="FeatureJarFileRunWithTitle">Asociar .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Asociar la extensión de fichero .jar con {vendor_branding}</String>
-	<String Id="DowngradeDenied">Ya hay instalada una versión posterior de [ProductName]. La instalación se cerrará.</String>
-	<String Id="FeatureOracleJavaSoftName">Claves de registro JavaSoft (Oracle)</String>
-	<String Id="FeatureOracleJavaSoftDescription">Sobrescribir las claves de registro HKLM\Software\JavaSoft (Oracle). Si se desinstala {vendor_branding}, la ejecución de Oracle Java desde la ruta "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" no funcionará. Será necesario reinstalarlo.</String>
-	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
-	<String Id="FeatureIcedTeaWebDescription">Instalar el paquete IcedTea-Web</String>
-	<String Id="FeatureJNLPFileRunWithTitle">Asociar .jnlp</String>
-	<String Id="FeatureJNLPFileRunWithDescription">Asociar la extensión de fichero .jnlp con IcedTea-Web</String>
+﻿<WixLocalization Culture="es-es" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<String Id="ProductLanguage" Value="3082" />
+	<String Id="ProductHelpLink" Value="{product_help_link}" />
+	<String Id="ProductUrlInfoAbout" Value="{product_support_link}" />
+	<String Id="ProductUrlUpdateInfo" Value="{product_update_info_link}" />
+	<String Id="OSVersionRequired" Value="Requerido Windows 7 o superior." />
+	<String Id="ProductIsNotSupportedOnItanium" Value="Este producto no es compatible con sistemas Itanium de 64 bits." />
+	<String Id="FeatureEnvironmentTitle" Value="Añadir al PATH" />
+	<String Id="FeatureEnvironmentDescription" Value="Añadir a la variable de entorno PATH." />
+	<String Id="FeatureJavaHomeTitle" Value="Establecer la variable JAVA_HOME" />
+	<String Id="FeatureJavaHomeDescription" Value="Establecer la variable de entorno JAVA_HOME." />
+	<String Id="FeatureSourceTitle" Value="Código fuente" />
+	<String Id="FeatureSourceDescription" Value="Código fuente de las clases que componen la API pública de Java." />
+	<String Id="FeatureJarFileRunWithTitle" Value="Asociar .jar" />
+	<String Id="FeatureJarFileRunWithDescription" Value="Asociar la extensión de fichero .jar con {vendor_branding}" />
+	<String Id="DowngradeDenied" Value="Ya hay instalada una versión posterior de [ProductName]. La instalación se cerrará." />
+	<String Id="FeatureOracleJavaSoftName" Value="Claves de registro JavaSoft (Oracle)" />
+	<String Id="FeatureOracleJavaSoftDescription" Value="Sobrescribir las claves de registro HKLM\Software\JavaSoft (Oracle). Si se desinstala {vendor_branding}, la ejecución de Oracle Java desde la ruta &quot;C:\Program Files (x86)\Common Files\Oracle\Java\javapath&quot; no funcionará. Será necesario reinstalarlo." />
+	<String Id="FeatureIcedTeaWebTitle" Value="IcedTea-Web" />
+	<String Id="FeatureIcedTeaWebDescription" Value="Instalar el paquete IcedTea-Web" />
+	<String Id="FeatureJNLPFileRunWithTitle" Value="Asociar .jnlp" />
+	<String Id="FeatureJNLPFileRunWithDescription" Value="Asociar la extensión de fichero .jnlp con IcedTea-Web" />
 </WixLocalization>

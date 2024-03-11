@@ -1,10 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+﻿<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <?include $(sys.CURRENTDIR)\Workdir\$(var.OutputBaseFilename)-$(var.ProductSku).Variables.wxi ?>
 
-  <Product Id="$(var.ProductId)" Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)">
-    <Package Description="$(var.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" InstallerVersion="200" Compressed="yes" />
-    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeDenied)"/>
+  <Package Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)" InstallerVersion="200" ProductCode="$(var.ProductId)"><SummaryInformation Description="$(var.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" />
+    <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeDenied)" />
     <Media Id="1" Cabinet="Data1.cab" EmbedCab="yes" CompressionLevel="high" />
     <Property Id="ARPHELPLINK" Value="!(loc.ProductHelpLink)" />
     <Property Id="ARPURLINFOABOUT" Value="!(loc.ProductUrlInfoAbout)" />
@@ -15,8 +13,8 @@
     <Icon Id="logo.ico" SourceFile="{vendor_branding_logo}" />
 
     <!-- Windows 7 and later is required. -->
-    <Condition Message="!(loc.OSVersionRequired)"><![CDATA[Installed OR VersionNT >= 601]]></Condition>
-    <Condition Message="!(loc.ProductIsNotSupportedOnItanium)"><![CDATA[(Not ITANIUM = "Itanium") AND (Not ITANIUM = "Itanium 2")]]></Condition>
+    <Launch Condition="Installed OR VersionNT &gt;= 601" Message="!(loc.OSVersionRequired)" />
+    <Launch Condition="(Not ITANIUM = &quot;Itanium&quot;) AND (Not ITANIUM = &quot;Itanium 2&quot;)" Message="!(loc.ProductIsNotSupportedOnItanium)" />
 
     <!--
       We may need to be able to install JDK in parallel. Therefore an in-place
@@ -38,29 +36,7 @@
     -->
 
     <!-- Define the directory structure -->
-    <Directory Id="TARGETDIR" Name="SourceDir">
-    <?if $(env.Platform)=x86?>
-        <Directory Id="ProgramFilesFolder">
-            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-            </Directory>
-        </Directory>
-    <?elseif $(env.Platform)=x64?>
-        <Directory Id="ProgramFiles64Folder">
-            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-            </Directory>
-         </Directory>
-    <?elseif $(env.Platform)=arm64?>
-        <Directory Id="ProgramFilesARMFolder">
-            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
-                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
-            </Directory>
-         </Directory>
-    <?else?>
-        <!-- unknown arch > build must failed without directory-->
-    <?endif?>
-    </Directory>
+    
 
     <!--
       RemoveFolderEx requires that we "remember" the path for uninstall.
@@ -73,52 +49,52 @@
       <RegistrySearch Id="INSTALLDIR_REGSEARCH_HKCU" Root="HKCU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Path" Type="raw" />
     </Property>
     
-    <CustomAction Id="PerMachineInstall" Property="TARGETDIR" Value="[INSTALLDIR_PER_MACHINE]" Execute="immediate"/>    
-    <CustomAction Id="PerUserInstall" Property="TARGETDIR" Value="[INSTALLDIR_PER_USER]" Execute="immediate"/>
+    <CustomAction Id="PerMachineInstall" Property="TARGETDIR" Value="[INSTALLDIR_PER_MACHINE]" Execute="immediate" />    
+    <CustomAction Id="PerUserInstall" Property="TARGETDIR" Value="[INSTALLDIR_PER_USER]" Execute="immediate" />
 
     <InstallExecuteSequence>
-        <Custom Action="PerMachineInstall" Before="CostFinalize">ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)</Custom>
-        <Custom Action="PerUserInstall"    Before="CostFinalize">ALLUSERS="" OR (ALLUSERS=2 AND (NOT Privileged))</Custom>
+        <Custom Action="PerMachineInstall" Before="CostFinalize" Condition="ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)" />
+        <Custom Action="PerUserInstall" Before="CostFinalize" Condition="ALLUSERS=&quot;&quot; OR (ALLUSERS=2 AND (NOT Privileged))" />
     </InstallExecuteSequence>
 
     <!-- Add the shortcuts to your installer package -->
     <DirectoryRef Id="INSTALLDIR">
-      <Component Id="CleanupMainInstallDir" Guid="*">
+      <Component Id="CleanupMainInstallDir">
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Path" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Main" Type="integer" Value="1" />
         <!-- We need to use INSTALLDIR variable here or RemoveFolderEx will not remove on "install". -->
         <util:RemoveFolderEx On="uninstall" Property="INSTALLDIR" />
         <RemoveFolder Id="PRODUCTMANUFACTURER_REMOVE" Directory="PRODUCTMANUFACTURER" On="uninstall" />
       </Component>
-      <Component Id="AddToEnvironmentPath" Guid="*">
+      <Component Id="AddToEnvironmentPath">
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="EnvironmentPath" Type="integer" Value="1" KeyPath="yes" />
       </Component>
-      <Component Id="AddToEnvironmentPathSystem" Guid="*">
-        <Condition>ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)</Condition>
+      <Component Id="AddToEnvironmentPathSystem" Condition="ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)">
+        
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="EnvironmentPathSetForSystem" Type="integer" Value="1" KeyPath="yes" /> <!-- Only to get a Keypath and can use Guid="*" for having different guid for each installer -->
         <Environment Id="PATH_SYSTEM" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="first" Action="set" System="yes" />
       </Component>
-      <Component Id="AddToEnvironmentPathUser" Guid="*">
-        <Condition>ALLUSERS="" OR (ALLUSERS=2 AND (NOT Privileged))</Condition>
+      <Component Id="AddToEnvironmentPathUser" Condition="ALLUSERS=&quot;&quot; OR (ALLUSERS=2 AND (NOT Privileged))">
+        
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="EnvironmentPathSetForUser" Type="integer" Value="1" KeyPath="yes" /> <!-- Only to get a Keypath and can use Guid="*" for having different guid for each installer -->
         <Environment Id="PATH_USER" Name="PATH" Value="[INSTALLDIR]bin" Permanent="no" Part="first" Action="set" System="no" />
       </Component>
-      <Component Id="SetJavaHomeVariable" Guid="*">
+      <Component Id="SetJavaHomeVariable">
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="JavaHome" Type="integer" Value="1" KeyPath="yes" />
       </Component>
-      <Component Id="SetJavaHomeVariableSystem" Guid="*">
-        <Condition>ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)</Condition>
+      <Component Id="SetJavaHomeVariableSystem" Condition="ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)">
+        
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="JavaHomeSetForSystem" Type="integer" Value="1" KeyPath="yes" /> <!-- Only to get a Keypath and can use Guid="*" for having different guid for each installer -->
         <Environment Id="JAVA_HOME_SYSTEM" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Action="set" System="yes" />
       </Component>
-      <Component Id="SetJavaHomeVariableUser" Guid="*">
-        <Condition>ALLUSERS="" OR (ALLUSERS=2 AND (NOT Privileged))</Condition>
+      <Component Id="SetJavaHomeVariableUser" Condition="ALLUSERS=&quot;&quot; OR (ALLUSERS=2 AND (NOT Privileged))">
+        
         <RegistryValue Root="HKMU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="JavaHomeSetForUser" Type="integer" Value="1" KeyPath="yes" /> <!-- Only to get a Keypath and can use Guid="*" for having different guid for each installer -->
         <Environment Id="JAVA_HOME_USER" Name="JAVA_HOME" Value="[INSTALLDIR]" Permanent="no" Action="set" System="no" />
     </Component>
       
       <!-- Add jar launch by double click -->
-      <Component Id="SetJarFileRunWith" Guid="*">
+      <Component Id="SetJarFileRunWith">
         <!--
         https://support.microsoft.com/en-us/help/256986/windows-registry-information-for-advanced-users
             If you write keys to a key under HKEY_CLASSES_ROOT, the system stores the information under HKEY_LOCAL_MACHINE\Software\Classes.
@@ -132,11 +108,11 @@
 
         <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\{vendor}.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
-      <Component Id="SetOracleJavaSoftKeysCurrentVersion" Guid="*">
-          <Condition><![CDATA[NOT JAVASOFT_CURRENTVERSION OR JAVASOFT_CURRENTVERSION <> "1.8" AND JAVASOFT_CURRENTVERSION < $(var.ProductMajorVersion)]]></Condition>
+      <Component Id="SetOracleJavaSoftKeysCurrentVersion" Condition="NOT JAVASOFT_CURRENTVERSION OR JAVASOFT_CURRENTVERSION &lt;&gt; &quot;1.8&quot; AND JAVASOFT_CURRENTVERSION &lt; $(var.ProductMajorVersion)">
+          
           <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)" Name="CurrentVersion" Type="string" Value="$(var.OracleVersionKey)" KeyPath="yes" />
       </Component>
-      <Component Id="SetOracleJavaSoftKeys" Guid="*">
+      <Component Id="SetOracleJavaSoftKeys">
         <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)\$(var.OracleVersionKey)" Name="JavaHome" Type="string" Value="[INSTALLDIR]" KeyPath="yes" />
         <?if $(env.PRODUCT_CATEGORY)="jre"?>
             <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)\$(var.OracleVersionKey)" Name="RuntimeLib" Type="string" Value="[INSTALLDIR]$(var.DllPath)" KeyPath="no" />
@@ -152,7 +128,7 @@
       <?if $(env.Platform)=x64?>
         <?if $(env.PRODUCT_MAJOR_VERSION)=8?>
           <?if $(env.BUNDLE_ICEDTEAWEB)=true?>
-            <Component Id="SetJNLPFileRunWith" Guid="*">
+            <Component Id="SetJNLPFileRunWith">
               <!--
               https://support.microsoft.com/en-us/help/256986/windows-registry-information-for-advanced-users
                   If you write keys to a key under HKEY_CLASSES_ROOT, the system stores the information under HKEY_LOCAL_MACHINE\Software\Classes.
@@ -173,32 +149,28 @@
     </DirectoryRef>
 
     <Property Id="JAVASOFT_CURRENTVERSION">
-        <RegistrySearch Id="JAVASOFT_CURRENTVERSION"
-                        Root="HKLM"
-                        Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)"
-                        Name="CurrentVersion"
-                        Type="raw" />
+        <RegistrySearch Id="JAVASOFT_CURRENTVERSION" Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)" Name="CurrentVersion" Type="raw" />
     </Property>
 
     <!-- List of features to install -->
-    <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Absent="disallow" Display="expand" AllowAdvertise="no" InstallDefault="local">
+    <Feature Id="FeatureMain" ConfigurableDirectory="INSTALLDIR" Level="1" Title="$(var.FeatureMainName)" Description="$(var.FeatureMainDescription)" Display="expand" AllowAdvertise="no" InstallDefault="local" AllowAbsent="no">
       <ComponentRef Id="CleanupMainInstallDir" />
       <ComponentGroupRef Id="AppFiles" />
-        <Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+        <Feature Id="FeatureEnvironment" Level="1" Title="!(loc.FeatureEnvironmentTitle)" Description="!(loc.FeatureEnvironmentDescription)" AllowAdvertise="no" InstallDefault="followParent">
           <ComponentRef Id="AddToEnvironmentPath" />
           <ComponentRef Id="AddToEnvironmentPathSystem" />
           <ComponentRef Id="AddToEnvironmentPathUser" />
         </Feature>
-        <Feature Id="FeatureJarFileRunWith" Level="1" Title="!(loc.FeatureJarFileRunWithTitle)" Description="!(loc.FeatureJarFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+        <Feature Id="FeatureJarFileRunWith" Level="1" Title="!(loc.FeatureJarFileRunWithTitle)" Description="!(loc.FeatureJarFileRunWithDescription)" AllowAdvertise="no" InstallDefault="followParent">
           <ComponentRef Id="SetJarFileRunWith" />
         </Feature>
-      <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+      <Feature Id="FeatureJavaHome" Level="2" Title="!(loc.FeatureJavaHomeTitle)" Description="!(loc.FeatureJavaHomeDescription)" AllowAdvertise="no" InstallDefault="followParent">
         <ComponentRef Id="SetJavaHomeVariable" />
         <ComponentRef Id="SetJavaHomeVariableSystem" />
         <ComponentRef Id="SetJavaHomeVariableUser" />
       </Feature>
 
-      <Feature Id="FeatureOracleJavaSoft" Level="2" Title="!(loc.FeatureOracleJavaSoftName)" Description="!(loc.FeatureOracleJavaSoftDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent" >
+      <Feature Id="FeatureOracleJavaSoft" Level="2" Title="!(loc.FeatureOracleJavaSoftName)" Description="!(loc.FeatureOracleJavaSoftDescription)" AllowAdvertise="no" InstallDefault="followParent">
         <!-- See https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB -->
         <!-- As Oracle, don't override if current value is already bigger ( newer java ): "a value that is the highest installed version on the system" 
         Note !! : the reg key is not removed during uninstall if any other installer reference it
@@ -209,9 +181,9 @@
       <?if $(env.Platform)=x64?>
         <?if $(env.PRODUCT_MAJOR_VERSION)=8?>
           <?if $(env.BUNDLE_ICEDTEAWEB)=true?>
-            <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="local">
+            <Feature Id="FeatureIcedTeaWeb" ConfigurableDirectory="INSTALLDIR" Level="2" Title="!(loc.FeatureIcedTeaWebTitle)" Description="!(loc.FeatureIcedTeaWebDescription)" AllowAdvertise="no" InstallDefault="local">
               <ComponentGroupRef Id="IcedTeaWebFiles" />
-              <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" Absent="allow" AllowAdvertise="no" InstallDefault="followParent">
+              <Feature Id="FeatureJNLPFileRunWith" Level="3" Title="!(loc.FeatureJNLPFileRunWithTitle)" Description="!(loc.FeatureJNLPFileRunWithDescription)" AllowAdvertise="no" InstallDefault="followParent">
                 <ComponentRef Id="SetJNLPFileRunWith" />
               </Feature>
             </Feature>
@@ -227,12 +199,34 @@
     <WixVariable Id="WixUIDialogBmp" Value="{vendor_branding_dialog}" />
     <WixVariable Id="WixUIBannerBmp" Value="{vendor_branding_banner}" />
     <UI>
-      <UIRef Id="WixUI_FeatureTree" />
+      <ui:WixUI Id="WixUI_FeatureTree" />
       <?if $(var.license_shown)=0 ?>
-        <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg"  Order="3">1</Publish>
+        <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="3" />
         <!-- skip the page on the way back too -->
-        <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg"  Order="3">1</Publish>
+        <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3" />
       <?endif?>
     </UI>
-  </Product>
+  
+    <?if $(env.Platform)=x86?>
+        <StandardDirectory Id="ProgramFilesFolder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+        </StandardDirectory>
+    <?elseif $(env.Platform)=x64?>
+        <StandardDirectory Id="ProgramFiles64Folder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+         </StandardDirectory>
+    <?elseif $(env.Platform)=arm64?>
+        <Directory Id="ProgramFilesARMFolder">
+            <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
+                <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
+            </Directory>
+         </Directory>
+    <?else?>
+        <!-- unknown arch > build must failed without directory-->
+    <?endif?>
+    </Package>
 </Wix>
