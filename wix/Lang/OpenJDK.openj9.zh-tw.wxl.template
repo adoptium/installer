@@ -1,12 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="zh-tw" Codepage="950" xmlns="http://schemas.microsoft.com/wix/2006/localization">
-	<String Id="JREFeatureMainName">JRE with Eclipse OpenJ9</String>
-	<String Id="JREFeatureMainDescription">{vendor_branding} Runtime Environment with Eclipse OpenJ9</String>
-	<String Id="JREProductName">{vendor_branding} JRE with Eclipse OpenJ9</String>
-	<String Id="JREPackageDescription">{vendor_branding} Runtime Environment with Eclipse OpenJ9</String>
+﻿<WixLocalization Culture="zh-tw" Codepage="950" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<String Id="JREFeatureMainName" Value="JRE with Eclipse OpenJ9" />
+	<String Id="JREFeatureMainDescription" Value="{vendor_branding} Runtime Environment with Eclipse OpenJ9" />
+	<String Id="JREProductName" Value="{vendor_branding} JRE with Eclipse OpenJ9" />
+	<String Id="JREPackageDescription" Value="{vendor_branding} Runtime Environment with Eclipse OpenJ9" />
 
-	<String Id="JDKFeatureMainName">JDK with Eclipse OpenJ9</String>
-	<String Id="JDKFeatureMainDescription">{vendor_branding} Development Kit with Eclipse OpenJ9</String>
-	<String Id="JDKProductName">{vendor_branding} JDK with Eclipse OpenJ9</String>
-	<String Id="JDKPackageDescription">{vendor_branding} Development Kit with Eclipse OpenJ9</String>
+	<String Id="JDKFeatureMainName" Value="JDK with Eclipse OpenJ9" />
+	<String Id="JDKFeatureMainDescription" Value="{vendor_branding} Development Kit with Eclipse OpenJ9" />
+	<String Id="JDKProductName" Value="{vendor_branding} JDK with Eclipse OpenJ9" />
+	<String Id="JDKPackageDescription" Value="{vendor_branding} Development Kit with Eclipse OpenJ9" />
 </WixLocalization>
