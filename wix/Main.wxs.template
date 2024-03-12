@@ -12,7 +12,7 @@
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
     <Icon Id="logo.ico" SourceFile="{vendor_branding_logo}" />
 
-    <!-- Windows 7 and later is required. -->
+    <!-- Required for Windows 7 and later. -->
     <Launch Condition="Installed OR VersionNT &gt;= 601" Message="!(loc.OSVersionRequired)" />
     <Launch Condition="(Not ITANIUM = &quot;Itanium&quot;) AND (Not ITANIUM = &quot;Itanium 2&quot;)" Message="!(loc.ProductIsNotSupportedOnItanium)" />
 
