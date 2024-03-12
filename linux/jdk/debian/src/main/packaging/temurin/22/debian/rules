@@ -1,0 +1,78 @@
+#!/usr/bin/make -f
+
+pkg_name = temurin-22-jdk
+priority = 2211
+jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
+amd64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_x64_linux_hotspot_22.0.0_0.tar.gz
+amd64_checksum = 454bebb2c9fe48d981341461ffb6bf1017c7b7c6e15c6b0c29b959194ba3aaa5
+arm64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_aarch64_linux_hotspot_22.0.0_0.tar.gz
+arm64_checksum = 3ce6a2b357e2ef45fd6b53d6587aa05bfec7771e7fb982f2c964f6b771b7526a
+ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_ppc64le_linux_hotspot_22.0.0_0.tar.gz
+ppc64el_checksum = d08de863499d8851811c893e8915828f2cd8eb67ed9e29432a6b4e222d80a12f
+s390x_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_s390x_linux_hotspot_22.0.0_0.tar.gz
+s390x_checksum = 0d5676c50821e0d0b951bf3ffd717e7a13be2a89d8848a5c13b4aedc6f982c78
+
+d = debian/$(pkg_name)
+jvm_home = usr/lib/jvm
+jvm_dir = $(pkg_name)-$(DEB_HOST_ARCH)
+pkg_alias = $(pkg_name)-$(DEB_HOST_ARCH)
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+override_dh_auto_test:
+override_dh_auto_build:
+override_dh_strip:
+override_dh_auto_install:
+	# Download and verify checksum of JDK
+	wget --progress=dot:mega -O jdk.tar.gz $($(DEB_HOST_ARCH)_tarball_url)
+	echo '$($(DEB_HOST_ARCH)_checksum) jdk.tar.gz' > jdk.tar.gz.sha256.txt
+	sha256sum -c jdk.tar.gz.sha256.txt
+
+	# Substitute variables.
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/jinfo.in > debian/jinfo
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/postinst.in > debian/postinst
+
+	sed \
+		-e 's/@pkg_alias@/$(pkg_alias)/g' \
+		-e 's/@jvm_dir@/$(jvm_dir)/g' \
+		-e 's/@priority@/$(priority)/g' \
+		-e 's/@jvm_tools@/$(jvm_tools)/g' \
+	    debian/prerm.in > debian/prerm
+
+	# Unpack JDK.
+	dh_installdirs \
+		$(jvm_home) \
+		$(jvm_home)/$(jvm_dir)
+	tar --strip-components=1 -C "$(d)/$(jvm_home)/$(jvm_dir)" -xf jdk.tar.gz
+
+	# Add jinfo file (alternatives support).
+	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
+
+	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
+	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
+
+	# Ensure src.zip is present in the root folder of the JDK.
+	if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/src.zip" ]; then \
+		if [ ! -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/src.zip" ] ; then \
+			echo "Missing src.zip in binary distribution"; \
+			exit 1; \
+		fi; \
+		ln -s lib/src.zip "$(d)/$(jvm_home)/$(jvm_dir)/src.zip"; \
+	fi;
+
+override_dh_gencontrol:
+	dh_gencontrol --
