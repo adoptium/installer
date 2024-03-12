@@ -227,8 +227,8 @@ foreach ($A in $ARCH.Split(',')) {
         # # Build with extra Source Code feature (needs work)
         # & "$WIX\bin\heat.exe" file "$REPRO_DIR\lib\src.zip" -out "Src-$OUTPUT_BASE_FILENAME.wxs" -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform $PLATFORM
         # & "$WIX\bin\heat.exe" dir "$REPRO_DIR" -out "Files-$OUTPUT_BASE_FILENAME.wxs" -t "$SETUP_RESOURCES_DIR\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform $PLATFORM
-        # & "$WIX\bin\candle.exe" -arch $PLATFORM "$OUTPUT_BASE_FILENAME-Main.wxs" "Files-$OUTPUT_BASE_FILENAME.wxs" "Src-$OUTPUT_BASE_FILENAME.wxs" -ext WixUIExtension -ext WixUtilExtension -dProductSku="$PRODUCT_SKU" -dProductMajorVersion="$PRODUCT_MAJOR_VERSION" -dProductMinorVersion="$PRODUCT_MINOR_VERSION" -dProductVersionString="$PRODUCT_SHORT_VERSION" -dMSIProductVersion="$MSI_PRODUCT_VERSION" -dProductId="$PRODUCT_ID" -dReproDir="$REPRO_DIR" -dSetupResourcesDir="$SETUP_RESOURCES_DIR" -dCulture="$CULTURE"
-        # & "$WIX\bin\light.exe" $MSI_VALIDATION_OPTION "Main-$OUTPUT_BASE_FILENAME.wixobj" "Files-$OUTPUT_BASE_FILENAME.wixobj" "Src-$OUTPUT_BASE_FILENAME.wixobj" -cc $CACHE_FOLDER -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\$OUTPUT_BASE_FILENAME.msi" -loc "Lang\$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.Base.$CULTURE.wxl" -loc "Lang\$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.$PACKAGE_TYPE.$CULTURE.wxl" -cultures:$CULTURE
+        # & "$WIX\bin\candle.exe" -arch $PLATFORM "$OUTPUT_BASE_FILENAME-Main.wxs" "Files-$OUTPUT_BASE_FILENAME.wxs" "Src-$OUTPUT_BASE_FILENAME.wxs" -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -dProductSku="$PRODUCT_SKU" -dProductMajorVersion="$PRODUCT_MAJOR_VERSION" -dProductMinorVersion="$PRODUCT_MINOR_VERSION" -dProductVersionString="$PRODUCT_SHORT_VERSION" -dMSIProductVersion="$MSI_PRODUCT_VERSION" -dProductId="$PRODUCT_ID" -dReproDir="$REPRO_DIR" -dSetupResourcesDir="$SETUP_RESOURCES_DIR" -dCulture="$CULTURE"
+        # & "$WIX\bin\light.exe" $MSI_VALIDATION_OPTION "Main-$OUTPUT_BASE_FILENAME.wixobj" "Files-$OUTPUT_BASE_FILENAME.wixobj" "Src-$OUTPUT_BASE_FILENAME.wixobj" -cc $CACHE_FOLDER -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -spdb -out "ReleaseDir\$OUTPUT_BASE_FILENAME.msi" -loc "Lang\$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.Base.$CULTURE.wxl" -loc "Lang\$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.$PACKAGE_TYPE.$CULTURE.wxl" -cultures:$CULTURE
 
         # Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
         if (Test-Path -Path "!CACHE_FOLDER!") {
@@ -272,7 +272,7 @@ foreach ($A in $ARCH.Split(',')) {
         }
 
         Write-Debug "CANDLE"
-        & "$WIX\bin\candle.exe" -arch $PLATFORM -out "$WORKDIR" "$WORKDIR$OUTPUT_BASE_FILENAME-Main.wxs" "$WORKDIR$OUTPUT_BASE_FILENAME-Files.wxs" $ITW_WXS -ext WixUIExtension -ext WixUtilExtension -dIcedTeaWebDir="$ICEDTEAWEB_DIR" -dOutputBaseFilename="$OUTPUT_BASE_FILENAME" -dProductSku="$PRODUCT_SKU" -dProductMajorVersion="$PRODUCT_MAJOR_VERSION" -dProductMinorVersion="$PRODUCT_MINOR_VERSION" -dProductVersionString="$PRODUCT_SHORT_VERSION" -dMSIProductVersion="$MSI_PRODUCT_VERSION" -dProductId="$PRODUCT_ID" -dProductUpgradeCode="$PRODUCT_UPGRADE_CODE" -dReproDir="$REPRO_DIR" -dSetupResourcesDir="$SETUP_RESOURCES_DIR" -dCulture="$CULTURE" -dJVM="$PACKAGE_TYPE"
+        & "$WIX\bin\candle.exe" -arch $PLATFORM -out "$WORKDIR" "$WORKDIR$OUTPUT_BASE_FILENAME-Main.wxs" "$WORKDIR$OUTPUT_BASE_FILENAME-Files.wxs" $ITW_WXS -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -dIcedTeaWebDir="$ICEDTEAWEB_DIR" -dOutputBaseFilename="$OUTPUT_BASE_FILENAME" -dProductSku="$PRODUCT_SKU" -dProductMajorVersion="$PRODUCT_MAJOR_VERSION" -dProductMinorVersion="$PRODUCT_MINOR_VERSION" -dProductVersionString="$PRODUCT_SHORT_VERSION" -dMSIProductVersion="$MSI_PRODUCT_VERSION" -dProductId="$PRODUCT_ID" -dProductUpgradeCode="$PRODUCT_UPGRADE_CODE" -dReproDir="$REPRO_DIR" -dSetupResourcesDir="$SETUP_RESOURCES_DIR" -dCulture="$CULTURE" -dJVM="$PACKAGE_TYPE"
         if ($LASTEXITCODE -ne 0) {
             Write-Host "Failed to preprocess and compile WiX source files into object files (.wixobj)"
             Get-ChildItem -Path $WORKDIR -Recurse | Sort-Object -Property Name
@@ -280,7 +280,7 @@ foreach ($A in $ARCH.Split(',')) {
         }
 
         Write-Debug "LIGHT"
-        & "$WIX\bin\light.exe" "$WORKDIR$OUTPUT_BASE_FILENAME-Main.wixobj" "$WORKDIR$OUTPUT_BASE_FILENAME-Files.wixobj" $ITW_WIXOBJ $MSI_VALIDATION_OPTION -cc $CACHE_FOLDER -ext WixUIExtension -ext WixUtilExtension -spdb -out "ReleaseDir\$OUTPUT_BASE_FILENAME.msi" -loc "$WORKDIR$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.Base.$CULTURE.wxl" -loc "$WORKDIR$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.$PACKAGE_TYPE.$CULTURE.wxl" -cultures:$CULTURE
+        & "$WIX\bin\light.exe" "$WORKDIR$OUTPUT_BASE_FILENAME-Main.wixobj" "$WORKDIR$OUTPUT_BASE_FILENAME-Files.wixobj" $ITW_WIXOBJ $MSI_VALIDATION_OPTION -cc $CACHE_FOLDER -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -spdb -out "ReleaseDir\$OUTPUT_BASE_FILENAME.msi" -loc "$WORKDIR$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.Base.$CULTURE.wxl" -loc "$WORKDIR$OUTPUT_BASE_FILENAME-$PRODUCT_SKU.$PACKAGE_TYPE.$CULTURE.wxl" -cultures:$CULTURE
         if ($LASTEXITCODE -ne 0) {
             Write-Host "Failed to link and bind one or more .wixobj files and create a Windows Installer database (.msi or .msm)"
             Get-ChildItem -Path $WORKDIR -Recurse | Sort-Object -Property Name
