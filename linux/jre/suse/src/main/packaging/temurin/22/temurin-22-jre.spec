@@ -161,13 +161,5 @@ fi
 %{prefix}
 
 %changelog
-* Wed Feb 28 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-3
-- Eclipse Temurin 21.0.2+13 release.
-* Wed Feb 21 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-2
-- Eclipse Temurin 21.0.2+13 release.
-* Tue Jan 23 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.2.0.0.13-1
-- Eclipse Temurin 21.0.2+13 release.
-* Tue Oct 24 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.1.0.0.12-1
-- Eclipse Temurin 21.0.1+12 release.
-* Wed Sep 20 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 21.0.0.0.0.35-1
-- Eclipse Temurin 21.0.0+35 release 0.
+* Wed Mar 30 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 22.0.0.0.0.36-0
+- Eclipse Temurin 22.0.0+36 release 0.
