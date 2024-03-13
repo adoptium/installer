@@ -238,4 +238,4 @@ fi
 
 %changelog
 * Wed Mar 20 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 22.0.0.0.0.0-0
-- Eclipse Temurin 22.0.0+036 release 0.
+- Eclipse Temurin 22.0.0+36 release 0.
