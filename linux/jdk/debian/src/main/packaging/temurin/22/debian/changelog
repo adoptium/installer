@@ -1,5 +1,5 @@
-temurin-22-jdk (22.0.0.0.0+0) STABLE; urgency=medium
+temurin-22-jdk (22.0.0.0.0+36) STABLE; urgency=medium
 
-  * Eclipse Temurin 22.0.0.0.0+0 release.
+  * Eclipse Temurin 22.0.0.0.0+36 release.
 
  -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 20 Mar 2024 00:00:00 +0000
