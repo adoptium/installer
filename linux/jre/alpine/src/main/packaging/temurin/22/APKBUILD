@@ -1,0 +1,83 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-22
+pkgver=22.0.0_p0
+# replace _p1 with _1
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
+_pkgvername=${_pkgverplus/+/%2B}
+pkgrel=0
+pkgdesc="Eclipse Temurin 22"
+provider_priority=22
+url="https://adoptium.net"
+arch="aarch64 x86_64"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+depends=""
+subpackages="$pkgname-jre:_jre"
+source="https://github.com/adoptium/temurin22-binaries/releases/download/jdk-$_pkgvername/OpenJDK22u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
+
+_java_home="/usr/lib/jvm/java-22-temurin-jre"
+
+ldpath="$_java_home/lib:$_java_home/lib/server"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+
+	# 1) check that java -version works
+	$_java_bin/java -version
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+}
+
+_jre() {
+	pkgdesc="Eclipse Temurin 22 (JRE)"
+	provides="java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+
+case "$CARCH" in
+	x86_64)
+		_arch_sum="7077b9e42b40f1ed8d59a71ae59a57d5d55de2685cc5efd70a0405618da616d7"
+		;;
+	aarch64)
+		_arch_sum="e961c43fa418a74d5349d519d4f05b70f2017b13420812946be88349729c8ff3"
+		;;
+esac
+
+sha256sums="
+$_arch_sum  OpenJDK22u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+"

@@ -3,12 +3,14 @@
 pkg_name = temurin-21-jre
 priority = 2112
 jvm_tools = java jfr jrunscript jwebserver keytool rmiregistry
-amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jre_x64_linux_hotspot_21.0.1_12.tar.gz
-amd64_checksum = 277f4084bee875f127a978253cfbaad09c08df597feaf5ccc82d2206962279a3
-arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jre_aarch64_linux_hotspot_21.0.1_12.tar.gz
-arm64_checksum = 4582c4cc0c6d498ba7a23fdb0a5179c9d9c0d7a26f2ee8610468d5c2954fcf2f
-ppc64el_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.1%2B12/OpenJDK21U-jre_ppc64le_linux_hotspot_21.0.1_12.tar.gz
-ppc64el_checksum = 05cc9b7bfbe246c27d307783b3d5095797be747184b168018ae3f7cc55608db2
+amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_x64_linux_hotspot_21.0.2_13.tar.gz
+amd64_checksum = 51141204fe01a9f9dd74eab621d5eca7511eac67315c9975dbde5f2625bdca55
+arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_aarch64_linux_hotspot_21.0.2_13.tar.gz
+arm64_checksum = 64c78854184c92a4da5cda571c8e357043bfaf03a03434eef58550cc3410d8a4
+ppc64el_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_ppc64le_linux_hotspot_21.0.2_13.tar.gz
+ppc64el_checksum = caaf48e50787b80b810dc08ee91bd4ffe0d0696bd14906a92f05bf8c14aabb22
+s390x_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_s390x_linux_hotspot_21.0.2_13.tar.gz
+s390x_checksum = ff8191fa5b23a175932e7f4fab10a6e8df61fd71b6529c7d21451c81e82f8d55
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm

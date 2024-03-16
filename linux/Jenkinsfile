@@ -37,7 +37,7 @@ pipeline {
     }
     parameters {
         choice(name: 'TYPE', choices: Types.ALL, description: 'Build JDK or JRE')
-        choice(name: 'VERSION', choices: ['8', '11', '17', '21'], description: 'Build for specific JDK VERSION')
+        choice(name: 'VERSION', choices: ['8', '11', '17', '21', '22'], description: 'Build for specific JDK VERSION')
         choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n Use armv7l for DebARM32 armv7hl for RH/Suse')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
@@ -211,7 +211,7 @@ def jenkinsStepDeb() {
         debArchAllList.remove('s390x')
     }
     // remove armv7l for JDK20
-    if ("${VERSION}" == '20') {
+    if ("${VERSION}" >= '20') {
         debArchAllList.remove('armv7l')
     }
     debArchAllList.each { DebARCH ->
@@ -233,7 +233,7 @@ def jenkinsStepDeb() {
             buildAndTest('Debian', "${DebARCH}","${VERSION}")
             if (params.uploadPackage.toBoolean()) {
                 echo "Upload artifacts for ${VERSION} - ${DebARCH} - Debian"
-                uploadArtifacts('Debian', "${DebARCH}")
+                uploadArtifacts('Debian', "${DebARCH}", "${VERSION}")
             }
         }
     }
@@ -253,7 +253,7 @@ def jenkinsStepAlpine() {
         apkArchAllList = ['x86_64', 'aarch64']
     }
     // remove aarch64 for JDK20 and below
-    if ("${VERSION}" != '21') {
+    if (${VERSION} -lt 21) {
         apkArchAllList.remove('aarch64')
     }
 
@@ -272,7 +272,7 @@ def jenkinsStepAlpine() {
             buildAndTest('Alpine', "${ApkARCH}", "${VERSION}")
             if (params.uploadPackage.toBoolean()) {
                 echo "Upload artifacts for ${VERSION} - ${ApkARCH} - Alpine"
-                uploadArtifacts('Alpine', "${ApkARCH}")
+                uploadArtifacts('Alpine', "${ApkARCH}", "${VERSION}")
             }
         }
     }
@@ -286,7 +286,7 @@ def jenkinsStepNonDeb(String DISTRO) {
     buildAndTest("${DISTRO}", "${ARCH}", "${VERSION}")
     if (params.uploadPackage.toBoolean()) {
         echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
-        uploadArtifacts("${DISTRO}", "${ARCH}")
+        uploadArtifacts("${DISTRO}", "${ARCH}", "${VERSION}")
     }
 }
 
@@ -348,10 +348,10 @@ private void buildCli(String DISTRO, String buildArch, String GPG_KEY = null, St
     sh(buildCli)
 }
 
-def uploadArtifacts(String DISTRO, String buildArch) {
+def uploadArtifacts(String DISTRO, String buildArch, String Version) {
     switch(DISTRO) {
         case "Debian":
-            uploadDebArtifacts(buildArch)
+            uploadDebArtifacts(buildArch, Version)
             break
         case "Alpine":
             uploadAlpineArtifacts(buildArch)
@@ -381,7 +381,8 @@ def uploadAlpineArtifacts(String buildArch) {
     // unset BUILDARCH environment variable
 }
 
-def uploadDebArtifacts(String buildArch) {
+def uploadDebArtifacts(String buildArch, String Version) {
+    env.VERSION = Version
     def Distro = "Debian"
     def debArchList = [
         'x86_64' : 'amd64',
@@ -395,7 +396,7 @@ def uploadDebArtifacts(String buildArch) {
         debArchList.remove('s390x')
     }
     // if VERSION is 20 remove armv7l from the list
-    if (VERSION == '20') {
+    if (VERSION >= '20') {
         debArchList.remove('armv7l')
     }
 
@@ -410,7 +411,7 @@ def uploadDebArtifacts(String buildArch) {
             "buster",   // Debian/10
             "jammy",    // Ubuntu/22.04 (LTS)
             "focal",    // Ubuntu/20.04 (LTS)
-            "bionic",   // Ubuntu/18.04 (LTS)
+            "bionic"   // Ubuntu/18.04 (LTS)
     ]
     def distro_list = ''
     deb_versions.each { deb_version ->
@@ -433,6 +434,7 @@ def uploadDebArtifacts(String buildArch) {
             def PackFiles = findFiles(glob: "**/build/ospackage/temurin-*${debArchList[buildArch]}.deb") // List All Packages To Upload
             for (PackFile in PackFiles) {
               def FileName = PackFile.name
+              echo "Prepare For Version = ${VERSION}"
               def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
 
               CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '', '' )
@@ -459,11 +461,11 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2'
-
         ],
         'suse'   : [
             'rpm/opensuse/15.3',
             'rpm/opensuse/15.4',
+            'rpm/opensuse/15.5',
             'rpm/sles/12',
             'rpm/sles/15'
         ]
@@ -481,7 +483,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         rpmArchList.remove('s390x')
     }
     // if VERSION is 20 remove armv7hl from the list
-    if (VERSION == '20') {
+    if (VERSION >= '20') {
         rpmArchList.remove('armv7hl')
     }
 

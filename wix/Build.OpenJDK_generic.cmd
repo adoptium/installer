@@ -7,7 +7,7 @@ REM PRODUCT_MAINTENANCE_VERSION=0
 REM PRODUCT_PATCH_VERSION=0
 REM PRODUCT_BUILD_NUMBER=28
 REM MSI_PRODUCT_VERSION=11.0.0.28
-REM ARCH=x64|x86-32|arm64 or all "x64 x86-32 arm64"
+REM ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
 REM JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
@@ -36,55 +36,28 @@ IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/adopti
 IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
 
-REM This needs tidying up, it's got out of control now
-IF NOT "%ARCH%" == "x64" (
-	IF NOT "%ARCH%" == "x86-32" (
-        IF NOT "%ARCH%" == "arm64" (
-            IF NOT "%ARCH%" == "x86-32 x64" (
-                IF NOT "%ARCH%" == "x86-32 arm64" (
-                    IF NOT "%ARCH%" == "arm64 x86-32" (
-                        IF NOT "%ARCH%" == "x64 x86-32" (
-                            IF NOT "%ARCH%" == "x64 arm64" (
-                                IF NOT "%ARCH%" == "arm64 x64" (
-                                    IF NOT "%ARCH%" == "x86-32 x64 arm64" (
-                                        IF NOT "%ARCH%" == "x86-32 arm64 x64" (
-                                            IF NOT "%ARCH%" == "arm64 x86-32 x64" (
-                                                IF NOT "%ARCH%" == "arm64 x64 x86-32" (
-                                                    IF NOT "%ARCH%" == "x86-32 x64 arm64" (
-                                                        IF NOT "%ARCH%" == "x64 x86-32 arm64" (
-                                                            ECHO ARCH %ARCH% not supported : valid values : x64, x86-32, arm64, x86-32 x64, x64 x86-32, x86-32 x64 arm64, x86-32 arm64 x64, arm64 x86-32 x64, arm64 x64 x86-32, x86-32 x64 arm64, x64 x86-32 arm64
-                                                            GOTO FAILED
-                                                        )
-                                                    )
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-        )
-	)
+powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
+    -toValidate '%ARCH%' ^
+    -validInputs "x64 x86-32 x86 arm64" ^
+    -delimiter " "
+
+IF %ERRORLEVEL% == 1 (
+    ECHO ARCH %ARCH% not supported : valid values are any combination of : x64, x86-32, arm64
+    GOTO FAILED
 )
 
 REM Update to handle the change of build variant until implications
 REM of setting this to Temurin can be evaluated
 IF "%JVM%" == "temurin" SET JVM=hotspot
 
-IF NOT "%JVM%" == "hotspot" (
-	IF NOT "%JVM%" == "openj9" (
-	    IF NOT "%JVM%" == "dragonwell" (
-            IF NOT "%JVM%" == "openj9 hotspot" (
-                IF NOT "%JVM%" == "hotspot openj9" (
-                    ECHO JVM "%JVM%" not supported : valid values : hotspot, openj9, dragonwell, hotspot openj9, openj9 hotspot
-                    GOTO FAILED
-                )
-            )
-        )
-	)
+powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
+    -toValidate '%JVM%' ^
+    -validInputs "hotspot,openj9,dragonwell,openj9 hotspot,hotspot openj9" ^
+    -delimiter ","
+
+IF %ERRORLEVEL% == 1 (
+    ECHO JVM "%JVM%" not supported : valid values : hotspot, openj9, dragonwell, hotspot openj9, openj9 hotspot
+    GOTO FAILED
 )
 
 IF NOT "%PRODUCT_CATEGORY%" == "jre" (

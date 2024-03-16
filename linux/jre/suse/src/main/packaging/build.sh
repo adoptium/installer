@@ -8,7 +8,7 @@ echo "DEBUG: building Suse arch ${buildArch} with version ${buildVersion}"
 # Build specified target or build all (not s390x on jre8)
 if [ "${buildArch}" != "all" ]; then
 	targets=${buildArch}
-elif [ "${buildVersion}" = "21" ]; then
+elif [ ${buildVersion} -gt 20 ]; then
         targets="x86_64 ppc64le aarch64"
 else
 	targets="x86_64 ppc64le aarch64 armv7hl s390x"
