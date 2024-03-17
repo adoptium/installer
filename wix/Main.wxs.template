@@ -133,7 +133,6 @@
         <RegistryValue Root="HKMU" Key="SOFTWARE\Classes\{vendor}.jarfile\shell\open\command" Type="string" Value="&quot;[INSTALLDIR]bin\javaw.exe&quot; -jar &quot;%1&quot; %*" KeyPath="no" />
       </Component>
       <Component Id="SetOracleJavaSoftKeysCurrentVersion" Guid="*">
-          <Condition><![CDATA[NOT JAVASOFT_CURRENTVERSION OR JAVASOFT_CURRENTVERSION <> "1.8" AND JAVASOFT_CURRENTVERSION < $(var.ProductMajorVersion)]]></Condition>
           <RegistryValue Root="HKLM" Key="SOFTWARE\JavaSoft\$(var.OracleJavasoftBaseKey)" Name="CurrentVersion" Type="string" Value="$(var.OracleVersionKey)" KeyPath="yes" />
       </Component>
       <Component Id="SetOracleJavaSoftKeys" Guid="*">
