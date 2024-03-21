@@ -8,8 +8,8 @@ amd64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/down
 amd64_checksum = faceda94ffd16e177cb674471f29789e48378f9f190eac8523713a0cb3324be9
 arm64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jre_aarch64_linux_hotspot_22_36.tar.gz
 arm64_checksum = 4748e5024eb0251ddf0f576e4c56d21270b1f2186f62b25fc1d89c888d742ed4
-TO_DO_ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jre_ppc64le_linux_hotspot_22.0.0_0.tar.gz
-TO_DO_ppc64el_checksum = caaf48e50787b80b810dc08ee91bd4ffe0d0696bd14906a92f05bf8c14aabb22
+ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jre_ppc64le_linux_hotspot_22_36.tar.gz
+ppc64el_checksum = e1cce04600b388777a1a278dda572a664db14cea034dc131155b3da5e6e885e5
 
 
 d = debian/$(pkg_name)
