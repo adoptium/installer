@@ -11,7 +11,6 @@ arm64_checksum = 4b52670caea44848cee893e35c804380817b6eff166cf64ee70ca2bfaac3d1c
 ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_ppc64le_linux_hotspot_22_36.tar.gz
 ppc64el_checksum = 8c062e934d95c639f97b4e51b968eed694a6653248727c3db8bc5e0e55cfd7f4
 
-
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
 jvm_dir = $(pkg_name)-$(DEB_HOST_ARCH)
