@@ -3,8 +3,8 @@
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 22.0.0.0.0___22.0.0.0.0+1
-#  22.0.0.0.0___1 == 22.0.0.0.0+35
-%global spec_version 22.0.0.0.0.0
+#  22.0.0.0.0___1 == 22.0.0.0.0+36
+%global spec_version 22.0.0.0.0.36
 %global spec_release 1
 %global priority 2200
 
@@ -20,7 +20,6 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
-%global vers_arch4 s390x
 %global src_num 0
 %global sha_src_num 1
 %endif
@@ -28,7 +27,6 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
-%global vers_arch4 s390x
 %global src_num 2
 %global sha_src_num 3
 %endif
@@ -36,17 +34,8 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
-%global vers_arch4 s390x
 %global src_num 4
 %global sha_src_num 5
-%endif
-%ifarch s390x
-%global vers_arch x64
-%global vers_arch2 ppc64le
-%global vers_arch3 aarch64
-%global vers_arch4 s390x
-%global src_num 6
-%global sha_src_num 7
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -68,7 +57,7 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: /usr/lib/jvm/%{name}
 
-ExclusiveArch: x86_64 ppc64le aarch64 s390x
+ExclusiveArch: x86_64 ppc64le aarch64
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -105,9 +94,6 @@ Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_ar
 # Third architecture (aarch64)
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
-# Fourth architecture (s390x)
-Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
@@ -171,5 +157,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-* Wed Mar 20 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 22.0.0.0.0.0-0
+* Wed Mar 20 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 22.0.0.0.0.36-0
 - Eclipse Temurin 22+36 release 0.
