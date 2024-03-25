@@ -253,10 +253,10 @@ def jenkinsStepAlpine() {
         apkArchAllList = ['x86_64', 'aarch64']
     }
     // remove aarch64 for JDK20 and below
-    if (${VERSION} -lt 21) {
+    if (${VERSION} < '21') {
         apkArchAllList.remove('aarch64')
     }
-
+    
     apkArchAllList.each { ApkARCH ->
         // special handle: no label x86_64 only x64 for alpine agent
         def apkLabel = "${ApkARCH}&&docker"
