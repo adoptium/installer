@@ -253,7 +253,7 @@ def jenkinsStepAlpine() {
         apkArchAllList = ['x86_64', 'aarch64']
     }
     // remove aarch64 for JDK20 and below
-    def versionInt = VERSION.toInteger() // Parse Version As Integer
+    def versionInt = VERSION as int // Parse Version As Integer
     if (versionInt < 21) {
         apkArchAllList.remove('aarch64')
     }
