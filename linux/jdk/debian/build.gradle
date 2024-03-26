@@ -112,7 +112,18 @@ if ("$arch" == "armhf") {
 		}
 	}
 
-if ("$arch" != "armhf") {
+if ("$arch" == "riscv64") {
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		}
+
+if ("$arch" != "armhf" && "$arch" != "riscv64"){
 		project.exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
@@ -121,6 +132,8 @@ if ("$arch" != "armhf") {
 				getProjectDir().absolutePath + "/src/main/packaging"
      }
 	}
+
+
 
 		project.exec {
 			workingDir getRootDir()

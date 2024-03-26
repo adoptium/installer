@@ -11,6 +11,8 @@ ppc64el_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/do
 ppc64el_checksum = d08de863499d8851811c893e8915828f2cd8eb67ed9e29432a6b4e222d80a12f
 s390x_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_s390x_linux_hotspot_21.0.2_13.tar.gz
 s390x_checksum = 0d5676c50821e0d0b951bf3ffd717e7a13be2a89d8848a5c13b4aedc6f982c78
+riscv64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jdk_riscv64_linux_hotspot_21.0.2_13.tar.gz
+riscv64_checksum = 791a37ddb040e1a02bbfc61abfbc7e7321431a28054c9ac59ba1738fd5320b02
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
