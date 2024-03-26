@@ -279,7 +279,7 @@ def jenkinsStepDeb() {
             debLabel = 'armv8&&build&&dockerBuild&&dockerhost'
         }
         if ("${DebARCH}" == 'riscv64') {
-            debLabel = 'riscv64&&docker'
+            debLabel = 'riscv64&&dockerInstaller'
         }
         // reallocate jenkins agent per element in list
         node("linux&&${debLabel}") {
