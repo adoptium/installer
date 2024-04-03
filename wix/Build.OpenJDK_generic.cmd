@@ -246,7 +246,7 @@ FOR %%A IN (%ARCH%) DO (
     
     ECHO HEAT
     @ECHO ON
-    "!WIX_HEAT_DIR!\WixToolset.Heat.4.0.4\tools\net472\x64\heat.exe" dir "!REPRO_DIR!" -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -gg -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
+    !WIX_HEAT_PATH! dir "!REPRO_DIR!" -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -gg -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     IF ERRORLEVEL 1 (
         ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
         GOTO FAILED

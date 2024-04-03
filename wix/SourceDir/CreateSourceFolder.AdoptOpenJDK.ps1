@@ -9,14 +9,18 @@
 .PARAMETER openjdk_filename_regex
     A regular expression that matches the OpenJDK filename. Default is ^OpenJDK(?<major>\d*).
 
+.PARAMETER platform_regex
+    A regular expression that matches the platform. Default is (?<platform>x86-32|x64|aarch64).
+
 .PARAMETER jvm_regex
     A regular expression that matches the JVM. Default is (?<jvm>hotspot|openj9|dragonwell).
 
 .PARAMETER jvm
     The JVM to be used. If not provided, the script will attempt to extract the JVM from the filename.
 
-.PARAMETER platform_regex
-    A regular expression that matches the platform. Default is (?<platform>x86-32|x64|aarch64).
+.PARAMETER wix_version
+    The version wix that is currently installed.
+    Used to determine WixToolset.Heat version to be installed. Default is 4.0.5.
 
 .NOTES
     File Name: CreateSourceFolder.AdoptOpenJDK.ps1
@@ -37,7 +41,9 @@ param (
     [Parameter(Mandatory = $false)]
     [string]$jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)",
     [Parameter(Mandatory = $false)]
-    [string]$jvm = ""
+    [string]$jvm = "",
+    [Parameter(Mandatory = $false)]
+    [string]$wix_version = "4.0.5"
 )
 
 Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
@@ -106,3 +112,25 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     Move-Item -Path $_.FullName -Destination $Destination -Force
   }
 }
+
+# Install wixtoolset.heat.4.0.5
+Write-Host "Installing WixToolset.Heat version $wix_version"
+mkdir wix_extension
+$sourceURI = 'https://www.nuget.org/api/v2/package/WixToolset.Heat/' + $wix_version
+$outFile = '.\wix_extension\wixtoolset.heat.' + $wix_version + '.zip'
+Invoke-WebRequest -Uri $sourceURI -OutFile $outFile
+Expand-Archive -Path "$outFile" -DestinationPath ./wix_extension/
+
+# Determine the architecture of the operating system
+if ([Environment]::Is64BitOperatingSystem) {
+  Write-Output "x64 operating system"
+  $current_arch = "x64"
+}
+else {
+  Write-Output "x86 operating system"
+  $current_arch = "x86"
+}
+
+# Set the path to heat.exe for later use
+$env:WIX_HEAT_PATH = (Get-ChildItem -Path .\wix_extension -Recurse -Filter "heat.exe").FullName | Select-String -Pattern "$current_arch"
+Write-Host "wixtoolset.heat.exe path saved at location $env:WIX_HEAT_PATH"
