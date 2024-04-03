@@ -246,80 +246,22 @@ FOR %%A IN (%ARCH%) DO (
     
     ECHO HEAT
     @ECHO ON
-    "C:\Program Files\PackageManagement\NuGet\Packages\WixToolset.Heat.4.0.4\tools\net472\x64\heat.exe" dir "!REPRO_DIR!" ^
-        -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs ^
-        -gg ^
-        -sfrag ^
-        -scom ^
-        -sreg ^
-        -srd ^
-        -ke ^
-        -cg "AppFiles" ^
-        -var var.ProductMajorVersion ^
-        -var var.ProductMinorVersion ^
-        -var var.ProductVersionString ^
-        -var var.MSIProductVersion ^
-        -var var.ReproDir ^
-        -dr INSTALLDIR ^
-        -platform !PLATFORM!
+    "!WIX_HEAT_DIR!\WixToolset.Heat.4.0.4\tools\net472\x64\heat.exe" dir "!REPRO_DIR!" -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -gg -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     IF ERRORLEVEL 1 (
         ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
         GOTO FAILED
     )
     @ECHO OFF
 
-    ECHO CANDLE
+    ECHO BUILD
     @ECHO ON
-    @REM -out %WORKDIR% ^
-    @REM -spdb ^
-    @REM !MSI_VALIDATION_OPTION! ^ @REM this was `-sval`
-    wix build ^
-        -arch !PLATFORM! ^
-        %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs ^
-        %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs ^
-        !ITW_WXS! ^
-        -ext WixToolset.UI.wixext ^
-        -ext WixToolset.Util.wixext ^
-        -dIcedTeaWebDir="!ICEDTEAWEB_DIR!" ^
-        -dOutputBaseFilename="!OUTPUT_BASE_FILENAME!" ^
-        -dProductSku="!PRODUCT_SKU!" ^
-        -dProductMajorVersion="!PRODUCT_MAJOR_VERSION!" ^
-        -dProductMinorVersion="!PRODUCT_MINOR_VERSION!" ^
-        -dProductVersionString="!PRODUCT_SHORT_VERSION!" ^
-        -dMSIProductVersion="!MSI_PRODUCT_VERSION!" ^
-        -dProductId="!PRODUCT_ID!" ^
-        -dProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" ^
-        -dReproDir="!REPRO_DIR!" ^
-        -dSetupResourcesDir="!SETUP_RESOURCES_DIR!" ^
-        -dCulture="!CULTURE!" ^
-        -dJVM="!PACKAGE_TYPE!" ^
-        -cc !CACHE_FOLDER! ^
-        -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" ^
-        -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" ^
-        -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+    wix build -arch !PLATFORM! %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -d JVM="!PACKAGE_TYPE!" -cc !CACHE_FOLDER! -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
     IF ERRORLEVEL 1 (
         ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
         dir /s /b /o:n %WORKDIR%
         GOTO FAILED
     )
     @ECHO OFF
-
-    ECHO LIGHT
-    @REM @ECHO ON
-    @REM "!WIX!bin\light.exe" ^
-    @REM     %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wixobj %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wixobj !ITW_WIXOBJ! !MSI_VALIDATION_OPTION! ^
-    @REM     -cc !CACHE_FOLDER!
-    @REM     -ext WixToolset.UI.wixext
-    @REM     -ext WixToolset.Util.wixext
-    @REM     -spdb
-    @REM     -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-    @REM     -cultures:!CULTURE!
-    @REM IF ERRORLEVEL 1 (
-    @REM     ECHO Failed to links and binds one or more .wixobj files and creates a Windows Installer database ^(.msi or .msm^)
-    @REM     dir /s /b /o:n
-    @REM     GOTO FAILED
-    @REM )
-    @REM @ECHO OFF
 
     REM Clean up variables
     SET ICEDTEAWEB_DIR=
