@@ -226,19 +226,7 @@ FOR %%A IN (%ARCH%) DO (
                 SET BUNDLE_ICEDTEAWEB=true
                 SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
                 ECHO HEAT
-                !WIX_HEAT_PATH! dir "!ICEDTEAWEB_DIR!" ^
-                    -out !ITW_WXS! ^
-                    -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" ^
-                    -gg ^
-                    -sfrag ^
-                    -scom ^
-                    -sreg ^
-                    -srd ^
-                    -ke ^
-                    -cg "IcedTeaWebFiles" ^
-                    -var var.IcedTeaWebDir ^
-                    -dr INSTALLDIR ^
-                    -platform !PLATFORM!
+                !WIX_HEAT_PATH! dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
                 IF ERRORLEVEL 1 (
                     ECHO "Failed to generate Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
