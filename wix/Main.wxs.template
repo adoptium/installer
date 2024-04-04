@@ -7,7 +7,6 @@
     <Property Id="ARPHELPLINK" Value="!(loc.ProductHelpLink)" />
     <Property Id="ARPURLINFOABOUT" Value="!(loc.ProductUrlInfoAbout)" />
     <Property Id="ARPURLUPDATEINFO" Value="!(loc.ProductUrlUpdateInfo)" />
-    <Property Id="ALLUSERS" Value="2" /> <!-- Allow per User or per Machine setup -->
     <Property Id="ARPPRODUCTICON" Value="logo.ico" />
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
     <Icon Id="logo.ico" SourceFile="{vendor_branding_logo}" />
