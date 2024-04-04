@@ -16,9 +16,9 @@ REM Build with extra Source Code feature (needs work)
 REM IF EXIST Files-!OUTPUT_BASE_FILENAME!.wixobj "%WIX%bin\light.exe" !MSI_VALIDATION_OPTION! Main-!OUTPUT_BASE_FILENAME!.wixobj Files-!OUTPUT_BASE_FILENAME!.wixobj Src-!OUTPUT_BASE_FILENAME!.wixobj !ITW_WIXOBJ! -cc !CACHE_FOLDER! -reusecab -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" -loc "Lang\%PRODUCT_SKU%.Base.!CULTURE!.wxl" -loc "Lang\%PRODUCT_SKU%.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
 
 REM Build without extra Source Code feature
-IF EXIST Workdir\!OUTPUT_BASE_FILENAME!-Files.wixobj "%WIX%bin\light.exe" !MSI_VALIDATION_OPTION! Workdir\!OUTPUT_BASE_FILENAME!-Main.wixobj Workdir\!OUTPUT_BASE_FILENAME!-Files.wixobj !ITW_WIXOBJ! -cc !CACHE_FOLDER! -reusecab -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -spdb -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" -loc "Workdir\!OUTPUT_BASE_FILENAME!-%PRODUCT_SKU%.Base.!CULTURE!.wxl" -loc "Workdir\!OUTPUT_BASE_FILENAME!-%PRODUCT_SKU%.!PACKAGE_TYPE!.!CULTURE!.wxl" -cultures:!CULTURE!
+wix build -arch !PLATFORM! %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -d JVM="!PACKAGE_TYPE!" -cc !CACHE_FOLDER! -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" -culture !CULTURE! -pdbtype none
 IF ERRORLEVEL 1 (
-    ECHO light failed with : %ERRORLEVEL%
+    ECHO Building for culture %CULTURE% failed with errorlevel: %ERRORLEVEL%
     GOTO FAILED
 )
 
