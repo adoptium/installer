@@ -35,7 +35,7 @@ IF NOT DEFINED VENDOR_BRANDING_DIALOG SET VENDOR_BRANDING_DIALOG=$(var.SetupReso
 IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/adoptium/adoptium-support/issues/new/choose
 IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
-IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat.exe
+IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
 IF NOT DEFINED WIX_VERSION SET WIX_VERSION=4.0.5
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
@@ -227,7 +227,7 @@ FOR %%A IN (%ARCH%) DO (
                 SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
                 SET ITW_WIXOBJ=%WORKDIR%IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj
                 ECHO HEAT
-                "C:\Program Files\PackageManagement\NuGet\Packages\WixToolset.Heat.4.0.4\tools\net472\x64\heat.exe" dir "!ICEDTEAWEB_DIR!" ^
+                !WIX_HEAT_PATH! dir "!ICEDTEAWEB_DIR!" ^
                     -out !ITW_WXS! ^
                     -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" ^
                     -gg ^
@@ -263,7 +263,7 @@ FOR %%A IN (%ARCH%) DO (
     @ECHO ON
     wix build -arch !PLATFORM! %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -d JVM="!PACKAGE_TYPE!" -cc !CACHE_FOLDER! -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
     IF ERRORLEVEL 1 (
-        ECHO Failed to preprocesses and compiles WiX source files into object files ^(.wixobj^)
+        ECHO Failed to preprocesses and compile WiX source files into object files ^(.wixobj^)
         dir /s /b /o:n %WORKDIR%
         GOTO FAILED
     )
