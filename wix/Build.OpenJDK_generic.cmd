@@ -298,7 +298,9 @@ FOR %%A IN (%ARCH%) DO (
 		IF ERRORLEVEL 1 (
 			ECHO Failed to validate MSI
 		    GOTO FAILED
-		)
+		) ELSE (
+            ECHO MSI validation passed
+        )
 		@ECHO OFF
 	) ELSE (
         ECHO MSI validation was skipped by option SKIP_MSI_VALIDATION=true
@@ -341,9 +343,7 @@ FOR %%A IN (%ARCH%) DO (
 
     REM Remove files we do not need any longer.
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs"
-    DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wixobj"
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs"
-    DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wixobj"
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.%JVM%.*.wxl"
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.*.wxl"
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Variables.wxi"

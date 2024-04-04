@@ -18,7 +18,7 @@ REM IF EXIST Files-!OUTPUT_BASE_FILENAME!.wixobj "%WIX%bin\light.exe" !MSI_VALID
 REM Build without extra Source Code feature
 wix build -arch !PLATFORM! %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -d JVM="!PACKAGE_TYPE!" -cc !CACHE_FOLDER! -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" -culture !CULTURE! -pdbtype none
 IF ERRORLEVEL 1 (
-    ECHO Building for culture %CULTURE% failed with errorlevel: %ERRORLEVEL%
+    ECHO Building msi for culture %CULTURE% failed with errorlevel: %ERRORLEVEL%
     GOTO FAILED
 )
 
