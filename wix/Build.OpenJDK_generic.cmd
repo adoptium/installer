@@ -35,7 +35,7 @@ IF NOT DEFINED VENDOR_BRANDING_DIALOG SET VENDOR_BRANDING_DIALOG=$(var.SetupReso
 IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/adoptium/adoptium-support/issues/new/choose
 IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
-IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=$(var.SetupResourcesDir)\heat.exe
+IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat.exe
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
@@ -236,7 +236,7 @@ FOR %%A IN (%ARCH%) DO (
                     -dr INSTALLDIR ^
                     -platform !PLATFORM!
                 IF ERRORLEVEL 1 (
-                    ECHO "Failed to generating Windows Installer XML Source files for IcedTea-Web (.wxs)"
+                    ECHO "Failed to generate Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
                 )
             ) ELSE (
@@ -249,7 +249,7 @@ FOR %%A IN (%ARCH%) DO (
     @ECHO ON
     !WIX_HEAT_PATH! dir "!REPRO_DIR!" -out %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -gg -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
     IF ERRORLEVEL 1 (
-        ECHO Failed to generating Windows Installer XML Source files ^(.wxs^)
+        ECHO Failed to generate Windows Installer XML Source files ^(.wxs^)
         GOTO FAILED
     )
     @ECHO OFF
