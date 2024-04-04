@@ -131,6 +131,13 @@ else {
   $current_arch = "x86"
 }
 
-# Set the path to heat.exe for later use
-$env:WIX_HEAT_PATH = (Get-ChildItem -Path .\wix_extension -Recurse -Filter "heat.exe").FullName | Select-String -Pattern "$current_arch"
+# Copy heat.exe to expected location in Resources Dir
+$ORIG_WIX_HEAT_PATH = (Get-ChildItem -Path .\wix_extension -Recurse -Filter "heat.exe").FullName | Select-String -Pattern "$current_arch"
+Copy-Item -Path $ORIG_WIX_HEAT_PATH -Destination ..\Resources\heat.exe -Force
+
+# Report the path to heat.exe
+$env:WIX_HEAT_PATH="$PWD/../Resources/heat.exe"
 Write-Host "wixtoolset.heat.exe path saved at location $env:WIX_HEAT_PATH"
+
+# Cleanup
+Remove-Item -Path .\wix_extension -Recurse -Force
