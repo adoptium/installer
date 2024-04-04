@@ -334,7 +334,7 @@ FOR %%A IN (%ARCH%) DO (
         exit /b 1
 
     ) ELSE (
-        ECHO Ignoring signing step : not certificate configured
+        ECHO Ignoring signing step : no certificate configured
     )
 
     :succeeded
