@@ -222,10 +222,9 @@ FOR %%A IN (%ARCH%) DO (
     IF !PLATFORM! == x64 (
         IF !PRODUCT_MAJOR_VERSION! == 8 (
             IF EXIST !ICEDTEAWEB_DIR! (
-                ECHO IcedTeaWeb Directory Exist!
+                ECHO IcedTeaWeb Directory Exists!
                 SET BUNDLE_ICEDTEAWEB=true
                 SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
-                SET ITW_WIXOBJ=%WORKDIR%IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wixobj
                 ECHO HEAT
                 !WIX_HEAT_PATH! dir "!ICEDTEAWEB_DIR!" ^
                     -out !ITW_WXS! ^
@@ -261,7 +260,7 @@ FOR %%A IN (%ARCH%) DO (
 
     ECHO BUILD
     @ECHO ON
-    wix build -arch !PLATFORM! %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -d JVM="!PACKAGE_TYPE!" -cc !CACHE_FOLDER! -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -culture !CULTURE! -pdbtype none
+    wix build -arch !PLATFORM! %WORKDIR%!OUTPUT_BASE_FILENAME!-Main.wxs %WORKDIR%!OUTPUT_BASE_FILENAME!-Files.wxs !ITW_WXS! -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ProductUpgradeCode="!PRODUCT_UPGRADE_CODE!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -d JVM="!PACKAGE_TYPE!" -cc !CACHE_FOLDER! -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -culture !CULTURE! -pdbtype none
     IF ERRORLEVEL 1 (
         ECHO Failed to process and compile Windows Installer XML Source files ^(.wxs^) into installer ^(.msi^)
         dir /s /b /o:n %WORKDIR%
@@ -349,12 +348,10 @@ FOR %%A IN (%ARCH%) DO (
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Variables.wxi"
     IF DEFINED ITW_WXS (
         DEL !ITW_WXS!
-        DEL !ITW_WIXOBJ!
     )
     RMDIR /S /Q !CACHE_FOLDER!
   )
   SET ITW_WXS=
-  SET ITW_WIXOBJ=
 )
 ENDLOCAL
 
