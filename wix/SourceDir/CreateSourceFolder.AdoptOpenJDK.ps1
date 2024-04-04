@@ -113,7 +113,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   }
 }
 
-# Install wixtoolset.heat.4.0.5
+# Install wixtoolset.heat version $wix_version
 Write-Host "Installing WixToolset.Heat version $wix_version"
 mkdir wix_extension
 $sourceURI = 'https://www.nuget.org/api/v2/package/WixToolset.Heat/' + $wix_version

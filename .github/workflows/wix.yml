@@ -90,7 +90,6 @@ jobs:
           wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
           wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
           ./CreateSourceFolder.AdoptOpenJDK.ps1 -wix_version ${{ env.WIX_VERSION }}
-          echo "WIX_HEAT_PATH=$env:WIX_HEAT_PATH" >> $env:GITHUB_ENV
 
       - name: Create JDK Installer
         run: |
