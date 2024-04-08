@@ -180,40 +180,18 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                  jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                }
                if (BuildArch == "riscv64") {
-                     // RISC Use RT upload
-                     node("dockerBuild&&linux&&x64") {
-                       tool name: 'jfrog-cli', type: 'jfrog'
-                       def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
-                       jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
-                       // Remove copied artifacts
-                      for (copiedFile in copiedFiles) {
-                        fileToDelete = copiedFile.filePath
-                        echo "Deleting file: ${fileToDelete}"
-                        deleteDir(path: fileToDelete)
-                      }
-                    }
-                 }
-                 break
+                 handleRISCUpload("Debian")
+               }
+               break
            case "Alpine":
                jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
                break
-          case "RPMS":
-          if (BuildArch != "riscv64") {
-            jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
-          }
-          if (BuildArch == "riscv64") {
-                // RISC Use RT upload
-                node("dockerBuild&&linux&&x64") {
-                  tool name: 'jfrog-cli', type: 'jfrog'
-                  def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
-                  jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
-                  // Remove copied artifacts
-                  for (copiedFile in copiedFiles) {
-                    fileToDelete = copiedFile.filePath
-                    echo "Deleting file: ${fileToDelete}"
-                    deleteDir(path: fileToDelete)
-                  }
-                }
+           case "RPMS":
+              if (BuildArch != "riscv64") {
+                jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              }
+              if (BuildArch == "riscv64") {
+                handleRISCUpload("RPMS")
               }
               break
            default:
@@ -222,25 +200,44 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                 jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
               }
               if (BuildArch == "riscv64") {
-                    // RISC Use RT upload
-                    node("dockerBuild&&linux&&x64") {
-                      tool name: 'jfrog-cli', type: 'jfrog'
-                      def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
-                      jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
-                      // Remove copied artifacts
-                      for (copiedFile in copiedFiles) {
-                        fileToDelete = copiedFile.filePath
-                        echo "Deleting file: ${fileToDelete}"
-                        deleteDir(path: fileToDelete)
-                      }
-                    }
-                }
-                break
+                handleRISCUpload("RPMS")
+              }
+              break
        }
     }
   } catch (Exception e) {
     error "Error While Checking URL ${Target}: ${e.message}"
   }
+}
+
+// Riscv Upload Function
+def handleRISCUpload(String Distro) {
+    env.DISTRO = Distro
+    echo "Distro = ${DISTRO}"
+    node("dockerBuild&&linux&&x64") {
+        tool name: 'jfrog-cli', type: 'jfrog'
+        def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
+        switch(Distro) {
+          case "Debian":
+            echo "Debian Upload"
+            jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            break
+          case "RPMS":
+            echo "RPM Upload"
+            jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+            break
+          default:
+             echo "Default Upload"
+             jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+             break
+        }
+        // Remove copied artifacts
+        for (copiedFile in copiedFiles) {
+            fileToDelete = copiedFile.filePath
+            echo "Deleting file: ${fileToDelete}"
+            deleteDir(path: fileToDelete)
+        }
+    }
 }
 
 // function only handle debian as DISTRO

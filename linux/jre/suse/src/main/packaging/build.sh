@@ -9,7 +9,7 @@ echo "DEBUG: building Suse arch ${buildArch} with version ${buildVersion}"
 if [ "${buildArch}" != "all" ]; then
 	targets=${buildArch}
 elif [ ${buildVersion} -gt 20 ]; then
-        targets="x86_64 ppc64le aarch64"
+        targets="x86_64 ppc64le aarch64 riscv64"
 else
 	targets="x86_64 ppc64le aarch64 armv7hl s390x"
 fi
