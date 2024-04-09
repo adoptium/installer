@@ -224,13 +224,19 @@ FOR %%A IN (%ARCH%) DO (
             IF EXIST !ICEDTEAWEB_DIR! (
                 ECHO IcedTeaWeb Directory Exists!
                 SET BUNDLE_ICEDTEAWEB=true
-                SET ITW_WXS="IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
+                SET ITW_WXS="%WORKDIR%IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
                 ECHO HEAT
                 !WIX_HEAT_PATH! dir "!ICEDTEAWEB_DIR!" -out !ITW_WXS! -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "IcedTeaWebFiles" -var var.IcedTeaWebDir -dr INSTALLDIR -platform !PLATFORM!
                 IF ERRORLEVEL 1 (
                     ECHO "Failed to generate Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
                 )
+
+                powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Update-id.ps1" ^
+                    -FilePath !ITW_WXS! ^
+                    -Name bin ^
+                    -Suffix IcedTea
+
             ) ELSE (
                 ECHO IcedTeaWeb Directory Does Not Exist!
             )
@@ -255,10 +261,6 @@ FOR %%A IN (%ARCH%) DO (
         GOTO FAILED
     )
     @ECHO OFF
-
-    REM Clean up variables
-    SET ICEDTEAWEB_DIR=
-    SET BUNDLE_ICEDTEAWEB=
 
     REM Generate setup translations
     FOR /F "tokens=1-2" %%L IN (Lang\LanguageList.config) do (
@@ -364,6 +366,8 @@ SET REPRO_DIR=
 SET SETUP_RESOURCES_DIR=
 SET WIN_SDK_FULL_VERSION=
 SET WIN_SDK_MAJOR_VERSION=
+SET ICEDTEAWEB_DIR=
+SET BUNDLE_ICEDTEAWEB=
 
 EXIT /b 0
 
