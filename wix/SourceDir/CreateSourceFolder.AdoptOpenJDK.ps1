@@ -22,7 +22,7 @@
 
 .PARAMETER wix_version
     The version wix that is currently installed.
-    Used to determine WixToolset.Heat version to be installed. Default is 4.0.5.
+    Used to determine WixToolset.Heat version to be installed. Default is 5.0.0.
 
 .NOTES
     File Name: CreateSourceFolder.AdoptOpenJDK.ps1
@@ -36,19 +36,19 @@
 #>
 
 param (
-    [Parameter(Mandatory = $false)]
-    [string]$openjdk_filename_regex = "^OpenJDK(?<major>\d*)",
-    [Parameter(Mandatory = $false)]
-    [string]$platform_regex = "(?<platform>x86-32|x64|aarch64)",
-    [Parameter(Mandatory = $false)]
-    [string]$jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)",
-    [Parameter(Mandatory = $false)]
-    [string]$jvm = "",
-    [Parameter(Mandatory = $false)]
-    [string]$wix_version = "4.0.5"
+  [Parameter(Mandatory = $false)]
+  [string]$openjdk_filename_regex = "^OpenJDK(?<major>\d*)",
+  [Parameter(Mandatory = $false)]
+  [string]$platform_regex = "(?<platform>x86-32|x64|aarch64)",
+  [Parameter(Mandatory = $false)]
+  [string]$jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)",
+  [Parameter(Mandatory = $false)]
+  [string]$jvm = "",
+  [Parameter(Mandatory = $false)]
+  [string]$wix_version = "5.0.0"
 )
 
-Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
+Get-ChildItem -Path .\ -Filter *.zip -File -Name | ForEach-Object {
   
   $filename = [System.IO.Path]::GetFileName($_)
   Write-Output "Processing filename : $filename"
@@ -60,13 +60,14 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
     exit 2
   }
 
-  $openjdk_basedir="OpenJDK"
+  $openjdk_basedir = "OpenJDK"
   if ([string]::IsNullOrEmpty($matches.major)) {
     # put unnumbered OpenJDK filename into OpenJDK-Latest directory
     # see Build.OpenJDK_generic.cmd who's going to look at it
-    $major=$openjdk_basedir + "-Latest"
-  } else {
-    $major=$openjdk_basedir + $Matches.major
+    $major = $openjdk_basedir + "-Latest"
+  }
+  else {
+    $major = $openjdk_basedir + $Matches.major
   }
 
   if ([string]::IsNullOrEmpty($jvm)) {
@@ -90,7 +91,7 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
 
   # Wix toolset expects this to be called arm64
   if ($platform -eq "aarch64") {
-    $platform="arm64"
+    $platform = "arm64"
   }
 
   # extract now
@@ -99,13 +100,14 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name| ForEach-Object {
   Expand-Archive -Force -Path $filename -DestinationPath $unzip_dest
 
   # do some cleanup in path
-  Get-ChildItem -Directory $unzip_dest | Where-Object {$_ -match ".*_.*"} | ForEach-Object {
+  Get-ChildItem -Directory $unzip_dest | Where-Object { $_ -match ".*_.*" } | ForEach-Object {
     $SourcePath = [System.IO.Path]::GetDirectoryName($_.FullName)
 
     if ( $_.Name -Match "(.*)_(.*)-jre$" ) {
-        $NewName = $_.Name -replace "(.*)_(.*)$",'$1-jre'
-    } elseif ( $_.Name -Match "(.*)_(.*)$" ) {
-        $NewName = $_.Name -replace "(.*)_(.*)$",'$1'
+      $NewName = $_.Name -replace "(.*)_(.*)$", '$1-jre'
+    }
+    elseif ( $_.Name -Match "(.*)_(.*)$" ) {
+      $NewName = $_.Name -replace "(.*)_(.*)$", '$1'
     }
 
     $Destination = Join-Path -Path $SourcePath -ChildPath $NewName

@@ -24,7 +24,7 @@ jobs:
           TAG: jdk8u362-b09
           SUB_TAG: 8u362b09
           JVM: hotspot
-          WIX_VERSION: 4.0.5
+          WIX_VERSION: 5.0.0
         - jdk: 11
           ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 11
@@ -37,7 +37,7 @@ jobs:
           TAG: jdk-11.0.18+10
           SUB_TAG: 11.0.18_10
           JVM: hotspot
-          WIX_VERSION: 4.0.5
+          WIX_VERSION: 5.0.0
         - jdk: 17
           ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 17
@@ -50,7 +50,7 @@ jobs:
           TAG: jdk-17.0.6+10
           SUB_TAG: 17.0.6_10
           JVM: hotspot
-          WIX_VERSION: 4.0.5
+          WIX_VERSION: 5.0.0
 
     name: wix
     runs-on: windows-latest

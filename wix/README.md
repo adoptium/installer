@@ -16,14 +16,16 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
 ```
 
 If your file structure/names are different than expected, we now support user-input regexes:
+
 - Note: the wix_version should be set to whichever version of wix is available on the buld machine
 - default values shown below. Note: `-jvm` flag also available, used in place of `-jvm_regex` result
+
 ```batch
 call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   -openjdk_filename_regex "^OpenJDK(?<major>\d*)" ^
   -platform_regex "(?<platform>x86-32|x64|aarch64)" ^
   -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)" ^
-  -wix_version "4.0.5"
+  -wix_version "5.0.0"
 ```
 
 3. Export the following environment variables:
@@ -38,7 +40,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
-  SET WIX_VERSION=4.0.5 (make sure this is the same version that is installed on the build machine)
+  SET WIX_VERSION=5.0.0 (make sure this is the same version that is installed on the build machine)
   cmd /c Build.OpenJDK_generic.cmd
   ```
 
@@ -148,7 +150,7 @@ Upgradable MSI work only for first 3 digit from the build number (due to MSI lim
 - Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
 - Upgradable : 8.0.2.1 -> 8.0.2.2 No ( You must uninstall previous msi and install new one )
 - Upgradable : 8.0.2.1 -> 8.1.2.1 Yes
-- Upgradable : 8.0.2.1 -> 11.0.2.1 No  ( Adoptium does not provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )
+- Upgradable : 8.0.2.1 -> 11.0.2.1 No ( Adoptium does not provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )
 
 ## Troubleshooting
 
@@ -163,7 +165,7 @@ C:\WINDOWS\System32\msiexec.exe /i "C:\Users\Administrator\Downloads\OpenJDK11U-
 If you have trouble with the GUI installer, changes to the registry are needed to enable logging (copy into `cmd.exe`):
 
 ```cmd
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Debug /t REG_DWORD /d 7 /f 
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Debug /t REG_DWORD /d 7 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Logging /t REG_SZ /d voicewarmupx! /f
 ```
 
