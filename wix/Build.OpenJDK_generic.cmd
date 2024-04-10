@@ -232,6 +232,8 @@ FOR %%A IN (%ARCH%) DO (
                     GOTO FAILED
                 )
 
+                @REM Add suffix to declaration and references of the IcedTeaWebDir 'bin' subfolder
+                @REM This is to avoid dubplicate Id conflict with INSTALLDER 'bin' subfolder
                 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Update-id.ps1" ^
                     -FilePath !ITW_WXS! ^
                     -Name bin ^

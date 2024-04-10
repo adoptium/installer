@@ -46,7 +46,7 @@ $inputArray = $toValidate -split "$delimiter"
 
 for ($i = 0; $i -lt $inputArray.Length; $i++) {
     if ($validInputArray -notcontains $inputArray[$i]) {
-        echo $inputArray[$i] ' is an invalid input'
+        Write-Output $inputArray[$i] ' is an invalid input'
         exit 1 # Invalid input
     }
 }

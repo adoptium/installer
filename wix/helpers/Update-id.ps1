@@ -44,15 +44,14 @@ if ($firstMatch -match $pattern) {
     $directoryId = $matches[1]
 }
 
-# If the directory ID is found, update it
+# If the directory ID is found, append the suffix to it's ID
 if (-not $directoryId) {
     Write-Host "Directory '$Name' not found in the file."
 }
 else {
-    Write-Host "Found Directory ID: $directoryId"
     $updatedDirectoryId = $directoryId + $Suffix
-    Write-Host "updatedDirectoryId: $updatedDirectoryId"
 
+    # Replace declaration and references of the old ID with the updated ID
     $IdRegex = $('Id="' + [regex]::Escape($directoryId) + '"')
     $updatedContent = $fileContent | ForEach-Object {
         if ($_ -match $IdRegex) {
@@ -60,7 +59,7 @@ else {
             $_ -replace $IdRegex, $('Id="' + [regex]::Escape($updatedDirectoryId) + '"')
         }
         else {
-            # Replace all instances of Directory="$FoundID" with Directory="$updatedDirectoryId"
+            # Replace all Directory ID references to the old ID with the updated ID
             $_ -replace $('Directory="' + [regex]::Escape($directoryId) + '"'), $('Directory="' + [regex]::Escape($updatedDirectoryId) + '"')
         }
     }
