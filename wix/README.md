@@ -16,12 +16,14 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
 ```
 
 If your file structure/names are different than expected, we now support user-input regexes:
-(default values shown below. Note: `-jvm` flag also available, used in place of `-jvm_regex` result )
+- Note: the wix_version should be set to whichever version of wix is available on the buld machine
+- default values shown below. Note: `-jvm` flag also available, used in place of `-jvm_regex` result
 ```batch
 call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   -openjdk_filename_regex "^OpenJDK(?<major>\d*)" ^
   -platform_regex "(?<platform>x86-32|x64|aarch64)" ^
-  -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)"
+  -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)" ^
+  -wix_version "4.0.5"
 ```
 
 3. Export the following environment variables:
@@ -36,6 +38,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
+  SET WIX_VERSION=4.0.5 (make sure this is the same version that is installed on the build machine)
   cmd /c Build.OpenJDK_generic.cmd
   ```
 
