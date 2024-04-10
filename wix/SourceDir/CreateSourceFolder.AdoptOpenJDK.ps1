@@ -1,9 +1,11 @@
 <#
 .SYNOPSIS
     This script extracts the contents of a zip file to a directory structure that is expected by the Wix toolset.
+    This script also downloads WixToolset.Heat and puts it in the expected location.
 
 .DESCRIPTION
     The script takes a zip file and extracts its contents to a directory structure that is expected by the Wix toolset.
+    This script also downloads WixToolset.Heat and puts it in the expected location.
     The script also performs some cleanup on the extracted files.
 
 .PARAMETER openjdk_filename_regex
