@@ -44,7 +44,7 @@ powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -delimiter " "
 
 IF %ERRORLEVEL% == 1 (
-    ECHO ARCH %ARCH% not supported : valid values are any combination of : x64, x86-32, arm64
+    ECHO ARCH %ARCH% not supported : valid values are any combination of : x64, (x86 or x86-32), arm64
     GOTO FAILED
 )
 
@@ -183,7 +183,7 @@ FOR %%A IN (%ARCH%) DO (
         REM If no UPGRADE_CODE_SEED given .. we are not trying to build upgradable MSI and generate always a new PRODUCT_UPGRADE_CODE
         FOR /F %%F IN ('POWERSHELL -COMMAND "$([guid]::NewGuid().ToString('b').ToUpper())"') DO (
           SET PRODUCT_UPGRADE_CODE=%%F
-          ECHO Uniq PRODUCT_UPGRADE_CODE: !PRODUCT_UPGRADE_CODE!
+          ECHO Unique PRODUCT_UPGRADE_CODE: !PRODUCT_UPGRADE_CODE!
         )
     ) ELSE (
         REM It will be better if we can generate "Name-based UUID" as specified here https://tools.ietf.org/html/rfc4122#section-4.3
@@ -224,7 +224,8 @@ FOR %%A IN (%ARCH%) DO (
                 ECHO IcedTeaWeb Directory Exists!
                 SET BUNDLE_ICEDTEAWEB=true
                 SET ITW_WXS="%WORKDIR%IcedTeaWeb-!OUTPUT_BASE_FILENAME!.wxs"
-                ECHO HEAT
+                ECHO HEAT IcedTeaWeb
+                @ECHO ON
                 !WIX_HEAT_PATH! dir "!ICEDTEAWEB_DIR!" ^
                     -out !ITW_WXS! ^
                     -t "!SETUP_RESOURCES_DIR!\heat.icedteaweb.xslt" ^
@@ -242,6 +243,7 @@ FOR %%A IN (%ARCH%) DO (
                     ECHO "Failed to generate Windows Installer XML Source files for IcedTea-Web (.wxs)"
                     GOTO FAILED
                 )
+                @ECHO OFF
 
                 @REM Add suffix to declaration and references of the IcedTeaWebDir 'bin' subfolder
                 @REM This is to avoid dubplicate Id conflict with INSTALLDER 'bin' subfolder
@@ -328,7 +330,7 @@ FOR %%A IN (%ARCH%) DO (
 	REM For temporarily disable the smoke test - use OPTION SKIP_MSI_VALIDATION=true
 	REM To validate MSI only once at the end
 	IF NOT "%SKIP_MSI_VALIDATION%" == "true" (
-		ECHO SMOKE
+		ECHO VALIDATE
 		@ECHO ON
 		wix msi validate "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 		IF ERRORLEVEL 1 (
