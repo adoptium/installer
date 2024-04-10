@@ -44,7 +44,7 @@ powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -delimiter " "
 
 IF %ERRORLEVEL% == 1 (
-    ECHO ARCH %ARCH% not supported : valid values are any combination of : x64, (x86 or x86-32), arm64
+    ECHO ARCH %ARCH% not supported : valid values are any combination of : x64, ^(x86 or x86-32^), arm64
     GOTO FAILED
 )
 
