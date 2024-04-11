@@ -210,7 +210,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
   }
 }
 
-// Riscv Upload Function
+// RISC-V Upload Function
 def handleRISCUpload(String Distro) {
     env.DISTRO = Distro
     echo "Distro = ${DISTRO}"
