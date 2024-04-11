@@ -9,6 +9,7 @@ aarch64     aarch64     arm64       arm64
 ppc64le     ppc64le     ppc64le
 source      src         -           only for SRPM and no need specify as option or target
 s390x       s390x       s390x       only for jdk8+
+riscv64     riscv64     riscv64     only for JDK21+
 */
 
 env.NODE_LABEL = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
@@ -38,7 +39,7 @@ pipeline {
     parameters {
         choice(name: 'TYPE', choices: Types.ALL, description: 'Build JDK or JRE')
         choice(name: 'VERSION', choices: ['8', '11', '17', '21', '22'], description: 'Build for specific JDK VERSION')
-        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n Use armv7l for DebARM32 armv7hl for RH/Suse')
+        choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'riscv64', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n Use armv7l for DebARM32 armv7hl for RH/Suse')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
         booleanParam(name: 'uploadSRCRPM', defaultValue: false, description: 'Tick this box to upload (src.rpm files) to Artifactory')
@@ -174,23 +175,69 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
       echo "Target Doesnt Exist - Upload Files"
       switch(Distro) {
            case "Debian":
-               jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+               // Not RISC Use JF CLI
+               if (BuildArch != "riscv64") {
+                 jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+               }
+               if (BuildArch == "riscv64") {
+                 handleRISCVUpload("Debian")
+               }
                break
            case "Alpine":
                jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
                break
-          case "RPMS":
-              jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+           case "RPMS":
+              if (BuildArch != "riscv64") {
+                jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              }
+              if (BuildArch == "riscv64") {
+                handleRISCVUpload("RPMS")
+              }
               break
            default:
               echo "Default Case"
-              jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              if (BuildArch != "riscv64") {
+                jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+              }
+              if (BuildArch == "riscv64") {
+                handleRISCVUpload("RPMS")
+              }
               break
        }
     }
   } catch (Exception e) {
     error "Error While Checking URL ${Target}: ${e.message}"
   }
+}
+
+// RISC-V Upload Function
+def handleRISCVUpload(String Distro) {
+    env.DISTRO = Distro
+    echo "Distro = ${DISTRO}"
+    node("dockerBuild&&linux&&x64") {
+        tool name: 'jfrog-cli', type: 'jfrog'
+        def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
+        switch(Distro) {
+          case "Debian":
+            echo "Debian Upload"
+            jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            break
+          case "RPMS":
+            echo "RPM Upload"
+            jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+            break
+          default:
+             echo "Default Upload"
+             jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
+             break
+        }
+        // Remove copied artifacts
+        for (copiedFile in copiedFiles) {
+            fileToDelete = copiedFile.filePath
+            echo "Deleting file: ${fileToDelete}"
+            deleteDir(path: fileToDelete)
+        }
+    }
 }
 
 // function only handle debian as DISTRO
@@ -204,7 +251,7 @@ def jenkinsStepDeb() {
     debArchAllList.add("${ARCH}")
     // when ARCH = all, rewrite list
     if ("${ARCH}" == 'all') {
-        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
+        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'riscv64']
     }
     // remove s390x for JDK8 and JDK20
     if ("${VERSION}" == '8' || "${VERSION}" == '20') {
@@ -213,6 +260,10 @@ def jenkinsStepDeb() {
     // remove armv7l for JDK20
     if ("${VERSION}" >= '20') {
         debArchAllList.remove('armv7l')
+    }
+    // remove riscv64 for earlier than jdk21
+    if ("${VERSION}" <= '20') {
+        debArchAllList.remove('riscv64')
     }
     debArchAllList.each { DebARCH ->
         // special handle: no label x86_64 only x64 for debian agent
@@ -224,11 +275,15 @@ def jenkinsStepDeb() {
         if ("${DebARCH}" == 'armv7l') {
             debLabel = 'armv8&&build&&dockerBuild&&dockerhost'
         }
-
+        if ("${DebARCH}" == 'riscv64') {
+            debLabel = 'riscv64&&dockerInstaller'
+        }
         // reallocate jenkins agent per element in list
         node("linux&&${debLabel}") {
             setup('Debian', "${DebARCH}")
-            tool name: 'jfrog-cli', type: 'jfrog'
+            if ("${DebARCH}" != 'riscv64') {
+                tool name: 'jfrog-cli', type: 'jfrog'
+            }
             unstash 'installercode'
             buildAndTest('Debian', "${DebARCH}","${VERSION}")
             if (params.uploadPackage.toBoolean()) {
@@ -255,17 +310,18 @@ def jenkinsStepAlpine() {
     // remove aarch64 for JDK20 and below
     def versionInt = VERSION as int // Parse Version As Integer
     if (versionInt < 21) {
-        apkArchAllList.remove('aarch64')
+          apkArchAllList.remove('aarch64')
     }
 
     apkArchAllList.each { ApkARCH ->
         // special handle: no label x86_64 only x64 for alpine agent
         def apkLabel = "${ApkARCH}&&docker"
 
-        if ("${ApkARCH}" == 'x86_64') {
             apkLabel = 'x64&&dockerBuild'
+            if ("${ApkARCH}" == 'x86_64') {
         }
         // reallocate jenkins agent per element in list
+        if (ApkARCH == 'x86_64' || ApkARCH == 'aarch64') {
         node("linux&&${apkLabel}") {
             setup('Alpine', "${ApkARCH}")
             tool name: 'jfrog-cli', type: 'jfrog'
@@ -276,6 +332,7 @@ def jenkinsStepAlpine() {
                 uploadArtifacts('Alpine', "${ApkARCH}", "${VERSION}")
             }
         }
+      }
     }
 }
 
@@ -323,7 +380,8 @@ def buildAndTest(String DISTRO, String buildArch, String VERSION) {
                 'armv7l': 'armhf',
                 'aarch64': 'arm64',
                 'ppc64le': 'ppc64el',
-                's390x'  : 's390x'
+                's390x'  : 's390x',
+                'riscv64'  : 'riscv64'
             ]
             def buildCli = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
             buildCli = params.enableDebug.toBoolean() ? buildCli + ' --stacktrace' : buildCli
@@ -364,7 +422,7 @@ def uploadArtifacts(String DISTRO, String buildArch, String Version) {
 }
 
 def uploadAlpineArtifacts(String buildArch) {
-    // currently only support x64 as buildArch
+    // currently only support x64 & aarch64 as buildArch
     // set BUILDARCH environment variable for ${buildArch}
     env.BUILDARCH = buildArch
 
@@ -390,15 +448,22 @@ def uploadDebArtifacts(String buildArch, String Version) {
         'armv7l': 'armhf',
         'aarch64': 'arm64',
         'ppc64le': 'ppc64el',
-        's390x'  : 's390x'
+        's390x'  : 's390x',
+        'riscv64' : 'riscv64'
     ]
     // if VERSION is 8 or 20 remove s390x from the list
+
     if (VERSION == '8' || VERSION == '20') {
         debArchList.remove('s390x')
     }
-    // if VERSION is 20 remove armv7l from the list
-    if (VERSION >= '20') {
+    // if VERSION is 20 or later remove armv7l from the list
+    def versionInt = VERSION as int // Parse Version As Integer
+    if (versionInt >= 20) {
         debArchList.remove('armv7l')
+    }
+    // if VERSION is < 21 remove riscv64 from the list
+    if (versionInt < 21) {
+        debArchList.remove('riscv64')
     }
 
     /*
@@ -477,15 +542,21 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         'armv7hl': 'armv7hl',
         'aarch64': 'aarch64',
         'ppc64le': 'ppc64le',
-        's390x'  : 's390x'
+        's390x'  : 's390x',
+        'riscv64' : 'riscv64'
     ]
     // if VERSION is 8 or 20 remove s390x from the list
     if (VERSION == '8' || VERSION == '20') {
         rpmArchList.remove('s390x')
     }
     // if VERSION is 20 remove armv7hl from the list
+
     if (VERSION >= '20') {
         rpmArchList.remove('armv7hl')
+    }
+    // If Version < 21 remove riscv64
+    if (VERSION < '21') {
+        rpmArchList.remove('riscv64')
     }
 
     if ("${rpmArch}" != 'all') {

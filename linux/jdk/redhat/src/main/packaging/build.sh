@@ -32,7 +32,7 @@ echo "DEBUG: building RH arch ${buildArch} with jdk version ${buildVersion}"
 if [ "${buildArch}" != "all" ]; then
 	targets=${buildArch}
 elif [ ${buildVersion} -gt 20 ]; then
-        targets="x86_64 ppc64le aarch64"
+        targets="x86_64 ppc64le aarch64 s390x riscv64"
 else
 	targets="x86_64 ppc64le aarch64 armv7hl s390x"
 fi
