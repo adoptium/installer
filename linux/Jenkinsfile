@@ -180,7 +180,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                  jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                }
                if (BuildArch == "riscv64") {
-                 handleRISCUpload("Debian")
+                 handleRISCVUpload("Debian")
                }
                break
            case "Alpine":
@@ -191,7 +191,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                 jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
               }
               if (BuildArch == "riscv64") {
-                handleRISCUpload("RPMS")
+                handleRISCVUpload("RPMS")
               }
               break
            default:
@@ -200,7 +200,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                 jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
               }
               if (BuildArch == "riscv64") {
-                handleRISCUpload("RPMS")
+                handleRISCVUpload("RPMS")
               }
               break
        }
@@ -211,7 +211,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
 }
 
 // Riscv Upload Function
-def handleRISCUpload(String Distro) {
+def handleRISCVUpload(String Distro) {
     env.DISTRO = Distro
     echo "Distro = ${DISTRO}"
     node("dockerBuild&&linux&&x64") {
