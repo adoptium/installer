@@ -3,14 +3,13 @@
 pkg_name = temurin-22-jdk
 priority = 2211
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_x64_linux_hotspot_22.0.0_0.tar.gz
-amd64_checksum = 454bebb2c9fe48d981341461ffb6bf1017c7b7c6e15c6b0c29b959194ba3aaa5
-arm64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_aarch64_linux_hotspot_22.0.0_0.tar.gz
-arm64_checksum = 3ce6a2b357e2ef45fd6b53d6587aa05bfec7771e7fb982f2c964f6b771b7526a
-ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_ppc64le_linux_hotspot_22.0.0_0.tar.gz
-ppc64el_checksum = d08de863499d8851811c893e8915828f2cd8eb67ed9e29432a6b4e222d80a12f
-s390x_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.0%2B0/OpenJDK22U-jdk_s390x_linux_hotspot_22.0.0_0.tar.gz
-s390x_checksum = 0d5676c50821e0d0b951bf3ffd717e7a13be2a89d8848a5c13b4aedc6f982c78
+
+amd64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_x64_linux_hotspot_22_36.tar.gz
+amd64_checksum = bc3d99e816d0c373f424cd7aa2b6d3e8081a7189fe55c1561616922200ec8e47
+arm64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_aarch64_linux_hotspot_22_36.tar.gz
+arm64_checksum = 4b52670caea44848cee893e35c804380817b6eff166cf64ee70ca2bfaac3d1c7
+ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22%2B36/OpenJDK22U-jdk_ppc64le_linux_hotspot_22_36.tar.gz
+ppc64el_checksum = 8c062e934d95c639f97b4e51b968eed694a6653248727c3db8bc5e0e55cfd7f4
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
