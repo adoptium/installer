@@ -180,7 +180,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                  jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                }
                if (BuildArch == "riscv64") {
-                 handleRISCVUpload("Debian")
+               handleRISCVUpload("Debian")
                }
                break
            case "Alpine":
@@ -416,7 +416,7 @@ def uploadArtifacts(String DISTRO, String buildArch, String Version) {
             uploadAlpineArtifacts(buildArch)
             break
         default:
-            uploadRpmArtifacts(DISTRO,buildArch)
+            uploadRpmArtifacts(DISTRO, buildArch, Version)
             break
     }
 }
@@ -510,7 +510,8 @@ def uploadDebArtifacts(String buildArch, String Version) {
         }
 }
 
-def uploadRpmArtifacts(String DISTRO, String rpmArch) {
+def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
+    env.VERSION = Version
     def Distro = "RPM"
     def distro_Package = [
         'redhat' : [
@@ -545,17 +546,18 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch) {
         's390x'  : 's390x',
         'riscv64' : 'riscv64'
     ]
+
     // if VERSION is 8 or 20 remove s390x from the list
     if (VERSION == '8' || VERSION == '20') {
         rpmArchList.remove('s390x')
     }
     // if VERSION is 20 remove armv7hl from the list
-
     if (VERSION >= '20') {
         rpmArchList.remove('armv7hl')
     }
+
     // If Version < 21 remove riscv64
-    if (VERSION < '21') {
+    if (VERSION == '8' || VERSION == '11' || VERSION == '17') {
         rpmArchList.remove('riscv64')
     }
 
