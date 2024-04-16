@@ -472,9 +472,11 @@ def uploadDebArtifacts(String buildArch, String Version) {
         also update linux/{jdk,jre}/debian/main/packing/build.sh
     */
     def deb_versions = [
+            "trixie", // Debian/13
             "bookworm", // Debian/12
             "bullseye", // Debian/11
             "buster",   // Debian/10
+            "noble",    // Ubuntu/24.04 (LTS) 
             "jammy",    // Ubuntu/22.04 (LTS)
             "focal",    // Ubuntu/20.04 (LTS)
             "bionic"   // Ubuntu/18.04 (LTS)
@@ -525,6 +527,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
             'rpm/fedora/37',
             'rpm/fedora/38',
             'rpm/fedora/39',
+            'rpm/fedora/40',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',
             'rpm/amazonlinux/2'
