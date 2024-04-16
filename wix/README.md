@@ -55,6 +55,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   set VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
   set VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.png
   set VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.png
+  set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_FULL_VERSION%
   ```
 
  `Build.OpenJDK_generic.cmd` statically depend on this SDK version (edit if needed):
