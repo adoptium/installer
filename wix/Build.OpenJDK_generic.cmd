@@ -148,7 +148,7 @@ FOR %%A IN (%ARCH%) DO (
     :CONTINUE
     ECHO Source dir used : !REPRO_DIR!
 
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_FULL_VERSION!
+    IF NOT DEFINED OUTPUT_BASE_FILENAME SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_FULL_VERSION!
     REM find all *.wxi.template,*.wxl.template,*.wxs.template files and replace text with configurations
     FOR /f %%i IN ('dir /s /b *.wxi.template, *.Base.*.wxl.template *.!JVM!.*.wxl.template,*.wxs.template') DO (
         SET INPUT_FILE=%%~ni
