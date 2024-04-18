@@ -200,12 +200,6 @@ FOR %%A IN (%ARCH%) DO (
         )
     )
 
-
-    REM Build with extra Source Code feature (needs work)
-    REM !WIX_HEAT_PATH! file "!REPRO_DIR!\lib\src.zip" -out !OUTPUT_BASE_FILENAME!-Src.wxs -gg -srd -cg "SrcFiles" -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM !WIX_HEAT_PATH! dir "!REPRO_DIR!" -out !OUTPUT_BASE_FILENAME!-Files.wxs -t "!SETUP_RESOURCES_DIR!\heat.tools.xslt" -gg -sfrag -scom -sreg -srd -ke -cg "AppFiles" -var var.ProductMajorVersion -var var.ProductMinorVersion -var var.ProductVersionString -var var.MSIProductVersion -var var.ReproDir -dr INSTALLDIR -platform !PLATFORM!
-    REM wix -arch !PLATFORM! !OUTPUT_BASE_FILENAME!-Main.wxs !OUTPUT_BASE_FILENAME!-Files.wxs !OUTPUT_BASE_FILENAME!-Src.wxs -ext WixToolset.UI.wixext -ext WixToolset.Util.wixext -d ProductSku="!PRODUCT_SKU!" -d ProductMajorVersion="!PRODUCT_MAJOR_VERSION!" -d ProductMinorVersion="!PRODUCT_MINOR_VERSION!" -d ProductVersionString="!PRODUCT_SHORT_VERSION!" -d MSIProductVersion="!MSI_PRODUCT_VERSION!" -d ProductId="!PRODUCT_ID!" -d ReproDir="!REPRO_DIR!" -d SetupResourcesDir="!SETUP_RESOURCES_DIR!" -d Culture="!CULTURE!" -cc !CACHE_FOLDER! -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" -culture !CULTURE!
-
     REM Clean .cab cache for each run .. Cache is only used inside BuildSetupTranslationTransform.cmd to speed up MST generation
     IF EXIST !CACHE_FOLDER! rmdir /S /Q !CACHE_FOLDER!
     MKDIR !CACHE_FOLDER!
@@ -213,8 +207,6 @@ FOR %%A IN (%ARCH%) DO (
 		ECHO Unable to create cache folder : !CACHE_FOLDER!
 	    GOTO FAILED
 	)
-
-	REM Build without extra Source Code feature
 
     REM Set default variable
     SET ICEDTEAWEB_DIR=.\SourceDir\icedtea-web-image
