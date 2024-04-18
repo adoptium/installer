@@ -12,6 +12,7 @@ REM JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
+REM OUTPUT_BASE_FILENAME=customFileName (optional) for setting file names that are not based on the default naming convention
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
