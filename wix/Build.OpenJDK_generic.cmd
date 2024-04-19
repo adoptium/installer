@@ -12,6 +12,7 @@ REM JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
+REM OUTPUT_BASE_FILENAME=customFileName (optional) for setting file names that are not based on the default naming convention
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
@@ -148,7 +149,7 @@ FOR %%A IN (%ARCH%) DO (
     :CONTINUE
     ECHO Source dir used : !REPRO_DIR!
 
-    SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_FULL_VERSION!
+    IF NOT DEFINED OUTPUT_BASE_FILENAME SET OUTPUT_BASE_FILENAME=!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION!-!PRODUCT_CATEGORY!_!FOLDER_PLATFORM!_windows_!PACKAGE_TYPE!-!PRODUCT_FULL_VERSION!
     REM find all *.wxi.template,*.wxl.template,*.wxs.template files and replace text with configurations
     FOR /f %%i IN ('dir /s /b *.wxi.template, *.Base.*.wxl.template *.!JVM!.*.wxl.template,*.wxs.template') DO (
         SET INPUT_FILE=%%~ni
