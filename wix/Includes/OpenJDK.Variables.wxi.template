@@ -9,7 +9,7 @@
     <?define Win64="yes" ?>
     <?define Arch="(x64)" ?>
   <?elseif $(env.Platform)=arm64?>
-    <?define ProgramFilesFolder="ProgramFilesARMFolder" ?>
+    <?define ProgramFilesFolder="ProgramFiles64Folder" ?>
     <?define Win64="no" ?>
     <?define Arch="(arm64)" ?>
   <?endif?>

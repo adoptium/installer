@@ -220,7 +220,7 @@
             </Directory>
          </StandardDirectory>
     <?elseif $(env.Platform)=arm64?>
-        <Directory Id="ProgramFilesARMFolder">
+        <Directory Id="ProgramFiles64Folder"> <!-- ARM64 is 64bit -->
             <Directory Id="PRODUCTMANUFACTURER" Name="$(var.ProductManufacturer)">
                 <Directory Id="INSTALLDIR" Name="$(var.AppFolder)" />
             </Directory>
