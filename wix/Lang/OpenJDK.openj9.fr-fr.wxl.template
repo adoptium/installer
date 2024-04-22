@@ -1,4 +1,5 @@
-﻿<WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
 	<String Id="JREFeatureMainName" Value="JRE avec Eclipse OpenJ9" />
 	<String Id="JREFeatureMainDescription" Value="{vendor_branding} Runtime Environment avec Eclipse OpenJ9" />
 	<String Id="JREProductName" Value="{vendor_branding} JRE avec Eclipse OpenJ9" />

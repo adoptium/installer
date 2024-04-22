@@ -1,4 +1,5 @@
-﻿<WixLocalization Culture="zh-cn" Codepage="936" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="zh-cn" Codepage="936" xmlns="http://wixtoolset.org/schemas/v4/wxl">
 	<String Id="JREFeatureMainName" Value="JRE with Alibaba Dragonwell" />
 	<String Id="JREFeatureMainDescription" Value="{vendor_branding} Runtime Environment with Alibaba Dragonwell" />
 	<String Id="JREProductName" Value="{vendor_branding} JRE with Alibaba Dragonwell" />

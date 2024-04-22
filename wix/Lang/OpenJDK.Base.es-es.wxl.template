@@ -1,4 +1,5 @@
-﻿<WixLocalization Culture="es-es" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="es-es" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
 	<String Id="ProductLanguage" Value="3082" />
 	<String Id="ProductHelpLink" Value="{product_help_link}" />
 	<String Id="ProductUrlInfoAbout" Value="{product_support_link}" />
