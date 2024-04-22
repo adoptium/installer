@@ -67,6 +67,3 @@ else {
     # Write the updated content back to the file
     $updatedContent | Set-Content -Path $FilePath
 }
-
-
-

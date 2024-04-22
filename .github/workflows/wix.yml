@@ -24,7 +24,6 @@ jobs:
           TAG: jdk8u362-b09
           SUB_TAG: 8u362b09
           JVM: hotspot
-          WIX_VERSION: 5.0.0
         - jdk: 11
           ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 11
@@ -37,7 +36,6 @@ jobs:
           TAG: jdk-11.0.18+10
           SUB_TAG: 11.0.18_10
           JVM: hotspot
-          WIX_VERSION: 5.0.0
         - jdk: 17
           ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 17
@@ -50,7 +48,6 @@ jobs:
           TAG: jdk-17.0.6+10
           SUB_TAG: 17.0.6_10
           JVM: hotspot
-          WIX_VERSION: 5.0.0
 
     name: wix
     runs-on: windows-latest
@@ -60,7 +57,7 @@ jobs:
       - name: Install dependencies
         run: |
           choco install --no-progress wget
-          dotnet tool install --global wix --version ${{ matrix.WIX_VERSION }}
+          dotnet tool install --global wix --version 5.0.0
 
       - name: Setup environment variables
         uses: allenevans/set-env@0f3306034af0ea21dd28983b6e7c1614ee317739 # v3.0.0
@@ -73,7 +70,6 @@ jobs:
           MSI_PRODUCT_VERSION: ${{ matrix.MSI_PRODUCT_VERSION }}
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
-          WIX_VERSION: ${{ matrix.WIX_VERSION }}
 
       - name: Download IcedTea-Web
         run: |
@@ -89,7 +85,7 @@ jobs:
           cd wix\SourceDir
           wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
           wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          ./CreateSourceFolder.AdoptOpenJDK.ps1 -wix_version ${{ env.WIX_VERSION }}
+          ./CreateSourceFolder.AdoptOpenJDK.ps1
 
       - name: Create JDK Installer
         run: |
