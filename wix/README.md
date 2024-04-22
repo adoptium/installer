@@ -7,6 +7,8 @@
 
 ## How to upgrade to a new OpenJDK version
 
+0. Ensure the necessary dependencies are installed (`wget` and `wix` version 5.0.0 or higher). If you do not have wix installed, you can followe the instructions [here](https://wixtoolset.org/docs/intro/#nettool) to install it.
+
 1. Download latest OpenJDK zip to the SourceDir directory.
 
 2. Extract the content and setup the expected file structure:
