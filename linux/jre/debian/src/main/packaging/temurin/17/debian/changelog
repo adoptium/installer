@@ -1,8 +1,8 @@
-temurin-17-jre (17.0.10.0.0+7) STABLE; urgency=medium
+temurin-17-jre (17.0.11.0.0+9) STABLE; urgency=medium
 
-  * Eclipse Temurin 17.0.10.0.0+7 release.
+  * Eclipse Temurin 17.0.11.0.0+9 release.
 
-  -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Mon, 22 Jan 2024 08:00:00 +0000
+  -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 17 Apr 2024 08:00:00 +0000
 
 temurin-17-jre (17.0.9.0.0+9) STABLE; urgency=medium
 
