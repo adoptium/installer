@@ -192,7 +192,6 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
-%changelog
 * Wed Apr 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.412.0.0.8-1
 - Eclipse Temurin 8.0.412-b08 release.
 * Wed Jan 24 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.402.0.0.6-1
