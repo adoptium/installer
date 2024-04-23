@@ -47,7 +47,7 @@
 %global src_num 6
 %global sha_src_num 7
 # jre8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
-%global upstream_version 8u412-ga-aarch32-20240419
+%global upstream_version 8u412-b08-aarch32-20240419
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
