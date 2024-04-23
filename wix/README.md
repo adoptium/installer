@@ -43,7 +43,6 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
   SET WIX_VERSION=5.0.0 (make sure this is the same version that is installed on the build machine)
-  cmd /c Build.OpenJDK_generic.cmd
   ```
 
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
@@ -60,7 +59,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_FULL_VERSION%
   ```
 
- `Build.OpenJDK_generic.cmd` statically depend on this SDK version (edit if needed):
+ `Build.OpenJDK_generic.cmd` statically depends on this SDK version (edit if needed):
 
   ```batch
   SET WIN_SDK_MAJOR_VERSION=10
