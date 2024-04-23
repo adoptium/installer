@@ -1,9 +1,9 @@
 # Requirements for build environment
 
 1. [Windows Installer XML (WiX) toolset, 4.0.0 or later (5.0.X recommended)](https://wixtoolset.org/docs/intro/#nettool)
-2. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
-3. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
-4. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
+1. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
+1. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
+1. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
 
 ## How to upgrade to a new OpenJDK version
 
