@@ -1,17 +1,15 @@
 # Requirements for build environment
 
-1. [Windows Installer XML (WiX) toolset, 3.11 or later](http://wixtoolset.org/releases/)
+1. [Windows Installer XML (WiX) toolset, 4.0.0 or later (5.0.X recommended)](https://wixtoolset.org/docs/intro/#nettool)
 2. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
 3. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
 4. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
 
 ## How to upgrade to a new OpenJDK version
 
-0. Ensure the necessary dependencies are installed (`wget` and `wix` version 5.0.0 or higher). If you do not have wix installed, you can followe the instructions [here](https://wixtoolset.org/docs/intro/#nettool) to install it.
-
 1. Download latest OpenJDK zip to the SourceDir directory.
 
-2. Extract the content and setup the expected file structure:
+1. Extract the content and setup the expected file structure:
 
 ```batch
 call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
