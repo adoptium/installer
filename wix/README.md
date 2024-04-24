@@ -57,6 +57,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   set VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.png
   set VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.png
   set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_FULL_VERSION%
+  set INSTALL_SCOPE=perMachine | perUser | perUserOrMachine (default is 'perMachine', note that 'perUserOrMachine' has not been fully implemented in wix v4 or v5 yet)
   ```
 
  `Build.OpenJDK_generic.cmd` statically depends on this SDK version (edit if needed):

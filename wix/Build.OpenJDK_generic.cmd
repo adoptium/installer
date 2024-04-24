@@ -38,6 +38,7 @@ IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.ne
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
 IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
 IF NOT DEFINED WIX_VERSION SET WIX_VERSION=5.0.0
+IF NOT DEFINED INSTALL_SCOPE SET INSTALL_SCOPE=perMachine
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
@@ -163,7 +164,7 @@ FOR %%A IN (%ARCH%) DO (
         REM Prevent concurrency issues if multiple builds are running in parallel.
         SET OUTPUT_FILE=%WORKDIR%!OUTPUT_BASE_FILENAME!-!INPUT_FILE:.template=%!
         ECHO string replacement input !INPUT_FILE! output !OUTPUT_FILE!
-        powershell -Command "(gc -Raw -encoding utf8 %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding_logo}', '!VENDOR_BRANDING_LOGO!' -replace '{vendor_branding_banner}', '!VENDOR_BRANDING_BANNER!' -replace '{vendor_branding_dialog}', '!VENDOR_BRANDING_DIALOG!' -replace '{vendor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_HELP_LINK!' -replace '{product_support_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' | Out-File -encoding utf8 !OUTPUT_FILE!"
+        powershell -Command "(gc -Raw -encoding utf8 %%i) -replace '{vendor}', '!VENDOR!' -replace '{vendor_branding_logo}', '!VENDOR_BRANDING_LOGO!' -replace '{vendor_branding_banner}', '!VENDOR_BRANDING_BANNER!' -replace '{vendor_branding_dialog}', '!VENDOR_BRANDING_DIALOG!' -replace '{vendor_branding}', '!VENDOR_BRANDING!' -replace '{product_help_link}', '!PRODUCT_HELP_LINK!' -replace '{product_support_link}', '!PRODUCT_SUPPORT_LINK!' -replace '{product_update_info_link}', '!PRODUCT_UPDATE_INFO_LINK!' -replace '{InstallScope}', '!INSTALL_SCOPE!' | Out-File -encoding utf8 !OUTPUT_FILE!"
 	IF ERRORLEVEL 1 (
 	    ECHO Unable to make string replacement
 	    GOTO FAILED
