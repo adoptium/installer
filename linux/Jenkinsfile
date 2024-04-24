@@ -132,6 +132,7 @@ pipeline {
                     steps {
                         dir('linuxSuse') {
                             script {
+                                DISTRO = 'Suse'
                                 jenkinsStepNonDeb('Suse')
                             }
                         }
@@ -249,22 +250,32 @@ def jenkinsStepDeb() {
     def debArchAllList = []
     // for one single ARCH add into array
     debArchAllList.add("${ARCH}")
+
     // when ARCH = all, rewrite list
     if ("${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'riscv64']
     }
-    // remove s390x for JDK8 and JDK20
-    if ("${VERSION}" == '8' || "${VERSION}" == '20') {
-        debArchAllList.remove('s390x')
+    // remove s390x for JDK8
+    if ("${VERSION}" == '8' && "${ARCH}" == 'all') {
+        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le']
     }
-    // remove armv7l for JDK20
-    if ("${VERSION}" >= '20') {
-        debArchAllList.remove('armv7l')
+    // remove riscv64 for JDK11
+    if ("${VERSION}" == '11' && "${ARCH}" == 'all') {
+        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
     }
-    // remove riscv64 for earlier than jdk21
-    if ("${VERSION}" <= '20') {
-        debArchAllList.remove('riscv64')
+    // remove riscv64 for JDK17
+    if ("${VERSION}" == '17' && "${ARCH}" == 'all') {
+        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
     }
+    // remove Arm32 & add riscv64 for JDK21
+    if ("${VERSION}" == '21' && "${ARCH}" == 'all' ) {
+        debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
+    }
+    // remove Arm32 & add riscv64 for JDK21
+    if ("${VERSION}" == '22' && "${ARCH}" == 'all') {
+        debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
+    }
+
     debArchAllList.each { DebARCH ->
         // special handle: no label x86_64 only x64 for debian agent
         def debLabel = "${DebARCH}&&docker"
@@ -343,7 +354,7 @@ def jenkinsStepNonDeb(String DISTRO) {
     unstash 'installercode'
     buildAndTest("${DISTRO}", "${ARCH}", "${VERSION}")
     if (params.uploadPackage.toBoolean()) {
-        echo "Upload artifacts for ${VERSION} - ${ARCH} - ${DISTRO}"
+        echo "Upload artifacts for ${DISTRO} - ${ARCH} - ${VERSION}"
         uploadArtifacts("${DISTRO}", "${ARCH}", "${VERSION}")
     }
 }
@@ -383,6 +394,31 @@ def buildAndTest(String DISTRO, String buildArch, String VERSION) {
                 's390x'  : 's390x',
                 'riscv64'  : 'riscv64'
             ]
+
+            switch (VERSION) {
+              case "8":
+                debArchList.remove('riscv64')
+                debArchList.remove('s390x')
+                break
+              case "11":
+                debArchList.remove('riscv64')
+                break
+              case "17":
+                debArchList.remove('riscv64')
+                break
+              case "21":
+                debArchList.remove('armv7l')
+                break
+              case "22":
+                debArchList.remove('armv7l')
+                break
+              default:
+                // Handle Any other cases by defaulting to the main list.
+                break
+            }
+
+            echo "Build Architecture List = ${debArchList}"
+
             def buildCli = "./gradlew ${gBuildTask} --parallel -PPRODUCT=${env.PRODUCT} -PPRODUCT_VERSION=${VERSION} -PARCH=${debArchList[buildArch]}"
             buildCli = params.enableDebug.toBoolean() ? buildCli + ' --stacktrace' : buildCli
             sh("$buildCli")
@@ -443,28 +479,37 @@ def uploadAlpineArtifacts(String buildArch) {
 def uploadDebArtifacts(String buildArch, String Version) {
     env.VERSION = Version
     def Distro = "Debian"
+
     def debArchList = [
         'x86_64' : 'amd64',
         'armv7l': 'armhf',
         'aarch64': 'arm64',
         'ppc64le': 'ppc64el',
         's390x'  : 's390x',
-        'riscv64' : 'riscv64'
+        'riscv64'  : 'riscv64'
     ]
-    // if VERSION is 8 or 20 remove s390x from the list
 
-    if (VERSION == '8' || VERSION == '20') {
-        debArchList.remove('s390x')
+    if (['8', '11', '17', '21', '22'].contains(VERSION)) {
+        debArchList = [
+            'x86_64' : 'amd64',
+            'armv7l': 'armhf',
+            'aarch64': 'arm64',
+            'ppc64le': 'ppc64el',
+            's390x'  : 's390x',
+            'riscv64'  : 'riscv64'
+        ]
+        if (['21', '22'].contains(VERSION)) {
+            debArchList.remove('armv7l') // Removing armv7l for versions 21 and 22
+        }
+        if (VERSION == "8") {
+            debArchList.remove('s390x') // Removing s390x for version 8
+        }
+    } else {
+        echo "Unsupported version: ${VERSION}"
+        return // Exit the function for unsupported versions
     }
-    // if VERSION is 20 or later remove armv7l from the list
-    def versionInt = VERSION as int // Parse Version As Integer
-    if (versionInt >= 20) {
-        debArchList.remove('armv7l')
-    }
-    // if VERSION is < 21 remove riscv64 from the list
-    if (versionInt < 21) {
-        debArchList.remove('riscv64')
-    }
+
+    echo "Debian Architecture Upload List = ${debArchList}"
 
     /*
         Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
@@ -476,7 +521,7 @@ def uploadDebArtifacts(String buildArch, String Version) {
             "bookworm", // Debian/12
             "bullseye", // Debian/11
             "buster",   // Debian/10
-            "noble",    // Ubuntu/24.04 (LTS) 
+            "noble",    // Ubuntu/24.04 (LTS)
             "jammy",    // Ubuntu/22.04 (LTS)
             "focal",    // Ubuntu/20.04 (LTS)
             "bionic"   // Ubuntu/18.04 (LTS)
@@ -541,33 +586,38 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
         ]
     ]
     def packageDirs = distro_Package[DISTRO.toLowerCase()]
-    def rpmArchList=[
-        'x86_64' : 'x86_64',
-        'armv7hl': 'armv7hl',
-        'aarch64': 'aarch64',
-        'ppc64le': 'ppc64le',
-        's390x'  : 's390x',
-        'riscv64' : 'riscv64'
+
+    def rpmArchList = [
+    'x86_64': 'x86_64',
+    'armv7hl': 'armv7hl',
+    'aarch64': 'aarch64',
+    'ppc64le': 'ppc64le'
     ]
 
-    // if VERSION is 8 or 20 remove s390x from the list
-    if (VERSION == '8' || VERSION == '20') {
-        rpmArchList.remove('s390x')
-    }
-    // if VERSION is 20 remove armv7hl from the list
-    if (VERSION >= '20') {
-        rpmArchList.remove('armv7hl')
+    if (VERSION == '11') {
+      rpmArchList['s390x'] = 's390x'
     }
 
-    // If Version < 21 remove riscv64
-    if (VERSION == '8' || VERSION == '11' || VERSION == '17') {
-        rpmArchList.remove('riscv64')
-    }
+    if (VERSION == '17') {
+    rpmArchList['s390x'] = 's390x'
+  }
+  if (VERSION == '21') {
+    rpmArchList['s390x'] = 's390x'
+    rpmArchList['riscv64'] = 'riscv64'
+  }
+  if (VERSION == '22') {
+    rpmArchList['s390x'] = 's390x'
+    rpmArchList['riscv64'] = 'riscv64'
+  }
 
     if ("${rpmArch}" != 'all') {
         // when only build and upload one arch, reset
-        rpmArchList = [("${rpmArch}" as String): "${rpmArchList[rpmArch]}"]
+        // rpmArchList = [("${rpmArch}" as String): "${rpmArchList[rpmArch]}"]
+        rpmArchList = [
+            (rpmArch): (rpmArch)
+        ]
     }
+
     // Enable upload src.rpm
     if ( params.uploadSRCRPM.toBoolean() || params.DISTRO == 'all' ) {
         rpmArchList.put('source', 'src')
