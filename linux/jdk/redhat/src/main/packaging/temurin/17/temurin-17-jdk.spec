@@ -1,10 +1,10 @@
-%global upstream_version 17.0.10+7
+%global upstream_version 17.0.11+9
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 #  17.0.1.0.0___12 == 17.0.1.0.0+12
-%global spec_version 17.0.10.0.0.7
+%global spec_version 17.0.11.0.0.9
 %global spec_release 1
 %global priority 1161
 
@@ -261,6 +261,8 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Wed Apr 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.11.0.0.9-1
+- Eclipse Temurin 17.0.11+9 release.
 * Mon Jan 22 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.10.0.0.7-1
 - Eclipse Temurin 17.0.10+7 release.
 * Thu Oct 26 2023 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.9.0.0.9-1

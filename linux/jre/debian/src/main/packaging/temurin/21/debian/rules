@@ -3,16 +3,16 @@
 pkg_name = temurin-21-jre
 priority = 2112
 jvm_tools = java jfr jrunscript jwebserver keytool rmiregistry
-amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_x64_linux_hotspot_21.0.2_13.tar.gz
-amd64_checksum = 51141204fe01a9f9dd74eab621d5eca7511eac67315c9975dbde5f2625bdca55
-arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_aarch64_linux_hotspot_21.0.2_13.tar.gz
-arm64_checksum = 64c78854184c92a4da5cda571c8e357043bfaf03a03434eef58550cc3410d8a4
-ppc64el_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_ppc64le_linux_hotspot_21.0.2_13.tar.gz
-ppc64el_checksum = caaf48e50787b80b810dc08ee91bd4ffe0d0696bd14906a92f05bf8c14aabb22
-s390x_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_s390x_linux_hotspot_21.0.2_13.tar.gz
-s390x_checksum = ff8191fa5b23a175932e7f4fab10a6e8df61fd71b6529c7d21451c81e82f8d55
-riscv64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.2%2B13/OpenJDK21U-jre_riscv64_linux_hotspot_21.0.2_13.tar.gz
-riscv64_checksum = efdeca282553229aa20d909ab9f5fb14eee52b56067a5598e6c649ef5f99a63d
+amd64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jre_x64_linux_hotspot_21.0.3_9.tar.gz
+amd64_checksum = f1af100c4afca2035f446967323230150cfe5872b5a664d98c86963e5c066e0d
+arm64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jre_aarch64_linux_hotspot_21.0.3_9.tar.gz
+arm64_checksum = c7c31bc6f5ab4c4b6f4559e11c2fa9541ae6757ab8da6dd85c29163913bd9238
+ppc64el_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jre_ppc64le_linux_hotspot_21.0.3_9.tar.gz
+ppc64el_checksum = aa628c6accc9d075b7b0f2bff6487f8ca0b8f057af31842a85fc8b363e1e10f3
+s390x_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jre_s390x_linux_hotspot_21.0.3_9.tar.gz
+s390x_checksum = a60dbad08a1977269dec7782f90225107479bfc8d10d2894f437778ae2e2b737
+riscv64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.3%2B9/OpenJDK21U-jre_riscv64_linux_hotspot_21.0.3_9.tar.gz
+riscv64_checksum = 83cae236bf823b6d6525a255f1e4ebd7bdb2e40e3778d1eb4d34b43478a680f9
 
 
 d = debian/$(pkg_name)
