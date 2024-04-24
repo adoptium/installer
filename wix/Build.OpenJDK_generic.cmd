@@ -13,6 +13,8 @@ REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
 REM OUTPUT_BASE_FILENAME=customFileName (optional) for setting file names that are not based on the default naming convention
+REM WIX_VERSION=5.0.0 (optional) for setting the version of Wix Toolset to use
+REM INSTALL_SCOPE=perMachine|perUser (default is perMachine)
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
