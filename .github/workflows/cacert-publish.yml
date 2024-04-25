@@ -45,9 +45,8 @@ jobs:
         run: |
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
           echo "File to upload: ${FILE}"
-          if jf rt s "deb/pool/main/a/adoptium-ca-certificates/$(basename $FILE)" > /dev/null; then
-            echo file_exists=true >> "$GITHUB_OUTPUT"
-          else
+          FILE_EXITS=$(jf rt s --count=true "deb/pool/main/a/adoptium-ca-certificates/$(basename $FILE)")
+          if [[ "$FILE_EXITS" == "0" ]]; then
             echo file_exists=false >> "$GITHUB_OUTPUT"
           fi
 
