@@ -25,7 +25,6 @@ jobs:
           SUB_TAG: 8u362b09
           JVM: hotspot
         - jdk: 11
-          ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 11
           PRODUCT_MINOR_VERSION: 0
           PRODUCT_MAINTENANCE_VERSION: 18
@@ -37,7 +36,6 @@ jobs:
           SUB_TAG: 11.0.18_10
           JVM: hotspot
         - jdk: 17
-          ICEDTEA_WEB_VERSION: ""
           PRODUCT_MAJOR_VERSION: 17
           PRODUCT_MINOR_VERSION: 0
           PRODUCT_MAINTENANCE_VERSION: 6
@@ -52,15 +50,32 @@ jobs:
     name: wix
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@9bb56186c3b09b4f86b1c65136769dd318469633 # v4.1.2
+      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
 
-      - name: Install dependencies
+      - name: Download IcedTea-Web
         run: |
-          choco install --no-progress wget
+          Invoke-WebRequest -Uri "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ matrix.ICEDTEA_WEB_VERSION }}/${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip" `
+            -OutFile "${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip"
+          unzip -q icedtea-web-*.win.bin.zip
+          Remove-Item icedtea-web-*.win.bin.zip
+          Remove-Item icedtea-web-image\share\doc -Recurse
+        working-directory: wix/SourceDir
+        if: ${{ matrix.ICEDTEA_WEB_VERSION }}
 
-      - name: Setup environment variables
-        uses: allenevans/set-env@0f3306034af0ea21dd28983b6e7c1614ee317739 # v3.0.0
-        with:
+      - name: Download Prebuilt JDK/JRE
+        run: |
+          Invoke-WebRequest -Uri "https://github.com/adoptium/temurin${{ matrix.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jdk_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip" `
+            -OutFile "OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jdk_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          Invoke-WebRequest -Uri "https://github.com/adoptium/temurin${{ matrix.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jre_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip" `
+            -OutFile "OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jre_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          ./CreateSourceFolder.AdoptOpenJDK.ps1
+        working-directory: wix/SourceDir
+
+      - name: Create JDK Installer
+        run: call Build.OpenJDK_generic.cmd
+        working-directory: wix
+        env:
+          PRODUCT_CATEGORY: jdk
           PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
           PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
           PRODUCT_MAINTENANCE_VERSION: ${{ matrix.PRODUCT_MAINTENANCE_VERSION }}
@@ -69,38 +84,24 @@ jobs:
           MSI_PRODUCT_VERSION: ${{ matrix.MSI_PRODUCT_VERSION }}
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
-
-      - name: Download IcedTea-Web
-        run: |
-          cd wix\SourceDir
-          wget -q "https://github.com/AdoptOpenJDK/IcedTea-Web/releases/download/${{ matrix.ICEDTEA_WEB_VERSION }}/${{ matrix.ICEDTEA_WEB_VERSION }}.win.bin.zip"
-          unzip icedtea-web-*.win.bin.zip
-          rm icedtea-web-*.win.bin.zip
-          Remove-Item 'icedtea-web-image\share\doc' -Recurse
-        if: ${{ matrix.ICEDTEA_WEB_VERSION != '' }}
-
-      - name: Download Prebuilt JDK/JRE
-        run: |
-          cd wix\SourceDir
-          wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          wget -q "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ env.ARCH }}_windows_${{ env.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          ./CreateSourceFolder.AdoptOpenJDK.ps1
-
-      - name: Create JDK Installer
-        run: |
-          cd wix
-          set PRODUCT_CATEGORY=jdk
-          call Build.OpenJDK_generic.cmd
         shell: cmd
 
       - name: Create JRE Installer
-        run: |
-          cd wix
-          set PRODUCT_CATEGORY=jre
-          call Build.OpenJDK_generic.cmd
+        run: call Build.OpenJDK_generic.cmd
+        working-directory: wix
+        env:
+          PRODUCT_CATEGORY: jre
+          PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
+          PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
+          PRODUCT_MAINTENANCE_VERSION: ${{ matrix.PRODUCT_MAINTENANCE_VERSION }}
+          PRODUCT_PATCH_VERSION: ${{ matrix.PRODUCT_PATCH_VERSION }}
+          PRODUCT_BUILD_NUMBER: ${{ matrix.PRODUCT_BUILD_NUMBER }}
+          MSI_PRODUCT_VERSION: ${{ matrix.MSI_PRODUCT_VERSION }}
+          ARCH: ${{ matrix.ARCH }}
+          JVM: ${{ matrix.JVM }}
         shell: cmd
 
-      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: windows
+          name: windows-${{ matrix.PRODUCT_MAJOR_VERSION }}
           path: wix/ReleaseDir/*.msi
