@@ -53,9 +53,9 @@ jobs:
       - name: Upload deb file to Artifactory
         if: steps.check-deb.outputs.file_exists == 'false'
         run: |
-          debVersionList=("trixie" "bookworm" "bullseye" "buster" "noble" "jammy" "focal" "bionic")
-          for debVersion in "${debVersionList[@]}"; do
-            distroList+="deb.distribution=${debVersion};"
-          done
+          DISTRO_LIST="trixie,bookworm,buster,noble,jammy,focal,bionic"
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
-          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main;${distroList}" --flat=true
+          # Upload cacerts deb file
+          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main" --flat=true
+          # Add deb.distribution properties
+          jf rt sp "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE})" "deb.distribution=${DISTRO_LIST}"
