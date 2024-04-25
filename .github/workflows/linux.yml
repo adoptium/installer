@@ -143,7 +143,7 @@ jobs:
           export _JAVA_OPTIONS="-Xmx4G"
           ./gradlew --parallel :ca-certificates:check --stacktrace
 
-      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         if: always() # always run even if the previous step fails
         with:
           name: test-results
@@ -185,7 +185,7 @@ jobs:
           mkdir ${{ matrix.product.version }}
           mv $( echo "${{ matrix.image_type }}" | tr [:upper:] [:lower:] ) ${{ matrix.product.version }}
 
-      - uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         if: always() # always run even if the previous step fails
         with:
           name: test-results
