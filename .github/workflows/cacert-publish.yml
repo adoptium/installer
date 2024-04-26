@@ -56,6 +56,6 @@ jobs:
           DISTRO_LIST="trixie,bookworm,buster,noble,jammy,focal,bionic"
           FILE=$(ls ca-certificates/debian/build/ospackage/*.deb)
           # Upload cacerts deb file
-          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE});deb.architecture=all;deb.component=main" --flat=true
+          jf rt u "$FILE" "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE})" --flat=true
           # Add deb.distribution properties
-          jf rt sp "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE})" "deb.distribution=${DISTRO_LIST}"
+          jf rt sp "deb/pool/main/a/adoptium-ca-certificates/$(basename ${FILE})" "deb.distribution=${DISTRO_LIST};deb.architecture=all;deb.component=main"
