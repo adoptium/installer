@@ -213,20 +213,23 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
 
 // RISC-V Upload Function
 def handleRISCVUpload(String Distro, String BuildArch, String Version, String DistroList, String Value, String PackageDir, String Key ) {
-    env.DISTRO = Distro
-    env.BUILDARCH = BuildArch
-    env.VERSION = Version
-    env.DISTROLIST = DistroList
-    env.VALUE = Value
-    env.PACKAGEDIR = PackageDir
-    env.KEY = Key
-    echo "SF01 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
-    // Risc Upload For Debian - riscv64 - 22 - deb.distribution=trixie;deb.distribution=bookworm;deb.distribution=bullseye;deb.distribution=buster;deb.distribution=noble;deb.distribution=jammy;deb.distribution=focal;deb.distribution=bionic; -  -  ,
-    //
     node("dockerBuild&&linux&&x64") {
-        tool name: 'jfrog-cli', type: 'jfrog'
+      tool name: 'jfrog-cli', type: 'jfrog'
+
+      env.DISTRO = Distro
+      env.BUILDARCH = BuildArch
+      env.VERSION = Version
+      env.DISTROLIST = DistroList
+      env.VALUE = Value
+      env.PACKAGEDIR = PackageDir
+      env.KEY = Key
+      echo "SF01 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
+      // Risc Upload For Debian - riscv64 - 22 - deb.distribution=trixie;deb.distribution=bookworm;deb.distribution=bullseye;deb.distribution=buster;deb.distribution=noble;deb.distribution=jammy;deb.distribution=focal;deb.distribution=bionic; -  -  ,
+      //
+      echo "here"
         def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
         echo "SF02 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
+
         switch(Distro) {
           case "Debian":
             echo "Debian Upload"
