@@ -223,12 +223,8 @@ def handleRISCVUpload(String Distro, String BuildArch, String Version, String Di
       env.VALUE = Value
       env.PACKAGEDIR = PackageDir
       env.KEY = Key
-      echo "SF01 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
-      // Risc Upload For Debian - riscv64 - 22 - deb.distribution=trixie;deb.distribution=bookworm;deb.distribution=bullseye;deb.distribution=buster;deb.distribution=noble;deb.distribution=jammy;deb.distribution=focal;deb.distribution=bionic; -  -  ,
-      //
-      echo "here"
-        def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
-        echo "SF02 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
+
+      def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
 
         switch(Distro) {
           case "Debian":
@@ -283,7 +279,7 @@ def jenkinsStepDeb() {
     if ("${VERSION}" == '21' && "${ARCH}" == 'all' ) {
         debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
     }
-    // remove Arm32 & add riscv64 for JDK21
+    // remove Arm32 & add riscv64 for JDK22
     if ("${VERSION}" == '22' && "${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
     }
