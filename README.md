@@ -1,6 +1,6 @@
 # Adoptium Installers
 
-[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/adoptium/adoptium.net/badge)](https://api.securityscorecards.dev/projects/github.com/adoptium/adoptium.net)
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/adoptium/installer/badge)](https://api.securityscorecards.dev/projects/github.com/adoptium/installer)
 
 Repository for creating installable packages for Eclipse Adoptium based releases.
 
