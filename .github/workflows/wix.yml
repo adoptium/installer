@@ -6,6 +6,9 @@ on:
     paths:
       - .github/workflows/wix.yml
       - wix/**
+permissions:
+  contents: read
+
 jobs:
   wix:
     strategy:
