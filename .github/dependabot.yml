@@ -10,3 +10,48 @@ updates:
   schedule:
     interval: "daily"
   open-pull-requests-limit: 10
+
+- package-ecosystem: docker
+  directory: /linux/ca-certificates/debian/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jdk/alpine/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jdk/debian/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jdk/redhat/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jdk/suse/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jre/alpine/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jre/debian/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jre/redhat/src/main/packaging
+  schedule:
+    interval: daily
+
+- package-ecosystem: docker
+  directory: /linux/jre/suse/src/main/packaging
+  schedule:
+    interval: daily
