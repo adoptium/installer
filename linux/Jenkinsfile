@@ -181,8 +181,8 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                  jf 'rt u **/build/ospackage/temurin-*${BUILDARCH}.deb deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                }
                if (BuildArch == "riscv64") {
-               handleRISCVUpload("Debian")
-               }
+               handleRISCVUpload("Debian", "${BUILDARCH}", "${VERSION}", "${DISTROLIST}", "", "", "")
+             }
                break
            case "Alpine":
                jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
@@ -192,7 +192,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                 jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
               }
               if (BuildArch == "riscv64") {
-                handleRISCVUpload("RPMS")
+                handleRISCVUpload("RPMS","" ,"", "", "${VALUE}", "${PACKAGEDIR}", "${KEY}" )
               }
               break
            default:
@@ -201,7 +201,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
                 jf 'rt u **/build/ospackage/*.${VALUE}.rpm ${PACKAGEDIR}/${KEY}/Packages/ --flat=true'
               }
               if (BuildArch == "riscv64") {
-                handleRISCVUpload("RPMS")
+                handleRISCVUpload("RPMS","" ,"", "", "${VALUE}", "${PACKAGEDIR}", "${KEY}" )
               }
               break
        }
@@ -212,9 +212,15 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
 }
 
 // RISC-V Upload Function
-def handleRISCVUpload(String Distro) {
+def handleRISCVUpload(String Distro, String BuildArch, String Version, String DistroList, String Value, String PackageDir, String Key ) {
     env.DISTRO = Distro
-    echo "Distro = ${DISTRO}"
+    env.BUILDARCH = BuildArch
+    env.VERSION = Version
+    env.DISTROLIST = DistroList
+    env.VALUE = Value
+    env.PACKAGEDIR = PackageDir
+    env.KEY = Key
+    echo "Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
     node("dockerBuild&&linux&&x64") {
         tool name: 'jfrog-cli', type: 'jfrog'
         def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
