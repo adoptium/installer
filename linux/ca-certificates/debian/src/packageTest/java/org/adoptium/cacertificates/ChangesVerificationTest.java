@@ -32,9 +32,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ChangesVerificationTest {
 
 	private static String[] versionsList = {
+		  "trixie", // Debian/13
 			"bookworm", // Debian/12
 			"bullseye", // Debian/11
 			"buster",   // Debian/10
+			"noble",    // Ubuntu/24.04 (LTS)
 			"jammy",    // Ubuntu/22.04 (LTS)
 			"focal",    // Ubuntu/20.04 (LTS)
 			"bionic",   // Ubuntu/18.04 (LTS)
