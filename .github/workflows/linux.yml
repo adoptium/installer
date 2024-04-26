@@ -59,7 +59,7 @@ jobs:
           )
 
           # If this job is being run on a pull request, only run the matrix for the changed files
-          if [[ ${{ github.event_name }} == 'pull_request' && ${{ github.actor }} != 'dependabot[bot]' ]]; then
+          if [[ ${{ github.event_name }} == 'pull_request' && ${{ github.event.pull_request.user.login }} != 'dependabot[bot]' ]]; then
             changed_files="${{ steps.changes.outputs.all }}"
           else
             changed_files=$(git ls-files linux)
