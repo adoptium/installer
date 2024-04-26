@@ -220,10 +220,13 @@ def handleRISCVUpload(String Distro, String BuildArch, String Version, String Di
     env.VALUE = Value
     env.PACKAGEDIR = PackageDir
     env.KEY = Key
-    echo "Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
+    echo "SF01 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
+    // Risc Upload For Debian - riscv64 - 22 - deb.distribution=trixie;deb.distribution=bookworm;deb.distribution=bullseye;deb.distribution=buster;deb.distribution=noble;deb.distribution=jammy;deb.distribution=focal;deb.distribution=bionic; -  -  ,
+    //
     node("dockerBuild&&linux&&x64") {
         tool name: 'jfrog-cli', type: 'jfrog'
         def copiedFiles = copyArtifacts(filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*', projectName: env.JOB_NAME, selector: specific(env.BUILD_NUMBER))
+        echo "SF02 - Risc Upload For ${DISTRO} - ${BUILDARCH} - ${VERSION} - ${DISTROLIST} - ${VALUE} - ${PACKAGEDIR} , ${KEY}"
         switch(Distro) {
           case "Debian":
             echo "Debian Upload"
