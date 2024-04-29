@@ -15,7 +15,7 @@ else
 fi
 
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
-	rpmdev-spectool -g -R "$spec";
+	rpmdev-spectool -g -R -f "$spec";
 	rpmbuild --nodeps -bs "$spec";
 	# if buildArch == all, extract ExclusiveArch from the spec file
 	if [ "${buildArch}" = "all" ]; then
@@ -25,6 +25,7 @@ for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 		ExclusiveArch=$(grep -E "^ExclusiveArch:" "$spec" | sed -e 's/ExclusiveArch: *//' | sed -e 's/%{arm}/armv7hl/g')
 		[ -n "$ExclusiveArch" ] && targets="${ExclusiveArch}"
 	fi
+	targets="s390x"
 	for target in $targets; do
 		rpmbuild --target "$target" --rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm;
 	done;

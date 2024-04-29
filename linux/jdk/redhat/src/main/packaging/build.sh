@@ -39,7 +39,7 @@ fi
 
 # loop spec file originally from src/main/packaging/$product/$productVersion/*.spec
 for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
-	spectool -g -R "$spec";
+	spectool -g -R -f "$spec";
 	rpmbuild --define "local_build ${buildLocalFlag}" \
 				--nodeps -bs "$spec"; # build src.rpm
 	# if buildArch == all, extract ExclusiveArch from the spec file
@@ -50,6 +50,7 @@ for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 		ExclusiveArch=$(grep -E "^ExclusiveArch:" "$spec" | sed -e 's/ExclusiveArch: *//' | sed -e 's/%{arm}/armv7hl/g')
 		[ -n "$ExclusiveArch" ] && targets="${ExclusiveArch}"
 	fi
+	targets="s390x"
 	for target in $targets; do
 		rpmbuild --target "$target" \
 					--define "local_build ${buildLocalFlag}" \
