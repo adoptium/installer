@@ -20,6 +20,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global vers_arch5 riscv64
 %global src_num 0
 %global sha_src_num 1
@@ -28,6 +29,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global vers_arch5 riscv64
 %global src_num 2
 %global sha_src_num 3
@@ -36,6 +38,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global vers_arch5 riscv64
 %global src_num 4
 %global sha_src_num 5
@@ -44,6 +47,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global vers_arch5 riscv64
 %global src_num 6
 %global sha_src_num 7
@@ -52,6 +56,7 @@
 %global vers_arch x64
 %global vers_arch2 ppc64le
 %global vers_arch3 aarch64
+%global vers_arch4 s390x
 %global vers_arch5 riscv64
 %global src_num 8
 %global sha_src_num 9
