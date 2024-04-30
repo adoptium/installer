@@ -50,19 +50,15 @@
     <WixVariable Id="WixUISupportPerUser" Value="1" />
     <WixVariable Id="WixUISupportPerMachine" Value="1" />
 
-    <!-- Preprocessor directives to set architecture-specific properties -->
-    <?if $(env.Platform)=x86?>
-    <!-- For x86, use the standard Program Files folder -->
-    <Property Id="PROGRAMFILESFOLDER" Value="[ProgramFilesFolder]" />
-    <?else?>
-    <!-- For x64 and arm64, use the Program Files x64 folder -->
-    <Property Id="PROGRAMFILESFOLDER" Value="[ProgramFiles64Folder]" />
-    <?endif?>
-
     <CustomAction Id="CustomSetDefaultPerUserFolder" Property="CustomWixPerUserFolder"
       Value="[LocalAppDataFolder]Programs\[ApplicationFolderName]" Execute="immediate" />
-    <CustomAction Id="CustomSetDefaultPerMachineFolder" Property="CustomWixPerMachineFolder"
-      Value="[PROGRAMFILESFOLDER][ApplicationFolderName]" Execute="immediate" />
+    <?if $(env.Platform)=x86?> 
+      <CustomAction Id="CustomSetDefaultPerMachineFolder" Property="CustomWixPerMachineFolder"
+        Value="[ProgramFilesFolder][ApplicationFolderName]" Execute="immediate" />
+    <?else?>
+      <CustomAction Id="CustomSetDefaultPerMachineFolder" Property="CustomWixPerMachineFolder"
+        Value="[ProgramFiles64Folder][ApplicationFolderName]" Execute="immediate" />
+    <?endif?>
     <CustomAction Id="CustomSetPerUserFolder" Property="APPLICATIONFOLDER"
       Value="[CustomWixPerUserFolder]" Execute="immediate" />
     <CustomAction Id="CustomSetPerMachineFolder" Property="APPLICATIONFOLDER"

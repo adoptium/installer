@@ -34,7 +34,7 @@ jobs:
 
       - name: Fetch latest Windows version from Adoptium API
         run: |
-          $response = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=${{ matrix.arch == 'x86-32' ? 'x86' : matrix.arch }}&image_type=jdk&os=windows&page=0&page_size=1" -UseBasicParsing
+          $response = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=x64&image_type=jdk&os=windows&page=0&page_size=1" -UseBasicParsing
           $json = $response.Content | ConvertFrom-Json
 
           $major = $json.version_data.major
@@ -107,5 +107,5 @@ jobs:
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: windows-${{ env.PRODUCT_MAJOR_VERSION }}
+          name: windows-${{ env.PRODUCT_MAJOR_VERSION }}-${{ matrix.arch }}
           path: wix/ReleaseDir/*.msi
