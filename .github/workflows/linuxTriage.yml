@@ -18,3 +18,4 @@ jobs:
         name: JUnit Test Report           # Name of the check run which will be created
         path: '**/build/test-results/**/TEST-*.xml' # Path to test results (inside artifact .zip)
         reporter: java-junit              # Format of test results
+        fail-on-empty: false
