@@ -3,19 +3,13 @@ FROM fedora:40
 RUN dnf update -y && dnf install -y rpmdevtools \
 	rpm-sign \
 	rpmlint \
-	gnupg2 \
-	wget \
 	tar \
 	dpkg \
 	findutils \
-	tini
+	tini \
+	wget
 
-RUN wget --progress=dot:mega -O /usr/bin/gosu https://github.com/tianon/gosu/releases/download/1.14/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')" \
-	&& wget --progress=dot:mega -O /tmp/gosu.asc https://github.com/tianon/gosu/releases/download/1.14/gosu-"$(dpkg --print-architecture | awk -F- '{ print $NF }')".asc \
-	&& gpg --batch --keyserver hkps://keyserver.ubuntu.com --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-	&& gpg --batch --verify /tmp/gosu.asc /usr/bin/gosu \
-	&& chmod +x /usr/bin/gosu \
-	&& rm -f /tmp/gosu.asc
+COPY --from=tianon/gosu /gosu /usr/local/bin/
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
