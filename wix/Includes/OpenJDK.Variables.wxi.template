@@ -60,8 +60,13 @@
     <?define license="license-OpenJ9.en-us.rtf" ?>
     <?define license_shown="1" ?>
   <?elseif $(var.JVM)="hotspot" ?>
-    <?define license="license-GPLv2+CE.en-us.rtf" ?>
-    <?define license_shown="0" ?>
+    <?if "{vendor}"="Microsoft"?>
+      <?define license="license-GPLv2+CE.en-us.rtf" ?>
+      <?define license_shown="1" ?> <!-- Show license agreement dialog -->
+    <?else?>
+      <?define license="license-GPLv2+CE.en-us.rtf" ?>
+      <?define license_shown="0" ?> <!-- Showing GPLv2 License is optional. Do not show it here -->
+    <?endif?>
   <?else?>
     <?define license="no licence defined for $(var.JVM)" ?>
     <?define license_shown="1" ?>

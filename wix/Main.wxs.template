@@ -298,13 +298,18 @@
 
     <UI>
       <ui:WixUI Id="WixUI_FeatureTree" />
-      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg"
-        Order="3" />
-      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog"
-        Value="CustomInstallScopeDlg" Order="3" />
+      <?if $(var.license_shown)=1 ?>
+        <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg"
+          Order="3" />
+        <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog"
+          Value="CustomInstallScopeDlg" Order="3" />
+        <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog"
+          Value="LicenseAgreementDlg" />
+      <?else?>
+        <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomInstallScopeDlg"
+          Order="3" />
+      <?endif?>
 
-      <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog"
-        Value="LicenseAgreementDlg" />
       <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="DoAction"
         Value="CustomSetPerMachineFolder" Condition='WixAppFolder="WixPerMachineFolder"' Order="1" />
       <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="DoAction"
