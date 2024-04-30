@@ -308,6 +308,8 @@
       <?else?>
         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomInstallScopeDlg"
           Order="3" />
+        <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog"
+          Value="WelcomeDlg" />
       <?endif?>
 
       <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="DoAction"
