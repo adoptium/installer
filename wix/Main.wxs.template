@@ -2,7 +2,7 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs" xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util" xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <?include $(sys.CURRENTDIR)\Workdir\$(var.OutputBaseFilename)-$(var.ProductSku).Variables.wxi ?>
 
-  <Package Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)" InstallerVersion="500" ProductCode="$(var.ProductId)" Scope="{InstallScope}">
+  <Package Name="$(var.ProductNameWithVersion)" Language="$(var.ProductLanguage)" Version="$(var.ProductVersion)" Manufacturer="$(var.ProductManufacturer)" UpgradeCode="$(var.ProductUpgradeCode)" InstallerVersion="500" ProductCode="$(var.ProductId)">
     <SummaryInformation Description="$(var.PackageDescription)" Manufacturer="$(var.ProductManufacturer)" />
     <MajorUpgrade DowngradeErrorMessage="!(loc.DowngradeDenied)" />
     <Media Id="1" Cabinet="Data1.cab" EmbedCab="yes" CompressionLevel="high" />
@@ -37,26 +37,28 @@
     -->
 
     <!-- Define the directory structure -->
-    
+	<Property Id="ApplicationFolderName" Value="PerUserOrMachine-Example" />
+	<Property Id="WixAppFolder" Value="WixPerMachineFolder" />
+	<WixVariable Id="WixUISupportPerUser" Value="1" />
+	<WixVariable Id="WixUISupportPerMachine" Value="1" />
 
-    <!--
-      RemoveFolderEx requires that we "remember" the path for uninstall.
-      This workaround is only required for the uninstall.
-    -->
-    <Property Id="INSTALLDIR_PER_MACHINE">
-      <RegistrySearch Id="INSTALLDIR_REGSEARCH_HKLM" Root="HKLM" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Path" Type="raw" />
-    </Property>
-    <Property Id="INSTALLDIR_PER_USER">
-      <RegistrySearch Id="INSTALLDIR_REGSEARCH_HKCU" Root="HKCU" Key="SOFTWARE\$(var.ProductManufacturer)\$(var.ProductCategory)\$(var.ProductVersion)\$(var.JVM)\MSI" Name="Path" Type="raw" />
-    </Property>
-    
-    <CustomAction Id="PerMachineInstall" Property="TARGETDIR" Value="[INSTALLDIR_PER_MACHINE]" Execute="immediate" />    
-    <CustomAction Id="PerUserInstall" Property="TARGETDIR" Value="[INSTALLDIR_PER_USER]" Execute="immediate" />
+	<CustomAction Id="CustomSetDefaultPerUserFolder" Property="CustomWixPerUserFolder" Value="[LocalAppDataFolder]Programs\[ApplicationFolderName]" Execute="immediate" />
+	<CustomAction Id="CustomSetDefaultPerMachineFolder" Property="CustomWixPerMachineFolder" Value="[ProgramFiles64Folder][ApplicationFolderName]" Execute="immediate" />
+	<CustomAction Id="CustomSetPerUserFolder" Property="APPLICATIONFOLDER" Value="[CustomWixPerUserFolder]" Execute="immediate" />
+	<CustomAction Id="CustomSetPerMachineFolder" Property="APPLICATIONFOLDER" Value="[CustomWixPerMachineFolder]" Execute="immediate" />
 
-    <InstallExecuteSequence>
-        <Custom Action="PerMachineInstall" Before="CostFinalize" Condition="ALLUSERS=1  OR (ALLUSERS=2 AND Privileged)" />
-        <Custom Action="PerUserInstall" Before="CostFinalize" Condition="ALLUSERS=&quot;&quot; OR (ALLUSERS=2 AND (NOT Privileged))" />
+  	<InstallExecuteSequence>
+      <Custom Action="CustomSetDefaultPerUserFolder" Before="CostFinalize" />
+      <Custom Action="CustomSetDefaultPerMachineFolder" After="CustomSetDefaultPerUserFolder" />
+      <Custom Action="CustomSetPerUserFolder" After="CustomSetDefaultPerMachineFolder" Condition='ACTION="INSTALL" AND (ALLUSERS="" OR ALLUSERS=0 OR (ALLUSERS=2 AND (NOT Privileged)))'/>
+      <Custom Action="CustomSetPerMachineFolder" After="CustomSetPerUserFolder" Condition='ACTION="INSTALL" AND (ALLUSERS=1 OR (ALLUSERS=2 AND Privileged))'/>
     </InstallExecuteSequence>
+    <InstallUISequence>
+      <Custom Action="CustomSetDefaultPerUserFolder" Before="CostFinalize" />
+      <Custom Action="CustomSetDefaultPerMachineFolder" After="CustomSetDefaultPerUserFolder" />
+      <Custom Action="CustomSetPerUserFolder" After="CustomSetDefaultPerMachineFolder" Condition='ACTION="INSTALL" AND (ALLUSERS="" OR ALLUSERS=0 OR (ALLUSERS=2 AND (NOT Privileged)))'/>
+      <Custom Action="CustomSetPerMachineFolder" After="CustomSetPerUserFolder" Condition='ACTION="INSTALL" AND (ALLUSERS=1 OR (ALLUSERS=2 AND Privileged))'/>
+    </InstallUISequence>
 
     <!-- Add the shortcuts to your installer package -->
     <DirectoryRef Id="INSTALLDIR">
@@ -199,13 +201,43 @@
     <WixVariable Id="WixUILicenseRtf" Value="$(var.SetupResourcesDir)\$(var.license)" />
     <WixVariable Id="WixUIDialogBmp" Value="{vendor_branding_dialog}" />
     <WixVariable Id="WixUIBannerBmp" Value="{vendor_branding_banner}" />
+
     <UI>
       <ui:WixUI Id="WixUI_FeatureTree" />
-      <?if $(var.license_shown)=0 ?>
-        <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="3" />
-        <!-- skip the page on the way back too -->
-        <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="3" />
-      <?endif?>
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg" Order="3" />
+      <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog" Value="CustomInstallScopeDlg" Order="3" />
+
+      <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog" Value="LicenseAgreementDlg" />
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="DoAction" Value="CustomSetPerMachineFolder" Condition='WixAppFolder="WixPerMachineFolder"' Order="1"/>
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="DoAction" Value="CustomSetPerUserFolder" Condition='WixAppFolder="WixPerUserFolder"' Order="2"/>
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Property="ALLUSERS" Value="{}" Order="2" Condition='WixAppFolder = "WixPerUserFolder"' />
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Property="ALLUSERS" Value="1" Order="3" Condition='WixAppFolder = "WixPerMachineFolder"' />
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Property="MSIINSTALLPERUSER" Value="1" Order="2" Condition='WixAppFolder = "WixPerUserFolder"' />
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Property="MSIINSTALLPERUSER" Value="{}" Order="3" Condition='WixAppFolder = "WixPerMachineFolder"' />
+      <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="NewDialog" Value="CustomizeDlg" Order="3"/>
+
+      <Publish Dialog="CustomizeDlg" Control="Back" Event="NewDialog" Value="CustomInstallScopeDlg" Order="3" />
+
+      <!-- Custom UI Banner to select perMachine or perUser install -->
+      <Dialog Id="CustomInstallScopeDlg" Width="370" Height="270" KeepModeless="yes" Title="[ProductName] Setup">
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallScopeDlgBannerBitmap)" />
+				<Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+				<Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+				<Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="20" Transparent="yes" NoPrefix="yes" Text="!(loc.CustomScopeDlgDescription)" />
+				<Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.CustomScopeDlgTitle)" />
+        <Control Id="BothScopes" Type="RadioButtonGroup" X="20" Y="55" Width="330" Height="40" Property="WixAppFolder">
+          <RadioButtonGroup Property="WixAppFolder">
+            <RadioButton Value="WixPerUserFolder" X="0" Y="0" Width="300" Height="17" Text="!(loc.CustomScopeDlgPerUser)" />
+            <RadioButton Value="WixPerMachineFolder" X="0" Y="20" Width="300" Height="17" Text="!(loc.CustomScopeDlgPerMachine)" />
+          </RadioButtonGroup>
+        </Control>
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+				<Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+				<Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+					<Publish Event="SpawnDialog" Value="CancelDlg"/>
+				</Control>
+      </Dialog>
+
     </UI>
   
     <?if $(env.Platform)=x86?>

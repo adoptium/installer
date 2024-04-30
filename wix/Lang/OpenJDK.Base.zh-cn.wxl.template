@@ -21,4 +21,8 @@
 	<String Id="FeatureIcedTeaWebDescription" Value="Install the IcedTea-Web package" />
 	<String Id="FeatureJNLPFileRunWithTitle" Value="Associate .jnlp" />
 	<String Id="FeatureJNLPFileRunWithDescription" Value="Associate .jnlp files to run with IcedTea-Web" />
+	<String Id="CustomScopeDlgDescription" Value="Choose the installation scope and folder" />
+	<String Id="CustomScopeDlgTitle" Value="{\WixUI_Font_Title}Installation Scope" />
+	<String Id="CustomScopeDlgPerUser" Value="Install &amp;just for you ([LogonUser])" />
+	<String Id="CustomScopeDlgPerMachine" Value="Install for all users of this &amp;machine" />
 </WixLocalization>
