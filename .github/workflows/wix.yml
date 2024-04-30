@@ -20,6 +20,9 @@ jobs:
         include:
         - jdk: 8
           ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
+        - jdk: 11
+          arch: x86-32
+          jvm: hotspot
 
     name: wix
     runs-on: windows-latest
@@ -31,7 +34,7 @@ jobs:
 
       - name: Fetch latest Windows version from Adoptium API
         run: |
-          $response = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=${{ matrix.arch }}&image_type=jdk&os=windows&page=0&page_size=1" -UseBasicParsing
+          $response = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=${{ matrix.arch == 'x86-32' ? 'x86' : matrix.arch }}&image_type=jdk&os=windows&page=0&page_size=1" -UseBasicParsing
           $json = $response.Content | ConvertFrom-Json
 
           $major = $json.version_data.major
