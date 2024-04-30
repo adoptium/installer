@@ -60,7 +60,7 @@
     <?define license="license-OpenJ9.en-us.rtf" ?>
     <?define license_shown="1" ?>
   <?elseif $(var.JVM)="hotspot" ?>
-    <?if "{vendor}"="Eclipse Adoptium"?>
+    <?if "{vendor}"="Microsoft"?>
       <?define license="license-GPLv2+CE.en-us.rtf" ?>
       <?define license_shown="1" ?> <!-- Show license agreement dialog -->
     <?else?>
