@@ -18,19 +18,19 @@ jobs:
         arch: [x64]
         jvm: [hotspot]
         include:
-        - jdk: 8
-          ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
-        - jdk: 11
-          arch: x86-32
-          jvm: hotspot
+          - jdk: 8
+            ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
+          - jdk: 11
+            arch: x86-32
+            jvm: hotspot
 
     name: wix
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
-      
+
       - name: Install wix toolset
-        run: dotnet tool install --global wix --version 5.0.0
+        run: dotnet tool install --global wix --version 5.0.0 --verbosity quiet
 
       - name: Fetch latest Windows version from Adoptium API
         run: |
