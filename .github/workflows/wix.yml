@@ -6,6 +6,9 @@ on:
     paths:
       - .github/workflows/wix.yml
       - wix/**
+permissions:
+  contents: read
+
 jobs:
   wix:
     strategy:
@@ -50,7 +53,7 @@ jobs:
     name: wix
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@1d96c772d19495a3b5c517cd2bc0cb401ea0529f # v4.1.3
+      - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4.1.4
       
       - name: Install wix toolset
         run: dotnet tool install --global wix --version 5.0.0
@@ -104,7 +107,7 @@ jobs:
           JVM: ${{ matrix.JVM }}
         shell: cmd
 
-      - uses: actions/upload-artifact@c7d193f32edcb7bfad88892161225aeda64e9392 # v4.0.0
+      - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
           name: windows-${{ matrix.PRODUCT_MAJOR_VERSION }}
           path: wix/ReleaseDir/*.msi
