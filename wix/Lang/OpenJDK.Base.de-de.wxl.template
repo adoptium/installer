@@ -23,6 +23,6 @@
 	<String Id="FeatureJNLPFileRunWithDescription" Value="Associate .jnlp files to run with IcedTea-Web" />
 	<String Id="CustomScopeDlgDescription" Value="Wählen Sie den Installationsbereich und Ordner" />
 	<String Id="CustomScopeDlgTitle" Value="{\WixUI_Font_Title}Installationsbereich" />
-	<String Id="CustomScopeDlgPerUser" Value="{\WixUI_Font_Emphasized}Nur für Sie installieren ([LogonUser])" />
-	<String Id="CustomScopeDlgPerMachine" Value="{\WixUI_Font_Emphasized}Für alle Benutzer dieses &amp;Computers installieren" />
+	<String Id="CustomScopeDlgPerUser" Value="Nur für Sie installieren ([LogonUser])" />
+	<String Id="CustomScopeDlgPerMachine" Value="Für alle Benutzer dieses &amp;Computers installieren" />
 </WixLocalization>
