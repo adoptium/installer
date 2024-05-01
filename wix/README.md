@@ -81,7 +81,7 @@ Note: default behavior is to use the GPLv2 license and to skip past the license 
 1. Copy the desired plaintext license into the wix/Resources folder (with the .rtf file extension)
 1. Go to `wix/Includes/OpenJDK.Variables.wxi.template` and find the line `<?elseif $(var.JVM)="hotspot" ?>`. Below that line is an if-statment with example code.
 
-    a. Create an `<?elseif "{vendor}"="<INSERT_VENDOR_HERE>"?>` statment (replacing the comparison text on the right side with your vendor name).
+    a. Create an `<?elseif $(env.VENDOR)="<INSERT_VENDOR_HERE>"?>` statment (replacing the comparison text on the right side with your vendor name).
 
     b. Set `<?define license=...` to be the name of your new license agreement file
 
