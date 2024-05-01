@@ -76,16 +76,16 @@ call Build.OpenJDK_generic.cmd
 
 If a vendor would like to implement custom end-user license agreement behavior for a hotspot JVM:
 ```
-Note: default behavior is to use the GPLv2 license and to skip past the license agreement page. This license does not affect end users, only software redistribution
+Note: default behavior is to use the GPLv2 license and to skip past the license agreement page. This license does not affect end users, only software redistribution.
 ```
-1. Copy the desired plaintext license into the wix/Resources folder (with the .rtf file extension)
-1. Go to `wix/Includes/OpenJDK.Variables.wxi.template` and find the line `<?elseif $(var.JVM)="hotspot" ?>`. Below that line is an if-statment with example code.
+1. If using a new license agreement, copy the desired plaintext license into the wix/Resources folder (with the .rtf file extension).
+1. Go to `wix/Includes/OpenJDK.Variables.wxi.template` and find the line `<?elseif $(var.JVM)="hotspot" ?>`.
 
-    a. Create an `<?elseif $(env.VENDOR)="<INSERT_VENDOR_HERE>"?>` statment (replacing the comparison text on the right side with your vendor name).
+    a. Create an inner `<?if $(env.VENDOR)="<INSERT_VENDOR_HERE>"?>` statement.
 
-    b. Set `<?define license=...` to be the name of your new license agreement file
+    b. Set `<?define license=...` to be the name of your license agreement file.
 
-    c. Set `<?define license_shown=...` to be `1` if the user needs to read and agree to this license before installing (most licenses require this), set 0 if this is not desired (ex: this is optional for GPLv2)
+    c. Set `<?define license_shown=...` to be `1` if the user needs to read and agree to this license before installing (most licenses require this), set 0 if this is not desired (ex: this is optional for GPLv2).
 ## Deploy via Active Directory GPO
 
 Installation optional parameters:
