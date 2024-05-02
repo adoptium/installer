@@ -1,0 +1,77 @@
+pipeline {
+    agent {
+        label 'wix'
+    }
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '20'))
+        copyArtifactPermission('*');
+    }
+    parameters {
+        string(name: 'UPSTREAM_JOB_NAME', description: 'e.g. build-scripts/openjdk11-pipeline')
+        string(name: 'UPSTREAM_JOB_NUMBER', description: 'e.g. 123')
+        string(name: 'FILTER', defaultValue: '**/OpenJDK*_windows_*.zip', description: 'e.g. **/OpenJDK*_windows_*.zip')
+        string(name: 'PRODUCT_MAJOR_VERSION', description: 'e.g. 8')
+        string(name: 'PRODUCT_MINOR_VERSION', description: 'e.g. 0')
+        string(name: 'PRODUCT_MAINTENANCE_VERSION', description: 'e.g. 181')
+        string(name: 'PRODUCT_PATCH_VERSION', description: 'eg 0 - this is the Vendor patch number and defaults to 0 unless we have a respin.  It is not the OpenJDK patch number (see PRODUCT_BUILD_NUMBER)')
+        string(name: 'PRODUCT_BUILD_NUMBER', description: 'e.g. 08, would be used if openjdk build number was b08\ne.g. 7, would be used if openjdk build number was +7')
+        string(name: 'MSI_PRODUCT_VERSION', description: 'e.g. 11.0.12.7  (which would be the equivalent to 11.0.12+7).  Must be in x.x.x.x format')
+        choice(name: 'JVM', choices: ['hotspot', 'openj9'])
+        choice(name: 'ARCH', choices: ['x64', 'x86-32'])
+        booleanParam(name: 'SKIP_MSI_VALIDATION', defaultValue: true, description: 'due to bug "issue #66" we skip it temporarily')
+        string(name: 'UPGRADE_CODE_SEED', description: 'ThisSeedAllowsUsToBuildUniqueInstallers')
+        choice(name: 'PRODUCT_CATEGORY', choices: ['jdk', 'jre'])
+        string(name: 'ARTIFACT', description: 'The artifact name copied from downstream job')
+    }
+    // checkout git repo
+    stages {
+        stage('Checkout') {
+            steps {
+                step([$class: 'WsCleanup'])
+                checkout scm
+            }
+        }
+        stage('Copy Artifacts') {
+            steps {
+                copyArtifacts filter: '${FILTER}', fingerprintArtifacts: true, flatten: true, projectName: '${UPSTREAM_JOB_NAME}', selector: specific('${UPSTREAM_JOB_NUMBER}'), target: 'wix/SourceDir/'
+            }
+        }
+        stage('Build Installer') {
+            steps {
+                bat '''
+                    cd wix\\SourceDir
+                    powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
+                    IF ERRORLEVEL 1 (
+                        EXIT /b 2
+                    )
+                    cd %WORKSPACE%\\wix
+                    set DEBUG=true
+                    call Build.OpenJDK_generic.cmd
+                '''
+            }
+        }
+        stage('Rename Installer') {
+            steps {
+                sh '''
+                    set -x
+                    cd wix/SourceDir/
+                    for FILEWITHEXTENSION in OpenJDK*-${PRODUCT_CATEGORY}*zip; do
+                        # Remove the extension from file ready for renaming MSI
+                        FILENAME=${FILEWITHEXTENSION//.zip/.msi}
+                        cd $WORKSPACE/wix/ReleaseDir/
+
+                        for FILE in *.msi; do
+                            mv $FILE $FILENAME
+                        done
+                    done
+                '''
+            }
+        }
+        stage('Archive Installer') {
+            steps {
+                archiveArtifacts artifacts: 'wix/ReleaseDir/*msi', followSymlinks: true
+            }
+        }
+    }
+}
