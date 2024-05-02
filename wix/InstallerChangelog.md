@@ -8,6 +8,11 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 2024-05-02
+### Changed
+- Update to wix v5
+- Fixed windows Arm installation path
+
 ## 2021-02-23
 ### Changed
 - Update IcedTea-Web to 1.8.6
