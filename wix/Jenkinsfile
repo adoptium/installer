@@ -18,7 +18,7 @@ pipeline {
         string(name: 'PRODUCT_BUILD_NUMBER', description: 'e.g. 08, would be used if openjdk build number was b08\ne.g. 7, would be used if openjdk build number was +7')
         string(name: 'MSI_PRODUCT_VERSION', description: 'e.g. 11.0.12.7  (which would be the equivalent to 11.0.12+7).  Must be in x.x.x.x format')
         choice(name: 'JVM', choices: ['hotspot', 'openj9'])
-        choice(name: 'ARCH', choices: ['x64', 'x86-32'])
+        choice(name: 'ARCH', choices: ['x64', 'x86-32', 'arm64'])
         booleanParam(name: 'SKIP_MSI_VALIDATION', defaultValue: true, description: 'due to bug "issue #66" we skip it temporarily')
         string(name: 'UPGRADE_CODE_SEED', description: 'ThisSeedAllowsUsToBuildUniqueInstallers')
         choice(name: 'PRODUCT_CATEGORY', choices: ['jdk', 'jre'])
