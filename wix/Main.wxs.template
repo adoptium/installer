@@ -311,6 +311,8 @@
         <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog"
           Value="LicenseAgreementDlg" />
       <?endif?>
+      <Publish Dialog="WelcomeDlg" Control="Cancel" Event="NewDialog" Value="CustomCancelDialog"
+          Order="3" />
 
       <Publish Dialog="CustomInstallScopeDlg" Control="Next" Event="DoAction"
         Value="CustomSetPerMachineFolder" Condition='WixAppFolder="WixPerMachineFolder"' Order="1" />
@@ -361,6 +363,20 @@
       </Dialog>
 
     </UI>
+    <Fragment>
+      <UI Id="CustomCancelDialogUI">
+          <Dialog Id="CustomCancelDialog" Width="260" Height="85" Title="!(loc.CancelDlg_Title)">
+              <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" NoPrefix="yes" Text="!(loc.CancelDlgText)" />
+              <Control Id="No" Type="PushButton" X="132" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUINo)">
+                  <Publish Event="EndDialog" Value="Return" />
+              </Control>
+              <Control Id="Yes" Type="PushButton" X="72" Y="57" Width="56" Height="17" Text="!(loc.WixUIYes)">
+                  <Publish Event="EndDialog" Value="Exit" />
+              </Control>
+              <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" ToolTip="!(loc.CancelDlgIconTooltip)" FixedSize="yes" IconSize="32" Text="!(loc.CancelDlgIcon)" />
+          </Dialog>
+      </UI>
+    </Fragment>
     <!-- Define the directory structure -->
     <?if $(env.Platform)=x86?>
       <StandardDirectory Id="ProgramFilesFolder">
