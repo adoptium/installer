@@ -336,8 +336,8 @@ def jenkinsStepAlpine() {
         // special handle: no label x86_64 only x64 for alpine agent
         def apkLabel = "${ApkARCH}&&docker"
 
+        if ("${ApkARCH}" == 'x86_64') {
             apkLabel = 'x64&&dockerBuild'
-            if ("${ApkARCH}" == 'x86_64') {
         }
         // reallocate jenkins agent per element in list
         if (ApkARCH == 'x86_64' || ApkARCH == 'aarch64') {

@@ -1,0 +1,44 @@
+pipeline {
+    agent {
+        label 'mac&&xcode11.7'
+    }
+    options {
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '50', artifactNumToKeepStr: '20'))
+        copyArtifactPermission('*');
+    }
+    parameters {
+        string(name: 'UPSTREAM_JOB_NAME', description: 'e.g. build-scripts/openjdk11-pipeline')
+        string(name: 'UPSTREAM_JOB_NUMBER', description: 'e.g. 123')
+        string(name: 'CERTIFICATE', description: 'Certificate name to sign the installer')
+        string(name: 'FILTER', defaultValue: '**/OpenJDK*_mac_*.tar.gz', description: 'e.g. **/OpenJDK*_mac_*.tar.gz')
+        string(name: 'MAJOR_VERSION', description: 'e.g. 8')
+        string(name: 'FULL_VERSION', description: 'e.g 1.8.0_192 or 11+28')
+    }
+    // checkout git repo
+    stages {
+        stage('Checkout') {
+            steps {
+                step([$class: 'WsCleanup'])
+                checkout scm
+            }
+        }
+        stage('Copy Artifacts') {
+            steps {
+                copyArtifacts filter: '${FILTER}', fingerprintArtifacts: true, projectName: '${UPSTREAM_JOB_NAME}', selector: specific('${UPSTREAM_JOB_NUMBER}')
+            }
+        }
+        stage('Build Installer') {
+            steps {
+                sh '''
+                    bash pkgbuild/create-installer-mac.sh
+                '''
+            }
+        }
+        stage('Archive Installer') {
+            steps {
+                archiveArtifacts artifacts: 'workspace/target/OpenJDK*.pkg', followSymlinks: true
+            }
+        }
+    }
+}
