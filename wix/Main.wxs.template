@@ -302,14 +302,14 @@
         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="CustomInstallScopeDlg"
           Order="3" />
         <Publish Dialog="WelcomeDlg" Control="Cancel" Event="NewDialog" Value="CustomCancelDialog"
-            Order="3" />
+            Order="4" />
         <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog"
           Value="WelcomeDlg" />
       <?else?> <!-- License shown -->
         <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="LicenseAgreementDlg"
           Order="3" />
         <Publish Dialog="WelcomeDlg" Control="Cancel" Event="NewDialog" Value="CustomCancelDialog"
-          Order="3" />
+          Order="4" />
         <Publish Dialog="LicenseAgreementDlg" Control="Next" Event="NewDialog"
           Value="CustomInstallScopeDlg" Order="3" />
         <Publish Dialog="CustomInstallScopeDlg" Control="Back" Event="NewDialog"
@@ -366,14 +366,14 @@
 
       <!-- Custom Cancel Dialog to get correct screen reader order -->
       <Dialog Id="CustomCancelDialog" Width="260" Height="85" Title="!(loc.CancelDlg_Title)">
-          <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" NoPrefix="yes" Text="!(loc.CancelDlgText)" />
-          <Control Id="No" Type="PushButton" X="132" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUINo)">
-              <Publish Event="EndDialog" Value="Return" />
-          </Control>
-          <Control Id="Yes" Type="PushButton" X="72" Y="57" Width="56" Height="17" Text="!(loc.WixUIYes)">
-              <Publish Event="EndDialog" Value="Exit" />
-          </Control>
-          <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" ToolTip="!(loc.CancelDlgIconTooltip)" FixedSize="yes" IconSize="32" Text="!(loc.CancelDlgIcon)" />
+        <Control Id="Text" Type="Text" X="48" Y="15" Width="194" Height="30" NoPrefix="yes" Text="!(loc.CancelDlgText)" />
+        <Control Id="No" Type="PushButton" X="132" Y="57" Width="56" Height="17" Default="yes" Cancel="yes" Text="!(loc.WixUINo)">
+            <Publish Event="EndDialog" Value="Return" />
+        </Control>
+        <Control Id="Yes" Type="PushButton" X="72" Y="57" Width="56" Height="17" Text="!(loc.WixUIYes)">
+            <Publish Event="EndDialog" Value="Exit" />
+        </Control>
+        <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" ToolTip="!(loc.CancelDlgIconTooltip)" FixedSize="yes" IconSize="32" Text="!(loc.CancelDlgIcon)" />
       </Dialog>
     </UI>
 
