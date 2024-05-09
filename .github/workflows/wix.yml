@@ -12,48 +12,61 @@ permissions:
 jobs:
   wix:
     strategy:
+      fail-fast: false
       matrix:
-        jdk: [8, 11, 17]
+        jdk: [8, 11, 17, 21]
+        arch: [x64]
+        jvm: [hotspot]
         include:
-        - jdk: 8
-          ICEDTEA_WEB_VERSION: "icedtea-web-1.8.6"
-          PRODUCT_MAJOR_VERSION: 8
-          PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 362
-          PRODUCT_PATCH_VERSION: 0
-          PRODUCT_BUILD_NUMBER: "09"
-          MSI_PRODUCT_VERSION: 8.0.362.9
-          ARCH: x64
-          TAG: jdk8u362-b09
-          SUB_TAG: 8u362b09
-          JVM: hotspot
-        - jdk: 11
-          PRODUCT_MAJOR_VERSION: 11
-          PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 18
-          PRODUCT_PATCH_VERSION: 0
-          PRODUCT_BUILD_NUMBER: 10
-          MSI_PRODUCT_VERSION: 11.0.18.10
-          ARCH: x64
-          TAG: jdk-11.0.18+10
-          SUB_TAG: 11.0.18_10
-          JVM: hotspot
-        - jdk: 17
-          PRODUCT_MAJOR_VERSION: 17
-          PRODUCT_MINOR_VERSION: 0
-          PRODUCT_MAINTENANCE_VERSION: 6
-          PRODUCT_PATCH_VERSION: 0
-          PRODUCT_BUILD_NUMBER: 10
-          MSI_PRODUCT_VERSION: 17.0.6.10
-          ARCH: x64
-          TAG: jdk-17.0.6+10
-          SUB_TAG: 17.0.6_10
-          JVM: hotspot
+          - jdk: 8
+            ICEDTEA_WEB_VERSION: "icedtea-web-1.8.8"
+          - jdk: 11
+            arch: x86-32
+            jvm: hotspot
 
     name: wix
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@44c2b7a8a4ea60a981eaca3cf939b5f4305c123b # v4.1.5
+
+      - name: Install wix toolset
+        run: dotnet tool install --global wix --version 5.0.0 --verbosity quiet
+
+      - name: Fetch latest Windows version from Adoptium API
+        run: |
+          $response = Invoke-WebRequest -Uri "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=x64&image_type=jdk&os=windows&page=0&page_size=1" -UseBasicParsing
+          $json = $response.Content | ConvertFrom-Json
+
+          $major = $json.version_data.major
+          $minor = $json.version_data.minor
+          $security = $json.version_data.security
+          $patch = 0
+          $build = $json.version_data.build
+
+          echo "PRODUCT_MAJOR_VERSION=$major" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "PRODUCT_MINOR_VERSION=$minor" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "PRODUCT_MAINTENANCE_VERSION=$security"| Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "PRODUCT_PATCH_VERSION=$patch" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+
+          # if jdk8 and build is a single digit, add a 0 to the front
+          if ($major -eq 8 -and $build -lt 10) {
+            echo "PRODUCT_BUILD_NUMBER=0$build" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          } else {
+            echo "PRODUCT_BUILD_NUMBER=$build" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          }
+          echo "MSI_PRODUCT_VERSION=$major.$minor.$security.$build" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          echo "TAG=$($json.release_name)" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
+          # SUB_TAG is used to create the file name of the JDK/JRE zip file
+          # For jdk8 strip the jdk and the - from the release name
+          if ($major -eq 8) {
+            $subTag = $json.release_name -replace "jdk", ""
+            $subTag = $subTag -replace "-", ""
+          # For JDK9 and above remove jdk- and replace + with _
+          } else {
+            $subTag = $json.release_name -replace "jdk-", ""
+            $subTag = $subTag -replace "\+", "_"
+          }
+          echo "SUB_TAG=$subTag" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Download IcedTea-Web
         run: |
@@ -67,10 +80,10 @@ jobs:
 
       - name: Download Prebuilt JDK/JRE
         run: |
-          Invoke-WebRequest -Uri "https://github.com/adoptium/temurin${{ matrix.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jdk_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip" `
-            -OutFile "OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jdk_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip"
-          Invoke-WebRequest -Uri "https://github.com/adoptium/temurin${{ matrix.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ matrix.TAG }}/OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jre_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip" `
-            -OutFile "OpenJDK${{ matrix.PRODUCT_MAJOR_VERSION }}U-jre_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ matrix.SUB_TAG }}.zip"
+          Invoke-WebRequest -Uri "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ env.SUB_TAG }}.zip" `
+            -OutFile "OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jdk_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ env.SUB_TAG }}.zip"
+          Invoke-WebRequest -Uri "https://github.com/adoptium/temurin${{ env.PRODUCT_MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ env.SUB_TAG }}.zip" `
+            -OutFile "OpenJDK${{ env.PRODUCT_MAJOR_VERSION }}U-jre_${{ matrix.ARCH }}_windows_${{ matrix.JVM }}_${{ env.SUB_TAG }}.zip"
           ./CreateSourceFolder.AdoptOpenJDK.ps1
         working-directory: wix/SourceDir
 
@@ -79,12 +92,6 @@ jobs:
         working-directory: wix
         env:
           PRODUCT_CATEGORY: jdk
-          PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
-          PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
-          PRODUCT_MAINTENANCE_VERSION: ${{ matrix.PRODUCT_MAINTENANCE_VERSION }}
-          PRODUCT_PATCH_VERSION: ${{ matrix.PRODUCT_PATCH_VERSION }}
-          PRODUCT_BUILD_NUMBER: ${{ matrix.PRODUCT_BUILD_NUMBER }}
-          MSI_PRODUCT_VERSION: ${{ matrix.MSI_PRODUCT_VERSION }}
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
         shell: cmd
@@ -94,17 +101,11 @@ jobs:
         working-directory: wix
         env:
           PRODUCT_CATEGORY: jre
-          PRODUCT_MAJOR_VERSION: ${{ matrix.PRODUCT_MAJOR_VERSION }}
-          PRODUCT_MINOR_VERSION: ${{ matrix.PRODUCT_MINOR_VERSION }}
-          PRODUCT_MAINTENANCE_VERSION: ${{ matrix.PRODUCT_MAINTENANCE_VERSION }}
-          PRODUCT_PATCH_VERSION: ${{ matrix.PRODUCT_PATCH_VERSION }}
-          PRODUCT_BUILD_NUMBER: ${{ matrix.PRODUCT_BUILD_NUMBER }}
-          MSI_PRODUCT_VERSION: ${{ matrix.MSI_PRODUCT_VERSION }}
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
         shell: cmd
 
       - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
         with:
-          name: windows-${{ matrix.PRODUCT_MAJOR_VERSION }}
+          name: windows-${{ env.PRODUCT_MAJOR_VERSION }}-${{ matrix.arch }}
           path: wix/ReleaseDir/*.msi

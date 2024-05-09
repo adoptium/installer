@@ -1,25 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://schemas.microsoft.com/wix/2006/localization">
-	<String Id="ProductLanguage">1036</String>
-	<String Id="ProductHelpLink">{product_help_link}</String>
-	<String Id="ProductUrlInfoAbout">{product_support_link}</String>
-	<String Id="ProductUrlUpdateInfo">{product_update_info_link}</String>
-	<String Id="OSVersionRequired">Windows 7 ou ultérieur est requis.</String>
-	<String Id="ProductIsNotSupportedOnItanium">Ce produit n'est pas pris en charge sur les systèmes Itanium 64 bits.</String>
-	<String Id="FeatureEnvironmentTitle">Ajouter au PATH</String>
-	<String Id="FeatureEnvironmentDescription">Ajouter à la variable d'environnement PATH.</String>
-	<String Id="FeatureJavaHomeTitle">Définir la variable JAVA_HOME</String>
-	<String Id="FeatureJavaHomeDescription">Définir la variable d'environnement JAVA_HOME.</String>
-	<String Id="FeatureSourceTitle">Code source</String>
-	<String Id="FeatureSourceDescription">Code source des classes qui composent l'API publique de Java.</String>
-	<String Id="FeatureJarFileRunWithTitle">Associer les .jar</String>
-	<String Id="FeatureJarFileRunWithDescription">Associer les fichiers .jar avec {vendor_branding} pour execution par double-click</String>
-	<String Id="DowngradeDenied">"Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter."</String>
-	<String Id="FeatureOracleJavaSoftName">Clés de registre JavaSoft (Oracle)</String>
+<WixLocalization Culture="fr-fr" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<String Id="ProductLanguage" Value="1036" />
+	<String Id="ProductHelpLink" Value="{product_help_link}" />
+	<String Id="ProductUrlInfoAbout" Value="{product_support_link}" />
+	<String Id="ProductUrlUpdateInfo" Value="{product_update_info_link}" />
+	<String Id="OSVersionRequired" Value="Windows 7 ou ultérieur est requis." />
+	<String Id="ProductIsNotSupportedOnItanium" Value="Ce produit n'est pas pris en charge sur les systèmes Itanium 64 bits." />
+	<String Id="FeatureEnvironmentTitle" Value="Ajouter au PATH" />
+	<String Id="FeatureEnvironmentDescription" Value="Ajouter à la variable d'environnement PATH." />
+	<String Id="FeatureJavaHomeTitle" Value="Définir la variable JAVA_HOME" />
+	<String Id="FeatureJavaHomeDescription" Value="Définir la variable d'environnement JAVA_HOME." />
+	<String Id="FeatureSourceTitle" Value="Code source" />
+	<String Id="FeatureSourceDescription" Value="Code source des classes qui composent l'API publique de Java." />
+	<String Id="FeatureJarFileRunWithTitle" Value="Associer les .jar" />
+	<String Id="FeatureJarFileRunWithDescription" Value="Associer les fichiers .jar avec {vendor_branding} pour execution par double-click" />
+	<String Id="DowngradeDenied" Value="&quot;Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter.&quot;" />
+	<String Id="FeatureOracleJavaSoftName" Value="Clés de registre JavaSoft (Oracle)" />
 	<!-- ! Description limité à 255 charactères -->
-	<String Id="FeatureOracleJavaSoftDescription">Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{vendor_branding}, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin</String>
-	<String Id="FeatureIcedTeaWebTitle">IcedTea-Web</String>
-	<String Id="FeatureIcedTeaWebDescription">Install the IcedTea-Web package</String>
-	<String Id="FeatureJNLPFileRunWithTitle">Associate .jnlp</String>
-	<String Id="FeatureJNLPFileRunWithDescription">Associate .jnlp files to run with IcedTea-Web</String>
+	<String Id="FeatureOracleJavaSoftDescription" Value="Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{vendor_branding}, Oracle Java lancé depuis le PATH &quot;C:\Program Files (x86)\Common Files\Oracle\Java\javapath&quot; ne fonctionne plus. Résintaller Oracle Java si besoin" />
+	<String Id="FeatureIcedTeaWebTitle" Value="IcedTea-Web" />
+	<String Id="FeatureIcedTeaWebDescription" Value="Install the IcedTea-Web package" />
+	<String Id="FeatureJNLPFileRunWithTitle" Value="Associate .jnlp" />
+	<String Id="FeatureJNLPFileRunWithDescription" Value="Associate .jnlp files to run with IcedTea-Web" />
+	<String Id="CustomScopeDlgDescription" Value="Choisissez le périmètre d'installation et le dossier" />
+	<String Id="CustomScopeDlgTitle" Value="{\WixUI_Font_Title}Portée de l'installation" />
+	<String Id="CustomScopeDlgPerUser" Value="Installer juste pour vous ([LogonUser])" />
+	<String Id="CustomScopeDlgPerMachine" Value="Installer pour tous les utilisateurs de cet &amp;ordinateur" />
 </WixLocalization>

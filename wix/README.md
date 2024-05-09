@@ -1,27 +1,31 @@
 # Requirements for build environment
 
-1. [Windows Installer XML (WiX) toolset, 3.11 or later](http://wixtoolset.org/releases/)
-2. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
-3. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
-4. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
+1. [Windows Installer XML (WiX) toolset, 5.0.0 or later](https://wixtoolset.org/docs/intro/#nettool)
+1. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
+1. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
+1. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
 
 ## How to upgrade to a new OpenJDK version
 
 1. Download latest OpenJDK zip to the SourceDir directory.
 
-2. Extract the content and setup the expected file structure:
+1. Extract the content and setup the expected file structure:
 
 ```batch
 call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1
 ```
 
 If your file structure/names are different than expected, we now support user-input regexes:
-(default values shown below. Note: `-jvm` flag also available, used in place of `-jvm_regex` result )
+
+- Note: the wix_version should be set to whichever version of wix is available on the buld machine
+- default values shown below. Note: `-jvm` flag also available, used in place of `-jvm_regex` result
+
 ```batch
 call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   -openjdk_filename_regex "^OpenJDK(?<major>\d*)" ^
   -platform_regex "(?<platform>x86-32|x64|aarch64)" ^
-  -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)"
+  -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)" ^
+  -wix_version "5.0.0"
 ```
 
 3. Export the following environment variables:
@@ -31,12 +35,14 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   ```batch
   SET PRODUCT_MAJOR_VERSION=11
   SET PRODUCT_MINOR_VERSION=0
-  SET PRODUCT_MAINTENANCE_VERSION=2
-  SET PRODUCT_PATCH_VERSION=8
+  SET PRODUCT_MAINTENANCE_VERSION=18
+  SET PRODUCT_PATCH_VERSION=0
+  SET PRODUCT_BUILD_NUMBER=10
+  SET MSI_PRODUCT_VERSION=11.0.18.10
   SET ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
-  cmd /c Build.OpenJDK_generic.cmd
+  SET WIX_VERSION=5.0.0 (make sure this is the same version that is installed on the build machine)
   ```
 
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
@@ -50,11 +56,10 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   set VENDOR_BRANDING_LOGO=$(var.SetupResourcesDir)\logo.ico
   set VENDOR_BRANDING_BANNER=$(var.SetupResourcesDir)\wix-banner.png
   set VENDOR_BRANDING_DIALOG=$(var.SetupResourcesDir)\wix-dialog.png
-  set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_F
-ULL_VERSION%
+  set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_FULL_VERSION%F
   ```
 
- `Build.OpenJDK_generic.cmd` statically depend on this SDK version (edit if needed):
+ `Build.OpenJDK_generic.cmd` statically depends on this SDK version (edit if needed):
 
   ```batch
   SET WIN_SDK_MAJOR_VERSION=10
@@ -67,6 +72,20 @@ ULL_VERSION%
 call Build.OpenJDK_generic.cmd
 ```
 
+## Custom end-user license agreement behavior
+
+If a vendor would like to implement custom end-user license agreement behavior for a hotspot JVM:
+```
+Note: default behavior is to use the GPLv2 license and to skip past the license agreement page. This license does not affect end users, only software redistribution.
+```
+1. If using a new license agreement, copy the desired plaintext license into the wix/Resources folder (with the .rtf file extension).
+1. Go to `wix/Includes/OpenJDK.Variables.wxi.template` and find the line `<?elseif $(var.JVM)="hotspot" ?>`.
+
+    a. Create an inner `<?if $(env.VENDOR)="<INSERT_VENDOR_HERE>"?>` statement.
+
+    b. Set `<?define license=...` to be the name of your license agreement file.
+
+    c. Set `<?define license_shown=...` to be `1` if the user needs to read and agree to this license before installing (most licenses require this), set 0 if this is not desired (ex: this is optional for GPLv2).
 ## Deploy via Active Directory GPO
 
 Installation optional parameters:
@@ -147,7 +166,7 @@ Upgradable MSI work only for first 3 digit from the build number (due to MSI lim
 - Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
 - Upgradable : 8.0.2.1 -> 8.0.2.2 No ( You must uninstall previous msi and install new one )
 - Upgradable : 8.0.2.1 -> 8.1.2.1 Yes
-- Upgradable : 8.0.2.1 -> 11.0.2.1 No  ( Adoptium does not provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )
+- Upgradable : 8.0.2.1 -> 11.0.2.1 No ( Adoptium does not provide upgrade for different major version ( jdk 8 -> jdk 11 ) (You can keep both or uninstall older jdk yourself )
 
 ## Troubleshooting
 
@@ -162,7 +181,7 @@ C:\WINDOWS\System32\msiexec.exe /i "C:\Users\Administrator\Downloads\OpenJDK11U-
 If you have trouble with the GUI installer, changes to the registry are needed to enable logging (copy into `cmd.exe`):
 
 ```cmd
-reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Debug /t REG_DWORD /d 7 /f 
+reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Debug /t REG_DWORD /d 7 /f
 reg add "HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer" /v Logging /t REG_SZ /d voicewarmupx! /f
 ```
 
