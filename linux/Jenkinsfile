@@ -9,7 +9,7 @@ aarch64     aarch64     arm64       arm64
 ppc64le     ppc64le     ppc64le
 source      src         -           only for SRPM and no need specify as option or target
 s390x       s390x       s390x       only for jdk8+
-riscv64     riscv64     riscv64     only for JDK21+
+riscv64     riscv64     riscv64     only for JDK17+
 */
 
 env.NODE_LABEL = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
@@ -271,10 +271,6 @@ def jenkinsStepDeb() {
     if ("${VERSION}" == '11' && "${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
     }
-    // remove riscv64 for JDK17
-    if ("${VERSION}" == '17' && "${ARCH}" == 'all') {
-        debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x']
-    }
     // remove Arm32 & add riscv64 for JDK21
     if ("${VERSION}" == '21' && "${ARCH}" == 'all' ) {
         debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
@@ -409,9 +405,6 @@ def buildAndTest(String DISTRO, String buildArch, String VERSION) {
                 debArchList.remove('s390x')
                 break
               case "11":
-                debArchList.remove('riscv64')
-                break
-              case "17":
                 debArchList.remove('riscv64')
                 break
               case "21":
@@ -608,6 +601,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
 
     if (VERSION == '17') {
     rpmArchList['s390x'] = 's390x'
+    rpmArchList['riscv64'] = 'riscv64'
   }
   if (VERSION == '21') {
     rpmArchList['s390x'] = 's390x'

@@ -22,6 +22,7 @@
 %global vers_arch3 s390x
 %global vers_arch4 aarch64
 %global vers_arch5 arm
+%global vers_arch6 riscv64
 %global src_num 0
 %global sha_src_num 1
 %endif
@@ -31,6 +32,7 @@
 %global vers_arch3 s390x
 %global vers_arch4 aarch64
 %global vers_arch5 arm
+%global vers_arch6 riscv64
 %global src_num 2
 %global sha_src_num 3
 %endif
@@ -40,6 +42,7 @@
 %global vers_arch3 s390x
 %global vers_arch4 aarch64
 %global vers_arch5 arm
+%global vers_arch6 riscv64
 %global src_num 4
 %global sha_src_num 5
 %endif
@@ -49,6 +52,7 @@
 %global vers_arch3 s390x
 %global vers_arch4 aarch64
 %global vers_arch5 arm
+%global vers_arch6 riscv64
 %global src_num 6
 %global sha_src_num 7
 %endif
@@ -58,8 +62,19 @@
 %global vers_arch3 s390x
 %global vers_arch4 aarch64
 %global vers_arch5 arm
+%global vers_arch6 riscv64
 %global src_num 8
 %global sha_src_num 9
+%endif
+%ifarch riscv64
+%global vers_arch x64
+%global vers_arch2 ppc64le
+%global vers_arch3 s390x
+%global vers_arch4 aarch64
+%global vers_arch5 arm
+%global vers_arch6 riscv64
+%global src_num 10
+%global sha_src_num 11
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -81,7 +96,7 @@ Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 AutoReqProv: no
 Prefix: %{_libdir}/jvm/%{name}
 
-ExclusiveArch: x86_64 ppc64le s390x aarch64 %{arm}
+ExclusiveArch: x86_64 ppc64le s390x aarch64 %{arm} riscv64
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -124,6 +139,9 @@ Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_ar
 # Fifth architecture (arm32)
 Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+# Sixth architecture (riscv64)
+Source10: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_arch6}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source11: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK17U-jre_%{vers_arch6}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
