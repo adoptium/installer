@@ -63,6 +63,10 @@ The following documentation describes how to create and publish these Linux inst
         - under sub-folder "\<distro>/\<os_version>/\<arch>/Packages/"
         - file "temurin-\<MAJOR_VERSION>-jdk-*.\<arch>.rpm" exist, e.g: temurin-19-jdk-19.0.1.0.0.10-1.armv7hl.rpm for jdk-19.0.1 hotspot JDK
 
+## More Information
+
+For more information on updating the linux package installers, additional documentation can be found in the docs subfolder of this project.
+
 ## Troubleshooting Tips
 
 Should errors occur during the upload process, and errant files created on Artifactory, any rogue files must be deleted by an artifactory administrator. Each file should be deleted individually, ahead of any errant folders being deleted. This ensures the artifactory metadata gets refreshed correctly.  This has been seen in this [issue](https://github.com/adoptium/temurin-build/issues/3618) and on rare other occasions.
