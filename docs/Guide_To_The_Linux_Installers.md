@@ -72,7 +72,7 @@ Prior to updating the source code, its important to have an understanding of how
               -- 8 / 11 / 17 / 21/ 22 (Java version)
 ```
 
-The following sections will detail the source changes required when a release is done, similar changes are made to both jdk/jre and are also similar between versions. Changes should be made in the specific vendor version being edited. This document assumes a Temurin release is being undertaken.
+The following sections will detail the source changes required when a release is done, similar changes are made to both jdk/jre and are also similar between versions. Changes should be made in the specific vendor version being edited. The examples shown in this document assume a Temurin release is being undertaken.
 
   ### Per Distribution Guide To Code Changes
 
