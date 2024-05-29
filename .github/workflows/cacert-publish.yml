@@ -47,7 +47,7 @@ jobs:
           architecture: x64
           distribution: 'temurin'
 
-      - uses: jfrog/setup-jfrog-cli@727b480bafd0d8adbdfdb2257a7d7c2e08eb1779 # v4.0.2
+      - uses: jfrog/setup-jfrog-cli@d730afd3a0551249ed4b178855aa53b36f2cca6a # v4.1.0
         env:
           JF_URL: https://adoptium.jfrog.io
           JF_USER: ${{ secrets.ARTIFACTORY_USER }}
