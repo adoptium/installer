@@ -4,7 +4,8 @@ This document is intended to provide a guide to the most common works needed to 
 
 ## 1. Overview Of The Linux Installer Packaging Process
 
-The linux installer packaging process, current consists of the following elements:
+The linux installer packaging process, currently consists of the following elements:
+
 
   ### 1.1. Jenkins Linux Packaging Job
   
