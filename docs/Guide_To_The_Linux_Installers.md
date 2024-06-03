@@ -33,7 +33,8 @@ The linux installer packaging process, currently consists of the following eleme
       + Suse
       + all (This will attempt to run for all of the available distributions)
 
-There are a number of restrictions around combinations of architecture and platforms, these are detailed in Appendix A, below, but the [jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile) has been coded to exclude these from the build processes, details here are included for reference.
+There are a number of restrictions around combinations of architecture and platforms detailed in Appendix A below. For our CI/CD pipelines, the [jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile) has been coded to exclude these from the build processes, details are included here for reference.
+
 
   ### 1.2. Gradle / Docker Package Build & Test Process
 
