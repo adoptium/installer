@@ -176,7 +176,6 @@ riscv64_tarball_url = https://github.com/adoptium/temurin21-binaries/releases/do
 riscv64_checksum = 246acb1db3ef69a7e3328fa378513b2e606e64710626ae8dd29decc0e525359b
 ```
 
-
 <h5>2.2.3 The control file (example below:)</h5>
 
 The final file, that typically only requires updates if this is the first release of a new jdk, or alternatively a new architecture is being added. 
