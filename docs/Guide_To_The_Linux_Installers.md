@@ -155,7 +155,8 @@ temurin-21-jdk (21.0.3.0.0+9-1) STABLE; urgency=medium
 
 <h5>2.2.2 The rules file (example below:)</h5>
 
-The second file that should be updated as part of a release is the Debian rules file. This contains the URLs of the binaries published to Github along with their checksum. It contains a pair of values (a tarball url, and a checksum) per architecture, and it is these values used to create the .deb packages.
+The second file that should be updated as part of a release is the Debian rules file. This contains the URLs of the binaries published to GitHub along with their checksum. It contains a pair of values (a tarball url, and a checksum) per architecture, and it is these values used to create the .deb packages.
+
 
 Should a new architecture require support, the a new value pair should be added here in addition to the other changes.
 
