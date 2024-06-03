@@ -9,7 +9,8 @@ The linux installer packaging process, currently consists of the following eleme
 
   ### 1.1. Jenkins Linux Packaging Job
   
-  This job which has restricted access, requires several inputs that drive the packaging process, these inputs are:
+  This job which has restricted access. It requires several inputs that drive the packaging process:
+
   
   + JDK / JRE - Whether you would like the packaging process to produce the installer packages for the JDK or JRE
   + Java version option (Which version of Java to produce packages for)
