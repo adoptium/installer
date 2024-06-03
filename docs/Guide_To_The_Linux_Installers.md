@@ -142,7 +142,8 @@ To update the source files for each new Debian release, there are potentially 3 
 
 <h5>2.2.1 The changelog file (example below:)</h5>
 
-When actioning a new release, or a patch to an existing release the changelog file, should have an additional section added to the top of the file (the most recent change is at the head).  The version number should be updated appropriately (e.g. 21.0.3.0.0+9) and then additionally the final element (-1) should be changed to be -0 for the first release, and then incremented by 1 for each subsequent release. In addition to the version number the release date and timestamps should also be updated.
+When actioning a new release, or patching to an existing release, the changelog file should have an additional section added to the top of the file (the most recent change is at the head). The version number should be updated appropriately (e.g. 21.0.3.0.0+9) and then additionally the final element (-1) should be changed to be -0 for the first release, and then incremented by 1 for each subsequent release. In addition to the version number the release date and timestamps should also be updated.
+
 
 ```
 temurin-21-jdk (21.0.3.0.0+9-1) STABLE; urgency=medium
