@@ -178,7 +178,8 @@ riscv64_checksum = 246acb1db3ef69a7e3328fa378513b2e606e64710626ae8dd29decc0e5253
 
 <h5>2.2.3 The control file (example below:)</h5>
 
-The final file, that typically only requires updates if this is the first release of a new jdk, or alternatively a new architecture is being added. 
+The final file typically only requires updates if this is the first release of a new jdk, or alternatively if a new architecture is being added. 
+
 
 In the event of a new architecture being added, the <b>Architecture</b> line should have the new value appended.
 
