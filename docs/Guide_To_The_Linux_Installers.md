@@ -38,7 +38,8 @@ There are a number of restrictions around combinations of architecture and platf
 
   ### 1.2. Gradle / Docker Package Build & Test Process
 
-The jenkins job above once triggered, performs a build, using gradle, and a dockerfile to produce, installer packages for the supported versions of each of the 4 distributions that we currently support, ie .apk (Alpine), .deb (Debian) & .rpm (RHEL & Suse). The versions of each specific distribution supported can be viewed in the [jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile), by searching for the deb_versions variable, or the distro_Package variable, the table below shows the current supported versions, but this does change on a regular basis.
+Once the jenkins job is triggered, it performs a build using Gradle, and a Dockerfile to produce installer packages for the supported versions of each of the 4 distributions that we currently support, i.e., `.apk` (Alpine), `.deb` (Debian) & `.rpm` (RHEL & Suse). The versions of each specific distribution supported can be viewed in the [jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile) by searching for the `deb_versions` variable, or the `distro_Package` variable. The table below shows the currently supported versions, but this does change on a regular basis.
+
 
 Supported Linux Distros:
 Distribution Type| Supported Versions
