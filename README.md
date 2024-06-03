@@ -65,7 +65,7 @@ The following documentation describes how to create and publish these Linux inst
 
 ## More Information
 
-For more information on updating the linux package installers, additional documentation can be found in the docs subfolder of this project.
+For more information on updating the linux package installers, additional documentation can be found in the docs subfolder of this project. [See Here](./docs/Guide_To_The_Linux_Installers.md)
 
 ## Troubleshooting Tips
 
