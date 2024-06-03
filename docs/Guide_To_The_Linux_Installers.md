@@ -137,7 +137,8 @@ e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.jav
 </details>
 <details><summary>2.2 Debian Distributions</summary>
 </br>
-To update the source files for each new Debian release, there are potentially 3 files that must be updated. These 3 files are ```changelog , control & rules``` ( located under _jdk_ / debian / src / main / packaging /_temurin_ / _21_for example) below are the files, and how to update them.
+To update the source files for each new Debian release, there are potentially 3 files that must be updated. These 3 files are ```changelog , control & rules``` ( located under _jdk_ / debian / src / main / packaging /_temurin_ / _21_) below are the files, and how to update them.
+
 
 <h5>2.2.1 The changelog file (example below:)</h5>
 
