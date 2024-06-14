@@ -1,0 +1,64 @@
+name: macOS
+on:
+  workflow_dispatch:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'pkgbuild/**'
+      - '.github/workflows/pkgbuild.yml'
+permissions:
+  contents: read
+
+jobs:
+  pkgbuild:
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk: [8, 11, 17, 21]
+        architecture: [x64, aarch64]
+        exclude:
+          - jdk: 8
+            architecture: aarch64
+    name: pkgbuild
+    runs-on: macos-latest
+    steps:
+
+    - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+
+    - name: Install dependencies
+      run: brew install --cask packages
+
+    - name: Fetch latest macOS version from Adoptium API
+      run: |
+        response=$(curl -s "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=${{ matrix.architecture }}&image_type=jdk&os=mac&page=0&page_size=1")
+        json=$(echo "$response" | jq '.[0]')
+
+        major=$(echo "$json" | jq -r '.version_data.major')
+        echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
+        echo "TAG=$(echo "$json" | jq -r '.release_name')" >> $GITHUB_ENV
+
+        # SUB_TAG is used to create the file name of the JDK/JRE zip file
+        release_name=$(echo "$json" | jq -r '.release_name')
+        if [[ "$major" -eq 8 ]]; then
+          subTag=$(echo "$release_name" | sed -e 's/jdk//' -e 's/-//')
+        else
+          subTag=$(echo "$release_name" | sed -e 's/jdk-//' -e 's/+/_/')
+        fi
+        echo "FULL_VERSION=$subTag" >> $GITHUB_ENV
+        echo "SUB_TAG=$subTag" >> $GITHUB_ENV
+
+    - name: Download prebuilt binaries
+      run: |
+        mkdir -p workspace/target/
+        cd workspace/target/
+        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_${{ matrix.architecture }}_mac_hotspot_${{ env.SUB_TAG }}.tar.gz"
+
+    - name: Create Package
+      run: |
+        export WORKSPACE=$PWD
+        bash pkgbuild/create-installer-mac.sh
+
+    - uses: actions/upload-artifact@65462800fd760344b1a7b4382951275a0abb4808 # v4.3.3
+      with:
+        name: macos-${{ env.MAJOR_VERSION }}-${{ matrix.architecture }}
+        path: workspace/target/*.pkg
