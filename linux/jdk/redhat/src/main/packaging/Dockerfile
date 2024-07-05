@@ -1,4 +1,4 @@
-FROM fedora:38
+FROM luigimirroracr.azurecr.io/fedora:38
 
 RUN dnf update -y && dnf install -y rpmdevtools \
 	rpm-sign \
@@ -9,7 +9,7 @@ RUN dnf update -y && dnf install -y rpmdevtools \
 	tini \
 	wget
 
-COPY --from=tianon/gosu /gosu /usr/local/bin/
+COPY --from=luigimirroracr.azurecr.io/tianon/gosu /gosu /usr/local/bin/
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
