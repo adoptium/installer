@@ -64,7 +64,7 @@ task packageJdkRedHat {
 	outputs.dir(outputDir)
 
 	def containerRegistry = getContainerRegistry()
-	def buildArgs = ""
+	def buildArgs = containerRegistry ? "--build-arg CONTAINER_REGISTRY=${containerRegistry}" : ""
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -93,9 +93,6 @@ task packageJdkRedHat {
 				include("*.sha256*.txt")
 			}
 		}
-
-		if (containerRegistry)
-			buildArgs = "--build-arg CONTAINER_REGISTRY=${containerRegistry}"
 
 		if (gpgKey) {
 			project.exec {
