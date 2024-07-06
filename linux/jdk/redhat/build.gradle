@@ -64,7 +64,9 @@ task packageJdkRedHat {
 	outputs.dir(outputDir)
 
 	def containerRegistry = getContainerRegistry()
+	println "Container registry: ${containerRegistry}"
 	def buildArgs = containerRegistry ? "--build-arg='CONTAINER_REGISTRY=${containerRegistry}'" : ""
+	println "Build args: ${buildArgs}"
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
