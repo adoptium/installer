@@ -55,3 +55,7 @@ def getInputDir() {
 def getLocalBuildStatus() {
 	return hasProperty("INPUT_DIR") ? "true" : "false"
 }
+
+def getContainerRegistry() {
+	return hasProperty("CONTAINER_REGISTRY") ? CONTAINER_REGISTRY.toString() : null
+}

@@ -1,4 +1,5 @@
-FROM luigimirroracr.azurecr.io/fedora:38
+ARG CONTAINER_REGISTRY=""
+FROM ${CONTAINER_REGISTRY}fedora:38
 
 RUN dnf update -y && dnf install -y rpmdevtools \
 	rpm-sign \
