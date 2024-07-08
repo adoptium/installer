@@ -59,3 +59,13 @@ def getLocalBuildStatus() {
 def getContainerRegistry() {
 	return hasProperty("CONTAINER_REGISTRY") ? "CONTAINER_REGISTRY=" + CONTAINER_REGISTRY.toString() : null
 }
+
+def setBuildArgs(args) {
+	def buildArgs = ""
+
+	for (item in args) {
+		buildArgs += "--build-arg=" + item
+	}
+	
+	return buildArgs
+}
