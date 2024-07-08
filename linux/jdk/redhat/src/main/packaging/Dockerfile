@@ -1,4 +1,6 @@
 ARG CONTAINER_REGISTRY=""
+
+FROM ${CONTAINER_REGISTRY}tianon/gosu as gosu
 FROM ${CONTAINER_REGISTRY}fedora:38
 
 RUN dnf update -y && dnf install -y rpmdevtools \
@@ -10,7 +12,7 @@ RUN dnf update -y && dnf install -y rpmdevtools \
 	tini \
 	wget
 
-COPY --from=luigimirroracr.azurecr.io/tianon/gosu /gosu /usr/local/bin/
+COPY --from=gosu /gosu /usr/local/bin/
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
