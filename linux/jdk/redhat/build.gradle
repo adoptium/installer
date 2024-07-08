@@ -65,8 +65,8 @@ task packageJdkRedHat {
 
 	def containerRegistry = getContainerRegistry()
 	println "Container registry: ${containerRegistry}"
-	def buildArgs = containerRegistry ? "--build-arg='CONTAINER_REGISTRY=${containerRegistry}'" : ""
-	println "Build args: ${buildArgs}"
+	// def buildArgs = containerRegistry ? "--build-arg='CONTAINER_REGISTRY=${containerRegistry}'" : ""
+	// println "Build args: ${buildArgs}"
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -102,7 +102,7 @@ task packageJdkRedHat {
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-redhat",
 					"--secret", "id=gpg,src=${gpgKey}",
-					"${buildArgs}",
+					"--build-arg=${containerRegistry}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -111,7 +111,7 @@ task packageJdkRedHat {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-redhat",
-					"${buildArgs}",
+					"--build-arg=${containerRegistry}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}

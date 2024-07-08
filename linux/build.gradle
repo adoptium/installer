@@ -57,5 +57,5 @@ def getLocalBuildStatus() {
 }
 
 def getContainerRegistry() {
-	return hasProperty("CONTAINER_REGISTRY") ? CONTAINER_REGISTRY.toString() : null
+	return hasProperty("CONTAINER_REGISTRY") ? "CONTAINER_REGISTRY=" + CONTAINER_REGISTRY.toString() : null
 }
