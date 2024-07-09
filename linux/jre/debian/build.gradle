@@ -71,6 +71,12 @@ task packageJreDebian {
 	def input_dir = getInputDir()
 	def buildLocalFlag = getLocalBuildStatus()
 
+	// Get container registry property
+	def containerRegistry = getContainerRegistry()
+
+	// Get multiple build arguments
+	def buildArgs = setBuildArgs([containerRegistry])
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -108,6 +114,7 @@ task packageJreDebian {
 					commandLine "docker", "build", "--no-cache",
 					  "--build-arg", "IMAGE=arm32v7/debian:bullseye",
 						"-t", "adoptium-packages-linux-jdk-debian",
+						"${buildArgs}",
 						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 				}
@@ -119,6 +126,7 @@ task packageJreDebian {
 					commandLine "docker", "build", "--no-cache",
 						"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
 						"-t", "adoptium-packages-linux-jdk-debian",
+						"${buildArgs}",
 						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 					}
@@ -129,6 +137,7 @@ task packageJreDebian {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache",
 						"-t", "adoptium-packages-linux-jdk-debian",
+						"${buildArgs}",
 						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 		     }

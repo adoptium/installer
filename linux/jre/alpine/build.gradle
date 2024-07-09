@@ -69,6 +69,12 @@ task packageJreAlpine {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	// Get container registry property
+	def containerRegistry = getContainerRegistry()
+
+	// Get multiple build arguments
+	def buildArgs = setBuildArgs([containerRegistry])
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -83,6 +89,7 @@ task packageJreAlpine {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
+					"${buildArgs}",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
@@ -92,6 +99,7 @@ task packageJreAlpine {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
+					"${buildArgs}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}

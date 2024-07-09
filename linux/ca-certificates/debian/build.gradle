@@ -75,6 +75,12 @@ task packageCaCertificatesDebian {
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
+	// Get container registry property
+	def containerRegistry = getContainerRegistry()
+
+	// Get multiple build arguments
+	def buildArgs = setBuildArgs([containerRegistry])
+
 	doLast {
 		project.copy {
 			from("src/main/packaging/")
@@ -84,6 +90,7 @@ task packageCaCertificatesDebian {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-cacerts-debian",
+				"${buildArgs}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
 		}

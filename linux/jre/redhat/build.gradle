@@ -63,6 +63,12 @@ task packageJreRedHat {
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
+	// Get container registry property
+	def containerRegistry = getContainerRegistry()
+
+	// Get multiple build arguments
+	def buildArgs = setBuildArgs([containerRegistry])
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -97,6 +103,7 @@ task packageJreRedHat {
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-redhat",
 					"--secret", "id=gpg,src=${gpgKey}",
+					"${buildArgs}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -105,6 +112,7 @@ task packageJreRedHat {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-redhat",
+					"${buildArgs}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
