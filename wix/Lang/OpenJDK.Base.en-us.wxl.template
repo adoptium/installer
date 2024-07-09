@@ -7,10 +7,10 @@
 	<String Id="OSVersionRequired" Value="Windows 7 or later is required." />
 	<!-- <String Id="NewerVersionInstalled">Newer version of OpenJDK is already installed.</String> -->
 	<String Id="ProductIsNotSupportedOnItanium" Value="This product is not supported on Itanium 64-bit systems." />
-	<String Id="FeatureEnvironmentTitle" Value="Add to PATH" />
-	<String Id="FeatureEnvironmentDescription" Value="Add to PATH environment variable." />
-	<String Id="FeatureJavaHomeTitle" Value="Set JAVA_HOME variable" />
-	<String Id="FeatureJavaHomeDescription" Value="Set JAVA_HOME environment variable." />
+	<String Id="FeatureEnvironmentTitle" Value="Modify PATH variable" />
+	<String Id="FeatureEnvironmentDescription" Value="Modify PATH environment variable by prepending the JDK installation directory to the beginning of PATH." />
+	<String Id="FeatureJavaHomeTitle" Value="Set or override JAVA_HOME variable" />
+	<String Id="FeatureJavaHomeDescription" Value="Sets or overrides JAVA_HOME environment variable with the JDK installation directory." />
 	<String Id="FeatureSourceTitle" Value="Source Code" />
 	<String Id="FeatureSourceDescription" Value="Source code for classes that comprise the public API of Java." />
 	<String Id="FeatureJarFileRunWithTitle" Value="Associate .jar" />
