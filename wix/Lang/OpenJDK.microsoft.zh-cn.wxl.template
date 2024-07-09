@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="zh-cn" Codepage="936" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+	<String Id="JREFeatureMainName" Value="JRE with Hotspot" />
+	<String Id="JREFeatureMainDescription" Value="{vendor_branding} Runtime Environment with Hotspot" />
+	<String Id="JREProductName" Value="{vendor_branding} JRE with Hotspot" />
+	<String Id="JREPackageDescription" Value="{vendor_branding} Runtime Environment with Hotspot" />
+
+	<String Id="JDKFeatureMainName" Value="JDK with Hotspot" />
+	<String Id="JDKFeatureMainDescription" Value="{vendor_branding} Development Kit with Hotspot" />
+	<String Id="JDKProductName" Value="{vendor_branding} JDK with Hotspot" />
+	<String Id="JDKPackageDescription" Value="{vendor_branding} Development Kit with Hotspot" />
+</WixLocalization>
