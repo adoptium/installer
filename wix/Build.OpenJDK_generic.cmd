@@ -8,7 +8,7 @@ REM PRODUCT_PATCH_VERSION=0
 REM PRODUCT_BUILD_NUMBER=28
 REM MSI_PRODUCT_VERSION=11.0.0.28
 REM ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
-REM JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
+REM JVM=hotspot|openj9|dragonwell|microsoft or both JVM=hotspot openj9
 REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
