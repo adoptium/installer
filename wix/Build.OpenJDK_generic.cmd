@@ -56,7 +56,7 @@ IF "%JVM%" == "temurin" SET JVM=hotspot
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%JVM%' ^
-    -validInputs "hotspot,openj9,dragonwell,openj9 hotspot,hotspot openj9" ^
+    -validInputs "hotspot,openj9,dragonwell,microsoft,openj9 hotspot,hotspot openj9" ^
     -delimiter ","
 
 IF %ERRORLEVEL% == 1 (
