@@ -33,7 +33,7 @@ wix build -arch !PLATFORM! ^
     -d JVM="!PACKAGE_TYPE!" ^
     -cc !CACHE_FOLDER! ^
     -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.!CULTURE!.wxl" ^
-    -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!PACKAGE_TYPE!.!CULTURE!.wxl" ^
+    -loc "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!TEMPLATE_NAME!.!CULTURE!.wxl" ^
     -out "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi" ^
     -culture !CULTURE! ^
     -pdbtype none
