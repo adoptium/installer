@@ -49,7 +49,9 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 
 		 String containerRegistry = System.getenv("CONTAINER_REGISTRY");
 
-		 if (!containerRegistry.isEmpty()) { 
+		 if (containerRegistry.isEmpty()) { 
+			System.out.println("Using default container registry");
+		 } else {
 			System.out.println("Using container registry: " + containerRegistry);
 		 }
 
