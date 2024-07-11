@@ -44,6 +44,7 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 */
 
 		 String containerRegistry = System.getProperty("CONTAINER_REGISTRY", "");
+		 System.out.println("containerRegistry: " + containerRegistry);
 
 		return Stream.of(
 			Arguments.of(containerRegistry + "rockylinux", "8"),
