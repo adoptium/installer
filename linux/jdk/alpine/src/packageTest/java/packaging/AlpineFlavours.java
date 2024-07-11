@@ -32,12 +32,21 @@ public class AlpineFlavours implements ArgumentsProvider {
          * Alpine policy: current (alive) releases and development version.
          *     (https://alpinelinux.org/releases/)
 		 */
+		
+		String containerRegistry = System.getenv("CONTAINER_REGISTRY");
+
+		if (containerRegistry.isEmpty()) { 
+			System.out.println("Using default container registry");
+		} else {
+			System.out.println("Using container registry: " + containerRegistry);
+		}
+
 		return Stream.of(
-			Arguments.of("alpine", "edge"),
-			Arguments.of("alpine", "latest"),
-			Arguments.of("alpine", "3.19"),
-			Arguments.of("alpine", "3.18"),
-			Arguments.of("alpine", "3.17")
+			Arguments.of(containerRegistry + "alpine", "edge"),
+			Arguments.of(containerRegistry + "alpine", "latest"),
+			Arguments.of(containerRegistry + "alpine", "3.19"),
+			Arguments.of(containerRegistry + "alpine", "3.18"),
+			Arguments.of(containerRegistry + "alpine", "3.17")
 		);
 	}
 }

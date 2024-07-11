@@ -43,13 +43,13 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 * ubi8 has DNF installed
 		 */
 
-		 String containerRegistry = System.getenv("CONTAINER_REGISTRY");
+		String containerRegistry = System.getenv("CONTAINER_REGISTRY");
 
-		 if (containerRegistry.isEmpty()) { 
+		if (containerRegistry.isEmpty()) { 
 			System.out.println("Using default container registry");
-		 } else {
+		} else {
 			System.out.println("Using container registry: " + containerRegistry);
-		 }
+		}
 
 		return Stream.of(
 			Arguments.of(containerRegistry + "rockylinux", "8"),

@@ -47,12 +47,14 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
 		 */
 
-		 String containerRegistry = System.getenv("CONTAINER_REGISTRY");
+		String redHatRegistry = "registry.access.redhat.com/";
+		String containerRegistry = System.getenv("CONTAINER_REGISTRY");
 
 		 if (containerRegistry.isEmpty()) { 
 			System.out.println("Using default container registry");
 		 } else {
 			System.out.println("Using container registry: " + containerRegistry);
+			redHatRegistry = containerRegistry;
 		 }
 
 		builder.add(Arguments.of(containerRegistry + "amazonlinux", "2"));
@@ -64,7 +66,7 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 *     (https://catalog.redhat.com/software/containers/ubi7/ubi/5c3592dcd70cc534b3a37814?container-tabs=technical-information).
 		 */
 		if (ubi7_supported) {
-			builder.add(Arguments.of("registry.access.redhat.com/ubi7/ubi", "latest"));
+			builder.add(Arguments.of(redHatRegistry + "ubi7/ubi", "latest"));
 		}
 
 		return builder.build();

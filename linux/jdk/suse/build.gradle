@@ -64,7 +64,7 @@ task packageJdkSuse {
 	def containerRegistry = getContainerRegistry()
 
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs([containerRegistry])
+	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {

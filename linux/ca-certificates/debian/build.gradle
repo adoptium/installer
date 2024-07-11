@@ -79,7 +79,7 @@ task packageCaCertificatesDebian {
 	def containerRegistry = getContainerRegistry()
 
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs([containerRegistry])
+	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
 
 	doLast {
 		project.copy {
@@ -112,10 +112,17 @@ task checkCaCertificatesDebian(type: Test) {
 	description = 'Tests the generated ca-certificate Debian packages.'
 	group = 'verification'
 
+	def containerRegistry = getContainerRegistry()
+
 	testClassesDirs = sourceSets.packageTest.output.classesDirs
 	classpath = sourceSets.packageTest.runtimeClasspath
 
 	environment "PACKAGE", "adoptium-ca-certificates"
+
+	if (containerRegistry != null) {
+		environment "CONTAINER_REGISTRY", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
 
 	useJUnitPlatform()
 	testLogging {

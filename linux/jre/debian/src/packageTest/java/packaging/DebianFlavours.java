@@ -35,15 +35,24 @@ public class DebianFlavours implements ArgumentsProvider {
 		 * Ubuntu policy: Current LTS versions, and development version.
 		 *     (https://wiki.ubuntu.com/Releases)
 		 */
-		 return Stream.of(
-        	        	Arguments.of("debian", "trixie"),   // Debian/13 (testing)
-                		Arguments.of("debian", "bookworm"), // Debian/12 (testing)
-                		Arguments.of("debian", "bullseye"), // Debian/11 (stable)
-                		Arguments.of("debian", "buster"),   // Debian/10 (oldstable)
-                		Arguments.of("ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
-                		Arguments.of("ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
-                		Arguments.of("ubuntu", "focal"),    // Ubuntu/20.04 (LTS)
-                		Arguments.of("ubuntu", "bionic")    // Ubuntu/18.04 (LTS)
-        	);
+
+		String containerRegistry = System.getenv("CONTAINER_REGISTRY");
+
+		if (containerRegistry.isEmpty()) { 
+			System.out.println("Using default container registry");
+		} else {
+			System.out.println("Using container registry: " + containerRegistry);
+		}
+		 
+		return Stream.of(
+        	Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)
+            Arguments.of(containerRegistry + "debian", "bookworm"), // Debian/12 (testing)
+            Arguments.of(containerRegistry + "debian", "bullseye"), // Debian/11 (stable)
+            Arguments.of(containerRegistry + "debian", "buster"),   // Debian/10 (oldstable)
+            Arguments.of(containerRegistry + "ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
+            Arguments.of(containerRegistry + "ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
+            Arguments.of(containerRegistry + "ubuntu", "focal"),    // Ubuntu/20.04 (LTS)
+            Arguments.of(containerRegistry + "ubuntu", "bionic")    // Ubuntu/18.04 (LTS)
+        );
 	}
 }

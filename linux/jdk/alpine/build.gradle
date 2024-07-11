@@ -73,7 +73,7 @@ task packageJdkAlpine {
 	def containerRegistry = getContainerRegistry()
 
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs([containerRegistry])
+	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -128,11 +128,17 @@ task checkJdkAlpine(type: Test) {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
+	def containerRegistry = getContainerRegistry()
 
 	environment "PACKAGE", "${product}-${productVersion}-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
 		println "We set the gpgkey!"
+	}
+
+	if (containerRegistry != null) {
+		environment "CONTAINER_REGISTRY", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
 	}
 
 	useJUnitPlatform()
