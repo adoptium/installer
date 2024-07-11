@@ -160,7 +160,12 @@ task checkJdkRedHat(type: Test) {
 		println "We set the gpgkey!"
 	}
 	environment "testArch", "$arch"
-	environment "CONTAINER_REGISTRY", "$containerRegistry"
+
+	if (containerRegistry != null) {
+		environment "CONTAINER_REGISTRY", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
+	
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"
