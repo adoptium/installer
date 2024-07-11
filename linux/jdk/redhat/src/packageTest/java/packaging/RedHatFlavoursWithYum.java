@@ -46,9 +46,12 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 * Oracle Linux: All supported versions until premier support runs out
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
 		 */
-		builder.add(Arguments.of("amazonlinux", "2"));
-		builder.add(Arguments.of("centos", "7"));
-		builder.add(Arguments.of("oraclelinux", "7"));
+
+		String containerRegistry = System.getProperty("CONTAINER_REGISTRY", "");
+
+		builder.add(Arguments.of(containerRegistry + "amazonlinux", "2"));
+		builder.add(Arguments.of(containerRegistry + "centos", "7"));
+		builder.add(Arguments.of(containerRegistry + "oraclelinux", "7"));
 
 		/*
 		 * Redhat UBI7: Does not currently suport aarch64 architecture
