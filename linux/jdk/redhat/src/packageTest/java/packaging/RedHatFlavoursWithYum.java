@@ -47,7 +47,11 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
 		 */
 
-		String containerRegistry = System.getProperty("CONTAINER_REGISTRY", "");
+		 String containerRegistry = System.getenv("CONTAINER_REGISTRY");
+
+		 if (!containerRegistry.isEmpty()) { 
+			System.out.println("Using container registry: " + containerRegistry);
+		 }
 
 		builder.add(Arguments.of(containerRegistry + "amazonlinux", "2"));
 		builder.add(Arguments.of(containerRegistry + "centos", "7"));
