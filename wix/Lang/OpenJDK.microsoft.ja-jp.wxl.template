@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<WixLocalization Culture="ja-jp" Codepage="932" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+    <!-- Microsoft does not currently support JREs -->
+    <String Id="JDKFeatureMainName" Value="{vendor_branding}" />
+    <String Id="JDKFeatureMainDescription" Value="{vendor_branding} " />
+    <String Id="JDKProductName" Value="{vendor_branding} " />
+    <String Id="JDKPackageDescription" Value="{vendor_branding}" />
+</WixLocalization>
