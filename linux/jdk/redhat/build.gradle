@@ -63,11 +63,15 @@ task packageJdkRedHat {
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
+	def buildArgs = []
+
 	// Get container registry property
 	def containerRegistry = getContainerRegistry()
 
+	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
+	
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
+	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -161,8 +165,10 @@ task checkJdkRedHat(type: Test) {
 	}
 	environment "testArch", "$arch"
 
-	if (containerRegistry != null) {
-		environment "CONTAINER_REGISTRY", "$containerRegistry"
+	if (containerRegistry) {
+		ext {
+			containerRegistry = containerRegistry
+		}
 		println "Container registry set to $containerRegistry"
 	}
 	

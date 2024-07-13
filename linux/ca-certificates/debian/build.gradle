@@ -75,11 +75,15 @@ task packageCaCertificatesDebian {
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
+	def buildArgs = []
+
 	// Get container registry property
 	def containerRegistry = getContainerRegistry()
 
+	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
+
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
+	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		project.copy {
@@ -112,15 +116,17 @@ task checkCaCertificatesDebian(type: Test) {
 	description = 'Tests the generated ca-certificate Debian packages.'
 	group = 'verification'
 
-	def containerRegistry = getContainerRegistry()
-
 	testClassesDirs = sourceSets.packageTest.output.classesDirs
 	classpath = sourceSets.packageTest.runtimeClasspath
 
+	def containerRegistry = getContainerRegistry()
+
 	environment "PACKAGE", "adoptium-ca-certificates"
 
-	if (containerRegistry != null) {
-		environment "CONTAINER_REGISTRY", "$containerRegistry"
+	if (containerRegistry) {
+		ext {
+			containerRegistry = containerRegistry
+		}
 		println "Container registry set to $containerRegistry"
 	}
 

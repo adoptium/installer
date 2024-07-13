@@ -71,11 +71,15 @@ task packageJdkDebian {
 	def input_dir = getInputDir()
 	def buildLocalFlag = getLocalBuildStatus()
 
+	def buildArgs = []
+
 	// Get container registry property
 	def containerRegistry = getContainerRegistry()
-
+	
+	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
+	
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
+	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -168,12 +172,21 @@ task checkJdkDebian(type: Test) {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	
+	def containerRegistry = getContainerRegistry()
 
 	// If product is microsoft set it as msopenjdk
 	if (product == "microsoft") {
 		environment "PACKAGE", "msopenjdk-$productVersion"
 	} else {
 		environment "PACKAGE", "$product-$productVersion-jdk"
+	}
+
+	if (containerRegistry) {
+		ext {
+			containerRegistry = containerRegistry
+		}
+		println "Container registry set to $containerRegistry"
 	}
 
 	useJUnitPlatform()

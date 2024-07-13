@@ -60,11 +60,15 @@ task packageJreSuse {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	def buildArgs = []
+
 	// Get container registry property
 	def containerRegistry = getContainerRegistry()
-
+	
+	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
+	
 	// Get multiple build arguments
-	def buildArgs = setBuildArgs(["CONTAINER_REGISTRY=" + containerRegistry])
+	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -123,12 +127,22 @@ task checkJreSuse(type: Test) {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	def containerRegistry = getContainerRegistry()
+
 	environment "PACKAGE", "$product-$productVersion-jre"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
 		println "We set the gpgkey!"
 	}
 	environment "testArch", "$arch"
+
+	if (containerRegistry) {
+		ext {
+			containerRegistry = containerRegistry
+		}
+		println "Container registry set to $containerRegistry"
+	}
+
 	useJUnitPlatform()
 	testLogging {
 		events "passed", "skipped", "failed"

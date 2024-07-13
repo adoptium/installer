@@ -36,7 +36,7 @@ public class SuseFlavours implements ArgumentsProvider {
 		*/
 
 		String suseRegistry = "registry.suse.com/"
-		String containerRegistry = System.getenv("CONTAINER_REGISTRY");
+		String containerRegistry = System.getProperty("containerRegistry", "");
 
 		if (containerRegistry.isEmpty()) { 
 			System.out.println("Using default container registry");
