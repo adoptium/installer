@@ -35,10 +35,9 @@ public class AlpineFlavours implements ArgumentsProvider {
 		return Stream.of(
 			Arguments.of("alpine", "edge"),
 			Arguments.of("alpine", "latest"),
-			Arguments.of("alpine", "3.17"),
-			Arguments.of("alpine", "3.16"),
-			Arguments.of("alpine", "3.15"),
-			Arguments.of("alpine", "3.14")
+			Arguments.of("alpine", "3.19"),
+			Arguments.of("alpine", "3.18"),
+			Arguments.of("alpine", "3.17")
 		);
 	}
 }
