@@ -35,7 +35,7 @@ public class SuseFlavours implements ArgumentsProvider {
 		 * SLES: All supported versions, see https://www.suse.com/lifecycle.
 		*/
 
-		String suseRegistry = "registry.suse.com/"
+		String suseRegistry = "registry.suse.com/";
 		String containerRegistry = System.getProperty("containerRegistry", "");
 
 		if (containerRegistry.isEmpty()) { 
