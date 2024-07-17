@@ -36,13 +36,14 @@ public class DebianFlavours implements ArgumentsProvider {
          *     (https://wiki.ubuntu.com/Releases)
          */
 
-        String containerRegistry = System.getProperty("containerRegistry", "");
+        String containerRegistry = "";
 
-		if (containerRegistry.isEmpty()) { 
-			System.out.println("Using default container registry");
-		} else {
-			System.out.println("Using container registry: " + containerRegistry);
-		}
+        if (System.getenv("containerRegistry") == null) {
+            System.out.println("Using default container registry");
+        } else {
+            containerRegistry = System.getenv("containerRegistry");
+            System.out.println("Using container registry: " + containerRegistry);
+        }
 
         return Stream.of(
                 Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)

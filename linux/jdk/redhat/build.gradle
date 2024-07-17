@@ -151,6 +151,7 @@ task checkJdkRedHat(type: Test) {
 	def arch = getArch()
 
 	def containerRegistry = getContainerRegistry()
+	// def containerRegistry = "junipercontainerregistry.azurecr.io/mirror/"
 
 	// If product is microsoft set it as msopenjdk
 	if (product == "microsoft") {
@@ -166,9 +167,7 @@ task checkJdkRedHat(type: Test) {
 	environment "testArch", "$arch"
 
 	if (containerRegistry) {
-		ext {
-			containerRegistry = containerRegistry
-		}
+		environment "containerRegistry", "$containerRegistry"
 		println "Container registry set to $containerRegistry"
 	}
 	

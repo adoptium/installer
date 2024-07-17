@@ -33,11 +33,12 @@ public class AlpineFlavours implements ArgumentsProvider {
 		 *     (https://alpinelinux.org/releases/)
 		 */
 
-		String containerRegistry = System.getProperty("containerRegistry", "");
+		String containerRegistry = "";
 
-		if (containerRegistry.isEmpty()) { 
+        if (System.getenv("containerRegistry") == null) { 
 			System.out.println("Using default container registry");
 		} else {
+			containerRegistry = System.getenv("containerRegistry");
 			System.out.println("Using container registry: " + containerRegistry);
 		}
 

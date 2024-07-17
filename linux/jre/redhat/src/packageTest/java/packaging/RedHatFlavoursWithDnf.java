@@ -42,11 +42,13 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 * ubi7 does not have DNF pre-installed, ubi-minimal has microdnf
 		 * ubi8 has DNF installed
 		 */
-		String containerRegistry = System.getProperty("containerRegistry", "");
 
-		if (containerRegistry.isEmpty()) { 
+		String containerRegistry = "";
+
+        if (System.getenv("containerRegistry") == null) { 
 			System.out.println("Using default container registry");
 		} else {
+			containerRegistry = System.getenv("containerRegistry");
 			System.out.println("Using container registry: " + containerRegistry);
 		}
 

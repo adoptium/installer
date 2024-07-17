@@ -48,13 +48,14 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 */
 
 		String redHatRegistry = "registry.access.redhat.com/";
-		String containerRegistry = System.getProperty("containerRegistry", "");
+		String containerRegistry = "";
 
-		if (containerRegistry.isEmpty()) { 
+        if (System.getenv("containerRegistry") == null) { 
 			System.out.println("Using default container registry");
 		} else {
-			System.out.println("Using container registry: " + containerRegistry);
+			containerRegistry = System.getenv("containerRegistry");
 			redHatRegistry = containerRegistry;
+			System.out.println("Using container registry: " + containerRegistry);
 		}
 
 		builder.add(Arguments.of(containerRegistry + "amazonlinux", "2"));

@@ -142,9 +142,7 @@ task checkJreAlpine(type: Test) {
 	}
 
 	if (containerRegistry) {
-		ext {
-			containerRegistry = containerRegistry
-		}
+		environment "containerRegistry", "$containerRegistry"
 		println "Container registry set to $containerRegistry"
 	}
 
