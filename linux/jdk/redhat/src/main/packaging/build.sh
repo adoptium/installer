@@ -63,5 +63,9 @@ done;
 find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out
 # Sign generated RPMs with rpmsign.
 if grep -q %_gpg_name /home/builder/.rpmmacros; then
-	rpmsign --addsign /home/builder/out/*.rpm
-fi
+	rm -f ~/.gnupg/public-keys.d/pubring.db.lock
+	for file in `ls /home/builder/out/*.rpm`; do
+		echo Signing: $file
+	  rpmsign --addsign $file
+  done
+fi;
