@@ -4,7 +4,7 @@
 # also not very intuitive:
 #  $ rpmdev-vercmp 17.0.1.0.1___17.0.1.0+12
 %global spec_version 17.0.12.0.0.7
-%global spec_release 1
+%global spec_release 2
 #  17.0.3.0.0___7 == 17.0.3.0.0+7
 %global priority 1161
 
@@ -269,6 +269,8 @@ fi
 %{prefix}
 
 %changelog
+* Thu Jul 25 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.12.0.0.7-2
+- Eclipse Temurin 17.0.12+7-2 release.
 * Wed Jul 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.12.0.0.7-1
 - Eclipse Temurin 17.0.12+7 release.
 * Wed Apr 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 17.0.11.0.0.9-1
