@@ -4,14 +4,14 @@ pkg_name = temurin-8-jre
 priority = 1082
 # The list below must be kept in sync with the jinfo.in file
 jvm_tools = java jjs keytool orbd pack200 policytool rmid rmiregistry servertool tnameserv unpack200
-amd64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u412-b08/OpenJDK8U-jre_x64_linux_hotspot_8u412b08.tar.gz
-amd64_checksum = a8d994332a2ff15d48bf04405c3b2f6bd331a928dd96639b15e62891f7172363
-arm64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u412-b08/OpenJDK8U-jre_aarch64_linux_hotspot_8u412b08.tar.gz
-arm64_checksum = 17550a6a4ddf71ac81ba8f276467bc58f036c123c0f1bafcafd69f70e3e49cf5
-armhf_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u412-b08/OpenJDK8U-jre_arm_linux_hotspot_8u412b08.tar.gz
-armhf_checksum = 1a6b470ac83b241223447a1e6cb55c4a8f78af0146b9387e9842625041226654
-ppc64el_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u412-b08/OpenJDK8U-jre_ppc64le_linux_hotspot_8u412b08.tar.gz
-ppc64el_checksum = d3157230c01b320e47ad6df650e83b15f8f76294d0df9f1c03867d07fe2883c9
+amd64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u422-b05/OpenJDK8U-jre_x64_linux_hotspot_8u422b05.tar.gz
+amd64_checksum = 0ac516cc1eadffb4cd3cfc9736a33d58ea6a396bf85729036c973482f7c063d9
+arm64_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u422-b05/OpenJDK8U-jre_aarch64_linux_hotspot_8u422b05.tar.gz
+arm64_checksum = 8fbefff2c578f73d95118d830347589ddc9aa84510200a5a5001901c2dea4810
+armhf_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u422-b05/OpenJDK8U-jre_arm_linux_hotspot_8u422b05.tar.gz
+armhf_checksum = 13bdefdeae6f18bc9c87bba18c853b8b12c5442ce07ff0a3956ce28776d695ff
+ppc64el_tarball_url = https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u422-b05/OpenJDK8U-jre_ppc64le_linux_hotspot_8u422b05.tar.gz
+ppc64el_checksum = 2991edbedee448c0f1edf131beca84b415dac64ea97365b9bfd85bc2f39893bb
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
