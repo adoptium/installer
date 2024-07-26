@@ -119,8 +119,8 @@ Source3: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_ar
 Source4: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source5: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch3}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Fourth architecture (s390x)
-Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jdk_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source6: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source7: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch4}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 # Fifth architecture (riscv64)
 Source8: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK22U-jre_%{vers_arch5}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
