@@ -55,3 +55,17 @@ def getInputDir() {
 def getLocalBuildStatus() {
 	return hasProperty("INPUT_DIR") ? "true" : "false"
 }
+
+def getContainerRegistry() {
+	return hasProperty("CONTAINER_REGISTRY") ? CONTAINER_REGISTRY.toString() : ""
+}
+
+def setBuildArgs(args) {
+	def buildArgs = ""
+
+	for (item in args) {
+		buildArgs += "--build-arg=" + item
+	}
+
+	return buildArgs
+}

@@ -1,4 +1,7 @@
-FROM opensuse/leap:15.6
+ARG CONTAINER_REGISTRY=""
+
+FROM ${CONTAINER_REGISTRY}tianon/gosu as gosu
+FROM ${CONTAINER_REGISTRY}opensuse/leap:15.6
 
 RUN zypper update -y && zypper install -y rpm-build \
 	rpm-devel \
@@ -11,7 +14,7 @@ RUN zypper update -y && zypper install -y rpm-build \
 	tini \
 	wget
 
-COPY --from=tianon/gosu /gosu /usr/local/bin/
+COPY --from=gosu /gosu /usr/local/bin/
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid

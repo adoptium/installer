@@ -69,6 +69,16 @@ task packageJdkAlpine {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	def buildArgs = []
+
+	// Get container registry property
+	def containerRegistry = getContainerRegistry()
+	
+	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
+	
+	// Get multiple build arguments
+	buildArgs = setBuildArgs(buildArgs)
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -84,6 +94,7 @@ task packageJdkAlpine {
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"--secret", "id=gpg,src=${gpgKey}",
+					"${buildArgs}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -92,6 +103,7 @@ task packageJdkAlpine {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
+					"${buildArgs}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -120,11 +132,17 @@ task checkJdkAlpine(type: Test) {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 	def gpgKey = getGPGKey()
+	def containerRegistry = getContainerRegistry()
 
 	environment "PACKAGE", "${product}-${productVersion}-jdk"
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
 		println "We set the gpgkey!"
+	}
+
+	if (containerRegistry) {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
 	}
 
 	useJUnitPlatform()
