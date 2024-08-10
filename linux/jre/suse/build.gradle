@@ -60,15 +60,8 @@ task packageJreSuse {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
-	def buildArgs = []
-
-	// Get container registry property
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
-	
-	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
-	
-	// Get multiple build arguments
-	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -85,7 +78,7 @@ task packageJreSuse {
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-suse",
 					"--secret", "id=gpg,src=${gpgKey}",
-					"${buildArgs}",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -94,7 +87,7 @@ task packageJreSuse {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-suse",
-					"${buildArgs}",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}

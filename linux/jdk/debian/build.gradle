@@ -71,15 +71,8 @@ task packageJdkDebian {
 	def input_dir = getInputDir()
 	def buildLocalFlag = getLocalBuildStatus()
 
-	def buildArgs = []
-
-	// Get container registry property
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
-	
-	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
-	
-	// Get multiple build arguments
-	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -117,7 +110,7 @@ if ("$arch" == "armhf") {
 			commandLine "docker", "build", "--no-cache",
 				"--build-arg", "IMAGE=arm32v7/debian:bullseye",
 				"-t", "adoptium-packages-linux-jdk-debian",
-				"${buildArgs}",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
 		}
@@ -129,7 +122,7 @@ if ("$arch" == "riscv64") {
 			commandLine "docker", "build", "--no-cache",
 				"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
 				"-t", "adoptium-packages-linux-jdk-debian",
-				"${buildArgs}",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -140,7 +133,7 @@ if ("$arch" != "armhf" && "$arch" != "riscv64"){
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-jdk-debian",
-				"${buildArgs}",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
      }

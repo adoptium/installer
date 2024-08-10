@@ -69,15 +69,8 @@ task packageJreAlpine {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
-	def buildArgs = []
-
-	// Get container registry property
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
-	
-	buildArgs.add("CONTAINER_REGISTRY=" + containerRegistry)
-	
-	// Get multiple build arguments
-	buildArgs = setBuildArgs(buildArgs)
 
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
@@ -93,7 +86,7 @@ task packageJreAlpine {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
-					"${buildArgs}",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
@@ -103,7 +96,7 @@ task packageJreAlpine {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache",
 					"-t", "adoptium-packages-linux-jdk-alpine",
-					"${buildArgs}",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
