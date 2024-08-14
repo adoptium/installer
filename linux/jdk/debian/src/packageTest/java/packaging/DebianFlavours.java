@@ -27,33 +27,33 @@ import java.util.stream.Stream;
  * @author luozhenyu
  */
 public class DebianFlavours implements ArgumentsProvider {
-    @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        /*
-         * Debian policy: oldstable, stable and testing version.
-         *     (https://www.debian.org/releases/)
-         * Ubuntu policy: Current LTS versions, and development version.
-         *     (https://wiki.ubuntu.com/Releases)
-         */
+	@Override
+	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
+		/*
+		 * Debian policy: oldstable, stable and testing version.
+		 *     (https://www.debian.org/releases/)
+		 * Ubuntu policy: Current LTS versions, and development version.
+		 *     (https://wiki.ubuntu.com/Releases)
+		 */
 
-        String containerRegistry = "";
+		String containerRegistry = "";
 
-        if (System.getenv("containerRegistry") == null) {
-            System.out.println("Using docker.io as the default container registry");
-        } else {
-            containerRegistry = System.getenv("containerRegistry");
-            System.out.println("Using container registry: " + containerRegistry);
-        }
+		if (System.getenv("containerRegistry") == null) {
+			System.out.println("Using docker.io as the default container registry");
+		} else {
+			containerRegistry = System.getenv("containerRegistry");
+			System.out.println("Using container registry: " + containerRegistry);
+		}
 
-        return Stream.of(
-                Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)
-                Arguments.of(containerRegistry + "debian", "bookworm"), // Debian/12 (testing)
-                Arguments.of(containerRegistry + "debian", "bullseye"), // Debian/11 (stable)
-                Arguments.of(containerRegistry + "debian", "buster"),   // Debian/10 (oldstable)
-                Arguments.of(containerRegistry + "ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
-                Arguments.of(containerRegistry + "ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
-                Arguments.of(containerRegistry + "ubuntu", "focal"),    // Ubuntu/20.04 (LTS)
-                Arguments.of(containerRegistry + "ubuntu", "bionic")    // Ubuntu/18.04 (LTS)
-        );
-    }
+		return Stream.of(
+				Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)
+				Arguments.of(containerRegistry + "debian", "bookworm"), // Debian/12 (testing)
+				Arguments.of(containerRegistry + "debian", "bullseye"), // Debian/11 (stable)
+				Arguments.of(containerRegistry + "debian", "buster"),   // Debian/10 (oldstable)
+				Arguments.of(containerRegistry + "ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
+				Arguments.of(containerRegistry + "ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
+				Arguments.of(containerRegistry + "ubuntu", "focal"),    // Ubuntu/20.04 (LTS)
+				Arguments.of(containerRegistry + "ubuntu", "bionic")    // Ubuntu/18.04 (LTS)
+		);
+	}
 }

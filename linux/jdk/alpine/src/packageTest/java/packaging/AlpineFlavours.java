@@ -29,13 +29,13 @@ public class AlpineFlavours implements ArgumentsProvider {
 	@Override
 	public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
 		/*
-         * Alpine policy: current (alive) releases and development version.
-         *     (https://alpinelinux.org/releases/)
+		 * Alpine policy: current (alive) releases and development version.
+		 *     (https://alpinelinux.org/releases/)
 		 */
 		
 		String containerRegistry = "";
 
-        if (System.getenv("containerRegistry") == null) {
+		if (System.getenv("containerRegistry") == null) {
 			System.out.println("Using docker.io as the default container registry");
 		} else {
 			containerRegistry = System.getenv("containerRegistry");

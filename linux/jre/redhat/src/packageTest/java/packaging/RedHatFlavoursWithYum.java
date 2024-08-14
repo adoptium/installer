@@ -50,7 +50,7 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		String redHatRegistry = "registry.access.redhat.com/";
 		String containerRegistry = "";
 
-        if (System.getenv("containerRegistry") == null) { 
+		if (System.getenv("containerRegistry") == null) { 
 			System.out.println("Using docker.io as the default container registry");
 		} else {
 			containerRegistry = System.getenv("containerRegistry");
