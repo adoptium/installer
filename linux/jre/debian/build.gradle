@@ -169,7 +169,7 @@ task checkJreDebian(type: Test) {
 
 	environment "PACKAGE", "${product}-${productVersion}-jre"
 
-	if (containerRegistry) {
+	if (containerRegistry != null && containerRegistry != "") {
 		environment "containerRegistry", "$containerRegistry"
 		println "Container registry set to $containerRegistry"
 	}

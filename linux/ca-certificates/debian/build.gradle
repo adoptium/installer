@@ -116,7 +116,7 @@ task checkCaCertificatesDebian(type: Test) {
 
 	environment "PACKAGE", "adoptium-ca-certificates"
 
-	if (containerRegistry) {
+	if (containerRegistry != null && containerRegistry != "") {
 		environment "containerRegistry", "$containerRegistry"
 		println "Container registry set to $containerRegistry"
 	}

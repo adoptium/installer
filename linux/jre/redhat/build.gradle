@@ -152,7 +152,7 @@ task checkJreRedHat(type: Test) {
 	}
 	environment "testArch", "$arch"
 
-	if (containerRegistry) {
+	if (containerRegistry != null && containerRegistry != "") {
 		environment "containerRegistry", "$containerRegistry"
 		println "Container registry set to $containerRegistry"
 	}
