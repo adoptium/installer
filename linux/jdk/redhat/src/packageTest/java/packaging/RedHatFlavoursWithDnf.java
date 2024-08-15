@@ -55,9 +55,9 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		return Stream.of(
 			Arguments.of(containerRegistry + "rockylinux", "8"),
 			Arguments.of(containerRegistry + "fedora", "35"),
+			Arguments.of(containerRegistry + "fedora", "36"),
 			Arguments.of(containerRegistry + "fedora", "37"),
 			Arguments.of(containerRegistry + "fedora", "38"),
-			Arguments.of(containerRegistry + "fedora", "36"),
 			Arguments.of(containerRegistry + "fedora", "39"),
 			Arguments.of(containerRegistry + "redhat/ubi8", "latest"),
 			Arguments.of(containerRegistry + "redhat/ubi9", "latest"),
