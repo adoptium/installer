@@ -46,16 +46,16 @@
       <?define OracleJavasoftBaseKey="JRE" ?>
     <?else?>
       <?define OracleJavasoftBaseKey="JDK" ?>
-    <?endif?>            
+    <?endif?>
   <?else?>
     <?define OracleVersionKey="1.8" ?>
     <?if $(env.PRODUCT_CATEGORY)="jre"?>
       <?define OracleJavasoftBaseKey="Java Runtime Environment" ?>
     <?else?>
       <?define OracleJavasoftBaseKey="Java Development Kit" ?>
-    <?endif?>    
+    <?endif?>
   <?endif?>
-  
+
   <?if $(var.JVM)="openj9" ?>
     <?define license="license-OpenJ9.en-us.rtf" ?>
     <?define license_shown="1" ?>
@@ -92,7 +92,7 @@
   <?else?>
     <?define DllPath="no DllPath known for $(var.JVM)" ?>
   <?endif?>
-  
+
   <!-- Static settings, DO NOT TOUCH or upgrades will break! -->
   <?define RTMProductVersion="1.0.0" ?>
 </Include>
