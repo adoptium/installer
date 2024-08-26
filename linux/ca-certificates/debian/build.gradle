@@ -75,6 +75,9 @@ task packageCaCertificatesDebian {
 	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
 	outputs.dir(outputDir)
 
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
+	def containerRegistry = getContainerRegistry()
+
 	doLast {
 		project.copy {
 			from("src/main/packaging/")
@@ -84,6 +87,7 @@ task packageCaCertificatesDebian {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-cacerts-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
 		}
@@ -108,7 +112,14 @@ task checkCaCertificatesDebian(type: Test) {
 	testClassesDirs = sourceSets.packageTest.output.classesDirs
 	classpath = sourceSets.packageTest.runtimeClasspath
 
+	def containerRegistry = getContainerRegistry()
+
 	environment "PACKAGE", "adoptium-ca-certificates"
+
+	if (containerRegistry != null && containerRegistry != "") {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
 
 	useJUnitPlatform()
 	testLogging {

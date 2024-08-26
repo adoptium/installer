@@ -46,16 +46,28 @@ public class RedHatFlavoursWithYum implements ArgumentsProvider {
 		 * Oracle Linux: All supported versions until premier support runs out
 		 *     (https://www.oracle.com/a/ocom/docs/elsp-lifetime-069338.pdf)
 		 */
-		builder.add(Arguments.of("amazonlinux", "2"));
-		builder.add(Arguments.of("centos", "7"));
-		builder.add(Arguments.of("oraclelinux", "7"));
+
+		String redHatRegistry = "registry.access.redhat.com/";
+		String containerRegistry = "";
+
+		if (System.getenv("containerRegistry") == null) { 
+			System.out.println("Using docker.io as the default container registry");
+		} else {
+			containerRegistry = System.getenv("containerRegistry");
+			redHatRegistry = containerRegistry;
+			System.out.println("Using container registry: " + containerRegistry);
+		}
+
+		builder.add(Arguments.of(containerRegistry + "amazonlinux", "2"));
+		builder.add(Arguments.of(containerRegistry + "centos", "7"));
+		builder.add(Arguments.of(containerRegistry + "oraclelinux", "7"));
 		
 		/*
 		 * Redhat UBI7: Does not currently suport aarch64 architecture
 		 *     (https://catalog.redhat.com/software/containers/ubi7/ubi/5c3592dcd70cc534b3a37814?container-tabs=technical-information).
 		 */
 		if (ubi7_supported) {
-			builder.add(Arguments.of("registry.access.redhat.com/ubi7/ubi", "latest"));
+			builder.add(Arguments.of(redHatRegistry + "ubi7/ubi", "latest"));
 		}
 		
 		return builder.build();

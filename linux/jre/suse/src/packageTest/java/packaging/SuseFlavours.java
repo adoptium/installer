@@ -34,12 +34,24 @@ public class SuseFlavours implements ArgumentsProvider {
 		 * OpenSUSE: All supported versions, see https://en.opensuse.org/Lifetime.
 		 * SLES: All supported versions, see https://www.suse.com/lifecycle.
 		*/
+
+		String suseRegistry = "registry.suse.com/";
+		String containerRegistry = "";
+
+		if (System.getenv("containerRegistry") == null) { 
+			System.out.println("Using docker.io as the default container registry");
+		} else {
+			containerRegistry = System.getenv("containerRegistry");
+			suseRegistry = containerRegistry;
+			System.out.println("Using container registry: " + containerRegistry);
+		}
+
 		return Stream.of(
-			Arguments.of("opensuse/leap", "15.3"),
-			Arguments.of("opensuse/leap", "15.4"),
-			Arguments.of("opensuse/leap", "15.5"),
-			Arguments.of("registry.suse.com/suse/sles12sp5", "latest"),
-			Arguments.of("registry.suse.com/suse/sle15", "latest")
+			Arguments.of(containerRegistry + "opensuse/leap", "15.3"),
+			Arguments.of(containerRegistry + "opensuse/leap", "15.4"),
+			Arguments.of(containerRegistry + "opensuse/leap", "15.5"),
+			Arguments.of(suseRegistry + "suse/sles12sp5", "latest"),
+			Arguments.of(suseRegistry + "suse/sle15", "latest")
 		);
 	}
 }

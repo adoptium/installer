@@ -71,6 +71,9 @@ task packageJdkDebian {
 	def input_dir = getInputDir()
 	def buildLocalFlag = getLocalBuildStatus()
 
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
+	def containerRegistry = getContainerRegistry()
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -107,6 +110,7 @@ if ("$arch" == "armhf") {
 			commandLine "docker", "build", "--no-cache",
 				"--build-arg", "IMAGE=arm32v7/debian:bullseye",
 				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
 		}
@@ -118,6 +122,7 @@ if ("$arch" == "riscv64") {
 			commandLine "docker", "build", "--no-cache",
 				"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
 				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
 			}
@@ -128,6 +133,7 @@ if ("$arch" != "armhf" && "$arch" != "riscv64"){
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache",
 				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
 				getProjectDir().absolutePath + "/src/main/packaging"
      }
@@ -159,12 +165,19 @@ task checkJdkDebian(type: Test) {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
+	
+	def containerRegistry = getContainerRegistry()
 
 	// If product is microsoft set it as msopenjdk
 	if (product == "microsoft") {
 		environment "PACKAGE", "msopenjdk-$productVersion"
 	} else {
 		environment "PACKAGE", "$product-$productVersion-jdk"
+	}
+
+	if (containerRegistry != null && containerRegistry != "") {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
 	}
 
 	useJUnitPlatform()

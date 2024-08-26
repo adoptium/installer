@@ -42,16 +42,26 @@ public class RedHatFlavoursWithDnf implements ArgumentsProvider {
 		 * ubi7 does not have DNF pre-installed, ubi-minimal has microdnf
 		 * ubi8 has DNF installed
 		 */
+
+		String containerRegistry = "";
+
+		if (System.getenv("containerRegistry") == null) { 
+			System.out.println("Using docker.io as the default container registry");
+		} else {
+			containerRegistry = System.getenv("containerRegistry");
+			System.out.println("Using container registry: " + containerRegistry);
+		}
+
 		return Stream.of(
-			Arguments.of("rockylinux", "8"),
-			Arguments.of("fedora", "35"),
-			Arguments.of("fedora", "36"),
-			Arguments.of("fedora", "37"),
-			Arguments.of("fedora", "38"),
-			Arguments.of("fedora", "39"),
-			Arguments.of("redhat/ubi8", "latest"),
-			Arguments.of("redhat/ubi9", "latest"),
-			Arguments.of("oraclelinux", "8")
+			Arguments.of(containerRegistry + "rockylinux", "8"),
+			Arguments.of(containerRegistry + "fedora", "35"),
+			Arguments.of(containerRegistry + "fedora", "36"),
+			Arguments.of(containerRegistry + "fedora", "37"),
+			Arguments.of(containerRegistry + "fedora", "38"),
+			Arguments.of(containerRegistry + "fedora", "39"),
+			Arguments.of(containerRegistry + "redhat/ubi8", "latest"),
+			Arguments.of(containerRegistry + "redhat/ubi9", "latest"),
+			Arguments.of(containerRegistry + "oraclelinux", "8")
 		);
 	}
 }

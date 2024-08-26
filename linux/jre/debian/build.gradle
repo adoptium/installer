@@ -71,6 +71,9 @@ task packageJreDebian {
 	def input_dir = getInputDir()
 	def buildLocalFlag = getLocalBuildStatus()
 
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
+	def containerRegistry = getContainerRegistry()
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -108,6 +111,7 @@ task packageJreDebian {
 					commandLine "docker", "build", "--no-cache",
 					  "--build-arg", "IMAGE=arm32v7/debian:bullseye",
 						"-t", "adoptium-packages-linux-jdk-debian",
+						"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 				}
@@ -119,6 +123,7 @@ task packageJreDebian {
 					commandLine "docker", "build", "--no-cache",
 						"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
 						"-t", "adoptium-packages-linux-jdk-debian",
+						"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 					}
@@ -129,6 +134,7 @@ task packageJreDebian {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache",
 						"-t", "adoptium-packages-linux-jdk-debian",
+						"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 						"-f", "Dockerfile",
 						getProjectDir().absolutePath + "/src/main/packaging"
 		     }
@@ -159,7 +165,14 @@ task checkJreDebian(type: Test) {
 	def product = getProduct()
 	def productVersion = getProductVersion()
 
+	def containerRegistry = getContainerRegistry()
+
 	environment "PACKAGE", "${product}-${productVersion}-jre"
+
+	if (containerRegistry != null && containerRegistry != "") {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
 
 	useJUnitPlatform()
 	testLogging {
