@@ -183,7 +183,7 @@ jobs:
           pattern: test-results-*
           merge-multiple: true
       
-      - uses: geekyeggo/delete-artifact@24928e75e6e6590170563b8ddae9fac674508aa1 # v5.0.0
+      - uses: geekyeggo/delete-artifact@f275313e70c08f6120db482d7a6b98377786765b # v5.1.0
         with:
           name: test-results-*
 
