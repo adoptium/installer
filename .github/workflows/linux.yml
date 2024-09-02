@@ -125,7 +125,7 @@ jobs:
           export _JAVA_OPTIONS="-Xmx4G"
           ./gradlew --parallel :ca-certificates:check --stacktrace
 
-      - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         if: always() # always run even if the previous step fails
         with:
           name: test-results-ca-certificates
@@ -166,7 +166,7 @@ jobs:
           mkdir ${{ matrix.product.version }}
           mv $( echo "${{ matrix.image_type }}" | tr [:upper:] [:lower:] ) ${{ matrix.product.version }}
 
-      - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         if: always() # always run even if the previous step fails
         with:
           name: test-results-${{ matrix.product.name }}-${{ matrix.product.version }}-${{ matrix.distro }}-${{ matrix.image_type }}
@@ -187,7 +187,7 @@ jobs:
         with:
           name: test-results-*
 
-      - uses: actions/upload-artifact@834a144ee995460fba8ed112a2fc961b36a5ec5a # v4.3.6
+      - uses: actions/upload-artifact@50769540e7f4bd5e21e526ee35c689e35e0d6874 # v4.4.0
         with:
           name: test-results
           path: '**/build/test-results/**/TEST-*.xml'
