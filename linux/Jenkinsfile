@@ -38,7 +38,7 @@ pipeline {
     }
     parameters {
         choice(name: 'TYPE', choices: Types.ALL, description: 'Build JDK or JRE')
-        choice(name: 'VERSION', choices: ['8', '11', '17', '21', '22'], description: 'Build for specific JDK VERSION')
+        choice(name: 'VERSION', choices: ['8', '11', '17', '21', '22', '23'], description: 'Build for specific JDK VERSION')
         choice(name: 'ARCH', choices: ['x86_64', 'armv7hl', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'riscv64', 'all'], description: 'Build for specific platform\n s390x not for VERSION 8\n Use armv7l for DebARM32 armv7hl for RH/Suse')
         choice(name: 'DISTRO', choices: ['all', 'Alpine', 'Debian', 'RedHat', 'Suse'], description: 'Build for specific Distro\n Select RPM builds for RedHat and Suse')
         booleanParam(name: 'uploadPackage', defaultValue: false, description: 'Tick this box to upload the deb/rpm files (exclude src.rpm) to Artifactory for official release')
@@ -259,6 +259,9 @@ def jenkinsStepDeb() {
     // for one single ARCH add into array
     debArchAllList.add("${ARCH}")
 
+    // Due to the jenkinsfile issues with string/numberic comparisons
+    // The individual if statements ensure stability and consistency
+
     // when ARCH = all, rewrite list
     if ("${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'armv7l', 'aarch64', 'ppc64le', 's390x', 'riscv64']
@@ -277,6 +280,10 @@ def jenkinsStepDeb() {
     }
     // remove Arm32 & add riscv64 for JDK22
     if ("${VERSION}" == '22' && "${ARCH}" == 'all') {
+        debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
+    }
+    // remove Arm32 & add riscv64 for JDK23
+    if ("${VERSION}" == '23' && "${ARCH}" == 'all') {
         debArchAllList = ['x86_64', 'aarch64', 'ppc64le', 's390x', 'riscv64']
     }
 
@@ -413,6 +420,9 @@ def buildAndTest(String DISTRO, String buildArch, String VERSION) {
               case "22":
                 debArchList.remove('armv7l')
                 break
+              case "23":
+                debArchList.remove('armv7l')
+                break
               default:
                 // Handle Any other cases by defaulting to the main list.
                 break
@@ -490,7 +500,7 @@ def uploadDebArtifacts(String buildArch, String Version) {
         'riscv64'  : 'riscv64'
     ]
 
-    if (['8', '11', '17', '21', '22'].contains(VERSION)) {
+    if (['8', '11', '17', '21', '22', '23'].contains(VERSION)) {
         debArchList = [
             'x86_64' : 'amd64',
             'armv7l': 'armhf',
@@ -499,8 +509,8 @@ def uploadDebArtifacts(String buildArch, String Version) {
             's390x'  : 's390x',
             'riscv64'  : 'riscv64'
         ]
-        if (['21', '22'].contains(VERSION)) {
-            debArchList.remove('armv7l') // Removing armv7l for versions 21 and 22
+        if (['21', '22', '23'].contains(VERSION)) {
+            debArchList.remove('armv7l') // Removing armv7l for versions 21,22,23
         }
         if (VERSION == "8") {
             debArchList.remove('s390x') // Removing s390x for version 8
@@ -513,7 +523,7 @@ def uploadDebArtifacts(String buildArch, String Version) {
     echo "Debian Architecture Upload List = ${debArchList}"
 
     /*
-        Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10
+        Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10  24.04
         add more into list when available for release
         also update linux/{jdk,jre}/debian/main/packing/build.sh
     */
@@ -608,6 +618,10 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
     rpmArchList['riscv64'] = 'riscv64'
   }
   if (VERSION == '22') {
+    rpmArchList['s390x'] = 's390x'
+    rpmArchList['riscv64'] = 'riscv64'
+  }
+  if (VERSION == '23') {
     rpmArchList['s390x'] = 's390x'
     rpmArchList['riscv64'] = 'riscv64'
   }
