@@ -3,16 +3,16 @@
 pkg_name = temurin-23-jre
 priority = 2312
 jvm_tools = java jfr jrunscript jwebserver keytool rmiregistry
-amd64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jre_x64_linux_hotspot_22.0.2_9.tar.gz
-amd64_checksum = 41e401f287e1850631b259b483929462217ac6b1cc3c7359d80b1cc01ee5a666
-arm64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jre_aarch64_linux_hotspot_22.0.2_9.tar.gz
-arm64_checksum = 7cf494b51625505d1843ad032677d885bd8000a80d0d38396685f25acbdb5708
-ppc64el_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jre_ppc64le_linux_hotspot_22.0.2_9.tar.gz
-ppc64el_checksum = 132191d6f23ad1ac558de67e3e9913d047db07efd979eb84bf5dc20a651ffe61
-s390x_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jre_s390x_linux_hotspot_22.0.2_9.tar.gz
-s390x_checksum = 4d9bc998c29fffcbbf752e9d0bf32391928a9e7a46edb1c5706e0f55b34a0c56
-riscv64_tarball_url = https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jre_riscv64_linux_hotspot_22.0.2_9.tar.gz
-riscv64_checksum = 81aacc0ae75e65846e6207edf41b8c5927673eba5588eebc5ba8076ca9a6041c
+amd64_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jre_x64_linux_hotspot_23_37.tar.gz
+amd64_checksum = 9c3c3d42ffb2603b328b7154fc9eb449ef87488b3cbeb24a497d46677c7fd44d
+arm64_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jre_aarch64_linux_hotspot_23_37.tar.gz
+arm64_checksum = ec45f4f9a4a98d8a0af24b508ca84a411ea88fac8abb8ad2cfca85cb3902ab5d
+ppc64el_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jre_ppc64le_linux_hotspot_23_37.tar.gz
+ppc64el_checksum = 9120876c35b904ac041c5a021330a6f11d4e6c7537ce28bdbb7170b944673435
+s390x_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jre_s390x_linux_hotspot_23_37.tar.gz
+s390x_checksum = b42ac56cfb90b313b73622221d8944d32996376d2d953e4ee3942439c5ce91bb
+riscv64_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jre_riscv64_linux_hotspot_23_37.tar.gz
+riscv64_checksum = edefdbfdf6e2b41d020361f7140edcacd0a36694ac68f82fe0a83d982d870a45
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm

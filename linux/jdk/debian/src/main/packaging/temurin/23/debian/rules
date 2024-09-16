@@ -3,16 +3,17 @@
 pkg_name = temurin-23-jdk
 priority = 2311
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd jwebserver keytool rmiregistry serialver jexec jspawnhelper
-amd64_tarball_url =
-amd64_checksum =
-arm64_tarball_url =
-arm64_checksum =
-ppc64el_tarball_url =
-ppc64el_checksum =
-s390x_tarball_url =
-s390x_checksum =
-riscv64_tarball_url =
-riscv64_checksum =
+
+amd64_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_x64_linux_hotspot_23_37.tar.gz
+amd64_checksum = 630c4f3870056e7e005736ec1edc34ee63a9b45e2027582c52f53a9bf44314b8
+arm64_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_aarch64_linux_hotspot_23_37.tar.gz
+arm64_checksum = e8043d1bd9c4f42c5cf7883aca1fc3ef6bcccf4a664f378818ac0fd4fb987b7e
+ppc64el_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_ppc64le_linux_hotspot_23_37.tar.gz
+ppc64el_checksum = 4d3b0609c783dea1f6a899bfc8c84b4000d1f48f39e2489d70050bbf2c7f7d9c
+s390x_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_s390x_linux_hotspot_23_37.tar.gz
+s390x_checksum = 2f9cb1db72ddc91f0b90904d038bca9314bc0bafedb0efe1233469bf3c934e58
+riscv64_tarball_url = https://github.com/adoptium/temurin23-binaries/releases/download/jdk-23%2B37/OpenJDK23U-jdk_riscv64_linux_hotspot_23_37.tar.gz
+riscv64_checksum = 4d8b991964f78b91ff74dfcb51a4f00e51f7a4100927d32899fc385df3f145ee
 
 d = debian/$(pkg_name)
 jvm_home = usr/lib/jvm
