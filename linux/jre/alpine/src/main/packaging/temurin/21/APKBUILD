@@ -1,11 +1,7 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-21
 pkgver=21.0.4_p7
-# replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
-_pkgvername=${_pkgverplus/+/%2B}
-pkgrel=1
+pkgrel=0
 pkgdesc="Eclipse Temurin 21"
 provider_priority=21
 url="https://adoptium.net"
@@ -25,7 +21,9 @@ makedepends="
 "
 depends=""
 subpackages="$pkgname-jre:_jre"
-source="https://github.com/adoptium/temurin21-binaries/releases/download/jdk-$_pkgvername/OpenJDK21u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
+source="
+	https://github.com/adoptium/temurin21-binaries/releases/download/jdk-21.0.4%2B7/OpenJDK21U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_21.0.4_7.tar.gz
+"
 
 _java_home="/usr/lib/jvm/java-21-temurin-jre"
 
@@ -37,16 +35,19 @@ prepare() {
 }
 
 check() {
-	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+	local _java_bin="./jdk-21.0.4+7-jre/bin"
 
+	
 	# 1) check that java -version works
 	$_java_bin/java -version
 }
 
 package() {
 	mkdir -p "$pkgdir/$_java_home"
-	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-21.0.4+7-jre/* "$pkgdir/$_java_home"
 }
+
+
 
 _jre() {
 	pkgdesc="Eclipse Temurin 21 (JRE)"
@@ -70,14 +71,14 @@ _jre() {
 }
 
 case "$CARCH" in
-	x86_64)
-		_arch_sum="0dfd0ebab44d777f65bceaff7f79e8e0b9deb74a5eb166922483f1864bcf2052"
-		;;
 	aarch64)
 		_arch_sum="f9410264235861deaf30f97bec80870cf3bc38b1d8e57d897d8bb1f706ae6705"
+		;;
+	x86_64)
+		_arch_sum="0dfd0ebab44d777f65bceaff7f79e8e0b9deb74a5eb166922483f1864bcf2052"
 		;;
 esac
 
 sha256sums="
-$_arch_sum  OpenJDK21u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK21U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_21.0.4_7.tar.gz
 "
