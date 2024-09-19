@@ -1,4 +1,4 @@
-%global upstream_version 23.0.0+37
+%global upstream_version 23+37
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -8,7 +8,7 @@
 %global spec_release 0
 %global priority 2300
 
-%global source_url_base https://github.com/adoptium/temurin22-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin23-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjdk
