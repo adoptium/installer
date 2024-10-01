@@ -20,8 +20,8 @@ Depends: adoptium-ca-certificates,
          zlib1g
 Recommends: fonts-dejavu-core,
             fonts-dejavu-extra
-Provides: java-runtime,
-          java-runtime-headless,
+Provides: java-runtime (= 21),
+          java-runtime-headless (= 21),
           java10-runtime,
           java11-runtime,
           java12-runtime,
