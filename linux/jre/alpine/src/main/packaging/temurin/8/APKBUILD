@@ -1,10 +1,6 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-8-jre
 pkgver=8.422.05
-# replace 8. with 8u and .01 with b-01
-_pkgver=${pkgver/8./8u}
-_pkgver=${_pkgver%.*}b${_pkgver#*.}
-_pkgvername=${_pkgver%b*}-b${_pkgver#*b}
 pkgrel=0
 pkgdesc="Eclipse Temurin 8 (JRE)"
 provider_priority=8
@@ -16,8 +12,8 @@ makedepends="
 	libpng-dev
 	libxcomposite-dev
 	libxinerama-dev
-	libxrender-dev
 	libxslt
+	libxrender-dev
 	libxt-dev
 	libxtst-dev
 "
@@ -26,7 +22,8 @@ depends="
 	java-cacerts
 	ttf-dejavu
 "
-source="https://github.com/adoptium/temurin8-binaries/releases/download/jdk$_pkgvername/OpenJDK8U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+source="
+	https://github.com/adoptium/temurin8-binaries/releases/download/jdk8u422-b05/OpenJDK8U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_8u422b05.tar.gz
 "
 
 _java_home="/usr/lib/jvm/java-8-temurin-jre"
@@ -41,8 +38,9 @@ prepare() {
 }
 
 check() {
-	local _java_bin="./jdk$_pkgvername-jre/bin"
+	local _java_bin="./jdk8u422-b05-jre/bin"
 
+	
 	# 1) check that java -version works
 	$_java_bin/java -version
 }
@@ -50,15 +48,22 @@ check() {
 package() {
 	provides=java-jre
 	mkdir -p "$pkgdir/$_java_home"
-ls ${srcdir}
-	cp -r "$srcdir"/jdk"$_pkgvername-jre"/* "$pkgdir/$_java_home"
-
+	cp -r "$srcdir"/jdk8u422-b05-jre/* "$pkgdir/$_java_home"
+	
 	# symlink to shared java cacerts store
 	rm -f "$pkgdir"/$_java_home/lib/security/cacerts
 	ln -sf /etc/ssl/certs/java/cacerts \
 		"$pkgdir"/$_java_home/lib/security/cacerts
 }
 
+
+
+case "$CARCH" in
+	x86_64)
+		_arch_sum="9a7a939638b9cdaa8e1a119b8f21bfdd4cb2390b8a47cc27ccf9effc90f4b437"
+		;;
+esac
+
 sha256sums="
-9a7a939638b9cdaa8e1a119b8f21bfdd4cb2390b8a47cc27ccf9effc90f4b437  OpenJDK8U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK8U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_8u422b05.tar.gz
 "

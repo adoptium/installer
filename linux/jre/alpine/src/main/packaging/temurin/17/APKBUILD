@@ -1,15 +1,11 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-17
 pkgver=17.0.12_p7
-# replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
-_pkgvername=${_pkgverplus/+/%2B}
-pkgrel=1
+pkgrel=0
 pkgdesc="Eclipse Temurin 17"
 provider_priority=17
 url="https://adoptium.net"
-arch="noarch"
+arch="x86_64"
 license="GPL-2.0-with-classpath-exception"
 makedepends="
 	alsa-lib-dev
@@ -24,8 +20,9 @@ makedepends="
 	libxtst-dev
 "
 depends=""
-subpackages="$pkgname-jre:_jre:x86_64"
-source="https://github.com/adoptium/temurin17-binaries/releases/download/jdk-$_pkgvername/OpenJDK17U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+subpackages="$pkgname-jre:_jre"
+source="
+	https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.12%2B7/OpenJDK17U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_17.0.12_7.tar.gz
 "
 
 _java_home="/usr/lib/jvm/java-17-temurin-jre"
@@ -38,16 +35,19 @@ prepare() {
 }
 
 check() {
-	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+	local _java_bin="./jdk-17.0.12+7-jre/bin"
 
+	
 	# 1) check that java -version works
 	$_java_bin/java -version
 }
 
 package() {
 	mkdir -p "$pkgdir/$_java_home"
-	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-17.0.12+7-jre/* "$pkgdir/$_java_home"
 }
+
+
 
 _jre() {
 	pkgdesc="Eclipse Temurin 17 (JRE)"
@@ -70,6 +70,12 @@ _jre() {
 		"$_toroot/lib/security/cacerts"
 }
 
+case "$CARCH" in
+	x86_64)
+		_arch_sum="63bae276cc322532b451ae7473127c92a75db16cc95473577f133cd09349822a"
+		;;
+esac
+
 sha256sums="
-63bae276cc322532b451ae7473127c92a75db16cc95473577f133cd09349822a  OpenJDK17U-jre_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK17U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_17.0.12_7.tar.gz
 "

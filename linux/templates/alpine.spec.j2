@@ -1,0 +1,184 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-{{ version }}{% if image_type == 'jre' and version|int == 8 %}-jre{% elif image_type == 'jdk' and version|int == 8 %}-jdk{% endif %}
+pkgver={{ openjdk_version }}
+pkgrel=0
+pkgdesc="Eclipse Temurin {{ version }}{% if version|int == 8 %} ({{ image_type | upper }}){% endif %}"
+provider_priority={{ version }}
+url="https://adoptium.net"
+arch="{% if version != '8' %}{{ arch_data.keys() | join(' ') }}{% endif %}"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+    {%- if version|int == 8 %}
+	libpng-dev
+	libxcomposite-dev
+	libxinerama-dev
+	libxslt
+	{%- else %}
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+    {%- endif %}
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+{% if version|int == 8 -%}
+depends="
+	java-common
+	java-cacerts
+	ttf-dejavu
+"
+{%- else -%}
+depends=""
+subpackages="
+{%- if image_type == 'jdk' -%}
+$pkgname-src:_src:noarch
+	$pkgname-jdk:_jdk"
+{%- else -%}
+$pkgname-jre:_jre"
+{%- endif %}
+{%- endif %}
+source="
+	{{ arch_data['x86_64']['download_url'] | replace("x64", "${CARCH/x86_64/x64}") }}
+	{%- if image_type == 'jdk' %}
+
+	HelloWorld.java
+	{% if version|int >= 11 -%}
+	TestECDSA.java
+	TestCryptoLevel.java
+	{%- endif %}
+	{%- endif %}
+"
+
+_java_home="/usr/lib/jvm/java-{{ version }}-temurin{% if image_type == 'jre' %}-jre{% endif %}"
+
+{% if version|int == 8 -%}
+# Exclude xawt from ldpath to avoid duplicate provides for libmawt.so
+# (also in headless). in future this should be a virtual provides.
+ldpath="$_jrelib:$_jrelib/native_threads:$_jrelib/headless:$_jrelib/server:$_jrelib/jli"
+{%- elif version|int == 11 -%}
+ldpath="$_java_home/lib:$_java_home/lib/jli:$_java_home/lib/server"
+{%- else -%}
+ldpath="$_java_home/lib:$_java_home/lib/server"
+{%- endif %}
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	{%- if version|int == 8 %}
+	local _java_bin="./{{ release_name }}{{ '-jre' if image_type == 'jre' }}/bin"
+	{%- else %}
+	local _java_bin="./jdk-{{ openjdk_version | replace("_p", "+") }}{{ '-jre' if image_type == 'jre' }}/bin"
+	{%- endif %}
+
+	{% if image_type == 'jdk' -%}
+	# 1) compile and run a simple hello world
+	$_java_bin/javac -d . "$srcdir"/HelloWorld.java
+	$_java_bin/java HelloWorld
+
+	{% if version|int >= 11 -%}
+	# 2) compile and run a testcase for unlimited policy
+	$_java_bin/javac -d . "$srcdir"/TestCryptoLevel.java
+	$_java_bin/java -cp . --add-opens java.base/javax.crypto=ALL-UNNAMED TestCryptoLevel
+
+	# 3) compile and run a testcase for ECDSA signatures
+	$_java_bin/javac -d . "$srcdir"/TestECDSA.java
+	$_java_bin/java TestECDSA
+	{%- else %}
+	# 2) check that java -version and javac -version work
+	$_java_bin/java -version
+	$_java_bin/javac -version
+	{%- endif %}
+    {%- else %}
+	# 1) check that java -version works
+	$_java_bin/java -version
+    {%- endif %}
+}
+
+package() {
+    {%- if version|int == 8 %}
+	provides=java-{{ image_type }}
+    {%- endif %}
+	mkdir -p "$pkgdir/$_java_home"
+	{% if version|int == 8 -%}
+    cp -r "$srcdir"/{{ release_name }}{{ '-jre' if image_type == 'jre' }}/* "$pkgdir/$_java_home"
+    {%- if image_type == 'jdk' %}
+	rm "$pkgdir"/$_java_home/src.zip
+    {%- endif %}
+	{% else -%}
+    cp -r "$srcdir"/jdk-{{ openjdk_version | replace("_p", "+") }}{{ '-jre' if image_type == 'jre' }}/* "$pkgdir/$_java_home"
+	{%- endif %}
+
+    {%- if version|int == 8 %}
+	# symlink to shared java cacerts store
+	rm -f "$pkgdir"/$_java_home/{{ 'jre/' if image_type == 'jdk' }}lib/security/cacerts
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$pkgdir"/$_java_home/{{ 'jre/' if image_type == 'jdk' }}lib/security/cacerts
+    {%- endif %}
+}
+
+{% if version|int >= 11 -%}
+{% if image_type == 'jdk' -%}
+_src() {
+	pkgdesc="Eclipse Temurin {{ version }} (sources)"
+	mkdir -p "$subpkgdir/$_java_home"/lib
+	mv "$pkgdir"/$_java_home/lib/src.zip \
+		"$subpkgdir"/$_java_home/lib/
+}
+{%- endif %}
+
+_{{ image_type }}() {
+	pkgdesc="Eclipse Temurin {{ version }} ({{ image_type | upper }})"
+	provides="{{ 'java-jdk ' if image_type == 'jdk' }}java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
+	{%- if image_type == 'jdk' %}
+	mv "$_fromroot/include" "$_toroot"
+	mv "$_fromroot/jmods"   "$_toroot"
+	{%- endif %}
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	{%- if image_type == 'jdk' or version|int < 17 %}
+	mv "$_fromroot/man"     "$_toroot"
+	{%- endif %}
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+{%- endif %}
+
+case "$CARCH" in
+    {%- for architecture, details in arch_data.items() %}
+	{{ architecture }})
+		_arch_sum="{{ details.checksum }}"
+		;;
+    {%- endfor %}
+esac
+
+sha256sums="
+$_arch_sum  {{ arch_data['x86_64']['filename'] | replace("x64", "${CARCH/x86_64/x64}") }}
+{%- if image_type == 'jdk' %}
+e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
+{%- if version|int >= 11 %}
+22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
+9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java
+{%- endif %}
+{%- endif %}
+"
+
