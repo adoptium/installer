@@ -3,7 +3,7 @@
 pkg_name = msopenjdk-17
 priority = 1711
 jvm_tools = jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jlink jmap jmod jpackage jps jrunscript jshell jstack jstat jstatd keytool rmiregistry serialver jexec jspawnhelper
-url_version = 17.0.12
+url_version = 17.0.13
 amd64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz
 amd64_checksum_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz.sha256sum.txt
 arm64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-aarch64.tar.gz
