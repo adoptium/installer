@@ -1,11 +1,7 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-22
 pkgver=22.0.2_p9
-# replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
-_pkgvername=${_pkgverplus/+/%2B}
-pkgrel=1
+pkgrel=0
 pkgdesc="Eclipse Temurin 22"
 provider_priority=22
 url="https://adoptium.net"
@@ -27,7 +23,7 @@ depends=""
 subpackages="$pkgname-src:_src:noarch
 	$pkgname-jdk:_jdk"
 source="
-	https://github.com/adoptium/temurin22-binaries/releases/download/jdk-$_pkgvername/OpenJDK22u-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+	https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_22.0.2_9.tar.gz
 
 	HelloWorld.java
 	TestECDSA.java
@@ -44,7 +40,7 @@ prepare() {
 }
 
 check() {
-	local _java_bin="./jdk-$_pkgverplus/bin"
+	local _java_bin="./jdk-22.0.2+9/bin"
 
 	# 1) compile and run a simple hello world
 	$_java_bin/javac -d . "$srcdir"/HelloWorld.java
@@ -61,7 +57,7 @@ check() {
 
 package() {
 	mkdir -p "$pkgdir/$_java_home"
-	cp -r "$srcdir"/jdk-"$_pkgverplus"/* "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-22.0.2+9/* "$pkgdir/$_java_home"
 }
 
 _src() {
@@ -96,16 +92,16 @@ _jdk() {
 }
 
 case "$CARCH" in
-	x86_64)
-		_arch_sum="49f73414824b1a7c268a611225fa4d7ce5e25600201e0f1cd59f94d1040b5264"
-		;;
 	aarch64)
 		_arch_sum="8ac93a2d5a55aabbc0f7156c2f9032026e87c185689d628ef8a4184b6e9ab006"
+		;;
+	x86_64)
+		_arch_sum="49f73414824b1a7c268a611225fa4d7ce5e25600201e0f1cd59f94d1040b5264"
 		;;
 esac
 
 sha256sums="
-$_arch_sum  OpenJDK22u-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK22U-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_22.0.2_9.tar.gz
 e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
 22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
 9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java

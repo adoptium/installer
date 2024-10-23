@@ -1,15 +1,11 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-11
 pkgver=11.0.24_p8
-# replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
-_pkgvername=${_pkgverplus/+/%2B}
-pkgrel=1
+pkgrel=0
 pkgdesc="Eclipse Temurin 11"
 provider_priority=11
 url="https://adoptium.net"
-arch="noarch"
+arch="x86_64"
 license="GPL-2.0-with-classpath-exception"
 makedepends="
 	alsa-lib-dev
@@ -25,8 +21,9 @@ makedepends="
 "
 depends=""
 subpackages="$pkgname-src:_src:noarch
-	$pkgname-jdk:_jdk:x86_64"
-source="https://github.com/adoptium/temurin11-binaries/releases/download/jdk-$_pkgvername/OpenJDK11U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+	$pkgname-jdk:_jdk"
+source="
+	https://github.com/adoptium/temurin11-binaries/releases/download/jdk-11.0.24%2B8/OpenJDK11U-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_11.0.24_8.tar.gz
 
 	HelloWorld.java
 	TestECDSA.java
@@ -43,7 +40,7 @@ prepare() {
 }
 
 check() {
-	local _java_bin="./jdk-$_pkgverplus/bin"
+	local _java_bin="./jdk-11.0.24+8/bin"
 
 	# 1) compile and run a simple hello world
 	$_java_bin/javac -d . "$srcdir"/HelloWorld.java
@@ -60,7 +57,7 @@ check() {
 
 package() {
 	mkdir -p "$pkgdir/$_java_home"
-	cp -r "$srcdir"/jdk-"$_pkgverplus"/* "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-11.0.24+8/* "$pkgdir/$_java_home"
 }
 
 _src() {
@@ -94,8 +91,14 @@ _jdk() {
 		"$_toroot/lib/security/cacerts"
 }
 
+case "$CARCH" in
+	x86_64)
+		_arch_sum="ae988c72eeb2d78bb729a3387601ce0ea84305734ebdbe95d276f39952a8e019"
+		;;
+esac
+
 sha256sums="
-ae988c72eeb2d78bb729a3387601ce0ea84305734ebdbe95d276f39952a8e019  OpenJDK11U-jdk_x64_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK11U-jdk_${CARCH/x86_64/x64}_alpine-linux_hotspot_11.0.24_8.tar.gz
 e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
 22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
 9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java

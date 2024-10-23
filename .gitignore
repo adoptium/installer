@@ -30,3 +30,9 @@ Thumbs.db
 
 node_modules/
 wix/Workdir/
+
+
+lib/
+bin/
+.venv/
+adoptium_cache.sqlite
