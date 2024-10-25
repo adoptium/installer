@@ -1,11 +1,7 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-22
 pkgver=22.0.2_p9
-# replace _p1 with _1
-_pkgver=${pkgver/_p/_}
-_pkgverplus=${pkgver/_p/+}
-_pkgvername=${_pkgverplus/+/%2B}
-pkgrel=1
+pkgrel=0
 pkgdesc="Eclipse Temurin 22"
 provider_priority=22
 url="https://adoptium.net"
@@ -25,7 +21,9 @@ makedepends="
 "
 depends=""
 subpackages="$pkgname-jre:_jre"
-source="https://github.com/adoptium/temurin22-binaries/releases/download/jdk-$_pkgvername/OpenJDK22u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz"
+source="
+	https://github.com/adoptium/temurin22-binaries/releases/download/jdk-22.0.2%2B9/OpenJDK22U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_22.0.2_9.tar.gz
+"
 
 _java_home="/usr/lib/jvm/java-22-temurin-jre"
 
@@ -37,16 +35,19 @@ prepare() {
 }
 
 check() {
-	local _java_bin="./jdk-$_pkgverplus-jre/bin"
+	local _java_bin="./jdk-22.0.2+9-jre/bin"
 
+	
 	# 1) check that java -version works
 	$_java_bin/java -version
 }
 
 package() {
 	mkdir -p "$pkgdir/$_java_home"
-	cp -r "$srcdir"/jdk-"$_pkgverplus-jre"/* "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-22.0.2+9-jre/* "$pkgdir/$_java_home"
 }
+
+
 
 _jre() {
 	pkgdesc="Eclipse Temurin 22 (JRE)"
@@ -70,14 +71,14 @@ _jre() {
 }
 
 case "$CARCH" in
-	x86_64)
-		_arch_sum="459342f5210cfd185aeed05abdc052fcd61cf6ff066541919b786236d69c5737"
-		;;
 	aarch64)
 		_arch_sum="749e7372a7dba0de632592fe55a0e387d96922c84dcdc039e0efc1f7ecfcd70e"
+		;;
+	x86_64)
+		_arch_sum="459342f5210cfd185aeed05abdc052fcd61cf6ff066541919b786236d69c5737"
 		;;
 esac
 
 sha256sums="
-$_arch_sum  OpenJDK22u-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_$_pkgver.tar.gz
+$_arch_sum  OpenJDK22U-jre_${CARCH/x86_64/x64}_alpine-linux_hotspot_22.0.2_9.tar.gz
 "
