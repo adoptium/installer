@@ -1,10 +1,10 @@
-%global upstream_version 11.0.24+8
+%global upstream_version 11.0.25+9
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
-%global spec_version 11.0.24.0.0.8
+%global spec_version 11.0.25.0.0.9
 %global spec_release 1
 %global priority 1112
 
@@ -190,6 +190,8 @@ fi
 %{prefix}
 
 %changelog
+* Wed Oct 16 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.25.0.0.9-1
+- Eclipse Temurin 11.0.25.0+9 release.
 * Wed Jul 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.24.0.0.8-1
 - Eclipse Temurin 11.0.24.0+8 release.
 * Wed Apr 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 11.0.23.0.0.9-1
