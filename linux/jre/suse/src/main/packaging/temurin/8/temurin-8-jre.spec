@@ -1,10 +1,10 @@
-%global upstream_version 8u422-b05
+%global upstream_version 8u432-b06
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 8.0.312.0.1___8 8.0.312.0.0+7
 #  8.0.312.0.0___7 == 8.0.312.0.0+7
-%global spec_version 8.0.422.0.0.5
+%global spec_version 8.0.432.0.0.6
 %global spec_release 1
 %global priority 1082
 
@@ -47,7 +47,7 @@
 %global src_num 6
 %global sha_src_num 7
 # jre8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
-%global upstream_version 8u422-b05-aarch32-20240718
+%global upstream_version 8u432-b06-aarch32-20241016
 %endif
 # Allow for noarch SRPM build
 %ifarch noarch
@@ -182,6 +182,8 @@ fi
 %{prefix}
 
 %changelog
+* Wed Oct 16 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.432.0.0.6-1
+- Eclipse Temurin 8.0.432-b06 release.
 * Wed Jul 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.422.0.0.5-1
 - Eclipse Temurin 8.0.422-b05 release.
 * Wed Apr 17 2024 Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> 8.0.412.0.0.8-1
