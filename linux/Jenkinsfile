@@ -12,7 +12,7 @@ s390x       s390x       s390x       only for jdk8+
 riscv64     riscv64     riscv64     only for JDK17+
 */
 
-env.NODE_LABEL = 'dockerBuild&&linux&&x64' // Default node and also used for build RedHat + Suse + Debian x64
+env.NODE_LABEL = '!dockerBuild&&linux&&x64' // Default node for top level pipeline script, !dockerBuild as we only have 1 node due to issue: https://github.com/adoptium/infrastructure/issues/3790
 env.PRODUCT = 'temurin'
 
 class Types {
