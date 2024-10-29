@@ -1,10 +1,12 @@
+# This is a templated file from https://github.com/adoptium/.eclipsefdn/tree/main/otterdog/policies/require_dependabot_auto_merge.yml
 name: Dependabot auto-merge
 on: pull_request_target
 
-permissions:
-  contents: write
-  pull-requests: write
+permissions: read-all
 
 jobs:
   dependabot:
+    permissions:
+      contents: write
+      pull-requests: write
     uses: adoptium/.github/.github/workflows/dependabot-auto-merge.yml@main
