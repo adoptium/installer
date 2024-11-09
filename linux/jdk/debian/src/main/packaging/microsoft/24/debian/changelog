@@ -1,5 +1,5 @@
-msopenjdk-21 (24.0.0-1) STABLE; urgency=medium
+msopenjdk-24 (24.0.0-1) STABLE; urgency=medium
 
-* Microsoft 24.0.0-1 release.
+  * Microsoft 24.0.0-1 release.
 
--- Microsoft Package Maintainers <openjdk@microsoft.com>  Fri, 08 Nov 2024 01:31:27 +0000
+ -- Microsoft Package Maintainers <openjdk@microsoft.com>  Fri, 08 Nov 2024 01:31:27 +0000
