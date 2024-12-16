@@ -523,19 +523,21 @@ def uploadDebArtifacts(String buildArch, String Version) {
     echo "Debian Architecture Upload List = ${debArchList}"
 
     /*
-        Debian/Ubuntu   10.0       11.0        16.04     20.04    22.04    22.10  24.04
+        Debian     10.0      11.0     12.0
+        Ubuntu     18.04     20.04    22.04    24.04    24.10
         add more into list when available for release
         also update linux/{jdk,jre}/debian/main/packing/build.sh
     */
     def deb_versions = [
-            "trixie", // Debian/13
+            "trixie",   // Debian/13
             "bookworm", // Debian/12
             "bullseye", // Debian/11
             "buster",   // Debian/10
+            "oracular", // Ubuntu/24.10 (STS)
             "noble",    // Ubuntu/24.04 (LTS)
             "jammy",    // Ubuntu/22.04 (LTS)
             "focal",    // Ubuntu/20.04 (LTS)
-            "bionic"   // Ubuntu/18.04 (LTS)
+            "bionic"    // Ubuntu/18.04 (LTS)
     ]
     def distro_list = ''
     deb_versions.each { deb_version ->

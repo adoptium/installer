@@ -27,7 +27,7 @@ if [ "$buildLocalFlag" == "true" ]; then
 fi
 
 # $ and $ARCH are env variables passing in from "docker run"
-debVersionList="trixie bookworm bullseye buster noble jammy focal bionic"
+debVersionList="trixie bookworm bullseye buster oracular noble jammy focal bionic"
 
 # the target package is only based on the host machine's ARCH
 # ${buildArch} is only used for debug purpose what really matter is the label on the jenkins agent
