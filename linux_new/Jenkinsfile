@@ -10,7 +10,6 @@ def binaryRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/
 def binaryDLRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/download/${params.TAG}"
 def fullURL = "${baseURL}/${binaryRepo}"
 def dlURL = "${baseURL}/${binaryDLRepo}"
-def PKGBUILDLABEL=""
 
 /* Supported Distro Arrays */
 // Remember If Adding An Deb Distro to update the cacerts package //
@@ -69,11 +68,15 @@ def Release = ""
 def Version = ""
 def Build = ""
 def packagearch = ""
+def AlpArch = ""
 def packagearchDeb = ""
 def packagearchRhel = ""
 def PackageReleaseVersion = "0"
 def upstreamversion = ""
 def upstreamversionARM32 = ""
+def RHELkey = ""
+def SUSEkey = ""
+
 /* Have Some Default Node Labels */
 def PKGBUILDLABELAPK = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 def PKGBUILDLABELDEB = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
@@ -146,19 +149,20 @@ def getPackageBuildLabel(String arch, String distro) {
 // Helper function to check and upload files
 def CheckAndUpload(String Target, String Distro, String BuildArch, String Version, String DistroList, String Value, String PackageDir, String Key, String FileName) {
   echo "Entering Check & Upload"
-  // Received From Alpine CheckAndUpload(Target, UpDistro, buildArch, '', '', '', '', '' , FileName)
-  // Received From Deb    CheckAndUpload(DebTarget, DebDistro, arch, Release, distro_list, '', '', '', DebFileName)
+  echo "Debug 2001"
+  def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}/${FileName}", returnStdout: true).trim()
+  echo "ResponseCode = ${ResponseCode}"
+// echo "${Target} ${Distro} ${BuildArch} ${Version} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
+echo "Target = ${Target}/${FileName}"
+echo "Distro = ${Distro}"
+echo "Arch = ${BuildArch}"
+// echo "Version = ${Version}"
+// echo "DistroList = ${DistroList}"
+// echo "Value = ${Value}"
+// echo "PackageDir = ${PackageDir}"
+// echo "Key = ${Key}"
+echo "Filename = ${FileName}"
 
-  echo "Debug 1001"
-  echo "Target = ${Target}"
-  echo "Distro = ${Distro}"
-  echo "Arch = ${BuildArch}"
-  echo "Version = ${Version}"
-  echo "DList = ${DistroList}"
-  echo "Value = ${Value}"
-  echo "PackageDir = ${PackageDir}"
-  echo "Key = ${Key}"
-  echo "Filename = ${FileName}"  
 }
 
 // Function Definitions End
@@ -214,7 +218,9 @@ pipeline {
                     } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
                         distro = "linux"
                     } else {
-                        error("The Artifacts Are For Neither Linux OR Alpine")
+                        printlin "WARNING: The Artifacts Are For Neither Linux OR Alpine"
+                        currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
+                        error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
                     }
 
                     // Figure Out Which Arch This Run Is For
@@ -231,6 +237,7 @@ pipeline {
                     } else if (params.ARTIFACTS_TO_COPY.contains('riscv64')) {
                         arch  = "riscv64"
                     } else {
+                        printlin "WARNING: The Artifacts Specified Are For An Unsupported Architecture"
                         error("The Artifacts Are For An Unsupported Architecture")
                     }
 
@@ -312,6 +319,8 @@ pipeline {
                         filenameFinal = "${filenamePrefix}${filenameVersion}-${packageType}_${arch}_${distro}_${JVM}_${verversion}_${verbuild ?: 'N/A'}"
                         ReleaseVersion = "${verversion}_${verbuild ?: 'N/A'}"
                       }
+
+                      echo "DEBUG0299 - ${ReleaseVersion}"
                       
                       def JDKFinal = "${filenameFinal}.${filenameSuffix}"
                       def SHAFinal = "${JDKFinal}.sha256.txt"
@@ -534,7 +543,13 @@ stage('Validate Artifacts') {
                             if (Version == "null") {
                                 packagever = "${Release}.0.0.0.0+${Build}"
                             } else {
+                                def debverparts = Version.tokenize('.')
+                                if (debverparts.size() == 2) {
+                                    Version = "${debverparts[0]}.${debverparts[1]}.0"
+                                    echo "Formatted Version: ${Version}"
+                                }         
                                 packagever = "${Release}.${Version}.0+${Build}"
+                                echo "DEBUGXXXXX - UPDREL PRE GEN SPEC DEB ${packagever}"
                             }
                             echo "Debian PackageVer = ${packagever}"
                         }
@@ -546,6 +561,7 @@ stage('Validate Artifacts') {
                         echo "Build = ${Build}"
                         echo "PackageVer = ${packagever}"
                         echo "PackageArch = ${packagearch}"
+
 
                         debianFiles.each { debianFilesArrayElement -> 
 
@@ -578,6 +594,12 @@ stage('Validate Artifacts') {
                         echo "PackageVer = ${packagever}"
                         echo "PackageArch = ${packagearch}"
 
+                        def verparts = Version.tokenize('.')
+                        if (verparts.size() == 2) {
+                            Version = "${verparts[0]}.${verparts[1]}.0"
+                            echo "Formatted Version: ${Version}"
+                        }                         
+
                         if (Release == "8" ) {
                             echo "RHEL/SUSE JDK8"
                             upstreamversion = params.TAG.replaceFirst("^jdk", "")
@@ -592,17 +614,21 @@ stage('Validate Artifacts') {
                             changelogversion = "${major}.0.${minor}-b${formattedBuild}"
                         } else {
                             echo "RHEL/SUSE Not JDK8"
-                            echo "Deubg 09A - ${PVERS}"
+                            echo "Debug 09A - ${PVERS}"
                             upstreamversion = params.TAG.replaceFirst("^jdk-", "")
 
                             if (Version == "null") {
                                 packagever = "${Release}.0.0.0.0.${Build}"
-                                changelogversion = "${Release}.0.${Version}+${Build}"
+                                changelogversion = "${Release}.0.0+${Build}"
+                                echo "DEBUGXXXXX - BASEREL PRE GEN SPEC RHEL ${packagever}"
                             } else {
                                 packagever = "${Release}.${Version}.0.${Build}"
-                                changelogversion = "${Release}.0.${Version}+${Build}"
+                                changelogversion = "${Release}.${Version}.0+${Build}"
+                                echo "DEBUGXXXXX - UPDREL PRE GEN SPEC RHEL ${packagever}"
                             }
                         }
+
+                        
 
                         if (PARCH == 'arm') {
                         // If JDK8 ARM32, Then Need To Deduce Correct Upstream
@@ -763,19 +789,26 @@ stage('Build & Archive Package') {
                     // Distro Specific Uploads
                     if (distro == 'alpine-linux') {
                         echo "ALPINE UPLOAD"
+                        if (arch == 'x64') {
+                            echo "Fixing Arch For Alpine"
+                            AlpArch = "x86_64"
+                        }
                         def AlpDistro = "Alpine"
                         def PackFiles = findFiles(glob: '**/build/ospackage/temurin-*j*.apk') // List All Packages To Upload
                         def SrcFiles = findFiles(glob: '**/build/ospackage/temurin-*src*.apk') // List All Sources To Upload
                         def AllFiles = PackFiles + SrcFiles
-                        for (PackFile in AllFiles) {
-                                 def AlpFileName = PackFile.name
-                                 def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${arch}/${AlpFileName}"
+                        for (AlpPackFile in AllFiles) {
+                                 def AlpFileName = AlpPackFile.name
+                                 def AlpFilePath = AlpPackFile.path
+                                 // def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${arch}/${AlpFileName}"
+                                 def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${AlpArch}"
                                  echo "Debug 1000 - Alpine Upload Debugging"
                                  echo "Target = ${Target}"
                                  echo "Distro = ${AlpDistro}"
-                                 echo "buildArch = ${arch}"
+                                 echo "buildArch = ${AlpArch}"
                                  echo "FileName = ${AlpFileName}"
-                                 CheckAndUpload(Target, AlpDistro, arch, '', '', '', '', '' , AlpFileName)
+                                //  echo "FilePath = ${AlpFilePath}"
+                                 CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
                         }
                     }
                     if (distro == 'linux') {
@@ -788,21 +821,98 @@ stage('Build & Archive Package') {
                         distro_list += "deb.distribution=${deb_version};"
                         }
                         def DebDistro = "Debian"
-                        def PackFilesDeb = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
-                        for (DebPackFile in PackFilesDeb) {
+                        def DebPackFiles = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
+                        for (DebPackFile in DebPackFiles) {
                             DebFileName = DebPackFile.name
-                            DebTarget = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${Release}/${DebFileName}"
-
-                            echo "Debug 1000 - Debian Upload Debugging"
+                            def DebFilePath = DebPackFile.path
+                            DebTarget = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${Release}"
+                            echo "Debug 1001 - Debian Upload Debugging"
                             echo "Target = ${DebTarget}"
-                            echo "Distro = ${DebDistro}"
-                            echo "buildArch = ${arch}"
-                            echo "Release = ${Release}"
+                            // echo "Distro = ${DebDistro}"
+                            // echo "buildArch = ${arch}"
+                            // echo "Release = ${Release}"
                             echo "FileName = ${DebFileName}"
-                            echo "DistroList = ${distro_list}"
+                            // echo "FilePath = ${DebFilePath}"
+                            // echo "DistroList = ${distro_list}"
                             CheckAndUpload(DebTarget, DebDistro, arch, '', distro_list, '', '', '' , DebFileName)
                         }
-                    }
+                        echo "Preapring For RHEL Upload"
+                        def RHELFileName = ''
+                        def RHELFilePath = ''
+                        def RHELTarget = ''
+                        def RHELarchitecture = ''
+                        def RHELDistro = "RPMS"
+                        def RHELPackFiles = findFiles(glob: "**/rhel/build/ospackage/t*.rpm") // List All Packages To Upload For Temurin
+                        for (RHELPackFile in RHELPackFiles) {
+                            RHELFileName = RHELPackFile.name
+                            RHELFilePath = RHELPackFile.path
+                            def RHELarchex = RHELFileName =~ /(?:\d+\.\d+-\d+)\.(\w+)\.(?:src\.)?rpm/
+                            RHELarchitecture = RHELarchex ? RHELarchex[0][1] : null
+                            // echo "Extracted architecture: ${RHELarchitecture}"
+                            // OverRide Architecture For SRC RPMS
+                            if (RHELFileName.contains(".src.rpm")) {
+                                RHELarchitecture = "source"
+                                // echo "Overriden Architecture : ${RHELarchitecture}"
+                            }                            
+                            // Calculate Key
+                            //  https://adoptium.jfrog.io/artifactory/rpm/fedora/39/source/Packages/temurin-17-jre-17.0.13.0.0.11-2.src.rpm
+                            //  https://adoptium.jfrog.io/artifactory/rpm/amazonlinux/2/source
+                            //  https://packages.adoptium.net/artifactory/rpm/fedora/rawhide/aarch64/Packages/temurin-11-jdk-11.0.25.0.0.9-1.aarch64.rpm
+                            //
+                            rhel_distros.each { rhel_distro ->
+                                RHELkey = "${rhel_distro}/${RHELarchitecture}"
+                                RHELTarget = "https://adoptium.jfrog.io/artifactory/${RHELkey}/Packages"
+                                CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', '', RHELTarget, RHELkey, RHELFileName)
+                                }
+                            // RHELTarget = "https://adoptium.jfrog.io/artifactory/"
+                            echo "Debug 1001 - RHEL Upload Debugging"
+                            echo "Target = ${RHELTarget}"
+                            // echo "Key = ${RHELkey}"
+                            // echo "Value = ${Release}"
+                            // echo "Distro = ${RHELDistro}"
+                            // echo "PackageDir = ${RHELTarget}"
+                            // echo "buildArch = ${RHELarchitecture}"
+                            echo "FileName = ${RHELFileName}"
+                            // echo "FilePath = ${RHELFilePath}"
+                        }
+                        echo "Preapring For SUSE Upload"
+                        def SUSEFileName = ''
+                        def SUSEFilePath = ''
+                        def SUSETarget = ''
+                        def SUSEarchitecture = ''
+                        def SUSEDistro = "RPMS"
+                        def SUSEPackFiles = findFiles(glob: "**/suse/build/ospackage/t*.rpm") // List All Packages To Upload For Temurin
+                        for (SUSEPackFile in SUSEPackFiles) {
+                            SUSEFileName = SUSEPackFile.name
+                            SUSEFilePath = SUSEPackFile.path
+                            def SUSEarchex = SUSEFileName =~ /(?:\d+\.\d+-\d+)\.(\w+)\.(?:src\.)?rpm/
+                            SUSEarchitecture = SUSEarchex ? SUSEarchex[0][1] : null
+                            // echo "Extracted architecture: ${SUSEarchitecture}"
+                            // OverRide Architecture For SRC RPMS
+                            if (SUSEFileName.contains(".src.rpm")) {
+                                SUSEarchitecture = "source"
+                                // echo "Overriden Architecture : ${SUSEarchitecture}"
+                            }                            
+                            // Calculate Key
+                            suse_distros.each { suse_distro ->
+                                SUSEkey = "${suse_distro}/${SUSEarchitecture}"
+                                SUSETarget = "https://adoptium.jfrog.io/artifactory/${SUSEkey}/Packages"
+                                CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', '', SUSETarget, SUSEkey, SUSEFileName)
+                                }
+                            // SUSETarget = "https://adoptium.jfrog.io/artifactory/"
+                            echo "Debug 1003 - SUSE Upload Debugging"
+                            echo "Target = ${SUSETarget}"
+                            // echo "Key = ${SUSEkey}"
+                            // echo "Value = ${Release}"
+                            // echo "Distro = ${SUSEDistro}"
+                            // echo "PackageDir = ${SUSETarget}"
+                            // echo "buildArch = ${SUSEarchitecture}"
+                            echo "FileName = ${SUSEFileName}"
+                            // echo "FilePath = ${SUSEFilePath}"
+                        }
+                } // End Of Linux Distro
+                // Verify files are retrieved
+                // sh 'find .'
               }
               // End OF Script
           }
