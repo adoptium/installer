@@ -10,7 +10,6 @@ def binaryRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/
 def binaryDLRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/download/${params.TAG}"
 def fullURL = "${baseURL}/${binaryRepo}"
 def dlURL = "${baseURL}/${binaryDLRepo}"
-def PKGBUILDLABEL=""
 
 /* Supported Distro Arrays */
 // Remember If Adding An Deb Distro to update the cacerts package //
@@ -74,6 +73,9 @@ def packagearchRhel = ""
 def PackageReleaseVersion = "0"
 def upstreamversion = ""
 def upstreamversionARM32 = ""
+def RHELkey = ""
+def SUSEkey = ""
+
 /* Have Some Default Node Labels */
 def PKGBUILDLABELAPK = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 def PKGBUILDLABELDEB = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
@@ -149,7 +151,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String Versio
   // Received From Alpine CheckAndUpload(Target, UpDistro, buildArch, '', '', '', '', '' , FileName)
   // Received From Deb    CheckAndUpload(DebTarget, DebDistro, arch, Release, distro_list, '', '', '', DebFileName)
 
-  echo "Debug 1001"
+  echo "Debug 2001"
   echo "Target = ${Target}"
   echo "Distro = ${Distro}"
   echo "Arch = ${BuildArch}"
@@ -769,12 +771,14 @@ stage('Build & Archive Package') {
                         def AllFiles = PackFiles + SrcFiles
                         for (PackFile in AllFiles) {
                                  def AlpFileName = PackFile.name
+                                 def AlpFilePath = AlpPackFile.path
                                  def Target = "https://adoptium.jfrog.io/artifactory/apk/alpine/main/${arch}/${AlpFileName}"
                                  echo "Debug 1000 - Alpine Upload Debugging"
                                  echo "Target = ${Target}"
                                  echo "Distro = ${AlpDistro}"
                                  echo "buildArch = ${arch}"
                                  echo "FileName = ${AlpFileName}"
+                                 echo "FilePath = ${AlpFilePath}"
                                  CheckAndUpload(Target, AlpDistro, arch, '', '', '', '', '' , AlpFileName)
                         }
                     }
@@ -788,21 +792,68 @@ stage('Build & Archive Package') {
                         distro_list += "deb.distribution=${deb_version};"
                         }
                         def DebDistro = "Debian"
-                        def PackFilesDeb = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
-                        for (DebPackFile in PackFilesDeb) {
+                        def DebPackFiles = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
+                        for (DebPackFile in DebPackFiles) {
                             DebFileName = DebPackFile.name
+                            def DebFilePath = DebPackFile.path
                             DebTarget = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${Release}/${DebFileName}"
-
-                            echo "Debug 1000 - Debian Upload Debugging"
+                            echo "Debug 1001 - Debian Upload Debugging"
                             echo "Target = ${DebTarget}"
                             echo "Distro = ${DebDistro}"
                             echo "buildArch = ${arch}"
                             echo "Release = ${Release}"
                             echo "FileName = ${DebFileName}"
+                            echo "FilePath = ${DebFilePath}"
                             echo "DistroList = ${distro_list}"
                             CheckAndUpload(DebTarget, DebDistro, arch, '', distro_list, '', '', '' , DebFileName)
                         }
+                        echo "Preapring For RHEL Upload"
+                        def RHELDistro = "RPMS"
+                        def RHELPackFiles = findFiles(glob: "**/rhel/build/ospackage/t*.rpm") // List All Packages To Upload For Temurin
+                        for (RHELPackFile in RHELPackFiles) {
+                            def RHELFileName = RHELPackFile.name
+                            def RHELFilePath = RHELPackFile.path
+                            def RHELarchex = RHELFileName =~ /(?:\d+\.\d+-\d+)\.(\w+)\.(?:src\.)?rpm/
+                            def RHELarchitecture = RHELarchex ? RHELarchex[0][1] : null
+                            echo "Extracted architecture: ${RHELarchitecture}"
+                            // OverRide Architecture For SRC RPMS
+                            if (RHELFileName.contains(*.src.rpm)) {
+                                RHELarchitecture = "source"
+                                echo "Overriden Architecture : ${RHELarchitecture}"
+                            }                            
+                            // Calculate Key
+                            rhel_distros.each { rhel_distro ->
+                                RHELkey = "${rhel_distro}/${RHELarchitecture}"
+                                echo "RHELKEY = ${RHELkey}"
+                                }
+                            def RHELTarget = "https://adoptium.jfrog.io/artifactory/rpm/${RHELkey}/Packages/${RHELFileName}"
+                            // Key = amazonlinux/2/x86_64
+                            // https://adoptium.jfrog.io/artifactory/rpm/amazonlinux/2/x86_64/Packages/temurin-23-jdk-23.0.1.0.0.11-0.x86_64.rpm
+                            echo "Debug 1002 - RHEL Upload Debugging"
+                            echo "Target = ${RHELTarget}"
+                            echo "Distro = ${RHELDistro}"
+                            echo "Arch = ${RHELarchitecture}"
+                            echo "Version = ${Release}"
+                            echo "DISTROLIST = "
+                            echo "FileName = ${RHELFileName}"
+                            echo "FilePath = ${RHELFilePath}"
+                            // echo "DistroList = ${distro_list}"
+                            // echo "RHEL FileName = ${RHELFileName}"
+                            // echo "Target = ${RHELTarget}"
+                    //         //CheckAndUpload(Target, Distro, arch, VERSION, DISTROLIST, '', '', '', RHELFileName )"
+                    // CheckAndUpload(Target, Distro, rpmArchList.each, '', '', VALUE , PACKAGEDIR, KEY, '' )
+                    //     }
+                    //     echo "Preparing For SUSE Upload"
+                    //     def PackFilesSUSE = findFiles(glob: "**/suse/build/ospackage/t*.rpm") // List All Packages To Upload For Temurin
+                    //     for (PackFile in PackFilesSUSE) {
+                    //         def FileName = PackFile.name
+                    //         // def Target = "https://adoptium.jfrog.io/artifactory/${PACKAGEDIR}/${KEY}/Packages/${FileName}"
+                    //         echo "SUSE FileName = ${FileName}"
+                    //         // echo "Target = ${Target}"
+                    //         //CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '', '' )"
+                    //     }
                     }
+                }
               }
               // End OF Script
           }
