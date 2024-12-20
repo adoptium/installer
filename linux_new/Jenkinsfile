@@ -817,7 +817,7 @@ stage('Build & Archive Package') {
                             def RHELarchitecture = RHELarchex ? RHELarchex[0][1] : null
                             echo "Extracted architecture: ${RHELarchitecture}"
                             // OverRide Architecture For SRC RPMS
-                            if (RHELFileName.contains(*.src.rpm)) {
+                            if (RHELFileName.contains(".src.rpm")) {
                                 RHELarchitecture = "source"
                                 echo "Overriden Architecture : ${RHELarchitecture}"
                             }                            
