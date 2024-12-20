@@ -1,0 +1,61 @@
+plugins {
+	id "java"
+}
+
+ext {
+	junitVersion = "5.7.0"
+	testcontainersVersion = "1.15.1"
+	assertjCoreVersion = "3.18.1"
+}
+
+repositories {
+	mavenCentral()
+}
+
+group "org.adoptium"
+version "1.0.0-SNAPSHOT"
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+tasks.register("package") {
+	group = "packaging"
+	description = "Creates Linux packages."
+}
+
+tasks.register("checkPackage") {
+	description = "Tests the generated packages."
+	group = "verification"
+}
+
+check.dependsOn(checkPackage)
+
+def getProduct() {
+	return hasProperty("PRODUCT") ? PRODUCT.toString().toLowerCase(Locale.US) : null
+}
+
+def getProductVersion() {
+	return hasProperty("PRODUCT_VERSION") ? Integer.parseInt(PRODUCT_VERSION) : null
+}
+
+def getGPGKey() {
+	return hasProperty("GPG_KEY") ? GPG_KEY.toString() : null
+}
+
+def getArch() {
+	return hasProperty("ARCH") ? ARCH.toString() : "all"
+}
+
+def getInputDir() {
+	return hasProperty("INPUT_DIR") ? INPUT_DIR.toString() : null
+}
+
+def getLocalBuildStatus() {
+	return hasProperty("INPUT_DIR") ? "true" : "false"
+}
+
+def getContainerRegistry() {
+	return hasProperty("CONTAINER_REGISTRY") ? CONTAINER_REGISTRY.toString() : ""
+}

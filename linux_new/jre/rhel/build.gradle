@@ -1,0 +1,173 @@
+plugins {
+	id "java"
+}
+
+ext {
+	junitVersion = "5.11.3"
+	testcontainersVersion = "1.20.3"
+	assertjCoreVersion = "3.26.3"
+}
+
+repositories {
+	mavenCentral()
+}
+
+group "org.adoptium"
+version "1.0.0-SNAPSHOT"
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+	packageTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	packageTestImplementation.extendsFrom implementation
+	packageTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
+	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
+	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+task packageJrerhel {
+	dependsOn "assemble"
+
+	group = "packaging"
+	description = "Creates RPM package for Red Hat flavours."
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
+	def arch = getArch()
+
+	def input_dir = getInputDir()
+	def buildLocalFlag = getLocalBuildStatus()
+
+	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
+	outputs.dir(outputDir)
+
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
+	def containerRegistry = getContainerRegistry()
+
+	doLast {
+		if (!file("src/main/packaging/$product/$productVersion").exists()) {
+			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+		if (input_dir != null && !file(input_dir).exists()) {
+			throw new IllegalArgumentException("Input directory '$input_dir' not found")
+		}
+
+		project.copy {
+			from("src/main/packaging/$product/$productVersion/")
+			into("${buildDir}/generated/packaging")
+		}
+		if ("$buildLocalFlag" == "true") {
+			// copy jre's tarfile to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jre")
+				include("*.tar.gz")
+			}
+
+			// copy jre's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jre")
+				include("*.sha256*.txt")
+			}
+		}
+
+		if (gpgKey) {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build", "--no-cache",
+					"-t", "adoptium-packages-linux-jdk-rhel",
+					"--secret", "id=gpg,src=${gpgKey}",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		} else {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build", "--no-cache",
+					"-t", "adoptium-packages-linux-jdk-rhel",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		}
+
+		project.exec {
+			workingDir getRootDir()
+			commandLine "docker", "run",
+				"--rm",
+				"-e", "buildArch=${arch}",
+				"-e", "buildVersion=${productVersion}",
+				"-e", "buildLocalFlag=${buildLocalFlag}",
+				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
+				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
+				"adoptium-packages-linux-jdk-rhel:latest"
+		}
+	}
+}
+
+task checkJrerhel(type: Test) {
+	dependsOn packageJrerhel
+
+	description = 'Tests the generated RPM packages for RHEL.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.packageTest.output.classesDirs
+	classpath = sourceSets.packageTest.runtimeClasspath
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
+	def arch = getArch()
+
+	def containerRegistry = getContainerRegistry()
+
+	environment "PACKAGE", "$product-$productVersion-jre"
+	if (gpgKey != null) {
+		environment "JDKGPG", "$gpgKey"
+		println "We set the gpgkey!"
+	}
+	environment "testArch", "$arch"
+
+	if (containerRegistry != null && containerRegistry != "") {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
+
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+
+	doFirst {
+		if (!file("src/main/packaging/$product/$productVersion").exists()) {
+			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+	}
+}
+
+parent.packageJre.dependsOn(packageJrerhel)
+parent.checkJrePackage.dependsOn(checkJrerhel)

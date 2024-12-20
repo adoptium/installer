@@ -1,0 +1,12 @@
+tasks.register("packageJdk") {
+	group = "packaging"
+	description = "Creates Linux packages of a JDK."
+}
+
+tasks.register("checkJdkPackage") {
+	description = "Tests the generated JDK packages."
+	group = "verification"
+}
+
+rootProject.package.dependsOn(packageJdk)
+rootProject.checkPackage.dependsOn(checkJdkPackage)

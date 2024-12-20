@@ -1,0 +1,103 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-21
+pkgver={{ package_version }}
+# replace _p1 with _1
+_pkgver=${pkgver/_p/_}
+_pkgverplus=${pkgver/_p/+}
+_pkgvername=${_pkgverplus/+/%2B}
+pkgrel={{ package_release_version }}
+pkgdesc="Eclipse Temurin 21"
+provider_priority=21
+url="https://adoptium.net"
+arch="{{ hardware_architecture }}"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	freetype-dev
+	libffi-dev
+	libjpeg-turbo-dev
+	libx11-dev
+	libxext-dev
+	libxrandr-dev
+	libxrender-dev
+	libxt-dev
+	libxtst-dev
+"
+depends=""
+subpackages="$pkgname-src:_src:noarch
+	$pkgname-jdk:_jdk"
+source="
+	{{ package_url }}
+
+	HelloWorld.java
+	TestECDSA.java
+	TestCryptoLevel.java
+"
+
+_java_home="/usr/lib/jvm/java-21-temurin"
+
+ldpath="$_java_home/lib:$_java_home/lib/server"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk-$_pkgverplus/bin"
+
+	# 1) compile and run a simple hello world
+	$_java_bin/javac -d . "$srcdir"/HelloWorld.java
+	$_java_bin/java HelloWorld
+
+	# 2) compile and run a testcase for unlimited policy
+	$_java_bin/javac -d . "$srcdir"/TestCryptoLevel.java
+	$_java_bin/java -cp . --add-opens java.base/javax.crypto=ALL-UNNAMED TestCryptoLevel
+
+	# 3) compile and run a testcase for ECDSA signatures
+	$_java_bin/javac -d . "$srcdir"/TestECDSA.java
+	$_java_bin/java TestECDSA
+}
+
+package() {
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk-"$_pkgverplus"/* "$pkgdir/$_java_home"
+}
+
+_src() {
+	pkgdesc="Eclipse Temurin 21 (sources)"
+	mkdir -p "$subpkgdir/$_java_home"/lib
+	mv "$pkgdir"/$_java_home/lib/src.zip \
+		"$subpkgdir"/$_java_home/lib/
+}
+
+_jdk() {
+	pkgdesc="Eclipse Temurin 21 (JDK)"
+	provides="java-jdk java-jre"
+	depends="java-common java-cacerts"
+	_fromroot="$pkgdir/$_java_home"
+	_toroot="$subpkgdir/$_java_home"
+
+	mkdir -p "$_toroot"
+	mv "$_fromroot/bin"     "$_toroot"
+	mv "$_fromroot/conf"    "$_toroot"
+	mv "$_fromroot/include" "$_toroot"
+	mv "$_fromroot/jmods"   "$_toroot"
+	mv "$_fromroot/legal"   "$_toroot"
+	mv "$_fromroot/lib"     "$_toroot"
+	mv "$_fromroot/man"     "$_toroot"
+	mv "$_fromroot/release" "$_toroot"
+	mv "$_fromroot/NOTICE"  "$_toroot"
+
+	# symlink to shared cacerts store
+	rm "$_toroot/lib/security/cacerts"
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$_toroot/lib/security/cacerts"
+}
+
+sha256sums="
+{{ package_checksum }} {{ package_name }}
+e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
+22d2ff9757549ebc64e09afd3423f84b5690dcf972cd6535211c07c66d38fab0  TestCryptoLevel.java
+9fb00c7b0220de8f3ee2aa398459a37d119f43fd63321530a00b3bb9217dd933  TestECDSA.java
+"
