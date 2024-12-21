@@ -1,0 +1,55 @@
+Source: temurin-17-jre
+Section: java
+Priority: optional
+Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+Build-Depends: debhelper (>= 11), lsb-release
+
+Package: temurin-17-jre
+Architecture: {{ hardware_architecture }}
+Depends: adoptium-ca-certificates,
+         java-common,
+         libasound2,
+         libc6,
+         libfontconfig1,
+         libfreetype6,
+         libx11-6,
+         libxext6,
+         libxi6,
+         libxrender1,
+         libxtst6,
+         zlib1g
+Recommends: fonts-dejavu-core,
+            fonts-dejavu-extra
+Provides: java-runtime (= 17),
+          java-runtime-headless (= 17),
+          java10-runtime,
+          java11-runtime,
+          java12-runtime,
+          java13-runtime,
+          java14-runtime,
+          java15-runtime,
+          java16-runtime,
+          java17-runtime,
+          java2-runtime,
+          java5-runtime,
+          java6-runtime,
+          java7-runtime,
+          java8-runtime,
+          java9-runtime,
+          java10-runtime-headless,
+          java11-runtime-headless,
+          java12-runtime-headless,
+          java13-runtime-headless,
+          java14-runtime-headless,
+          java15-runtime-headless,
+          java16-runtime-headless,
+          java17-runtime-headless,
+          java2-runtime-headless,
+          java5-runtime-headless,
+          java6-runtime-headless,
+          java7-runtime-headless,
+          java8-runtime-headless,
+          java9-runtime-headless
+Description: Eclipse Temurin 17 JRE
+ Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
+ Java applications and services.

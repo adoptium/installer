@@ -1,0 +1,5 @@
+# Defaults for adoptium-ca-certificates
+
+# Enable/disable updates of the keystore /etc/ssl/certs/adoptium/cacerts.
+# Any value other than yes disables it.
+cacerts_updates=yes

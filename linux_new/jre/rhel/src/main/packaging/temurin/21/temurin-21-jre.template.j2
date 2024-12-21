@@ -1,0 +1,140 @@
+%global upstream_version {{ upstream_version }}
+# Only [A-Za-z0-9.] allowed in version:
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
+# also not very intuitive:
+#  $ rpmdev-vercmp 21.0.0.0.0___21.0.0.0.0+1
+#  20.0.0.0.0___1 == 21.0.0.0.0+35
+%global spec_version {{ package_version }}
+%global spec_release {{ package_release_version }}
+%global priority 2100
+
+%global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
+%global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
+%global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
+%global java_provides openjre
+
+# Map architecture to the expected value in the download URL; Allow for a
+# pre-defined value of vers_arch and use that if it's defined
+
+%global vers_arch {{ hardware_architecture }}
+%global src_num 0
+%global sha_src_num 1
+
+Name:        temurin-21-jre
+Version:     %{spec_version}
+Release:     %{spec_release}
+Summary:     Eclipse Temurin 21 JRE
+
+Group:       java
+License:     GPLv2 with exceptions
+Vendor:      Eclipse Adoptium
+URL:         https://projects.eclipse.org/projects/adoptium
+Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+
+AutoReqProv: no
+Prefix: /usr/lib/jvm/%{name}
+
+ExclusiveArch: {{ hardware_architecture }}
+
+%if "%{vers_arch}" == "armv7hl"
+%define vers_arch arm
+%endif
+
+%if "%{vers_arch}" == "x86_64"
+%define vers_arch x64
+%endif
+
+BuildRequires:  tar
+BuildRequires:  wget
+
+Requires: /bin/sh
+Requires: /usr/sbin/alternatives
+Requires: ca-certificates
+Requires: dejavu-sans-fonts
+Requires: libX11%{?_isa}
+Requires: libXext%{?_isa}
+Requires: libXi%{?_isa}
+Requires: libXrender%{?_isa}
+Requires: libXtst%{?_isa}
+Requires: alsa-lib%{?_isa}
+Requires: glibc%{?_isa}
+Requires: zlib%{?_isa}
+Requires: fontconfig%{?_isa}
+
+Provides: jre
+Provides: jre-21
+Provides: jre-21-headless
+Provides: jre-21-%{java_provides}
+Provides: jre-21-%{java_provides}-headless
+Provides: jre-headless
+Provides: jre-%{java_provides}
+Provides: jre-%{java_provides}-headless
+
+# First architecture ({{ hardware_architecture }})
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+
+# Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
+# is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
+# lists the available options.
+%define _source_payload w7.xzdio
+%define _binary_payload w7.xzdio
+
+# Avoid build failures on some distros due to missing build-id in binaries.
+%global debug_package %{nil}
+%global __brp_strip %{nil}
+
+%description
+Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
+applications and components using the programming language Java.
+
+%prep
+pushd "%{_sourcedir}"
+sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
+popd
+
+%setup -n jdk-%{upstream_version}-jre -T -b %{src_num}
+
+%build
+# noop
+
+%install
+mkdir -p %{buildroot}%{prefix}
+cd %{buildroot}%{prefix}
+tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
+
+# Use cacerts included in OS
+rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
+pushd "%{buildroot}%{prefix}/lib/security"
+ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
+popd
+
+# Ensure systemd-tmpfiles-clean does not remove pid files
+# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
+%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
+echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+
+%post
+if [ $1 -ge 1 ] ; then
+    update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/jwebserver jwebserver %{prefix}/bin/jwebserver \
+                        --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry
+fi
+
+%preun
+if [ $1 -eq 0 ]; then
+    update-alternatives --remove java %{prefix}/bin/java
+fi
+
+%files
+%defattr(-,root,root)
+%{prefix}
+/usr/lib/tmpfiles.d/%{name}.conf
+
+%changelog
+* {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}
+- Eclipse Temurin {{ changelog_version }} JRE release.
