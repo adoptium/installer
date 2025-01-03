@@ -1,0 +1,205 @@
+plugins {
+	id "java"
+}
+
+ext {
+	junitVersion = "5.11.3"
+	testcontainersVersion = "1.20.3"
+	assertjCoreVersion = "3.26.3"
+}
+
+repositories {
+	mavenCentral()
+}
+
+group "org.adoptium"
+version "1.0.0-SNAPSHOT"
+
+/*
+ * The versions list defines the Debian and Ubuntu versions that this package is uploaded to.
+ *
+ * If a version like sid is missing here, the package won't be included in the sid repository and therefore not
+ * installable via apt. Never use suite names like testing or unstable. This list is usually bigger than the list
+ * of versions we test with as defined by the class DebianFlavours in the source set packageTest.
+ *
+ * **Attention**: If you alter the list, check if the class DebianFlavours needs to be updated, too.
+ */
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+	packageTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	packageTestImplementation.extendsFrom implementation
+	packageTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
+	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
+	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+task packageJdkDebian {
+	dependsOn "assemble"
+
+	group = "packaging"
+	description = "Creates deb package for Debian flavours."
+
+	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
+	outputs.dir(outputDir)
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+	def arch = getArch()
+
+	def input_dir = getInputDir()
+	def buildLocalFlag = getLocalBuildStatus()
+
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
+	def containerRegistry = getContainerRegistry()
+
+	doLast {
+		if (!file("src/main/packaging/$product/$productVersion").exists()) {
+			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+		if (input_dir != null && !file(input_dir).exists()) {
+			throw new IllegalArgumentException("Input directory '$input_dir' not found")
+		}
+
+		project.copy {
+			from("src/main/packaging/$product/$productVersion/")
+			into("${buildDir}/generated/packaging")
+		}
+		if ("$buildLocalFlag" == "true") {
+			// copy jdk's tarfile to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jdk")
+				include("*.tar.gz")
+			}
+
+			// copy jdk's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jdk")
+				include("*.sha256*.txt")
+			}
+		}
+
+println "The Value Of ARCH is: $arch"
+
+if ("$arch" == "armhf") {
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"--build-arg", "IMAGE=arm32v7/debian:bullseye",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+		}
+	}
+
+if ("$arch" == "riscv64") {
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		}
+
+if ("$arch" == "s390x") {
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"--build-arg", "IMAGE=s390x/debian:bullseye",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+		}
+	}
+if ("$arch" != "armhf" && "$arch" != "riscv64" && "$arch" != "s390x"){
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+     }
+	}
+
+		project.exec {
+			workingDir getRootDir()
+			commandLine "docker", "run",
+				"--rm",
+				"-e", "buildArch=${arch}",
+				"-e", "buildLocalFlag=${buildLocalFlag}",
+				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
+				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
+				"adoptium-packages-linux-jdk-debian:latest"
+		}
+	}
+}
+
+task checkJdkDebian(type: Test) {
+	dependsOn packageJdkDebian
+
+	description = 'Tests the generated Debian packages.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.packageTest.output.classesDirs
+	classpath = sourceSets.packageTest.runtimeClasspath
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+	
+	def containerRegistry = getContainerRegistry()
+
+	// If product is microsoft set it as msopenjdk
+	if (product == "microsoft") {
+		environment "PACKAGE", "msopenjdk-$productVersion"
+	} else {
+		environment "PACKAGE", "$product-$productVersion-jdk"
+	}
+
+	if (containerRegistry != null && containerRegistry != "") {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
+
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+
+	doFirst {
+		if (!file("src/main/packaging/$product/$productVersion").exists()) {
+			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+	}
+}
+
+parent.packageJdk.dependsOn(packageJdkDebian)
+parent.checkJdkPackage.dependsOn(checkJdkDebian)

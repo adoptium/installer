@@ -1,0 +1,71 @@
+trigger:
+  branches:
+    include:
+      - "*"
+  tags:
+    include:
+      - "v*" # Only consider tags like v1.0.0.
+
+pr:
+  branches:
+    include:
+      - "*"
+
+schedules:
+  - cron: "2 4 * * Tue" # Every Tuesday on 04:02 UTC
+    displayName: "Weekly Build"
+    branches:
+      include:
+        - main
+
+pool:
+  vmImage: "ubuntu-latest"
+
+variables:
+  isTag: $[startsWith(variables['Build.SourceBranch'], 'refs/tags/')]
+
+steps:
+  - task: CmdLine@2
+    displayName: 'Lint Bash scripts'
+    inputs:
+      script: |
+        shellcheck *.sh
+        shellcheck packaging/debian/adoptium-cacerts.sh
+        shellcheck packaging/debian/postinst
+        shellcheck packaging/debian/prerm
+
+  - task: Gradle@2
+    displayName: "Build and run tests"
+    inputs:
+      workingDirectory: ""
+      gradleWrapperFile: "gradlew"
+      gradleOptions: "-Xmx3072m"
+      javaHomeOption: "JDKVersion"
+      jdkVersionOption: "1.8"
+      jdkArchitectureOption: "x64"
+      publishJUnitResults: true
+      testResultsFiles: "**/TEST-*.xml"
+      tasks: "check packageTest"
+
+  - task: CopyFiles@2
+    displayName: "Collect debian packages"
+    inputs:
+      sourceFolder: "$(Build.SourcesDirectory)/build/deb"
+      contents: "*.deb"
+      targetFolder: "$(Build.ArtifactStagingDirectory)"
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish artifacts"
+    inputs:
+      pathToPublish: '$(Build.ArtifactStagingDirectory)'
+      artifactName: artifacts
+
+  - task: GitHubRelease@0
+    displayName: "Push to GitHub Releases"
+    condition: and(succeeded(), eq(variables.isTag, true))
+    inputs:
+      gitHubConnection: github/aahlenst
+      repositoryName: "$(Build.Repository.Name)"
+      action: "create"
+      target: "$(Build.SourceVersion)"
+      tagSource: "auto"

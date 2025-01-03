@@ -1,0 +1,15 @@
+drwxr-xr-x root/root    ./
+drwxr-xr-x root/root    ./etc/
+drwxr-xr-x root/root    ./etc/ca-certificates/
+drwxr-xr-x root/root    ./etc/ca-certificates/update.d/
+-rwxr-xr-x root/root    ./etc/ca-certificates/update.d/adoptium-cacerts
+drwxr-xr-x root/root    ./etc/default/
+-rw-r--r-- root/root    ./etc/default/adoptium-ca-certificates
+drwxr-xr-x root/root    ./etc/ssl/
+drwxr-xr-x root/root    ./etc/ssl/certs/
+drwxr-xr-x root/root    ./etc/ssl/certs/adoptium/
+drwxr-xr-x root/root    ./usr/
+drwxr-xr-x root/root    ./usr/share/
+drwxr-xr-x root/root    ./usr/share/doc/
+drwxr-xr-x root/root    ./usr/share/doc/adoptium-ca-certificates/
+-rw-r--r-- root/root    ./usr/share/doc/adoptium-ca-certificates/changelog.Debian.gz

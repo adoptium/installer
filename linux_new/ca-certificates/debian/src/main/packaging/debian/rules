@@ -1,0 +1,22 @@
+#!/usr/bin/make -f
+
+d = debian/adoptium-ca-certificates
+
+%:
+	dh $@
+
+override_dh_auto_clean:
+override_dh_auto_test:
+override_dh_auto_build:
+override_dh_auto_install:
+	dh_installdirs \
+		etc/ca-certificates/update.d \
+		etc/default \
+		etc/ssl/certs/adoptium
+	install -m600 debian/default \
+		$(d)/etc/default/adoptium-ca-certificates
+	install -m755 debian/adoptium-cacerts.sh \
+		$(d)/etc/ca-certificates/update.d/adoptium-cacerts
+
+override_dh_gencontrol:
+	dh_gencontrol --

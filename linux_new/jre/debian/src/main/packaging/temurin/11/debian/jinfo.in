@@ -1,0 +1,15 @@
+name=@pkg_alias@
+alias=@pkg_alias@
+priority=@priority@
+section=contrib
+
+jdkhl jaotc /usr/lib/jvm/@jvm_dir@/bin/jaotc
+hl java /usr/lib/jvm/@jvm_dir@/bin/java
+hl jfr /usr/lib/jvm/@jvm_dir@/bin/jfr
+hl jjs /usr/lib/jvm/@jvm_dir@/bin/jjs
+hl jrunscript /usr/lib/jvm/@jvm_dir@/bin/jrunscript
+hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
+hl pack200 /usr/lib/jvm/@jvm_dir@/bin/pack200
+hl rmid /usr/lib/jvm/@jvm_dir@/bin/rmid
+hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry
+hl unpack200 /usr/lib/jvm/@jvm_dir@/bin/unpack200
