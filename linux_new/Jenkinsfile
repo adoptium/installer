@@ -152,18 +152,29 @@ def getPackageBuildLabel(String arch, String distro) {
 def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVersion, String DistroList, String Value, String PackageDir, String Key, String FileName) {
   echo "Entering Check & Upload"
   echo "Debug 2001"
-  // echo "${Target} ${Distro} ${BuildArch} ${Version} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
+  echo "${Target} ${Distro} ${BuildArch} ${RelVersion} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
   // echo "Target = ${Target}/${FileName}"
   // echo "Distro = ${Distro}"
-  // echo "Arch = ${BuildArch}"
-  // echo "Version = ${RelVersion}"
+  echo "Arch = ${BuildArch}"
+  echo "Version = ${RelVersion}"
   def RelNumber = params.VERSION.replaceAll(/[^\d]/, '')
-  // echo "RELNUM = ${RelNumber}"
+  echo "RELNUM = ${RelNumber}"
   // echo "DistroList = ${DistroList}"
   // echo "Value = ${Value}"
   // echo "PackageDir = ${PackageDir}"
   // echo "Key = ${Key}"
   // echo "Filename = ${FileName}"
+
+  env.TARGET = Target
+  env.DISTRO = Distro
+  env.BUILDARCH = BuildArch
+  env.VERSION = RelVersion
+  env.RELNUM = RelNumber
+  env.DISTROLIST = DistroList
+  env.VALUE = Value
+  env.PACKAGEDIR = PackageDir
+  env.KEY = Key
+  env.FILENAME = FileName
 
   // WORKING HERE
 
@@ -177,26 +188,30 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
       switch(Distro) { // Distro Values ( Alpine / RPMS / Debian )
            case "Debian":
                echo "About To Upload Debian File"
+               env.VERSION=17
                // Debian : jf 'rt u **/build/ospackage/{FileName} deb/pool/main/t/temurin-${RelVersion}/ --target-props=${DistroList}deb.component=main;deb.architecture=${BuildArch} --flat=true'
+               // def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
+               // CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '', '' )
                echo "Debug 2002 - Debian List"
-            //    echo "Filename = ${FileName}"
-            //    echo "BuildArch = ${BuildArch}"
-            //    echo "Version = ${RelVersion}"
-            //    echo "DistroList = ${DistroList}"
+            //     echo "Filename = ${FILENAME}"
+            //     sh "ls -ltr ${FILENAME}"
+            //     echo "BuildArch = ${BUILDARCH}"
+            //     echo "Version = ${VERSION}"
+            //     echo "RelVersion = ${RelVersion}"
+            //    echo "DistroList = ${DISTROLIST}"
             //    sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
                 echo "Debian Sample Command:"
-                echo "jf 'rt u **/build/ospackage/${FileName} deb/pool/main/t/temurin-${RelVersion}/ --target-props=${DistroList}deb.component=main;deb.architecture=${BuildArch} --flat=true'"
+                echo "jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
+                // This Upload Works
+                // jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                break
            case "Alpine":
                echo "About To Upload Alpine File"
-               // Alpine : jf 'rt u **/build/ospackage/${FileName} apk/alpine/main/${BuildArch}/ --flat=true' ( BUILDARCH = aarch64 / x86_64 )
                echo "Debug 2003 - Alpine List"
-            //    echo "Filename = ${FileName}"
-            //    echo "BuildArch = ${BuildArch}"
-                echo "Alpine Sample Command:"
-                echo "jf 'rt u **/build/ospackage/${FileName} apk/alpine/main/${BuildArch}/ --flat=true'"
-               // sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
-               jf 'rt u **/build/ospackage/${FileName} sfr-apk-test/alpine/main/${BuildArch}/ --flat=true'
+               echo "Alpine Sample Command:"
+               echo "jf rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true"
+               // This Upload Works
+               // jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
                break
            case "RPMS":
               echo "About To Upload RPM File"
@@ -204,12 +219,12 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
               echo "Debug 2004 - RPM List"
               // sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
             //   echo "Value = ${Value}"
-              echo "Filename = ${FileName}"
-              echo "PackageDir  = ${PackageDir}"
-              echo "Key = ${Key}"
+            //   echo "Filename = ${FileName}"
+            //   echo "PackageDir  = ${PackageDir}"
+            //   echo "Key = ${Key}"
               echo "RPM Sample Command:"
-              echo "jf 'rt u ${FileName} ${PackageDir} --flat=true'"
-              sh "ls -l ${FileName}"
+              echo "jf 'rt u ${FILENAME} ${PACKAGEDIR} --flat=true'"
+              // sh "ls -l ${FileName}"
               break
            default:
               echo "Default Case"
@@ -895,13 +910,16 @@ stage('Build & Archive Package') {
                             DebTarget = "${artBaseURL}/deb/pool/main/t/temurin-${Release}"
                             echo "Debug 1001 - Debian Upload Debugging"
                             echo "Target = ${DebTarget}"
-                            // echo "Distro = ${DebDistro}"
-                            // echo "buildArch = ${arch}"
+                            echo "Distro = ${DebDistro}"
+                            echo "buildArch = ${arch}"
+                            def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
+                            def DebArch = DebArchEx[0][1]
+                            echo "DebArch = ${DebArch}"
                             echo "Release = ${Release}"
                             echo "FileName = ${DebFileName}"
                             // echo "FilePath = ${DebFilePath}"
                             // echo "DistroList = ${distro_list}"
-                            CheckAndUpload(DebTarget, DebDistro, arch,, '', distro_list, '', '', '' , DebPackFile.path)
+                            CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', '' , DebPackFile.path)
                         }
                         echo "Preapring For RHEL Upload"
                         def RHELFileName = ''
