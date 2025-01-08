@@ -196,6 +196,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
                 echo "Alpine Sample Command:"
                 echo "jf 'rt u **/build/ospackage/${FileName} apk/alpine/main/${BuildArch}/ --flat=true'"
                // sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
+               jf 'rt u **/build/ospackage/${FileName} sfr-apk-test/alpine/main/${BuildArch}/ --flat=true'
                break
            case "RPMS":
               echo "About To Upload RPM File"
