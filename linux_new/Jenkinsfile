@@ -5,8 +5,11 @@
 def NODE_LABEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure' // Default node
 def PRODUCT = 'temurin'
 def JVM = 'hotspot'
+
+// Artifactory Global Variables
 def baseURL = "https://github.com/adoptium/"
-def artBaseURL = "https://adoptium.jfrog.io/artifactory"
+
+// Github Artifact Repos
 def binaryRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/tag/${params.TAG}"
 def binaryDLRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/download/${params.TAG}"
 def fullURL = "${baseURL}/${binaryRepo}"
@@ -26,32 +29,60 @@ def deb_distros = [
     "bionic"   // Ubuntu/18.04 (LTS)
     ]
 
+// def rhel_distros = [
+//     'rpm/centos/7',
+//     'rpm/rocky/8',
+//     'rpm/rhel/7',
+//     'rpm/rhel/8',
+//     'rpm/rhel/9',
+//     'rpm/fedora/35',
+//     'rpm/fedora/36',
+//     'rpm/fedora/37',
+//     'rpm/fedora/38',
+//     'rpm/fedora/39',
+//     'rpm/fedora/40',
+//     'rpm/fedora/41',
+//     'rpm/fedora/42',
+//     'rpm/fedora/rawhide',
+//     'rpm/oraclelinux/7',
+//     'rpm/oraclelinux/8',
+//     'rpm/amazonlinux/2'
+//     ]
+
+// def suse_distros = [
+//     'rpm/opensuse/15.3',
+//     'rpm/opensuse/15.4',
+//     'rpm/opensuse/15.5',
+//     'rpm/sles/12',
+//     'rpm/sles/15'
+//     ]
+
 def rhel_distros = [
-    'rpm/centos/7',
-    'rpm/rocky/8',
-    'rpm/rhel/7',
-    'rpm/rhel/8',
-    'rpm/rhel/9',
-    'rpm/fedora/35',
-    'rpm/fedora/36',
-    'rpm/fedora/37',
-    'rpm/fedora/38',
-    'rpm/fedora/39',
-    'rpm/fedora/40',
-    'rpm/fedora/41',
-    'rpm/fedora/42',
-    'rpm/fedora/rawhide',
-    'rpm/oraclelinux/7',
-    'rpm/oraclelinux/8',
-    'rpm/amazonlinux/2'
+    'sfr-rpm-test/centos/7',
+    'sfr-rpm-test/rocky/8',
+    'sfr-rpm-test/rhel/7',
+    'sfr-rpm-test/rhel/8',
+    'sfr-rpm-test/rhel/9',
+    'sfr-rpm-test/fedora/35',
+    'sfr-rpm-test/fedora/36',
+    'sfr-rpm-test/fedora/37',
+    'sfr-rpm-test/fedora/38',
+    'sfr-rpm-test/fedora/39',
+    'sfr-rpm-test/fedora/40',
+    'sfr-rpm-test/fedora/41',
+    'sfr-rpm-test/fedora/42',
+    'sfr-rpm-test/fedora/rawhide',
+    'sfr-rpm-test/oraclelinux/7',
+    'sfr-rpm-test/oraclelinux/8',
+    'sfr-rpm-test/amazonlinux/2'
     ]
 
 def suse_distros = [
-    'rpm/opensuse/15.3',
-    'rpm/opensuse/15.4',
-    'rpm/opensuse/15.5',
-    'rpm/sles/12',
-    'rpm/sles/15'
+    'sfr-rpm-test/opensuse/15.3',
+    'sfr-rpm-test/opensuse/15.4',
+    'sfr-rpm-test/opensuse/15.5',
+    'sfr-rpm-test/sles/12',
+    'sfr-rpm-test/sles/15'
     ]
 
 /* End Of Distro Definitions*/
@@ -153,17 +184,17 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
   echo "Entering Check & Upload"
   echo "Debug 2001"
   echo "${Target} ${Distro} ${BuildArch} ${RelVersion} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
-  // echo "Target = ${Target}/${FileName}"
+  echo "Target = ${Target}/${FileName}"
   // echo "Distro = ${Distro}"
   echo "Arch = ${BuildArch}"
   echo "Version = ${RelVersion}"
   def RelNumber = params.VERSION.replaceAll(/[^\d]/, '')
   echo "RELNUM = ${RelNumber}"
-  // echo "DistroList = ${DistroList}"
-  // echo "Value = ${Value}"
-  // echo "PackageDir = ${PackageDir}"
-  // echo "Key = ${Key}"
-  // echo "Filename = ${FileName}"
+  echo "DistroList = ${DistroList}"
+  echo "Value = ${Value}"
+  echo "PackageDir = ${PackageDir}"
+  echo "Key = ${Key}"
+  echo "Filename = ${FileName}"
 
   env.TARGET = Target
   env.DISTRO = Distro
@@ -175,11 +206,13 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
   env.PACKAGEDIR = PackageDir
   env.KEY = Key
   env.FILENAME = FileName
-
+  // env.DESTTARGET = RHELTarget = "${RHELkey}/Packages"
+  def artBaseURL = "https://adoptium.jfrog.io/artifactory/"
+  
   // WORKING HERE
 
   try {
-    def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${Target}/${FileName}", returnStdout: true).trim()
+    def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}/${Target}/${FileName}", returnStdout: true).trim()
     echo "ResponseCode = ${ResponseCode}"
     if ( ResponseCode == '200') {
       echo "Target Exists - Skipping"
@@ -188,7 +221,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
       switch(Distro) { // Distro Values ( Alpine / RPMS / Debian )
            case "Debian":
                echo "About To Upload Debian File"
-               env.VERSION=17
+               // env.VERSION=17
                // Debian : jf 'rt u **/build/ospackage/{FileName} deb/pool/main/t/temurin-${RelVersion}/ --target-props=${DistroList}deb.component=main;deb.architecture=${BuildArch} --flat=true'
                // def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
                // CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '', '' )
@@ -201,30 +234,30 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             //    echo "DistroList = ${DISTROLIST}"
             //    sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
                 echo "Debian Sample Command:"
-                echo "jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
+                echo "jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
                 // This Upload Works
-                // jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+                jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                break
            case "Alpine":
                echo "About To Upload Alpine File"
                echo "Debug 2003 - Alpine List"
                echo "Alpine Sample Command:"
-               echo "jf rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true"
+               echo "jf rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true"
                // This Upload Works
-               // jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
+               jf 'rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true'
                break
            case "RPMS":
               echo "About To Upload RPM File"
               // RPM : jf 'rt u ${FileName} ${PackageDir} --flat=true'
               echo "Debug 2004 - RPM List"
               // sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
-            //   echo "Value = ${Value}"
-            //   echo "Filename = ${FileName}"
-            //   echo "PackageDir  = ${PackageDir}"
-            //   echo "Key = ${Key}"
+              echo "FILENAME = ${FILENAME}"
+              echo "PACKAGEDIR = ${PACKAGEDIR}"
               echo "RPM Sample Command:"
-              echo "jf 'rt u ${FILENAME} ${PACKAGEDIR} --flat=true'"
+              echo "jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'"
               // sh "ls -l ${FileName}"
+              sh "ls -l ${FILENAME}"
+              jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
               break
            default:
               echo "Default Case"
@@ -249,7 +282,6 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
 }
 
 // Function Definitions End
-
 
 /* Pipeline Declaration */
 pipeline {
@@ -579,20 +611,6 @@ stage('Validate Artifacts') {
                         }
                         outputfile = "APKBUILD"
 
-                        // echo "Debug 05 Python Parameters For Alpine"
-                        // echo "Python 1 : Template Path = : ${templatebase}"
-                        // echo "Python 2 : Package Version = : ${packagever}"
-                        // echo "Python 3 : Package Arch = : ${packagearch}"
-                        // echo "Python 4 : Package URL = : ${PKURL}"
-                        // echo "Python 5 : Package Checksum = : ${PCSUM}"
-                        // echo "Python 6 : Package Name = : ${PFILE}"
-                        // echo "Python 7 : Output File Name = : ${outputfile}"
-                        // echo "Python 8 : Current Date = : ${currentDate}"
-                        // echo "Python 9 : Package Release Version = : ${PackageReleaseVersion}"
-                        // echo "Python 10: JDK Upstream Version = : ${upstreamversion}"
-                        // echo "Python 11 : Changelog Version = :${packagever}"
-                        // echo "Python 12: ARM32 Version = ${upstreamversion}"
-
                         // Figure Out Template name
                         templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}.${PTYPE}${Release}.template.j2"
 
@@ -883,7 +901,7 @@ stage('Build & Archive Package') {
                         for (AlpPackFile in AllFiles) {
                                  def AlpFileName = AlpPackFile.name
                                  def AlpFilePath = AlpPackFile.path
-                                 def Target = "${artBaseURL}/apk/alpine/main/${AlpArch}"
+                                 def Target = "apk/alpine/main/${AlpArch}"
                                  echo "Debug 1000 - Alpine Upload Debugging"
                                  echo "Target = ${Target}"
                                  echo "Distro = ${AlpDistro}"
@@ -907,7 +925,7 @@ stage('Build & Archive Package') {
                         for (DebPackFile in DebPackFiles) {
                             DebFileName = DebPackFile.name
                             def DebFilePath = DebPackFile.path
-                            DebTarget = "${artBaseURL}/deb/pool/main/t/temurin-${Release}"
+                            DebTarget = "deb/pool/main/t/temurin-${Release}"
                             echo "Debug 1001 - Debian Upload Debugging"
                             echo "Target = ${DebTarget}"
                             echo "Distro = ${DebDistro}"
@@ -939,14 +957,11 @@ stage('Build & Archive Package') {
                                 RHELarchitecture = "source"
                                 // echo "Overriden Architecture : ${RHELarchitecture}"
                             }                            
-                            // Calculate Key
-                            //  https://adoptium.jfrog.io/artifactory/rpm/fedora/39/source/Packages/temurin-17-jre-17.0.13.0.0.11-2.src.rpm
-                            //  https://adoptium.jfrog.io/artifactory/rpm/amazonlinux/2/source
-                            //  https://packages.adoptium.net/artifactory/rpm/fedora/rawhide/aarch64/Packages/temurin-11-jdk-11.0.25.0.0.9-1.aarch64.rpm
-                            //
+
                             rhel_distros.each { rhel_distro ->
                                 RHELkey = "${rhel_distro}/${RHELarchitecture}"
-                                RHELTarget = "${artBaseURL}/${RHELkey}/Packages"
+                                // RHELTarget = "${artBaseURL}/${RHELkey}/Packages"
+                                RHELTarget = "${RHELkey}/Packages"
                                 CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', '', RHELTarget, RHELkey, RHELFilePath)
                                 }
                             // RHELTarget = "https://adoptium.jfrog.io/artifactory/"
@@ -981,7 +996,9 @@ stage('Build & Archive Package') {
                             // Calculate Key
                             suse_distros.each { suse_distro ->
                                 SUSEkey = "${suse_distro}/${SUSEarchitecture}"
-                                SUSETarget = "https://adoptium.jfrog.io/artifactory/${SUSEkey}/Packages"
+                                // SUSETarget = "https://adoptium.jfrog.io/artifactory/${SUSEkey}/Packages"
+                                // SUSETarget = "${artBaseURL}/${SUSEkey}/Packages"
+                                SUSETarget = "${SUSEkey}/Packages"
                                 CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', '', SUSETarget, SUSEkey, SUSEFilePath)
                                 }
                             // SUSETarget = "https://adoptium.jfrog.io/artifactory/"
