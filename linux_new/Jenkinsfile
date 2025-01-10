@@ -235,9 +235,9 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             //    echo "DistroList = ${DISTROLIST}"
             //    sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
                 echo "Debian Sample Command:"
-                echo "jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
+                echo "jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
                 // This Upload Works
-                jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${VERSION}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+                jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
                break
            case "Alpine":
                echo "About To Upload Alpine File"
