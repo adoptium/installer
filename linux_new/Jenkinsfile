@@ -212,54 +212,61 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
   // WORKING HERE
 
   try {
-    def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}/${Target}/${FileName}", returnStdout: true).trim()
-    echo "ResponseCode = ${ResponseCode}"
-    if ( ResponseCode == '200') {
-      echo "Target Exists - Skipping"
-    } else {
-      echo "Target Doesnt Exist - Upload Files"
       switch(Distro) { // Distro Values ( Alpine / RPMS / Debian )
            case "Debian":
-               echo "About To Upload Debian File"
-               // env.VERSION=17
-               // Debian : jf 'rt u **/build/ospackage/{FileName} deb/pool/main/t/temurin-${RelVersion}/ --target-props=${DistroList}deb.component=main;deb.architecture=${BuildArch} --flat=true'
-               // def Target = "https://adoptium.jfrog.io/artifactory/deb/pool/main/t/temurin-${VERSION}/${FileName}"
-               // CheckAndUpload(Target, Distro, BUILDARCH, VERSION, DISTROLIST, '', '', '', '' )
-               echo "Debug 2002 - Debian List"
-            //     echo "Filename = ${FILENAME}"
-            //     sh "ls -ltr ${FILENAME}"
-            //     echo "BuildArch = ${BUILDARCH}"
-            //     echo "Version = ${VERSION}"
-                   echo "RelVersion = ${RelVersion}"
-                   echo "RelNum = ${RELNUM}"
-            //    echo "DistroList = ${DISTROLIST}"
-            //    sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
-                echo "Debian Sample Command:"
-                echo "jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
-                // This Upload Works
-                jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
-               break
+                echo "Debug 2002A - Debian List"
+                echo "Target = ${Target}"
+                echo "Filename = ${Filename}"
+                def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${Key}", returnStdout: true).trim()
+                echo "ResponseCode = ${ResponseCode}"
+                if ( ResponseCode == '200') {
+                    echo "Target Exists - Skipping"
+                    break
+                } else {
+                    echo "Target Doesnt Exist - Upload Files"
+                    echo "About To Upload Debian File"
+                    echo "Debug 2002B - Debian List"
+                    echo "Debian Sample Command:"
+                    echo "jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'"
+                    // This Upload Works
+                    jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+                    break
+                }
            case "Alpine":
-               echo "About To Upload Alpine File"
-               echo "Debug 2003 - Alpine List"
-               echo "Alpine Sample Command:"
-               echo "jf rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true"
-               // This Upload Works
-               jf 'rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true'
-               break
+                echo "Debug 2003A"
+                echo "Target = ${Target}"
+                echo "Filename = ${Filename}"
+                def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${FileName}", returnStdout: true).trim()
+                if ( ResponseCode == '200') {
+                    echo "Target Exists - Skipping"
+                    break
+                } else {
+                    echo "About To Upload Alpine File"
+                    echo "Debug 2003B - Alpine List"
+                    echo "Alpine Sample Command:"
+                    echo "jf rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true"
+                    // This Upload Works
+                    jf 'rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true'
+                    break
+                }
            case "RPMS":
-              echo "About To Upload RPM File"
-              // RPM : jf 'rt u ${FileName} ${PackageDir} --flat=true'
-              echo "Debug 2004 - RPM List"
-              // sh "find . -path '*/build/ospackage/${FileName}' -exec ls -ltr {} +"
-              echo "FILENAME = ${FILENAME}"
-              echo "PACKAGEDIR = ${PACKAGEDIR}"
-              echo "RPM Sample Command:"
-              echo "jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'"
-              // sh "ls -l ${FileName}"
-              sh "ls -l ${FILENAME}"
-              jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
-              break
+                echo "Debug 2004A"
+                echo "Target = ${Target}"
+                echo "Filename = ${Filename}"
+                def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${DistroList}", returnStdout: true).trim()
+                if ( ResponseCode == '200') {
+                    echo "Target Exists - Skipping"
+                    break
+                } else {
+                    echo "About To Upload RPM File"
+                    // RPM : jf 'rt u ${FileName} ${PackageDir} --flat=true'
+                    echo "Debug 2004B - RPM List"
+                    echo "RPM Sample Command:"
+                    echo "jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'"
+                    // This Upload Works
+                    jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
+                    break
+                }
            default:
               echo "Default Case"
               echo "I've reached an unsupported Distro This Shouldnt Occur - Have Some Debugging"
@@ -273,7 +280,6 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
               echo "Key = ${Key}"
               echo "Filename = ${FileName}"
               break
-       }
     }
   } catch (Exception e) {
     error "Error While Checking URL ${Target}: ${e.message}"
@@ -903,7 +909,7 @@ stage('Build & Archive Package') {
                         for (AlpPackFile in AllFiles) {
                                  def AlpFileName = AlpPackFile.name
                                  def AlpFilePath = AlpPackFile.path
-                                 def Target = "apk/alpine/main/${AlpArch}"
+                                 def Target = "sfr-apk-test/alpine/main/${AlpArch}" // ZZZZZZZZZZZ
                                  echo "Debug 1000 - Alpine Upload Debugging"
                                  echo "Target = ${Target}"
                                  echo "Distro = ${AlpDistro}"
@@ -927,7 +933,7 @@ stage('Build & Archive Package') {
                         for (DebPackFile in DebPackFiles) {
                             DebFileName = DebPackFile.name
                             def DebFilePath = DebPackFile.path
-                            DebTarget = "deb/pool/main/t/temurin-${Release}"
+                            DebTarget = "sfr-deb-test/pool/main/t/temurin-${Release}" // ZZZZZZZZZZ
                             echo "Debug 1001 - Debian Upload Debugging"
                             echo "Target = ${DebTarget}"
                             echo "Distro = ${DebDistro}"
@@ -939,7 +945,7 @@ stage('Build & Archive Package') {
                             echo "FileName = ${DebFileName}"
                             // echo "FilePath = ${DebFilePath}"
                             // echo "DistroList = ${distro_list}"
-                            CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', '' , DebPackFile.path)
+                            CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
                         }
                         echo "Preapring For RHEL Upload"
                         def RHELFileName = ''
@@ -964,7 +970,7 @@ stage('Build & Archive Package') {
                                 RHELkey = "${rhel_distro}/${RHELarchitecture}"
                                 // RHELTarget = "${artBaseURL}/${RHELkey}/Packages"
                                 RHELTarget = "${RHELkey}/Packages"
-                                CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', '', RHELTarget, RHELkey, RHELFilePath)
+                                CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
                                 }
                             // RHELTarget = "https://adoptium.jfrog.io/artifactory/"
                             echo "Debug 1001 - RHEL Upload Debugging"
@@ -1001,7 +1007,7 @@ stage('Build & Archive Package') {
                                 // SUSETarget = "https://adoptium.jfrog.io/artifactory/${SUSEkey}/Packages"
                                 // SUSETarget = "${artBaseURL}/${SUSEkey}/Packages"
                                 SUSETarget = "${SUSEkey}/Packages"
-                                CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', '', SUSETarget, SUSEkey, SUSEFilePath)
+                                CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', SUSEFileName, SUSETarget, SUSEkey, SUSEFilePath)
                                 }
                             // SUSETarget = "https://adoptium.jfrog.io/artifactory/"
                             echo "Debug 1003 - SUSE Upload Debugging"
