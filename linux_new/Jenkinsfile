@@ -890,6 +890,7 @@ stage('Build & Archive Package') {
                     // Distro Specific Uploads
                     if (distro == 'alpine-linux') {
                         echo "ALPINE UPLOAD"
+                        AlpArch = arch
                         if (arch == 'x64') {
                             echo "Fixing Arch For Alpine"
                             AlpArch = "x86_64"
