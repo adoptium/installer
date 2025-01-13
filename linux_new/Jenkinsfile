@@ -184,19 +184,19 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
   echo "Entering Check & Upload"
   // Define A Context Appropriate Release Number
   def RelNumber = params.VERSION.replaceAll(/[^\d]/, '')
-  
-//   echo "Debug 2001"
-//   echo "${Target} ${Distro} ${BuildArch} ${RelVersion} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
-//   echo "Target = ${Target}/${FileName}"
-//   // echo "Distro = ${Distro}"
-//   echo "Arch = ${BuildArch}"
-//   echo "Version = ${RelVersion}"
-//   echo "RELNUM = ${RelNumber}"
-//   echo "DistroList = ${DistroList}"
-//   echo "Value = ${Value}"
-//   echo "PackageDir = ${PackageDir}"
-//   echo "Key = ${Key}"
-//   echo "Filename = ${FileName}"
+
+  echo "Debug 2001"
+  echo "${Target} ${Distro} ${BuildArch} ${RelVersion} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
+  echo "Target = ${Target}/${FileName}"
+  echo "Distro = ${Distro}"
+  echo "Arch = ${BuildArch}"
+  echo "Version = ${RelVersion}"
+  echo "RELNUM = ${RelNumber}"
+  echo "DistroList = ${DistroList}"
+  echo "Value = ${Value}"
+  echo "PackageDir = ${PackageDir}"
+  echo "Key = ${Key}"
+  echo "Filename = ${FileName}"
 
   env.TARGET = Target
   env.DISTRO = Distro
@@ -242,7 +242,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
                 }
            case "RPMS":
                 echo "Uploading RPM Target : ${Target} For Filename {$Filename}"
-                def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${DistroList}", returnStdout: true).trim()
+                def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${DistroList}/${Value}", returnStdout: true).trim()
                 echo "File Existence Check Result = = ${ResponseCode}"
                 if ( ResponseCode == '200') {
                     echo "Target Exists - Skipping"
@@ -898,15 +898,15 @@ stage('Build & Archive Package') {
                                 CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
                                 }
                             // RHELTarget = "https://adoptium.jfrog.io/artifactory/"
-                            // echo "Debug 1001 - RHEL Upload Debugging"
-                            // echo "Target = ${RHELTarget}"
-                            // echo "Key = ${RHELkey}"
-                            // echo "Value = ${Release}"
-                            // echo "Distro = ${RHELDistro}"
-                            // echo "PackageDir = ${RHELTarget}"
-                            // echo "buildArch = ${RHELarchitecture}"
-                            // echo "FileName = ${RHELFileName}"
-                            // echo "FilePath = ${RHELFilePath}"
+                            echo "Debug 1001 - RHEL Upload Debugging"
+                            echo "Target = ${RHELTarget}"
+                            echo "Key = ${RHELkey}"
+                            echo "Value = ${Release}"
+                            echo "Distro = ${RHELDistro}"
+                            echo "PackageDir = ${RHELTarget}"
+                            echo "buildArch = ${RHELarchitecture}"
+                            echo "FileName = ${RHELFileName}"
+                            echo "FilePath = ${RHELFilePath}"
                         }
                         echo "Preapring For SUSE Upload"
                         def SUSEFileName = ''
