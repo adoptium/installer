@@ -182,13 +182,15 @@ def getPackageBuildLabel(String arch, String distro) {
 // Helper function to check and upload files
 def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVersion, String DistroList, String Value, String PackageDir, String Key, String FileName) {
   echo "Entering Check & Upload"
+  // Define A Context Appropriate Release Number
+  def RelNumber = params.VERSION.replaceAll(/[^\d]/, '')
+  
 //   echo "Debug 2001"
 //   echo "${Target} ${Distro} ${BuildArch} ${RelVersion} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
 //   echo "Target = ${Target}/${FileName}"
 //   // echo "Distro = ${Distro}"
 //   echo "Arch = ${BuildArch}"
 //   echo "Version = ${RelVersion}"
-//   def RelNumber = params.VERSION.replaceAll(/[^\d]/, '')
 //   echo "RELNUM = ${RelNumber}"
 //   echo "DistroList = ${DistroList}"
 //   echo "Value = ${Value}"
