@@ -139,7 +139,20 @@ task packageJreDebian {
 						getProjectDir().absolutePath + "/src/main/packaging"
 				}
 			}
-		if ("$arch" != "armhf" && "$arch" != "riscv64" && "$arch" != "s390x"){
+		
+		if ("$arch" == "ppc64el") {
+		project.exec {
+			workingDir "src/main/packaging"
+			commandLine "docker", "build", "--no-cache",
+				"--build-arg", "IMAGE=ppc64le/debian:bullseye",
+				"-t", "adoptium-packages-linux-jdk-debian",
+				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+				"-f", "Dockerfile",
+				getProjectDir().absolutePath + "/src/main/packaging"
+				}
+			}
+
+		if ("$arch" != "armhf" && "$arch" != "riscv64" && "$arch" != "s390x" && "$arch" != "ppc64el" ){
 				project.exec {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache",
