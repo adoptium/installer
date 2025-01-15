@@ -1,0 +1,150 @@
+plugins {
+	id "java"
+}
+
+ext {
+	junitVersion = "5.11.3"
+	testcontainersVersion = "1.20.3"
+	assertjCoreVersion = "3.26.3"
+}
+
+repositories {
+	mavenCentral()
+}
+
+group "org.adoptium"
+version "1.0.0-SNAPSHOT"
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+sourceSets {
+	packageTest {
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += sourceSets.main.output
+	}
+}
+
+configurations {
+	packageTestImplementation.extendsFrom implementation
+	packageTestRuntimeOnly.extendsFrom runtimeOnly
+}
+
+dependencies {
+	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
+	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
+	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}
+
+task packageJdkSuse {
+	dependsOn "assemble"
+
+	group = "packaging"
+	description = "Creates RPM package for SUSE flavours."
+
+	def outputDir = new File(project.buildDir.absolutePath, "ospackage")
+	outputs.dir(outputDir)
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
+	def arch = getArch()
+
+	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
+	def containerRegistry = getContainerRegistry()
+
+	doLast {
+		if (!file("src/main/packaging/$product/$productVersion").exists()) {
+			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+
+		project.copy {
+			from("src/main/packaging/$product/$productVersion/")
+			into("${buildDir}/generated/packaging")
+		}
+		if (gpgKey) {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build", "--no-cache",
+					"-t", "adoptium-packages-linux-jdk-suse",
+					"--secret", "id=gpg,src=${gpgKey}",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		} else {
+			project.exec {
+				workingDir "src/main/packaging"
+				commandLine "docker", "build", "--no-cache",
+					"-t", "adoptium-packages-linux-jdk-suse",
+					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
+					"-f", "Dockerfile",
+					getProjectDir().absolutePath + "/src/main/packaging"
+			}
+		}
+
+		project.exec {
+			workingDir getRootDir()
+			commandLine "docker", "run",
+				"--rm",
+				"-e", "buildArch=${arch}",
+				"-e", "buildVersion=${productVersion}",
+				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
+				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
+				"adoptium-packages-linux-jdk-suse:latest"
+		}
+	}
+}
+
+task checkJdkSuse(type: Test) {
+	dependsOn packageJdkSuse
+
+	description = 'Tests the generated RPM packages for SUSE flavours.'
+	group = 'verification'
+
+	testClassesDirs = sourceSets.packageTest.output.classesDirs
+	classpath = sourceSets.packageTest.runtimeClasspath
+
+	def product = getProduct()
+	def productVersion = getProductVersion()
+	def gpgKey = getGPGKey()
+	def arch = getArch()
+
+	def containerRegistry = getContainerRegistry()
+
+	environment "PACKAGE", "$product-$productVersion-jdk"
+	if (gpgKey != null) {
+		environment "JDKGPG", "$gpgKey"
+		println "We set the gpgkey!"
+	}
+	environment "testArch", "$arch"
+
+	if (containerRegistry != null && containerRegistry != "") {
+		environment "containerRegistry", "$containerRegistry"
+		println "Container registry set to $containerRegistry"
+	}
+
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+
+	doFirst {
+		if (!file("src/main/packaging/$product/$productVersion").exists()) {
+			throw new IllegalArgumentException("Unknown product $product/$productVersion")
+		}
+	}
+}
+
+parent.packageJdk.dependsOn(packageJdkSuse)
+parent.checkJdkPackage.dependsOn(checkJdkSuse)

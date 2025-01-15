@@ -1,0 +1,64 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-8-jre
+pkgver={{ package_version }}
+# replace 8. with 8u and .01 with b-01
+_pkgver=${pkgver/8./8u}
+_pkgver=${_pkgver%.*}b${_pkgver#*.}
+_pkgvername=${_pkgver%b*}-b${_pkgver#*b}
+pkgrel={{ package_release_version }}
+pkgdesc="Eclipse Temurin 8 (JRE)"
+provider_priority=8
+url="https://adoptium.net"
+arch="{{ hardware_architecture }}"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	libpng-dev
+	libxcomposite-dev
+	libxinerama-dev
+	libxrender-dev
+	libxslt
+	libxt-dev
+	libxtst-dev
+"
+depends="
+	java-common
+	java-cacerts
+	ttf-dejavu
+"
+source="{{ package_url }}
+"
+
+_java_home="/usr/lib/jvm/java-8-temurin-jre"
+
+# Exclude xawt from ldpath to avoid duplicate provides for libmawt.so
+# (also in headless). in future this should be a virtual provides.
+ldpath="$_jrelib:$_jrelib/native_threads:$_jrelib/headless:$_jrelib/server:$_jrelib/jli"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk$_pkgvername-jre/bin"
+
+	# 1) check that java -version works
+	$_java_bin/java -version
+}
+
+package() {
+	provides=java-jre
+	mkdir -p "$pkgdir/$_java_home"
+ls ${srcdir}
+	cp -r "$srcdir"/jdk"$_pkgvername-jre"/* "$pkgdir/$_java_home"
+
+	# symlink to shared java cacerts store
+	rm -f "$pkgdir"/$_java_home/lib/security/cacerts
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$pkgdir"/$_java_home/lib/security/cacerts
+}
+
+sha256sums="
+{{ package_checksum }} {{ package_name }}
+"

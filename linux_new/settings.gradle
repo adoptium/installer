@@ -1,0 +1,16 @@
+rootProject.name = "adoptium-packages-linux-new"
+
+include "ca-certificates",
+	"ca-certificates:debian",
+
+	"jdk",
+	"jdk:alpine",
+	"jdk:debian",
+	"jdk:rhel",
+	"jdk:suse",
+
+	"jre",
+	"jre:alpine",
+	"jre:debian",
+	"jre:rhel",
+	"jre:suse"

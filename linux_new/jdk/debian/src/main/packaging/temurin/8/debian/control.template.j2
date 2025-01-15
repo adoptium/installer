@@ -1,0 +1,52 @@
+Source: temurin-8-jdk
+Section: java
+Priority: optional
+Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+Build-Depends: debhelper (>= 11), lsb-release
+
+Package: temurin-8-jdk
+Architecture: {{ hardware_architecture }}
+Depends: adoptium-ca-certificates,
+         fonts-dejavu,
+         java-common,
+         libasound2,
+         libatomic1 [armhf],
+         libc6,
+         libfontconfig1,
+         libfreetype6,
+         libx11-6,
+         libxext6,
+         libxi6,
+         libxrender1,
+         libxtst6,
+         zlib1g
+Recommends: fonts-dejavu-core,
+            fonts-dejavu-extra
+Provides: java-compiler,
+          java-sdk,
+          java-sdk-headless,
+          java2-sdk,
+          java5-sdk,
+          java6-sdk,
+          java7-sdk,
+          java8-sdk,
+          java2-sdk-headless,
+          java5-sdk-headless,
+          java6-sdk-headless,
+          java7-sdk-headless,
+          java8-sdk-headless,
+          java-runtime (= 8),
+          java-runtime-headless (= 8),
+          java2-runtime,
+          java5-runtime,
+          java6-runtime,
+          java7-runtime,
+          java8-runtime,
+          java2-runtime-headless,
+          java5-runtime-headless,
+          java6-runtime-headless,
+          java7-runtime-headless,
+          java8-runtime-headless
+Description: Eclipse Temurin 8 JDK
+ Eclipse Temurin JDK is an OpenJDK-based development environment to create
+ applications and components using the programming language Java.
