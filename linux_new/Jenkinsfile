@@ -118,13 +118,13 @@ def PKGBUILDLABELRHEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 // Function Definitions Begin
 
 // Helper function to download and validate files
-def validateAndDownloadArtifact(url, file) {
+def downloadArtifact(url) {
     echo "Downloading: ${url}"
     def result = sh(script: "curl -sSL -O ${url}", returnStatus: true)
     if (result != 0) {
-        error("Failed to download ${file}. File not found or an error occurred.")
+        error("Failed to download ${url}. File not found or an error occurred. Download result := ${result}")
     }
-    echo "Downloaded: ${file}"
+    echo "Downloaded: ${url}"
 }
 
 // Helper function to validate checksum
@@ -140,7 +140,8 @@ def validateChecksum(file, checksumFile) {
 
 // Helper function to extract upstream version from tar file
 def extractUpstreamVersionFromTar(file) {
-    def version = sh(script: "tar xvfz \"${file}\" | head -n 1 | cut -d/ -f1", returnStdout: true).trim()
+    // def version = sh(script: "tar xvfz \"${file}\" | head -n 1 | cut -d/ -f1", returnStdout: true).trim()
+    def version = sh(script: "tar tvfz \"${file}\" | head -n 1 | awk '{print \$NF}' | cut -d/ -f1", returnStdout: true).trim()
     sh "rm -rf \"${version}\""
     echo "Extracted upstream version: ${version}"
     return version
@@ -157,46 +158,34 @@ def cleanupFiles(files) {
 def getPackageBuildLabel(String arch, String distro) {
     switch (distro) {
         case 'APK':
-        return (arch == 'x64') ? 'build&&linux&&x64&&dockerBuild&&dynamicAzure' :
-        (arch == 'aarch64') ? 'docker&&linux&&aarch64&&alpineInstaller' :
-        'build&&linux&&x64&&dockerBuild&&dynamicAzure'
-
+            if (arch == 'x64') {
+                return 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
+            } else if (arch == 'aarch64') {
+                // return 'docker&&linux&&aarch64&&alpineInstaller'
+                return 'build&&docker&&linux&&aarch64'
+            } else {
+                error("Unsupported architecture '${arch}' for distro 'APK'")
+            }
         case 'DEB':
-        return (arch == 'x64') ? 'build&&linux&&x64&&dockerBuild&&dynamicAzure' :
-        (arch == 'arm') ? 'docker&&linux&&aarch64' :
-        (arch == 'aarch64') ? 'docker&&linux&&aarch64' :
-        (arch == 'ppc64le') ? 'build&&docker&&ppc64le' :
-        (arch == 's390x') ? 'docker&&s390x&&dockerBuild' :
-        (arch == 'riscv64') ? 'dockerBuild&&linux&&riscv64&&dockerInstaller' :
-
-        'build&&linux&&x64&&dockerBuild&&dynamicAzure'
-
+            return (arch == 'x64') ? 'build&&linux&&x64&&dockerBuild&&dynamicAzure' :
+                   (arch == 'arm') ? 'docker&&linux&&aarch64' :
+                   (arch == 'aarch64') ? 'docker&&linux&&aarch64' :
+                   (arch == 'ppc64le') ? 'build&&docker&&ppc64le' :
+                   (arch == 's390x') ? 'docker&&s390x&&dockerBuild' :
+                   (arch == 'riscv64') ? 'dockerBuild&&linux&&riscv64&&dockerInstaller' :
+                   error("Unsupported architecture '${arch}' for distro 'DEB'")
         case 'RHEL':
-        return 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
-
+            return 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
         default:
-        error("Unsupported distro: ${distro}")
+            error("Unsupported distro: ${distro}")
     }
 }
 
 // Helper function to check and upload files
 def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVersion, String DistroList, String Value, String PackageDir, String Key, String FileName) {
-    echo "Entering Check & Upload"
+    echo "Entering : CheckAndUpload()"
     // Define A Context Appropriate Release Number
     def RelNumber = params.VERSION.replaceAll(/[^\d]/, '')
-
-    echo "Debug 2001"
-    echo "${Target} ${Distro} ${BuildArch} ${RelVersion} ${DistroList} ${Value} ${PackageDir} ${Key} ${FileName}"
-    echo "Target = ${Target}/${FileName}"
-    echo "Distro = ${Distro}"
-    echo "Arch = ${BuildArch}"
-    echo "Version = ${RelVersion}"
-    echo "RELNUM = ${RelNumber}"
-    echo "DistroList = ${DistroList}"
-    echo "Value = ${Value}"
-    echo "PackageDir = ${PackageDir}"
-    echo "Key = ${Key}"
-    echo "Filename = ${FileName}"
 
     env.TARGET = Target
     env.DISTRO = Distro
@@ -208,7 +197,6 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
     env.PACKAGEDIR = PackageDir
     env.KEY = Key
     env.FILENAME = FileName
-    // env.DESTTARGET = RHELTarget = "${RHELkey}/Packages"
     def artBaseURL = "https://adoptium.jfrog.io/artifactory/"
 
     try {
@@ -223,7 +211,6 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
         } else {
             echo "Target Doesnt Exist - Upload Files"
             // This Upload Works
-            // ZZZZZZZZZZ
             jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
@@ -236,7 +223,6 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         } else {
             // This Upload Works
-            // ZZZZZZZZZZ
             jf 'rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true'
             break
         }
@@ -268,9 +254,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
 } catch (Exception e) {
     error "Error While Checking URL ${Target}: ${e.message}"
 }
-
 }
-
 // Function Definitions End
 
 /* Pipeline Declaration */
@@ -305,6 +289,12 @@ pipeline {
                     echo "Artifacts : ${params.ARTIFACTS_TO_COPY}"
                     echo "Release : ${params.RELEASE}"
                     echo "Dry Run : ${params.DRY_RUN}"
+
+                    if (params.DRY_RUN) {
+                        echo "This Is A Dry Run - And As No Packages Are Potentially On Github - No Further Stages Will Run"
+                    } else {
+                        echo "Not A Dry Run - About To Build And Publish Packages"
+                    }
                 }
             }
         }
@@ -312,9 +302,9 @@ pipeline {
         // Process Parameters Stage - Start
         stage('Process Parameters') {
             agent { label NODE_LABEL }
-            // when {
-            //     expression { return params.Release }
-            // }
+            when {
+                expression { return params.DRY_RUN == false }
+            }
             steps {
                 script{
                     echo "Entering Stage : Process Parameters"
@@ -393,7 +383,7 @@ pipeline {
                         }
                     } else {
                         echo "Not JDK8"
-                        // Parse The Version Tag, Into Usable Components
+                        // Parse the version tag into usable components.
                         def split = (params.TAG =~ /(jdk)-(\d[\d.]*)([+_]\d+)?/)
                         if (split.find()) {
                             vername = split.group(1)
@@ -440,9 +430,9 @@ pipeline {
     // Validate Artifacts Stage - Start
     stage('Validate Artifacts') {
         agent { label NODE_LABEL }
-        // when {
-        //     expression { return params.RELEASE }
-        // }
+        when {
+            expression { return params.DRY_RUN == false }
+        }
         steps {
             script {
                 echo "Entering Stage : Validate Artifacts"
@@ -453,12 +443,14 @@ pipeline {
                 def SHAurl = "${dlURL}/${PSIGN}"
 
                 // Download binary and checksum
-                validateAndDownloadArtifact(Binurl, PFILE)
-                validateAndDownloadArtifact(SHAurl, PSIGN)
+                downloadArtifact(Binurl)
+                downloadArtifact(SHAurl)
 
                 // Validate checksum
                 def calculatedChecksum = validateChecksum(PFILE, PSIGN)
 
+                // Special Case : Arm 32 has a different tag format as its built from a seperate repo
+                // It does require a different tag for the specfiles, which can be extracted from the tarball.
                 if (PARCH == "arm") {
                     upstreamversionARM32 = extractUpstreamVersionFromTar(PFILE)
                 }
@@ -477,12 +469,12 @@ pipeline {
 // Generate Spec File Stage - Start
 stage('Generate Spec File') {
     agent { label NODE_LABEL }
-    // when {
-    //     expression { return params.RELEASE }
-    // }
+    when {
+        expression { return params.DRY_RUN == false }
+    }
     steps {
         script {
-            echo "Entering Stage : Generate Spec Files"
+            echo "Entering Stage : Generate Spec File"
             JDKArray.each { ArrayElement ->
             // echo "${ArrayElement}"
             // Assign Tuple Values To Vars
@@ -635,7 +627,6 @@ stage('Generate Spec File') {
                 def genresult = sh(script: speccmd, returnStatus: true)
                 // echo "Result : ${genresult}"
             }
-
         }
 
         if (DistArrayElement == "rhel" || DistArrayElement == "suse") {
@@ -671,8 +662,6 @@ stage('Generate Spec File') {
 
             if (PARCH == 'arm') {
                 // If JDK8 ARM32, Then Need To Deduce Correct Upstream
-                // upstreamversionARM32 = upstreamversionARM32.replaceFirst("^jdk", "")
-                // upstreamversionARM32 = upstreamversionARM32.replaceAll(/-(jre|jdk)$/, "")
                 upstreamversionARM32 = upstreamversionARM32.replaceFirst("^jdk", "").replaceAll(/-(jre|jdk)$/, "")
                 // DONE
             }
@@ -688,9 +677,7 @@ stage('Generate Spec File') {
             }
 
             def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearchRhel}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDateRHEL}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${changelogversion}\" \"${upstreamversionARM32}\""
-            // echo "Spec Command : ${speccmd}"
             def genresult = sh(script: speccmd, returnStatus: true)
-
             // End Of RHEL SUSE CODE
         }
 
@@ -698,14 +685,19 @@ stage('Generate Spec File') {
 
 }
 
-// Tar And Publish The Generated Build Files
-// May Need Rework
-sh "tar -czf ./package_build_files.tar.gz ./linux_new/*"
+// Archive & store the generated files, for future reference
+
+echo ""
+echo "Debug SF01"
+def ArchiveFileName = "Linux_Installer_Src_${params.TAG}_${params.VERSION}_${distro}_${env.BUILD_NUMBER}.tar.gz"
+echo "ArchiveFileName = ${ArchiveFileName}"
+sh "tar -czf ./${ArchiveFileName} ./linux_new/*"
 sh "pwd"
 sh "ls -ltr"
 // Publish the tarball
 archiveArtifacts artifacts: "package_build_files.tar.gz", allowEmptyArchive: false
-// Stash The Generated Build Files
+
+// Stash the generated build files for use throughout the rest of the process
 dir('linux_new') {
     stash name: 'installercode', includes: '**'
 }
@@ -715,12 +707,12 @@ dir('linux_new') {
 // Generate Spec File Stage - End
 // Build And Archive Packages Stage - Start
 stage('Build & Archive Package') {
-    // when {
-    //     expression { return params.RELEASE }
-    // }
+    when {
+        expression { return params.DRY_RUN == false }
+    }
     steps {
         script {
-            echo "Entering Stage : Build And Archive Linux Packages"
+            echo "Entering Stage : Build & Archive Package"
             DISTS_TO_BUILD.each { DistArrayElement ->
             def nodeLabel = ''
             if (DistArrayElement == 'alpine') {
@@ -734,11 +726,6 @@ stage('Build & Archive Package') {
             }
 
             node(label: nodeLabel) { // Assign node dynamically based on distribution type
-            // echo "Build Packages For Arch: ${arch}"
-            // echo "Build Packages For PARCH: ${packagearch}"
-            // echo "Building For Dist: ${DistArrayElement}"
-            // echo "Build Product: ${PRODUCT}"
-            // echo "Build Version : ${Release}"
 
             // Docker --mount option requires BuildKit
             env.DOCKER_BUILDKIT = 1
@@ -802,13 +789,7 @@ stage('Publish Packages') {
     }
     steps {
         script {
-            echo "Entering Stage : Publish Packages To Artifactory"
-            //   echo "Publishing Packages For : ${distro}"
-            //   echo "Arch : ${arch}"
-            //   echo "Publishing For Version : ${Release}"
-            //   echo ""
-            //   echo "Retrieving Files"
-            //   echo ""
+            echo "Entering Stage : Publish Packages"
             copyArtifacts projectName: "${env.JOB_NAME}",
             selector: specific("${env.BUILD_NUMBER}"),
             filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
@@ -833,12 +814,6 @@ stage('Publish Packages') {
                     def AlpFileName = AlpPackFile.name
                     def AlpFilePath = AlpPackFile.path
                     def Target = "sfr-apk-test/alpine/main/${AlpArch}" // ZZZZZZZZZZZ
-                    //  echo "Debug 1000 - Alpine Upload Debugging"
-                    //  echo "Target = ${Target}"
-                    //  echo "Distro = ${AlpDistro}"
-                    //  echo "buildArch = ${AlpArch}"
-                    //  echo "FileName = ${AlpFileName}"
-                    //  echo "FilePath = ${AlpFilePath}"
                     CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
                 }
             }
@@ -857,17 +832,8 @@ stage('Publish Packages') {
                 DebFileName = DebPackFile.name
                 def DebFilePath = DebPackFile.path
                 DebTarget = "sfr-deb-test/pool/main/t/temurin-${Release}" // ZZZZZZZZZZ
-                // echo "Debug 1001 - Debian Upload Debugging"
-                // echo "Target = ${DebTarget}"
-                // echo "Distro = ${DebDistro}"
-                // echo "buildArch = ${arch}"
                 def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
                 def DebArch = DebArchEx[0][1]
-                // echo "DebArch = ${DebArch}"
-                // echo "Release = ${Release}"
-                // echo "FileName = ${DebFileName}"
-                // echo "FilePath = ${DebFilePath}"
-                // echo "DistroList = ${distro_list}"
                 CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
             }
             echo "Preapring For RHEL Upload"
