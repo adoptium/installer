@@ -309,6 +309,7 @@ pipeline {
                 script{
                     echo "Entering Stage : Process Parameters"
                     // Figure Out Which Dist This Run Is For
+                    // ZZZZZZZZ ADD SOME BETTER HANDLING FOR MULTIPLES
                     if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
                         distro  = "alpine-linux"
                     } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
@@ -689,9 +690,10 @@ stage('Generate Spec File') {
 
 echo ""
 echo "Debug SF01"
-def ArchiveFileName = "Linux_Installer_Src_${params.TAG}_${params.VERSION}_${distro}_${env.BUILD_NUMBER}.tar.gz"
+def ArchiveFileName = "Package_Bld_Src_${distro}_${params.TAG}_${arch}_${env.BUILD_NUMBER}.tar.gz"
 echo "ArchiveFileName = ${ArchiveFileName}"
-sh "tar -czf ./${ArchiveFileName} ./linux_new/*"
+//sh "tar -czf ./${ArchiveFileName} ./linux_new/*"
+sh "find ./linux_new -type f \\( -name '*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) | tar -czf ./${ArchiveFileName} -T -"
 sh "pwd"
 sh "ls -ltr"
 // Publish the tarball
