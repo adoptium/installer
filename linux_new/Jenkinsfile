@@ -8,6 +8,7 @@ def JVM = 'hotspot'
 
 // Artifactory Global Variables
 def baseURL = "https://github.com/adoptium/"
+def ArchiveFileName = ""
 
 // Github Artifact Repos
 def binaryRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/tag/${params.TAG}"
@@ -29,62 +30,33 @@ def deb_distros = [
 "bionic"   // Ubuntu/18.04 (LTS)
 ]
 
-// def rhel_distros = [
-//     'rpm/centos/7',
-//     'rpm/rocky/8',
-//     'rpm/rhel/7',
-//     'rpm/rhel/8',
-//     'rpm/rhel/9',
-//     'rpm/fedora/35',
-//     'rpm/fedora/36',
-//     'rpm/fedora/37',
-//     'rpm/fedora/38',
-//     'rpm/fedora/39',
-//     'rpm/fedora/40',
-//     'rpm/fedora/41',
-//     'rpm/fedora/42',
-//     'rpm/fedora/rawhide',
-//     'rpm/oraclelinux/7',
-//     'rpm/oraclelinux/8',
-//     'rpm/amazonlinux/2'
-//     ]
-
-// def suse_distros = [
-//     'rpm/opensuse/15.3',
-//     'rpm/opensuse/15.4',
-//     'rpm/opensuse/15.5',
-//     'rpm/sles/12',
-//     'rpm/sles/15'
-//     ]
-
 def rhel_distros = [
-'sfr-rpm-test/centos/7',
-'sfr-rpm-test/rocky/8',
-'sfr-rpm-test/rhel/7',
-'sfr-rpm-test/rhel/8',
-'sfr-rpm-test/rhel/9',
-'sfr-rpm-test/fedora/35',
-'sfr-rpm-test/fedora/36',
-'sfr-rpm-test/fedora/37',
-'sfr-rpm-test/fedora/38',
-'sfr-rpm-test/fedora/39',
-'sfr-rpm-test/fedora/40',
-'sfr-rpm-test/fedora/41',
-'sfr-rpm-test/fedora/42',
-'sfr-rpm-test/fedora/rawhide',
-'sfr-rpm-test/oraclelinux/7',
-'sfr-rpm-test/oraclelinux/8',
-'sfr-rpm-test/amazonlinux/2'
-]
+    'rpm/centos/7',
+    'rpm/rocky/8',
+    'rpm/rhel/7',
+    'rpm/rhel/8',
+    'rpm/rhel/9',
+    'rpm/fedora/35',
+    'rpm/fedora/36',
+    'rpm/fedora/37',
+    'rpm/fedora/38',
+    'rpm/fedora/39',
+    'rpm/fedora/40',
+    'rpm/fedora/41',
+    'rpm/fedora/42',
+    'rpm/fedora/rawhide',
+    'rpm/oraclelinux/7',
+    'rpm/oraclelinux/8',
+    'rpm/amazonlinux/2'
+    ]
 
 def suse_distros = [
-'sfr-rpm-test/opensuse/15.3',
-'sfr-rpm-test/opensuse/15.4',
-'sfr-rpm-test/opensuse/15.5',
-'sfr-rpm-test/sles/12',
-'sfr-rpm-test/sles/15'
-]
-
+    'rpm/opensuse/15.3',
+    'rpm/opensuse/15.4',
+    'rpm/opensuse/15.5',
+    'rpm/sles/12',
+    'rpm/sles/15'
+    ]
 /* End Of Distro Definitions*/
 
 // Global Variables
@@ -111,6 +83,8 @@ def SUSEkey = ""
 def TemurinVersion = "${params.TEMURIN_VERSION_INCREMENT}"
 
 /* Have Some Default Node Labels */
+/* Specified Here To Simplify Updates Later */
+
 def PKGBUILDLABELAPK = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 def PKGBUILDLABELDEB = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 def PKGBUILDLABELRHEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
@@ -309,7 +283,6 @@ pipeline {
                 script{
                     echo "Entering Stage : Process Parameters"
                     // Figure Out Which Dist This Run Is For
-                    // ZZZZZZZZ ADD SOME BETTER HANDLING FOR MULTIPLES
                     if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
                         distro  = "alpine-linux"
                     } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
@@ -319,25 +292,6 @@ pipeline {
                         currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
                         error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
                     }
-
-                    // // Figure Out Which Arch This Run Is For
-
-                    // if (params.ARTIFACTS_TO_COPY.contains('aarch64')) {
-                    //     arch  = "aarch64"
-                    // } else if (params.ARTIFACTS_TO_COPY.contains('x64')) {
-                    //     arch  = "x64"
-                    // } else if (params.ARTIFACTS_TO_COPY.contains('s390x')) {
-                    //     arch  = "s390x"
-                    // } else if (params.ARTIFACTS_TO_COPY.contains('arm')) {
-                    //     arch  = "arm"
-                    // } else if (params.ARTIFACTS_TO_COPY.contains('ppc64le')) {
-                    //     arch  = "ppc64le"
-                    // } else if (params.ARTIFACTS_TO_COPY.contains('riscv64')) {
-                    //     arch  = "riscv64"
-                    // } else {
-                    //     printlin "WARNING: The Artifacts Specified Are For An Unsupported Architecture"
-                    //     error("The Artifacts Are For An Unsupported Architecture")
-                    // }
 
                     // Valid architectures
                     def validArchs = ['aarch64', 'x64', 's390x', 'arm', 'ppc64le', 'riscv64']
@@ -703,21 +657,15 @@ stage('Generate Spec File') {
             def genresult = sh(script: speccmd, returnStatus: true)
             // End Of RHEL SUSE CODE
         }
-
     }
-
 }
 
 // Archive & store the generated files, for future reference
 
-echo ""
-echo "Debug SF01"
-def ArchiveFileName = "Package_Bld_Src_${distro}_${params.TAG}_${arch}_${env.BUILD_NUMBER}.tar.gz"
+ArchiveFileName = "Package_Bld_Src_${distro}_${params.TAG}_${arch}_${env.BUILD_NUMBER}.tar.gz"
 echo "ArchiveFileName = ${ArchiveFileName}"
-//sh "tar -czf ./${ArchiveFileName} ./linux_new/*"
 sh "find ./linux_new -type f \\( -name '*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) | tar -czf ./${ArchiveFileName} -T -"
-sh "pwd"
-sh "ls -ltr"
+
 // Publish the tarball
 archiveArtifacts artifacts: "${ArchiveFileName}", allowEmptyArchive: false
 
@@ -818,8 +766,6 @@ stage('Publish Packages') {
             selector: specific("${env.BUILD_NUMBER}"),
             filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
 
-            // Verify files are retrieved
-            // sh 'find .'
             echo "Done Retrieving Files"
 
             // Distro Specific Uploads
@@ -926,5 +872,24 @@ stage('Publish Packages') {
 }
 // Stage Definition - End
 }
+post {
+    success {
+        script {
+            if (!params.DRY_RUN) {
+                echo 'Build succeeded. Triggering downstream job...'
+                echo "Release : ${params.TAG}"
+                echo "FileName : ${ArchiveFileName}"
+
+                build job: 'sfr-publish-linux-pck', parameters: [
+                    string(name: 'TAG', value: "${params.TAG}"),
+                    string(name: 'FILENAME', value: "${ArchiveFileName}")
+                ]
+            } else {
+                echo 'Dry Run is enabled. Skipping downstream job trigger.'
+            }
+        }
+    }
+}
+// End Of Post Build Trigger Stage
 }
 // Pipeline Definition - End
