@@ -320,22 +320,44 @@ pipeline {
                         error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
                     }
 
-                    // Figure Out Which Arch This Run Is For
-                    if (params.ARTIFACTS_TO_COPY.contains('aarch64')) {
-                        arch  = "aarch64"
-                    } else if (params.ARTIFACTS_TO_COPY.contains('x64')) {
-                        arch  = "x64"
-                    } else if (params.ARTIFACTS_TO_COPY.contains('s390x')) {
-                        arch  = "s390x"
-                    } else if (params.ARTIFACTS_TO_COPY.contains('arm')) {
-                        arch  = "arm"
-                    } else if (params.ARTIFACTS_TO_COPY.contains('ppc64le')) {
-                        arch  = "ppc64le"
-                    } else if (params.ARTIFACTS_TO_COPY.contains('riscv64')) {
-                        arch  = "riscv64"
+                    // // Figure Out Which Arch This Run Is For
+
+                    // if (params.ARTIFACTS_TO_COPY.contains('aarch64')) {
+                    //     arch  = "aarch64"
+                    // } else if (params.ARTIFACTS_TO_COPY.contains('x64')) {
+                    //     arch  = "x64"
+                    // } else if (params.ARTIFACTS_TO_COPY.contains('s390x')) {
+                    //     arch  = "s390x"
+                    // } else if (params.ARTIFACTS_TO_COPY.contains('arm')) {
+                    //     arch  = "arm"
+                    // } else if (params.ARTIFACTS_TO_COPY.contains('ppc64le')) {
+                    //     arch  = "ppc64le"
+                    // } else if (params.ARTIFACTS_TO_COPY.contains('riscv64')) {
+                    //     arch  = "riscv64"
+                    // } else {
+                    //     printlin "WARNING: The Artifacts Specified Are For An Unsupported Architecture"
+                    //     error("The Artifacts Are For An Unsupported Architecture")
+                    // }
+
+                    // Valid architectures
+                    def validArchs = ['aarch64', 'x64', 's390x', 'arm', 'ppc64le', 'riscv64']
+                    
+                    // Extract architectures from the parameter
+                    def specifiedPaths = params.ARTIFACTS_TO_COPY.tokenize(',') // Split by commas
+                    def extractedArchs = specifiedPaths.collect { path ->
+                        validArchs.find { validArch -> path.contains("/${validArch}/") }}.unique() // Get unique architectures
+
+                    // Validate architectures
+                    if (extractedArchs.size() == 1) {
+                        def check_arch = extractedArchs[0]
+                        println "Valid architecture identified: ${check_arch}"
+                        arch = extractedArchs[0]
+                    } else if (extractedArchs.isEmpty()) {
+                        println "WARNING: No valid architecture found in the specified paths: ${params.ARTIFACTS_TO_COPY}"
+                        error("No valid architecture found in the specified paths.")
                     } else {
-                        printlin "WARNING: The Artifacts Specified Are For An Unsupported Architecture"
-                        error("The Artifacts Are For An Unsupported Architecture")
+                        println "WARNING: Multiple architectures found: ${extractedArchs}"
+                        error("The Artifacts contain multiple architectures: ${extractedArchs}")
                     }
 
                     // Derive Node To Build Packages On
