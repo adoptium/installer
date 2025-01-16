@@ -695,7 +695,7 @@ sh "tar -czf ./${ArchiveFileName} ./linux_new/*"
 sh "pwd"
 sh "ls -ltr"
 // Publish the tarball
-archiveArtifacts artifacts: "package_build_files.tar.gz", allowEmptyArchive: false
+archiveArtifacts artifacts: "${ArchiveFileName}", allowEmptyArchive: false
 
 // Stash the generated build files for use throughout the rest of the process
 dir('linux_new') {
