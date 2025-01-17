@@ -20,7 +20,7 @@ jobs:
 
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@0080882f6c36860b6ba35c610c98ce87d4e2f26f # v2.10.2
+        uses: step-security/harden-runner@c95a14d0e5bab51a9f56296a4eb0e416910cd350 # v2.10.3
         with:
           disable-sudo: true
           egress-policy: block
@@ -47,7 +47,7 @@ jobs:
           architecture: x64
           distribution: 'temurin'
 
-      - uses: jfrog/setup-jfrog-cli@dff217c085c17666e8849ebdbf29c8fe5e3995e6 # v4.5.2
+      - uses: jfrog/setup-jfrog-cli@f748a0599171a192a2668afee8d0497f7c1069df # v4.5.6
         env:
           JF_URL: https://adoptium.jfrog.io
           JF_USER: ${{ secrets.ARTIFACTORY_USER }}
