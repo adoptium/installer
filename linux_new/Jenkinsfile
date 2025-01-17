@@ -1,4 +1,5 @@
-/* Used By Jenkins Job sfr-build-linux-package-modular */
+/* Used By Jenkins Job create_installer_linux */
+/* https://ci.adoptium.net/job/build-scripts/job/release/job/create_installer_linux/ */
 
 /* Constant Declarations */
 
@@ -185,7 +186,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
         } else {
             echo "Target Doesnt Exist - Upload Files"
             // This Upload Works
-            jf 'rt u ${FILENAME} sfr-deb-test/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
         case "Alpine":
@@ -197,7 +198,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         } else {
             // This Upload Works
-            jf 'rt u **/build/ospackage/${FILENAME} sfr-apk-test/alpine/main/${BUILDARCH}/ --flat=true'
+            jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
             break
         }
         case "RPMS":
@@ -783,7 +784,7 @@ stage('Publish Packages') {
                 for (AlpPackFile in AllFiles) {
                     def AlpFileName = AlpPackFile.name
                     def AlpFilePath = AlpPackFile.path
-                    def Target = "sfr-apk-test/alpine/main/${AlpArch}" // ZZZZZZZZZZZ
+                    def Target = "apk/alpine/main/${AlpArch}"
                     CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
                 }
             }
@@ -801,7 +802,7 @@ stage('Publish Packages') {
             for (DebPackFile in DebPackFiles) {
                 DebFileName = DebPackFile.name
                 def DebFilePath = DebPackFile.path
-                DebTarget = "sfr-deb-test/pool/main/t/temurin-${Release}" // ZZZZZZZZZZ
+                DebTarget = "deb/pool/main/t/temurin-${Release}"
                 def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
                 def DebArch = DebArchEx[0][1]
                 CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
@@ -829,15 +830,6 @@ stage('Publish Packages') {
                 RHELTarget = "${RHELkey}/Packages"
                 CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
             }
-            echo "Debug 1001 - RHEL Upload Debugging"
-            echo "Target = ${RHELTarget}"
-            echo "Key = ${RHELkey}"
-            echo "Value = ${Release}"
-            echo "Distro = ${RHELDistro}"
-            echo "PackageDir = ${RHELTarget}"
-            echo "buildArch = ${RHELarchitecture}"
-            echo "FileName = ${RHELFileName}"
-            echo "FilePath = ${RHELFilePath}"
         }
         echo "Preapring For SUSE Upload"
         def SUSEFileName = ''
@@ -880,7 +872,7 @@ post {
                 echo "Release : ${params.TAG}"
                 echo "FileName : ${ArchiveFileName}"
 
-                build job: 'sfr-publish-linux-pck', parameters: [
+                build job: 'publish_linux_pkg_src', parameters: [
                     string(name: 'TAG', value: "${params.TAG}"),
                     string(name: 'FILENAME', value: "${ArchiveFileName}")
                 ]
