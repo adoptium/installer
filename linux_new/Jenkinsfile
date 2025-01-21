@@ -226,9 +226,9 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
         echo "Filename = ${FileName}"
         break
     }
-} catch (Exception e) {
+  } catch (Exception e) {
     error "Error While Checking URL ${Target}: ${e.message}"
-}
+  }
 }
 // Function Definitions End
 
@@ -673,9 +673,9 @@ archiveArtifacts artifacts: "${ArchiveFileName}", allowEmptyArchive: false
 // Stash the generated build files for use throughout the rest of the process
 dir('linux_new') {
     stash name: 'installercode', includes: '**'
-}
-}
-}
+      }
+    }
+  }
 }
 // Generate Spec File Stage - End
 // Build And Archive Packages Stage - Start
@@ -744,12 +744,12 @@ stage('Build & Archive Package') {
         } finally {
             archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*',
             onlyIfSuccessful: false, allowEmptyArchive: false
+            }
+          }
         }
+      }
     }
-}
-}
-}
-}
+  }
 // Build And Archive Packages Stage - End
 // Publish Packages Stage - Start
 stage('Publish Packages') {
@@ -854,14 +854,14 @@ stage('Publish Packages') {
             SUSEkey = "${suse_distro}/${SUSEarchitecture}"
             SUSETarget = "${SUSEkey}/Packages"
             CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', SUSEFileName, SUSETarget, SUSEkey, SUSEFilePath)
-        }
-    }
-} // End Of Linux Distro
-}
+            }
+          }
+        } // End Of Linux Distro
+      }
 // End OF Script
-}
+    }
 // Publish Packages Stage - End
-}
+  }
 // Stage Definition - End
 }
 post {
