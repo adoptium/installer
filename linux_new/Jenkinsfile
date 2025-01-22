@@ -297,7 +297,7 @@ pipeline {
                     } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
                         distro = "linux"
                     } else {
-                        printlin "WARNING: The Artifacts Are For Neither Linux OR Alpine"
+                        println "WARNING: The Artifacts Are For Neither Linux OR Alpine"
                         currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
                         error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
                     }
