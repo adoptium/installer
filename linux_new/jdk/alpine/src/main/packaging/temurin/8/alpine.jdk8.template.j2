@@ -1,0 +1,72 @@
+# Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+pkgname=temurin-8-jdk
+pkgver={{ package_version }}
+# replace 8. with 8u and .01 with b-01
+_pkgver=${pkgver/8./8u}
+_pkgver=${_pkgver%.*}b${_pkgver#*.}
+_pkgvername=${_pkgver%b*}-b${_pkgver#*b}
+pkgrel={{ package_release_version }}
+pkgdesc="Eclipse Temurin 8 (JDK)"
+provider_priority=8
+url="https://adoptium.net"
+arch="{{ hardware_architecture }}"
+license="GPL-2.0-with-classpath-exception"
+makedepends="
+	alsa-lib-dev
+	libpng-dev
+	libxcomposite-dev
+	libxinerama-dev
+	libxrender-dev
+	libxslt
+	libxt-dev
+	libxtst-dev
+"
+depends="
+	java-common
+	java-cacerts
+	ttf-dejavu
+"
+source="{{ package_url }}
+
+	HelloWorld.java
+"
+
+_java_home="/usr/lib/jvm/java-8-temurin"
+
+# Exclude xawt from ldpath to avoid duplicate provides for libmawt.so
+# (also in headless). in future this should be a virtual provides.
+ldpath="$_jrelib:$_jrelib/native_threads:$_jrelib/headless:$_jrelib/server:$_jrelib/jli"
+sonameprefix="$pkgname:"
+
+prepare() {
+	default_prepare
+}
+
+check() {
+	local _java_bin="./jdk$_pkgvername/bin"
+
+	# 1) compile and run a simple hello world
+	$_java_bin/javac -d . "$srcdir"/HelloWorld.java
+	$_java_bin/java HelloWorld
+
+	# 2) check that java -version and javac -version work
+	$_java_bin/java -version
+	$_java_bin/javac -version
+}
+
+package() {
+	provides=java-jdk
+	mkdir -p "$pkgdir/$_java_home"
+	cp -r "$srcdir"/jdk"$_pkgvername"/* "$pkgdir/$_java_home"
+	rm "$pkgdir"/$_java_home/src.zip
+
+	# symlink to shared java cacerts store
+	rm -f "$pkgdir"/$_java_home/jre/lib/security/cacerts
+	ln -sf /etc/ssl/certs/java/cacerts \
+		"$pkgdir"/$_java_home/jre/lib/security/cacerts
+}
+
+sha256sums="
+{{ package_checksum }} {{ package_name }}
+e9185736dde99a4dc570a645a20407bdb41c1f48dfc34d9c3eb246cf0435a378  HelloWorld.java
+"

@@ -1,0 +1,35 @@
+name=@pkg_alias@
+alias=@pkg_alias@
+priority=@priority@
+section=contrib
+
+jdkhl jar /usr/lib/jvm/@jvm_dir@/bin/jar
+jdkhl jarsigner /usr/lib/jvm/@jvm_dir@/bin/jarsigner
+hl java /usr/lib/jvm/@jvm_dir@/bin/java
+jdkhl javac /usr/lib/jvm/@jvm_dir@/bin/javac
+jdkhl javadoc /usr/lib/jvm/@jvm_dir@/bin/javadoc
+jdkhl javap /usr/lib/jvm/@jvm_dir@/bin/javap
+jdkhl jcmd /usr/lib/jvm/@jvm_dir@/bin/jcmd
+jdk jconsole /usr/lib/jvm/@jvm_dir@/bin/jconsole
+jdkhl jdb /usr/lib/jvm/@jvm_dir@/bin/jdb
+jdkhl jdeprscan /usr/lib/jvm/@jvm_dir@/bin/jdeprscan
+jdkhl jdeps /usr/lib/jvm/@jvm_dir@/bin/jdeps
+hl jfr /usr/lib/jvm/@jvm_dir@/bin/jfr
+jdkhl jhsdb /usr/lib/jvm/@jvm_dir@/bin/jhsdb
+jdkhl jimage /usr/lib/jvm/@jvm_dir@/bin/jimage
+jdkhl jinfo /usr/lib/jvm/@jvm_dir@/bin/jinfo
+jdkhl jlink /usr/lib/jvm/@jvm_dir@/bin/jlink
+jdkhl jmap /usr/lib/jvm/@jvm_dir@/bin/jmap
+jdkhl jmod /usr/lib/jvm/@jvm_dir@/bin/jmod
+jdkhl jpackage /usr/lib/jvm/@jvm_dir@/bin/jpackage
+jdkhl jps /usr/lib/jvm/@jvm_dir@/bin/jps
+hl jrunscript /usr/lib/jvm/@jvm_dir@/bin/jrunscript
+jdkhl jshell /usr/lib/jvm/@jvm_dir@/bin/jshell
+jdkhl jstack /usr/lib/jvm/@jvm_dir@/bin/jstack
+jdkhl jstat /usr/lib/jvm/@jvm_dir@/bin/jstat
+jdkhl jstatd /usr/lib/jvm/@jvm_dir@/bin/jstatd
+hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
+hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry
+jdkhl serialver /usr/lib/jvm/@jvm_dir@/bin/serialver
+hl jexec /usr/lib/jvm/@jvm_dir@/lib/jexec
+hl jspawnhelper /usr/lib/jvm/@jvm_dir@/lib/jspawnhelper
