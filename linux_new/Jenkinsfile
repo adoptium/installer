@@ -250,6 +250,14 @@ pipeline {
         booleanParam(name: 'REPACKAGE', defaultValue: false, description: 'Tick if this is a republish of an existing package, ie xx.xxx.2 , rather than the base release of a package (1)')
         string(name: 'PACKAGE_INCREMENT', defaultValue: '1', description: 'This is the incremental number used for re-releases of package versions - Should be set appropriately if RePackage is True')
         string(name: 'TEMURIN_VERSION_INCREMENT', defaultValue: '0', description: 'Final Element Of The Version Number - Used For Temurin Specific Patches - NEARLY ALWAYS ZERO')
+
+        // Handle Parameters From Upstream Job That Are Not Required.
+        string(name: 'UPSTREAM_JOB_NAME', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
+        string(name: 'UPSTREAM_JOB_NUMBER', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
+        booleanParam(name: 'UPLOAD_TESTRESULTS_ONLY', defaultValue: false, description: 'Parameter From Upstream Job Not Required Here')
+        string(name: 'TIMESTAMP', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
+        string(name: 'GITHUB_TOKEN', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
+        string(name: 'ARTIFACTS_TO_SKIP', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
     }
     // Stage Definition - Start
     stages {
