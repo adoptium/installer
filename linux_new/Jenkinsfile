@@ -323,11 +323,18 @@ pipeline {
                         error("The Artifacts contain multiple architectures: ${extractedArchs}")
                     }
 
-                    // Derive Node To Build Packages On
-
-                    PKGBUILDLABELAPK = getPackageBuildLabel(arch, 'APK')
-                    PKGBUILDLABELDEB = getPackageBuildLabel(arch, 'DEB')
-                    PKGBUILDLABELRHEL = getPackageBuildLabel(arch, 'RHEL')
+                     if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
+                        // Derive Node To Build Alpine Packages On
+                        PKGBUILDLABELAPK = getPackageBuildLabel(arch, 'APK')
+                    } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
+                        // Derive Node To Build Linux Packages On
+                        PKGBUILDLABELDEB = getPackageBuildLabel(arch, 'DEB')
+                        PKGBUILDLABELRHEL = getPackageBuildLabel(arch, 'RHEL')
+                    } else {
+                        println "WARNING: The Artifacts Are For Neither Linux OR Alpine - So I Cant Determine Appropriate Node Labels"
+                        currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
+                        error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
+                    }
 
                     // Map Architectures From Source To Dist Suitable Values
 
