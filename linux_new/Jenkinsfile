@@ -754,6 +754,7 @@ stage('Build & Archive Package') {
                         def privateKey = 'adoptium-artifactory-gpg-key'
                         withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
                            buildCli += " -PGPG_KEY=${env.GPG_KEY}"
+                           buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
                            sh("$buildCli")
                         }
                     }
@@ -763,11 +764,13 @@ stage('Build & Archive Package') {
                         def privateKey = 'adoptium-artifactory-rsa-key'
                         withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
                            buildCli += " -PGPG_KEY=${env.GPG_KEY}"
+                           buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
                            sh("$buildCli")
                         }
                     }
                 } else {
                     echo "Building Without Signing"
+                    buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
                     sh("$buildCli")
                 }
             }
