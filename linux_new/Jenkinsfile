@@ -743,15 +743,36 @@ stage('Build & Archive Package') {
                 }
 
                 if (params.ENABLEGPGSIGNING) {
-                    def privateKey = 'adoptium-artifactory-rsa-key'
-                    withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
-                        buildCli += " -PGPG_KEY_PATH=${GPG_KEY}"
+                    if (DistArrayElement =="debian") {
+                        echo "Debian Does Not Use Signing"
+                        buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
+                        sh("$buildCli")
                     }
+                    
+                    if (DistArrayElement == "rhel" || DistArrayElement == "suse") { // for RPM based: RedHat / Suse / Alpine
+                        echo "Using RPM Private KEY"
+                        def privateKey = 'adoptium-artifactory-gpg-key'
+                        withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
+                           buildCli += " -PGPG_KEY=${env.GPG_KEY}"
+                           buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
+                           sh("$buildCli")
+                        }
+                    }
+                        
+                    if (DistArrayElement == "alpine") {
+                        echo "Using Alpine Private KEY"
+                        def privateKey = 'adoptium-artifactory-rsa-key'
+                        withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
+                           buildCli += " -PGPG_KEY=${env.GPG_KEY}"
+                           buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
+                           sh("$buildCli")
+                        }
+                    }
+                } else {
+                    echo "Building Without Signing"
+                    buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
+                    sh("$buildCli")
                 }
-
-                buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
-                // echo "Build CLI : ${buildCli}"
-                sh("$buildCli")
             }
         } catch (Exception ex) {
             echo "Exception in build for ${DistArrayElement}: ${ex}"
