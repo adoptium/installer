@@ -14,8 +14,8 @@ def ArchiveFileName = ""
 // Github Artifact Repos
 def binaryRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/tag/${params.TAG}"
 def binaryDLRepo = "${params.VERSION.replace('jdk', 'temurin')}-binaries/releases/download/${params.TAG}"
-def fullURL = "${baseURL}/${binaryRepo}"
-def dlURL = "${baseURL}/${binaryDLRepo}"
+def fullURL = "${baseURL}${binaryRepo}"
+def dlURL = "${baseURL}${binaryDLRepo}"
 
 /* Supported Distro Arrays */
 // Remember If Adding An Deb Distro to update the cacerts package //
@@ -198,7 +198,8 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         } else {
             // This Upload Works
-            jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
+            echo "DEBUGXX"
+            // jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
             break
         }
         case "RPMS":
@@ -256,7 +257,7 @@ pipeline {
         string(name: 'UPSTREAM_JOB_NUMBER', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
         booleanParam(name: 'UPLOAD_TESTRESULTS_ONLY', defaultValue: false, description: 'Parameter From Upstream Job Not Required Here')
         string(name: 'TIMESTAMP', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
-        string(name: 'GITHUB_TOKEN', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
+        password(name: 'GITHUB_TOKEN', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
         string(name: 'ARTIFACTS_TO_SKIP', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
     }
     // Stage Definition - Start
@@ -304,7 +305,7 @@ pipeline {
 
                     // Valid architectures
                     def validArchs = ['aarch64', 'x64', 's390x', 'arm', 'ppc64le', 'riscv64']
-                    
+
                     // Extract architectures from the parameter
                     def specifiedPaths = params.ARTIFACTS_TO_COPY.tokenize(',') // Split by commas
                     def extractedArchs = specifiedPaths.collect { path ->
@@ -748,7 +749,7 @@ stage('Build & Archive Package') {
                         buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
                         sh("$buildCli")
                     }
-                    
+
                     if (DistArrayElement == "rhel" || DistArrayElement == "suse") { // for RPM based: RedHat / Suse / Alpine
                         echo "Using RPM Private KEY"
                         def privateKey = 'adoptium-artifactory-gpg-key'
@@ -758,7 +759,7 @@ stage('Build & Archive Package') {
                            sh("$buildCli")
                         }
                     }
-                        
+
                     if (DistArrayElement == "alpine") {
                         echo "Using Alpine Private KEY"
                         def privateKey = 'adoptium-artifactory-rsa-key'
