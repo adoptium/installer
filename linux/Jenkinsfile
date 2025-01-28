@@ -384,9 +384,9 @@ def buildAndTest(String DISTRO, String buildArch, String VERSION) {
     try {
         if (DISTRO != "Debian") { // for RPM based: RedHat / Suse / Alpine
             def privateKey = 'adoptium-artifactory-gpg-key'
-            if (DISTRO == "Alpine") {
-                privateKey = 'adoptium-artifactory-rsa-key'
-            }
+            // if (DISTRO == "Alpine") {
+                // privateKey = 'adoptium-artifactory-rsa-key'
+            // }
             if (params.enableGpgSigning) {
                 // Use Adoptium GPG key for signing
                 withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
