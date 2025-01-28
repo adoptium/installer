@@ -8,7 +8,8 @@ cp -R /home/builder/build/generated/packaging /home/builder/workspace
 
 # Build package and set distributions it supports
 cd /home/builder/workspace/packaging
-abuild -r
+abuild verify
+abuild -r -v 
 
 arch=$(abuild -A)
 
