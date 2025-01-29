@@ -1,6 +1,6 @@
 # Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 pkgname=temurin-21
-pkgver=21.0.5_p11
+pkgver=21.0.6_p7
 # replace _p1 with _1
 _pkgver=${pkgver/_p/_}
 _pkgverplus=${pkgver/_p/+}
@@ -97,10 +97,10 @@ _jdk() {
 
 case "$CARCH" in
 	x86_64)
-		_arch_sum="8da7da49101d45f646272616f20e8b10d57472bbf5961d64ffb07d7ba93c6909"
+		_arch_sum="6c66470a9143ad562570a34c1583d9fa50bf904f6f9ced642e9d800ce043a0f3"
 		;;
 	aarch64)
-		_arch_sum="f22e32b869dd0e5e3f248646f62bffaa307b360299488ac8764e622923d7e747"
+		_arch_sum="2798990401d9c47eaeddb7d5148f577770e4c1013b9223290a43765463204ae4"
 		;;
 esac
 
