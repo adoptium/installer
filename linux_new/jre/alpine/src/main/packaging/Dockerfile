@@ -1,6 +1,6 @@
 ARG CONTAINER_REGISTRY=""
 
-FROM ${CONTAINER_REGISTRY}alpine:3.19
+FROM ${CONTAINER_REGISTRY}alpine:3.21
 ENV GOSU_VERSION 1.14
 
 RUN set -eux; \
@@ -9,15 +9,19 @@ RUN set -eux; \
 		alpine-sdk \
 		bash \
 		ca-certificates \
+		doas \
 		dpkg \
-		sudo
+		sudo \
+		wget
 
 # Create unprivileged user for building, see
 # https://github.com/hexops/dockerfile#use-a-static-uid-and-gid
 RUN adduser -D -h /home/builder builder \
     && addgroup builder abuild \
-    && echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+    && echo 'builder ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers \
+    && echo 'permit builder as root' > /etc/doas.d/doas.conf
 
+# Add GPG key
 USER builder
 WORKDIR /home/builder
 RUN --mount=type=secret,id=gpg,gid=1000,uid=1000,dst=/tmp/private.rsa \
