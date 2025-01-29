@@ -344,7 +344,7 @@ def jenkinsStepAlpine() {
         }
         // reallocate jenkins agent per element in list
         if (ApkARCH == 'x86_64' || ApkARCH == 'aarch64') {
-        node("linux&&${apkLabel}") {
+        node("linux&&apkbuild&&${apkLabel}") {
             setup('Alpine', "${ApkARCH}")
             tool name: 'jfrog-cli', type: 'jfrog'
             unstash 'installercode'
