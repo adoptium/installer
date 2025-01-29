@@ -50,20 +50,20 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
+Requires: dejavu-fonts
 %ifarch %{arm}
-Requires: libatomic
+Requires: libatomic1
 %endif
-Requires: libX11%{?_isa}
-Requires: libXext%{?_isa}
-Requires: libXi%{?_isa}
-Requires: libXrender%{?_isa}
-Requires: libXtst%{?_isa}
-Requires: alsa-lib%{?_isa}
+Requires: libX11-6%{?_isa}
+Requires: libXext6%{?_isa}
+Requires: libXi6%{?_isa}
+Requires: libXrender1%{?_isa}
+Requires: libXtst6%{?_isa}
+Requires: libasound2%{?_isa}
 Requires: glibc%{?_isa}
-Requires: zlib%{?_isa}
+Requires: libz1%{?_isa}
 Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
+Requires: libfreetype6%{?_isa}
 
 Provides: java
 Provides: java-1.8.0
