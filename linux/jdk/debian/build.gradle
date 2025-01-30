@@ -107,7 +107,7 @@ println "The Value Of ARCH is: $arch"
 if ("$arch" == "armhf") {
 		project.exec {
 			workingDir "src/main/packaging"
-			commandLine "docker", "build", "--no-cache",
+			commandLine "docker", "build", "--no-cache", "--pull",
 				"--build-arg", "IMAGE=arm32v7/debian:bullseye",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
@@ -119,7 +119,7 @@ if ("$arch" == "armhf") {
 if ("$arch" == "riscv64") {
 		project.exec {
 			workingDir "src/main/packaging"
-			commandLine "docker", "build", "--no-cache",
+			commandLine "docker", "build", "--no-cache", "--pull",
 				"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
@@ -131,7 +131,7 @@ if ("$arch" == "riscv64") {
 if ("$arch" != "armhf" && "$arch" != "riscv64"){
 		project.exec {
 			workingDir "src/main/packaging"
-			commandLine "docker", "build", "--no-cache",
+			commandLine "docker", "build", "--no-cache", "--pull",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",

@@ -97,7 +97,7 @@ task packageJrerhel {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-rhel",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
@@ -107,7 +107,7 @@ task packageJrerhel {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-rhel",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",

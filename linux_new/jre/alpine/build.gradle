@@ -84,7 +84,7 @@ task packageJreAlpine {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"--secret", "id=gpg,src=${gpgKey}",
@@ -94,7 +94,7 @@ task packageJreAlpine {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-alpine",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",

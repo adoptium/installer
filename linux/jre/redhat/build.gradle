@@ -97,7 +97,7 @@ task packageJreRedHat {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-redhat",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
@@ -107,7 +107,7 @@ task packageJreRedHat {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-redhat",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",
