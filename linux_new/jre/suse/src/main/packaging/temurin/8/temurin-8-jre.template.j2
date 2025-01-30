@@ -35,7 +35,6 @@ Prefix: /usr/lib/jvm/%{name}
 
 %if "%{vers_arch}" == "armv7hl"
 %define vers_arch arm
-%global upstream_version {{ upstreamarm32_version }}
 %endif
 
 %if "%{vers_arch}" == "x86_64"
@@ -76,6 +75,11 @@ Provides: jre-%{java_provides}-headless
 # First architecture ({{ hardware_architecture }})
 Source0: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
 Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
+
+# Reset Upstream Version Ahead Of Package Build
+%if "%{vers_arch}" == "arm"
+%global upstream_version {{ upstreamarm32_version }}
+%endif
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
