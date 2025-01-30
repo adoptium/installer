@@ -35,11 +35,14 @@ Prefix: /usr/lib/jvm/%{name}
 
 %if "%{vers_arch}" == "armv7hl"
 %define vers_arch arm
+%global upstream_version {{ upstreamarm32_version }}
 %endif
 
 %if "%{vers_arch}" == "x86_64"
 %define vers_arch x64
 %endif
+
+ExclusiveArch: {{ hardware_architecture }}
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -74,12 +77,6 @@ Provides: jre-%{java_provides}-headless
 Source0: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
 Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
 
-# Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
-# is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
-# lists the available options.
-%define _source_payload w7.xzdio
-%define _binary_payload w7.xzdio
-
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
 %global __brp_strip %{nil}
@@ -93,12 +90,6 @@ pushd "%{_sourcedir}"
 sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
 popd
 
-# Override upstream_version if vers_arch is arm
-%if "%{vers_arch}" == "arm"
-%global upstream_version {{ upstreamarm32_version }}
-%endif
-
-# Proceed with setup
 %setup -n jdk%{upstream_version}-jre -T -b %{src_num}
 
 %build
@@ -112,14 +103,11 @@ tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_n
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
+ln -s /var/lib/ca-certificates/java-cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
 
-# Ensure systemd-tmpfiles-clean does not remove pid files
-# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
-%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
-echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
-echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+%pretrans
+# noop
 
 %post
 if [ $1 -ge 1 ] ; then
@@ -156,7 +144,6 @@ fi
 %files
 %defattr(-,root,root)
 %{prefix}
-/usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
 * {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}

@@ -1,5 +1,4 @@
 %global upstream_version {{ upstream_version }}
-# jdk8 arm32 has different top directory name https://github.com/adoptium/temurin-build/issues/2795
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -20,6 +19,15 @@
 %global src_num 0
 %global sha_src_num 1
 
+%if "%{vers_arch}" == "armv7hl"
+%define vers_arch arm
+%global upstream_version {{ upstreamarm32_version }}
+%endif
+
+%if "%{vers_arch}" == "x86_64"
+%define vers_arch x64
+%endif
+
 Name:        temurin-8-jdk
 Version:     %{spec_version}
 Release:     %{spec_release}
@@ -32,17 +40,9 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: /usr/lib/jvm/%{name}
+Prefix: %{_libdir}/jvm/%{name}
 
 ExclusiveArch: {{ hardware_architecture }}
-
-%if "%{vers_arch}" == "armv7hl"
-%define vers_arch arm
-%endif
-
-%if "%{vers_arch}" == "x86_64"
-%define vers_arch x64
-%endif
 
 BuildRequires:  tar
 BuildRequires:  wget
@@ -95,12 +95,6 @@ Provides: jre-%{java_provides}-headless
 Source0: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
 Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
 
-# Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
-# is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
-# lists the available options.
-%define _source_payload w7.xzdio
-%define _binary_payload w7.xzdio
-
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
 %global __brp_strip %{nil}
@@ -114,12 +108,6 @@ pushd "%{_sourcedir}"
 sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
 popd
 
-# Override upstream_version if vers_arch is arm
-%if "%{vers_arch}" == "arm"
-%global upstream_version {{ upstreamarm32_version }}
-%endif
-
-# Proceed with setup
 %setup -n jdk%{upstream_version} -T -b %{src_num}
 
 %build
@@ -136,14 +124,11 @@ rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/jre/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/jre/lib/security"
-ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/jre/lib/security/cacerts"
+ln -s /var/lib/ca-certificates/java-cacerts "%{buildroot}%{prefix}/jre/lib/security/cacerts"
 popd
 
-# Ensure systemd-tmpfiles-clean does not remove pid files
-# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
-%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
-echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
-echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+%pretrans
+# noop
 
 %post
 if [ $1 -ge 1 ] ; then
@@ -245,7 +230,6 @@ fi
 %files
 %defattr(-,root,root)
 %{prefix}
-/usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
 * {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}

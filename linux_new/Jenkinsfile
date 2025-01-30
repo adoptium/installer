@@ -86,7 +86,7 @@ def TemurinVersion = "${params.TEMURIN_VERSION_INCREMENT}"
 /* Have Some Default Node Labels */
 /* Specified Here To Simplify Updates Later */
 
-def PKGBUILDLABELAPK = 'linux&&apkbuild&&buildx64&&dockerBuild'
+def PKGBUILDLABELAPK = 'linux&&apkbuild&&build&&x64&&dockerBuild'
 def PKGBUILDLABELDEB = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 def PKGBUILDLABELRHEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 
@@ -134,10 +134,9 @@ def getPackageBuildLabel(String arch, String distro) {
     switch (distro) {
         case 'APK':
             if (arch == 'x64') {
-                return 'linux&&apkbuild&&build&&x64&&dockerBuild'
+                return 'linux&&build&&x64&&dockerBuild'
             } else if (arch == 'aarch64') {
-                // return 'docker&&linux&&aarch64&&apkbuild'
-                return 'build&&docker&&linux&&aarch64'
+                return 'build&&docker&&linux&&aarch64&&apkbuild'
             } else {
                 error("Unsupported architecture '${arch}' for distro 'APK'")
             }
