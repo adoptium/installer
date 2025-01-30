@@ -133,11 +133,10 @@ def cleanupFiles(files) {
 def getPackageBuildLabel(String arch, String distro) {
     switch (distro) {
         case 'APK':
-            if (arch == 'x64') {
-                return 'linux&&apkbuild&&build&&x64&&dockerBuild'
+        if (arch == 'x64') {
+                return 'linux&&build&&x64&&dockerBuild'
             } else if (arch == 'aarch64') {
-                // return 'docker&&linux&&aarch64&&apkbuild'
-                return 'build&&docker&&linux&&aarch64'
+                return 'build&&docker&&linux&&aarch64&&apkbuild'
             } else {
                 error("Unsupported architecture '${arch}' for distro 'APK'")
             }
