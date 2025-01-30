@@ -13,6 +13,7 @@ sudo chmod 775 /etc/apk/keys
 sudo wget -O /etc/apk/keys/adoptium.rsa.pub https://packages.adoptium.net/artifactory/api/security/keypair/public/repositories/apk
 sudo echo 'https://packages.adoptium.net/artifactory/apk/alpine/main' >> /etc/apk/repositories
 sudo wget -O /home/builder/.abuild/adoptium.rsa.pub https://packages.adoptium.net/artifactory/api/security/keypair/public/repositories/apk
+ls -ltr /etc/apk/keys
 
 # Set permssions
 sudo chown -R builder /home/builder/out
