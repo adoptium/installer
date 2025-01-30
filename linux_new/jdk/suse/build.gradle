@@ -75,7 +75,7 @@ task packageJdkSuse {
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-suse",
 					"--secret", "id=gpg,src=${gpgKey}",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
@@ -85,7 +85,7 @@ task packageJdkSuse {
 		} else {
 			project.exec {
 				workingDir "src/main/packaging"
-				commandLine "docker", "build", "--no-cache",
+				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-suse",
 					"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 					"-f", "Dockerfile",
