@@ -14,6 +14,10 @@ sudo wget -O /etc/apk/keys/adoptium.rsa.pub https://packages.adoptium.net/artifa
 sudo echo 'https://packages.adoptium.net/artifactory/apk/alpine/main' >> /etc/apk/repositories
 sudo wget -O /home/builder/.abuild/adoptium.rsa.pub https://packages.adoptium.net/artifactory/api/security/keypair/public/repositories/apk
 
+# As We Dont Build The Package Index We Dont Sign/Release It
+# This allows the build/test of the APK to succeed.
+export ABUILD_APK_INDEX_OPTS="--allow-untrusted"
+
 # Set permssions
 sudo chown -R builder /home/builder/out
 
