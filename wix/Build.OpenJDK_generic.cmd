@@ -354,9 +354,14 @@ FOR %%A IN (%ARCH%) DO (
             for /F %%s IN (serverTimestamp.config) do (
 	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
 		REM Always hide password here
-		@ECHO OFF
-                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "Adoptium" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
-		@ECHO ON
+        IF "%SIGN_TOOL%" == "ucl" (
+            ECHO Using UCL sign tool
+            ucl sign-code --file "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi" -n WindowsSHA -t %%s --hash SHA256
+        ) ELSE (
+            @ECHO OFF
+            "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "AdoptOpenJDK" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+            @ECHO ON
+        )
 		IF NOT "%DEBUG%" == "true" @ECHO OFF
 
                 REM check the return value of the timestamping operation and retry a max of ten times...
