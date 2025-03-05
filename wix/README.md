@@ -25,7 +25,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   -openjdk_filename_regex "^OpenJDK(?<major>\d*)" ^
   -platform_regex "(?<platform>x86-32|x64|aarch64)" ^
   -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)" ^
-  -wix_version "5.0.0"
+  -wix_version "5.0.2"
 ```
 
 3. Export the following environment variables:
