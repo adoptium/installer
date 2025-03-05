@@ -42,7 +42,7 @@ IF ERRORLEVEL 1 (
     GOTO FAILED
 )
 
-cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi Product %LANGID%
+cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\!PLATFORM!\WiLangId.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi Product %LANGID%
 IF ERRORLEVEL 1 (
     ECHO WiLangId failed with : %ERRORLEVEL%
     GOTO FAILED
@@ -53,12 +53,12 @@ IF ERRORLEVEL 1 (
     GOTO FAILED
 )
 ECHO.
-cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\wisubstg.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst %LANGID%
+cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\!PLATFORM!\wisubstg.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst %LANGID%
 IF ERRORLEVEL 1 (
     ECHO wisubstg failed with : %ERRORLEVEL%
     GOTO FAILED
 )
-cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\wisubstg.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi
+cscript "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\!PLATFORM!\wisubstg.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi
 
 del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.msi"
 del /Q "ReleaseDir\!OUTPUT_BASE_FILENAME!.!CULTURE!.mst"
