@@ -25,7 +25,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   -openjdk_filename_regex "^OpenJDK(?<major>\d*)" ^
   -platform_regex "(?<platform>x86-32|x64|aarch64)" ^
   -jvm_regex "(?<jvm>hotspot|openj9|dragonwell)" ^
-  -wix_version "5.0.0"
+  -wix_version "5.0.2"
 ```
 
 3. Export the following environment variables:
@@ -42,7 +42,7 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET ARCH=x64|x86-32|x86|arm64 or all "x64 x86-32 arm64"
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
-  SET WIX_VERSION=5.0.0 (make sure this is the same version that is installed on the build machine)
+  SET WIX_VERSION=5.0.2 (make sure this is the same version that is installed on the build machine)
   ```
 
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
