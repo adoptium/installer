@@ -40,6 +40,11 @@ IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://ado
 IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
 IF NOT DEFINED WIX_VERSION SET WIX_VERSION=5.0.0
 
+REM default windows_SDK version
+REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.22621.0]\!PLATFORM!"
+IF NOT DEFINED WIN_SDK_MAJOR_VERSION SET WIN_SDK_MAJOR_VERSION=10
+IF NOT DEFINED WIN_SDK_FULL_VERSION SET WIN_SDK_FULL_VERSION=10.0.22621.0
+
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
     -validInputs "x64 x86-32 x86 arm64" ^
@@ -79,10 +84,6 @@ IF "%SKIP_MSI_VALIDATION%" == "true" (
 	SET "MSI_VALIDATION_OPTION= -sval "
 )
 
-REM Configure available SDK version:
-REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
-SET WIN_SDK_MAJOR_VERSION=10
-SET WIN_SDK_FULL_VERSION=10.0.22621.0
 SET WORKDIR=Workdir\
 mkdir %WORKDIR%
 

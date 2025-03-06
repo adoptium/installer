@@ -59,11 +59,11 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_FULL_VERSION%F
   ```
 
- `Build.OpenJDK_generic.cmd` statically depends on this SDK version (edit if needed):
+ `Build.OpenJDK_generic.cmd` depends on the windows SDK. The default version used is `10.0.22621.0`, but you can set the following variables if you have a different + compatible version installed:
 
   ```batch
   SET WIN_SDK_MAJOR_VERSION=10
-  SET WIN_SDK_FULL_VERSION=10.0.17763.0
+  SET WIN_SDK_FULL_VERSION=10.0.22621.0
   ```
 
 4. Run `Build.OpenJDK_generic.cmd` to create the MSI setup in "ReleaseDir":
