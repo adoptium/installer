@@ -40,6 +40,11 @@ IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://ado
 IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
 IF NOT DEFINED WIX_VERSION SET WIX_VERSION=5.0.2
 
+REM default windows_SDK version
+REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.22621.0]\!PLATFORM!"
+IF NOT DEFINED WIN_SDK_MAJOR_VERSION SET WIN_SDK_MAJOR_VERSION=10
+IF NOT DEFINED WIN_SDK_FULL_VERSION SET WIN_SDK_FULL_VERSION=10.0.22621.0
+
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
     -validInputs "x64 x86-32 x86 arm64" ^
@@ -79,10 +84,6 @@ IF "%SKIP_MSI_VALIDATION%" == "true" (
 	SET "MSI_VALIDATION_OPTION= -sval "
 )
 
-REM Configure available SDK version:
-REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.16299.0]\x64"
-SET WIN_SDK_MAJOR_VERSION=10
-SET WIN_SDK_FULL_VERSION=10.0.22621.0
 SET WORKDIR=Workdir\
 mkdir %WORKDIR%
 
@@ -323,7 +324,7 @@ FOR %%A IN (%ARCH%) DO (
     )
 
     REM Add all supported languages to MSI Package attribute
-    CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\WiLangId.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
+    CSCRIPT "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\!PLATFORM!\WiLangId.vbs" //Nologo ReleaseDir\!OUTPUT_BASE_FILENAME!.msi Package !LANGIDS!
     IF ERRORLEVEL 1 (
 		ECHO Failed to pack all languages into MSI : !LANGIDS!
 	    GOTO FAILED
@@ -355,7 +356,7 @@ FOR %%A IN (%ARCH%) DO (
 	        ECHO try !timestampErrors! / sha256 / timestamp server : %%s
 		REM Always hide password here
 		@ECHO OFF
-                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\x64\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "Adoptium" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
+                "%ProgramFiles(x86)%\Windows Kits\%WIN_SDK_MAJOR_VERSION%\bin\%WIN_SDK_FULL_VERSION%\!PLATFORM!\signtool.exe" sign -f "%SIGNING_CERTIFICATE%" -p "%SIGN_PASSWORD%" -fd sha256 -d "Adoptium" -t %%s "ReleaseDir\!OUTPUT_BASE_FILENAME!.msi"
 		@ECHO ON
 		IF NOT "%DEBUG%" == "true" @ECHO OFF
 
