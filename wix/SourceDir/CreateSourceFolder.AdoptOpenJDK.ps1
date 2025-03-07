@@ -45,7 +45,7 @@ param (
   [Parameter(Mandatory = $false)]
   [string]$jvm = "",
   [Parameter(Mandatory = $false)]
-  [string]$wix_version = "5.0.0"
+  [string]$wix_version = "5.0.2"
 )
 
 Get-ChildItem -Path .\ -Filter *.zip -File -Name | ForEach-Object {
