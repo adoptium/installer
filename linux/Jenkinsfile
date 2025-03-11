@@ -575,7 +575,9 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
     def Distro = "RPM"
     def distro_Package = [
         'redhat' : [
-            'rpm/centos/7',
+            'rpm/centos/7', // Build Platform uses CentOS 7 so retain this (2025-03)
+            'rpm/centos/9',
+            'rpm/centos/10',
             'rpm/rocky/8',
             'rpm/rhel/7',
             'rpm/rhel/8',
