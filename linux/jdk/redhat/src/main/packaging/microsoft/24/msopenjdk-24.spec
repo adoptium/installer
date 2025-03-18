@@ -1,9 +1,9 @@
-%global upstream_version 24.0.0+15
+%global upstream_version 24+36
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
-%global spec_version 24.0.0
+%global spec_version 24
 %global spec_release 1
-%global priority 1241
+%global priority 2411
 
 %global source_url_base https://aka.ms/download-jdk
 %global java_provides openjdk
@@ -222,3 +222,5 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Fri 28 2025 Microsoft Package Maintainers <openjdk@microsoft.com> 24-1
+- Microsoft 24+36 initial release.
