@@ -3,7 +3,7 @@
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 %global spec_version 25.0.0
 %global spec_release 1
-%global priority 1251
+%global priority 2511
 
 %global source_url_base https://aka.ms/download-jdk
 %global java_provides openjdk
