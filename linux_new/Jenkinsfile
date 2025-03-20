@@ -851,7 +851,6 @@ stage('Publish Packages') {
             def RHELarchitecture = ''
             def RHELDistro = "RPMS"
             def RHELPackFiles = findFiles(glob: "**/rhel/build/ospackage/t*.rpm") + findFiles(glob: "**/rhel/build/ospackage/j*.rpm")
-
             for (RHELPackFile in RHELPackFiles) {
                 RHELFileName = RHELPackFile.name
                 RHELFilePath = RHELPackFile.path
