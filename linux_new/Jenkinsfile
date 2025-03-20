@@ -850,7 +850,8 @@ stage('Publish Packages') {
             def RHELTarget = ''
             def RHELarchitecture = ''
             def RHELDistro = "RPMS"
-            def RHELPackFiles = findFiles(glob: "**/rhel/build/ospackage/t*.rpm") // List All Packages To Upload For Temurin
+            def RHELPackFiles = findFiles(glob: "**/rhel/build/ospackage/t*.rpm") + findFiles(glob: "**/rhel/build/ospackage/j*.rpm")
+
             for (RHELPackFile in RHELPackFiles) {
                 RHELFileName = RHELPackFile.name
                 RHELFilePath = RHELPackFile.path
@@ -874,7 +875,7 @@ stage('Publish Packages') {
         def SUSETarget = ''
         def SUSEarchitecture = ''
         def SUSEDistro = "RPMS"
-        def SUSEPackFiles = findFiles(glob: "**/suse/build/ospackage/t*.rpm") // List All Packages To Upload For Temurin
+        def SUSEPackFiles = findFiles(glob: "**/suse/build/ospackage/t*.rpm") + findFiles(glob: "**/suse/build/ospackage/j*.rpm")
         for (SUSEPackFile in SUSEPackFiles) {
             SUSEFileName = SUSEPackFile.name
             SUSEFilePath = SUSEPackFile.path
