@@ -19,9 +19,9 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
-%global altname temurin-24-jre
+%global altname java-24-temurin-jre
 
-Name:        java-24-temurin-jre
+Name:        temurin-24-jre
 Version:     %{spec_version}
 Release:     %{spec_release}
 Summary:     Eclipse Temurin 24 JRE
@@ -33,7 +33,7 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: /usr/lib/jvm/%{name}
+Prefix: /usr/lib/jvm/%{altname}
 
 ExclusiveArch: {{ hardware_architecture }}
 
@@ -71,7 +71,7 @@ Provides: jre-headless
 Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
 
-# Add Virtual Provide For Original Naming Format
+# Add Virtual Provides For Altname
 Provides: %{altname}
 
 # Add Provides For Java Public Libraries
@@ -110,13 +110,13 @@ popd
 # noop
 
 %install
-if [ -L %{buildroot}/usr/lib/jvm/%{altname} ]; then
-  rm -f %{buildroot}/usr/lib/jvm/%{altname}
+if [ -L %{buildroot}/usr/lib/jvm/%{name} ]; then
+  rm -f %{buildroot}/usr/lib/jvm/%{name}
 fi
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
-ln -s %{prefix} %{buildroot}/usr/lib/jvm/%{altname}
+ln -s %{prefix} %{buildroot}/usr/lib/jvm/%{name}
 
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
@@ -149,7 +149,7 @@ fi
 %defattr(-,root,root)
 %{prefix}
 /usr/lib/tmpfiles.d/%{name}.conf
-/usr/lib/jvm/%{altname}
+/usr/lib/jvm/%{name}
 
 %changelog
 * {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}
