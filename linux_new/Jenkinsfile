@@ -905,9 +905,9 @@ post {
     success {
         script {
             if (!params.DRY_RUN) {
-                  echo 'Build succeeded. Triggering downstream job...'
-                  echo "Release : ${params.TAG}"
-                  echo "FileName : ${ArchiveFileName}"
+                echo 'Build succeeded. Triggering downstream job...'
+                echo "Release : ${params.TAG}"
+                echo "FileName : ${ArchiveFileName}"
 
                 build job: 'publish_linux_pkg_src', parameters: [
                     string(name: 'TAG', value: "${params.TAG}"),
