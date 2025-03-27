@@ -187,7 +187,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
         } else {
             echo "Target Doesnt Exist - Upload Files"
             // This Upload Works
-            // jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
         case "Alpine":
@@ -199,7 +199,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         } else {
             // This Upload Works
-            // jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
+            jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
             break
         }
         case "RPMS":
@@ -210,7 +210,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             echo "Target Exists - Skipping"
             break
         } else {
-            // jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
+            jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
             break
         }
         default:
@@ -909,10 +909,10 @@ post {
                 echo "Release : ${params.TAG}"
                 echo "FileName : ${ArchiveFileName}"
 
-                // build job: 'publish_linux_pkg_src', parameters: [
-                    // string(name: 'TAG', value: "${params.TAG}"),
-                    // string(name: 'FILENAME', value: "${ArchiveFileName}")
-                // ]
+                build job: 'publish_linux_pkg_src', parameters: [
+                    string(name: 'TAG', value: "${params.TAG}"),
+                    string(name: 'FILENAME', value: "${ArchiveFileName}")
+                ]
             } else {
                 echo 'Dry Run is enabled. Skipping downstream job trigger.'
             }
