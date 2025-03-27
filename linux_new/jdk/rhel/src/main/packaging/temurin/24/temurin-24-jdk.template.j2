@@ -84,6 +84,9 @@ Provides: java-sdk-%{java_provides}
 # Add Virtual Provides For Altname
 Provides: %{altname}
 
+# Obsolete JDK24 v0 package due to naming
+Obsoletes: java-24-temurin-jdk < 24.0.0.0.0.36-1
+
 # Add Provides For Java Public Libraries
 Provides: libjawt.so
 Provides: libjava.so
