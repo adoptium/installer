@@ -60,6 +60,9 @@ task packageJdkSuse {
 	def gpgKey = getGPGKey()
 	def arch = getArch()
 
+	def input_dir = getInputDir()
+	def buildLocalFlag = getLocalBuildStatus()
+
 	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
 
@@ -67,11 +70,30 @@ task packageJdkSuse {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
 		}
+		if (input_dir != null && !file(input_dir).exists()) {
+			throw new IllegalArgumentException("Input directory '$input_dir' not found")
+		}
 
 		project.copy {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
+		if ("$buildLocalFlag" == "true") {
+			// copy jdk's tarfile to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jdk")
+				include("*.tar.gz")
+			}
+
+			// copy jdk's .sha256sum.txt file (or .sha256.txt file) to build dir
+			copy {
+				from("$input_dir")
+				into("${buildDir}/jdk")
+				include("*.sha256*.txt")
+			}
+		}
+
 		if (gpgKey) {
 			project.exec {
 				workingDir "src/main/packaging"
@@ -99,6 +121,7 @@ task packageJdkSuse {
 				"--rm",
 				"-e", "buildArch=${arch}",
 				"-e", "buildVersion=${productVersion}",
+				"-e", "buildLocalFlag=${buildLocalFlag}",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
 				"--mount", "type=bind,source=${outputDir.absolutePath},target=/home/builder/out",
 				"adoptium-packages-linux-jdk-suse:latest"
