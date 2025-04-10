@@ -212,8 +212,8 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 - Ubuntu Releases: https://ubuntu.com/about/release-cycle
 
 ### RPM (RedHat and Suse)
-- Supported JDK version 8,11,17,19
-- Supported JRE version 8,11,17,19
+- Supported JDK version 8,11,17,19,20,21,22,23
+- Supported JRE version 8,11,17,19,20,21,22,23
 
 Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
 SRPM also available.
