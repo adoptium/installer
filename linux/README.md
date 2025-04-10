@@ -31,8 +31,8 @@ You'll want to make sure you've set the exact versions of the binaries you want 
 
 In all the examples below you'll need to replace the following variables:
 
-* Replace `<version>` with `8|11|17|19`
-* Replace `<vendor>` with `temurin|dragonwell`
+* Replace `<version>` with `8|11|17|19|20|21|22|23`
+* Replace `<vendor>` with `temurin|dragonwell|microsoft|openj9`
 * Replace `<platform>` with `Alpine|Debian|RedHat|Suse`
 * Replace `<type>` with `Jdk|Jre` (or `CaCertificates` for the `Debian` platform)
 
@@ -62,8 +62,8 @@ _src/packageTest/java/packaging_ on them.
 
 ### Build a Debian specific package for a version
 
-- replace `<version>` with `8|11|17|19`
-- replace `<vendor>` with `temurin|dragonwell`
+- replace `<version>` with `8|11|17|19|20|21|22|23`
+- replace `<vendor>` with `temurin|dragonwell|microsoft`
 - Replace `<type>` with `Jdk|Jre`
 
 ```shell
@@ -74,8 +74,8 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a Red Hat specific package for a version
 
-- replace `<version>` with `8|11|17|19`
-- replace `<vendor>` with `temurin|dragonwell`
+- replace `<version>` with `8|11|17|19|20|21|22|23`
+- replace `<vendor>` with `temurin|dragonwell|microsoft|openj9`
 
 ```shell
 export DOCKER_BUILDKIT=1
@@ -85,8 +85,8 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 ### Build a SUSE specific package for a version
 
-- replace `<version>` with `8|11|17|19`
-- replace `<vendor>` with `temurin|dragonwell`
+- replace `<version>` with `8|11|17|19|20|21|22|23`
+- replace `<vendor>` with `temurin|dragonwell|microsoft`
 
 ```shell
 export DOCKER_BUILDKIT=1
@@ -98,7 +98,7 @@ export _JAVA_OPTIONS="-Xmx4g"
 
 In order to GPG sign the generated RPMs/APKs you must add the following argument to the gradlew command:
 - replace `<DISTRO>` with `Alpine|RedHat|Suse`
-- replace `<version>` with `8|11|17|19`
+- replace `<version>` with `8|11|17|19|20|21|22|23`
 - replace `<vendor>` with `temurin|dragonwell`
 
 ```shell
@@ -182,8 +182,8 @@ rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
 ## Supported packages
 
 ### APK (Alpine)
-- Supported JDK version 8,11,17,19
-- Supported JRE version 8,11,17,19
+- Supported JDK version 8,11,17,19,20,21,22,23
+- Supported JRE version 8,11,17,19,20,21,22,23
 
 Supported platform amd64
 
@@ -192,8 +192,8 @@ Supported platform amd64
 | alpine/3.x.x |         x86_64         |      |
 
 ### DEB
-- Supported JDK version 8,11,17,19
-- Supported JRE version 8,11,17,19
+- Supported JDK version 8,11,17,19,20,21,22,23
+- Supported JRE version 8,11,17,19,20,21,22,23
 
 Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
 
