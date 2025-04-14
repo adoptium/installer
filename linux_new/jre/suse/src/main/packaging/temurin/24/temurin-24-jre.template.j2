@@ -78,11 +78,11 @@ Provides: %{altname}
 Obsoletes: java-24-temurin-jre < 24.0.0.0.0.36-1
 
 # Add Provides For Java Public Libraries
-Provides: libjawt.so
-Provides: libjava.so
-Provides: libjvm.so
-Provides: libverify.so
-Provides: libjsig.so
+Provides: libjawt.so%{?_isa}
+Provides: libjvm.so%{?_isa}
+Provides: libjava.so%{?_isa}
+Provides: libverify.so%{?_isa}
+Provides: libjsig.so%{?_isa}
 
 # First architecture ({{ hardware_architecture }})
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK24U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
