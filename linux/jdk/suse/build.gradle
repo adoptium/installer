@@ -145,7 +145,11 @@ task checkJdkSuse(type: Test) {
 
 	def containerRegistry = getContainerRegistry()
 
-	environment "PACKAGE", "$product-$productVersion-jdk"
+	if (product == "microsoft") {
+		environment "PACKAGE", "msopenjdk-$productVersion"
+	} else {
+		environment "PACKAGE", "$product-$productVersion-jdk"
+	}
 	if (gpgKey != null) {
 		environment "JDKGPG", "$gpgKey"
 		println "We set the gpgkey!"
