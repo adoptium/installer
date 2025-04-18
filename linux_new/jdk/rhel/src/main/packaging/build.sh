@@ -71,6 +71,6 @@ if grep -q %_gpg_name /home/builder/.rpmmacros; then
 	rm -f ~/.gnupg/public-keys.d/pubring.db.lock
 	for file in `ls /home/builder/out/*.rpm`; do
 		echo Signing: $file
-	  rpmsign --addsign $file
+	  	rpmsign --addsign $file
   done
 fi;
