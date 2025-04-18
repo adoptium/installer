@@ -12,27 +12,18 @@
 %global java_provides openjdk
 
 %global local_build_ %{?local_build}%{!?local_build:0}
-%global override_arch_ %{?override_arch}%{!?override_arch:0}
-# Above var evaluate to the value held in override_arch if defined,
-# else evaluates to 0 (meaning: we will build for the actual system architecture)
-# Same explanation for local_build_
-
-%global vers_arch x64
-%global vers_arch2 aarch64
+# Above var evaluates to the value held in local_build if defined,
+# else evaluates to 0 (meaning: we will build using binaries from web)
 
 # Map architecture to the expected value in the download URL; Allow for a
 # pre-defined value of vers_arch and use that if it's defined
 
-# Use override_arch_ if defined with correct value, else use system arch
+%global vers_arch x64
+%global vers_arch2 aarch64
+
 %if "%{local_build_}" == "true"
 %global src_num 4
 %global sha_src_num 5
-%elif "%{override_arch_}" == "aarch64"
-%global src_num 2
-%global sha_src_num 3
-%elif "%{override_arch_}" == "x86_64" || "%{override_arch_}" == "x64"
-%global src_num 0
-%global sha_src_num 1
 %else
 %ifarch x86_64
 %global src_num 0
@@ -42,12 +33,6 @@
 %global src_num 2
 %global sha_src_num 3
 %endif
-%endif
-
-# Allow for noarch SRPM build
-%ifarch noarch
-%global src_num 0
-%global sha_src_num 1
 %endif
 
 Name:        msopenjdk-11
