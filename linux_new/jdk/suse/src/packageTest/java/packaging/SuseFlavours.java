@@ -42,7 +42,6 @@ public class SuseFlavours implements ArgumentsProvider {
 			System.out.println("Using docker.io as the default container registry");
 		} else {
 			containerRegistry = System.getenv("containerRegistry");
-			suseRegistry = containerRegistry;
 			System.out.println("Using container registry: " + containerRegistry);
 		}
 

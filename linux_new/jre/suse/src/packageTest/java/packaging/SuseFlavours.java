@@ -42,7 +42,6 @@ public class SuseFlavours implements ArgumentsProvider {
 			System.out.println("Using docker.io as the default container registry");
 		} else {
 			containerRegistry = System.getenv("containerRegistry");
-			suseRegistry = containerRegistry;
 			System.out.println("Using container registry: " + containerRegistry);
 		}
 
@@ -50,6 +49,7 @@ public class SuseFlavours implements ArgumentsProvider {
 			Arguments.of(containerRegistry + "opensuse/leap", "15.3"),
 			Arguments.of(containerRegistry + "opensuse/leap", "15.4"),
 			Arguments.of(containerRegistry + "opensuse/leap", "15.5"),
+
 			Arguments.of(suseRegistry + "suse/sles12sp5", "latest"),
 			Arguments.of(suseRegistry + "suse/sle15", "latest")
 		);
