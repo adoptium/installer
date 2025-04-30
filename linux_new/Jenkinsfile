@@ -191,7 +191,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         }
         case "Alpine":
-        echo "Uploading Debian Target : ${Target} For Filename {$Filename}"
+        echo "Uploading Alpine Target : ${Target} For Filename {$Filename}"
         def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${FileName}", returnStdout: true).trim()
         echo "File Existence Check Result = = ${ResponseCode}"
         if ( ResponseCode == '200') {
@@ -257,6 +257,7 @@ pipeline {
         booleanParam(name: 'SKIP_ALPINE', defaultValue: false, description: 'Tick if you dont want to run the Alpine package builds and publishes')
         booleanParam(name: 'SKIP_RHEL', defaultValue: false, description: 'Tick if you dont want to run the RHEL RPM package builds and publishes')
         booleanParam(name: 'SKIP_SUSE', defaultValue: false, description: 'Tick if you dont want to run the SUSE RPM package builds and publishes')
+        booleanParam(name: 'SKIP_SRC', defaultValue: false, description: 'Tick if you dont want to upload the source files to the github repository')
 
         // Handle Parameters From Upstream Job That Are Not Required.
         string(name: 'UPSTREAM_JOB_NAME', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
@@ -915,10 +916,14 @@ post {
                 echo "Release : ${params.TAG}"
                 echo "FileName : ${ArchiveFileName}"
 
-                // build job: 'publish_linux_pkg_src', parameters: [
-                //     string(name: 'TAG', value: "${params.TAG}"),
-                //     string(name: 'FILENAME', value: "${ArchiveFileName}")
-                // ]
+                if (!params.SKIP_SRC) {
+                    build job: 'publish_linux_pkg_src', parameters: [
+                        string(name: 'TAG', value: params.TAG),
+                        string(name: 'FILENAME', value: ArchiveFileName)
+                    ]
+                } else {
+                  echo 'SKIP_SRC parameter is set, skipping publish.'  
+                }
             } else {
                 echo 'Dry Run is enabled. Skipping downstream job trigger.'
             }
