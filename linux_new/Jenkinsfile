@@ -187,7 +187,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
         } else {
             echo "Target Doesnt Exist - Upload Files"
             // This Upload Works
-            jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            // jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
         case "Alpine":
@@ -199,7 +199,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         } else {
             // This Upload Works
-            jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
+            // jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
             break
         }
         case "RPMS":
@@ -210,7 +210,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             echo "Target Exists - Skipping"
             break
         } else {
-            jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
+            // jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
             break
         }
         default:
@@ -251,6 +251,12 @@ pipeline {
         booleanParam(name: 'REPACKAGE', defaultValue: false, description: 'Tick if this is a republish of an existing package, ie xx.xxx.2 , rather than the base release of a package (1)')
         string(name: 'PACKAGE_INCREMENT', defaultValue: '1', description: 'This is the incremental number used for re-releases of package versions - Should be set appropriately if RePackage is True')
         string(name: 'TEMURIN_VERSION_INCREMENT', defaultValue: '0', description: 'Final Element Of The Version Number - Used For Temurin Specific Patches - NEARLY ALWAYS ZERO')
+
+        // Add Some Parameter To Allow Selective Builds Of Packages
+        booleanParam(name: 'SKIP_DEBIAN', defaultValue: false, description: 'Tick if you dont want to run the Debian package builds and publishes')
+        booleanParam(name: 'SKIP_ALPINE', defaultValue: false, description: 'Tick if you dont want to run the Alpine package builds and publishes')
+        booleanParam(name: 'SKIP_RHEL', defaultValue: false, description: 'Tick if you dont want to run the RHEL RPM package builds and publishes')
+        booleanParam(name: 'SKIP_SUSE', defaultValue: false, description: 'Tick if you dont want to run the SUSE RPM package builds and publishes')
 
         // Handle Parameters From Upstream Job That Are Not Required.
         string(name: 'UPSTREAM_JOB_NAME', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
@@ -909,10 +915,10 @@ post {
                 echo "Release : ${params.TAG}"
                 echo "FileName : ${ArchiveFileName}"
 
-                build job: 'publish_linux_pkg_src', parameters: [
-                    string(name: 'TAG', value: "${params.TAG}"),
-                    string(name: 'FILENAME', value: "${ArchiveFileName}")
-                ]
+                // build job: 'publish_linux_pkg_src', parameters: [
+                //     string(name: 'TAG', value: "${params.TAG}"),
+                //     string(name: 'FILENAME', value: "${ArchiveFileName}")
+                // ]
             } else {
                 echo 'Dry Run is enabled. Skipping downstream job trigger.'
             }
