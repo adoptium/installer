@@ -872,10 +872,14 @@ stage('Publish Packages') {
                 rhel_distros.each { rhel_distro ->
                 RHELkey = "${rhel_distro}/${RHELarchitecture}"
                 RHELTarget = "${RHELkey}/Packages"
-                CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
+                if (!params.SKIP_RHEL) {
+                    CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
+                   } else {
+                      echo 'SKIP_RHEL parameter is set, skipping publish.'
+                   }
             }
         }
-        echo "Preapring For SUSE Upload"
+        echo "Preparing For SUSE Upload"
         def SUSEFileName = ''
         def SUSEFilePath = ''
         def SUSETarget = ''
@@ -897,7 +901,11 @@ stage('Publish Packages') {
             suse_distros.each { suse_distro ->
             SUSEkey = "${suse_distro}/${SUSEarchitecture}"
             SUSETarget = "${SUSEkey}/Packages"
-            CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', SUSEFileName, SUSETarget, SUSEkey, SUSEFilePath)
+            if (!params.SKIP_SUSE) {
+              CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', SUSEFileName, SUSETarget, SUSEkey, SUSEFilePath)
+              } else {
+                echo 'SKIP_SUSE parameter is set, skipping publish.'
+              }
             }
           }
         } // End Of Linux Distro
@@ -922,7 +930,7 @@ post {
                         string(name: 'FILENAME', value: ArchiveFileName)
                     ]
                 } else {
-                  echo 'SKIP_SRC parameter is set, skipping publish.'  
+                  echo 'SKIP_SRC parameter is set, skipping publish.'
                 }
             } else {
                 echo 'Dry Run is enabled. Skipping downstream job trigger.'
