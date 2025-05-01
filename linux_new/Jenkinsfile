@@ -299,6 +299,8 @@ pipeline {
             steps {
                 script{
                     echo "Entering Stage : Process Parameters"
+                    // Proceed No Further As Early Access Builds Are Not Supported
+                    // jdk8u452-b09-ea
                     // Figure Out Which Dist This Run Is For
                     if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
                         distro  = "alpine-linux"
@@ -539,7 +541,7 @@ stage('Generate Spec File') {
 
             // Reformat Any Variables For Distribution Specific Oddities
 
-            if (DistArrayElement == 'alpine') {
+            if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
 
                 if (Version == "null") {
                     packagever = "${Release}_p${Build}"
@@ -583,8 +585,7 @@ stage('Generate Spec File') {
                 echo "Result : ${genresult}"
             }
 
-            if (DistArrayElement == 'debian') {
-
+            if (DistArrayElement == "debian" && !params.SKIP_DEBIAN) {
                 echo "Processing Debian Files"
 
                 // Debian Requires 3 Files To Be Generated
@@ -630,7 +631,8 @@ stage('Generate Spec File') {
             }
         }
 
-        if (DistArrayElement == "rhel" || DistArrayElement == "suse") {
+        if ((DistArrayElement == "rhel" && !params.SKIP_RHEL) ||
+            (DistArrayElement == "suse" && !params.SKIP_SUSE)) {
 
             def verparts = Version.tokenize('.')
             if (verparts.size() == 2) {
@@ -786,10 +788,49 @@ stage('Build & Archive Package') {
         } catch (Exception ex) {
             echo "Exception in build for ${DistArrayElement}: ${ex}"
             currentBuild.result = 'FAILURE'
-        } finally {
-            archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*',
-            onlyIfSuccessful: false, allowEmptyArchive: false
-            }
+        } finally { //zz
+          // archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*',
+          // onlyIfSuccessful: false, allowEmptyArchive: false
+
+          def basePattern = '**/build/ospackage/*,**/build/reports/**'
+          def archivePattern = ''
+
+          if (DistArrayElement == 'debian' && !params.SKIP_DEBIAN) {
+            archivePattern = "${basePattern},**/packageTest/dependencies/deb/*"
+            archiveArtifacts artifacts: archivePattern,
+              onlyIfSuccessful: false,
+              allowEmptyArchive: false
+          } else if (DistArrayElement == 'debian') {
+            echo "Skipping archive for Debian as SKIP_DEBIAN is true"
+          }
+
+          if (DistArrayElement == 'rhel' && !params.SKIP_RHEL) {
+            archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
+            archiveArtifacts artifacts: archivePattern,
+              onlyIfSuccessful: false,
+              allowEmptyArchive: false
+          } else if (DistArrayElement == 'rhel') {
+            echo "Skipping archive for RHEL as SKIP_RHEL is true"
+          }
+
+          if (DistArrayElement == 'suse' && !params.SKIP_SUSE) {
+            archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
+            archiveArtifacts artifacts: archivePattern,
+              onlyIfSuccessful: false,
+              allowEmptyArchive: false
+          } else if (DistArrayElement == 'suse') {
+            echo "Skipping archive for SUSE as SKIP_SUSE is true"
+          }
+
+          if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
+            archivePattern = "${basePattern},**/packageTest/dependencies/apk/*"
+            archiveArtifacts artifacts: archivePattern,
+              onlyIfSuccessful: false,
+              allowEmptyArchive: false
+          } else if (DistArrayElement == 'alpine') {
+            echo "Skipping archive for Alpine as SKIP_ALPINE is true"
+          }
+          } // zzz
           }
         }
       }
@@ -808,15 +849,15 @@ stage('Publish Packages') {
     steps {
         script {
             echo "Entering Stage : Publish Packages"
-            copyArtifacts projectName: "${env.JOB_NAME}",
-            selector: specific("${env.BUILD_NUMBER}"),
-            filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
-
+            
             echo "Done Retrieving Files"
 
             // Distro Specific Uploads
-            if (distro == 'alpine-linux') {
+            if (distro == 'alpine-linux' && !params.SKIP_ALPINE) {
                 echo "ALPINE UPLOAD"
+                copyArtifacts projectName: "${env.JOB_NAME}",
+                selector: specific("${env.BUILD_NUMBER}"),
+                filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
                 AlpArch = arch
                 if (arch == 'x64') {
                     echo "Fixing Arch For Alpine"
@@ -837,29 +878,33 @@ stage('Publish Packages') {
                        }
                 }
             }
-            if (distro == 'linux') {
+            if (distro == 'linux' && (!params.SKIP_DEBIAN || !params.SKIP_RHEL || !params.SKIP_SUSE)) {
                 echo "Linux Upload"
+                copyArtifacts projectName: "${env.JOB_NAME}",
+                selector: specific("${env.BUILD_NUMBER}"),
+                filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
+                
                 echo "Preparing For Debian Upload"
                 def DebFileName = ''
                 def DebTarget = ''
                 // Creates list like deb.distribution=stretch;deb.distribution=buster;
                 deb_distros.each { deb_version ->
                 distro_list += "deb.distribution=${deb_version};"
-            }
-            def DebDistro = "Debian"
-            def DebPackFiles = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
-            for (DebPackFile in DebPackFiles) {
-                DebFileName = DebPackFile.name
-                def DebFilePath = DebPackFile.path
-                DebTarget = "deb/pool/main/t/temurin-${Release}"
-                def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
-                def DebArch = DebArchEx[0][1]
-                if (!params.SKIP_DEBIAN) {
-                    CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
-                   } else {
-                      echo 'SKIP_DEBIAN parameter is set, skipping publish.'
-                   }
-            }
+                }
+                def DebDistro = "Debian"
+                def DebPackFiles = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
+                for (DebPackFile in DebPackFiles) {
+                    DebFileName = DebPackFile.name
+                    def DebFilePath = DebPackFile.path
+                    DebTarget = "deb/pool/main/t/temurin-${Release}"
+                    def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
+                    def DebArch = DebArchEx[0][1]
+                    if (!params.SKIP_DEBIAN) {
+                        CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
+                    } else {
+                        echo 'SKIP_DEBIAN parameter is set, skipping publish.'
+                    }
+                }
             echo "Preapring For RHEL Upload"
             def RHELFileName = ''
             def RHELFilePath = ''
