@@ -751,13 +751,14 @@ stage('Build & Archive Package') {
                 }
 
                 if (params.ENABLEGPGSIGNING) {
-                    if (DistArrayElement =="debian") {
+                    if (DistArrayElement == "debian" && !params.SKIP_DEBIAN) {
                         echo "Debian Does Not Use Signing"
                         buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
                         sh("$buildCli")
                     }
 
-                    if (DistArrayElement == "rhel" || DistArrayElement == "suse") { // for RPM based: RedHat / Suse / Alpine
+                    if ((DistArrayElement == "rhel" && !params.SKIP_RHEL) ||
+                        (DistArrayElement == "suse" && !params.SKIP_SUSE)) { // for RPM based: RedHat / Suse
                         echo "Using RPM Private KEY"
                         def privateKey = 'adoptium-artifactory-gpg-key'
                         withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
@@ -767,7 +768,7 @@ stage('Build & Archive Package') {
                         }
                     }
 
-                    if (DistArrayElement == "alpine") {
+                    if (DistArrayElement == "alpine" && !params.SKIP_ALPINE) {
                         echo "Using Alpine Private KEY"
                         def privateKey = 'adoptium-artifactory-rsa-key'
                         withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
@@ -829,7 +830,11 @@ stage('Publish Packages') {
                     def AlpFileName = AlpPackFile.name
                     def AlpFilePath = AlpPackFile.path
                     def Target = "apk/alpine/main/${AlpArch}"
-                    CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
+                    if (!params.SKIP_ALPINE) {
+                        CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
+                       } else {
+                          echo 'SKIP_ALPINE parameter is set, skipping publish.'
+                       }
                 }
             }
             if (distro == 'linux') {
@@ -849,7 +854,11 @@ stage('Publish Packages') {
                 DebTarget = "deb/pool/main/t/temurin-${Release}"
                 def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
                 def DebArch = DebArchEx[0][1]
-                CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
+                if (!params.SKIP_DEBIAN) {
+                    CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
+                   } else {
+                      echo 'SKIP_DEBIAN parameter is set, skipping publish.'
+                   }
             }
             echo "Preapring For RHEL Upload"
             def RHELFileName = ''
