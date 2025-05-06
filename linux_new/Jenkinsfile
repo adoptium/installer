@@ -6,6 +6,7 @@
 def NODE_LABEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure' // Default node
 def PRODUCT = 'temurin'
 def JVM = 'hotspot'
+def shouldSkipPipeline = false
 
 // Artifactory Global Variables
 def baseURL = "https://github.com/adoptium/"
@@ -299,17 +300,17 @@ pipeline {
             steps {
                 script{
                     echo "Entering Stage : Process Parameters"
-                    // Proceed No Further As Early Access Builds Are Not Supported
-                    // jdk8u452-b09-ea
-                    // Figure Out Which Dist This Run Is For
+
                     if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
-                        distro  = "alpine-linux"
+                        distro = "alpine-linux"
                     } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
                         distro = "linux"
                     } else {
-                        println "WARNING: The Artifacts Are For Neither Linux OR Alpine"
-                        currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
-                        error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
+                        echo "[WARNING] Unsupported distro in ARTIFACTS_TO_COPY: ${params.ARTIFACTS_TO_COPY}"
+                        distro = null
+                        currentBuild.result = 'NOT_BUILT'
+                        currentBuild.description = "UNSUPPORTED_DISTRO / UNSUPPORTED_ARCH / ${params.TAG ?: 'NO_TAG'}"
+                        return
                     }
 
                     // Valid architectures
@@ -326,11 +327,19 @@ pipeline {
                         println "Valid architecture identified: ${check_arch}"
                         arch = extractedArchs[0]
                     } else if (extractedArchs.isEmpty()) {
-                        println "WARNING: No valid architecture found in the specified paths: ${params.ARTIFACTS_TO_COPY}"
-                        error("No valid architecture found in the specified paths.")
+                        echo "[WARNING] No valid architecture found in ARTIFACTS_TO_COPY: ${params.ARTIFACTS_TO_COPY}"
+                        arch = null
+                        currentBuild.result = 'NOT_BUILT'
+                        def distroLabel = (distro in ['linux', 'alpine-linux']) ? distro.toUpperCase() : "UNSUPPORTED_DISTRO (${distro ?: 'null'})"
+                        currentBuild.description = "${distroLabel} / UNSUPPORTED_ARCH (null) / ${params.TAG ?: 'NO_TAG'}"
+                        return
                     } else {
-                        println "WARNING: Multiple architectures found: ${extractedArchs}"
-                        error("The Artifacts contain multiple architectures: ${extractedArchs}")
+                        echo "[WARNING] Multiple architectures found: ${extractedArchs}"
+                        arch = null
+                        currentBuild.result = 'NOT_BUILT'
+                        def distroLabel = (distro in ['linux', 'alpine-linux']) ? distro.toUpperCase() : "UNSUPPORTED_DISTRO (${distro ?: 'null'})"
+                        currentBuild.description = "${distroLabel} / MULTIPLE_ARCHS (${extractedArchs.join(',')}) / ${params.TAG ?: 'NO_TAG'}"
+                        return
                     }
 
                      if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
@@ -345,6 +354,12 @@ pipeline {
                         currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
                         error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
                     }
+
+                    // Set build description for supported combinations
+                    def distroLabel = (distro in ['linux', 'alpine-linux']) ? distro.toUpperCase() : "UNSUPPORTED_DISTRO (${distro ?: 'null'})"
+                    def archLabel = (arch in validArchs) ? arch : "UNSUPPORTED_ARCH (${arch ?: 'null'})"
+                    def tagLabel = params.TAG ?: "NO_TAG"
+                    currentBuild.description = "${distroLabel} / ${archLabel} / ${tagLabel}"
 
                     // Map Architectures From Source To Dist Suitable Values
 
@@ -365,14 +380,11 @@ pipeline {
                     'unknown'
 
                     // Version Number Parsing
-
                     def vername = ''
                     def verversion = ''
                     def verbuild = ''
 
                     // Add Special Handling For JDK8 Version Number
-                    // jdk8u432-b06
-
                     if (params.TAG?.startsWith("jdk8")) {
                         echo "JDK 8"
                         def split = (params.TAG =~ /(jdk)(\d+u\d+)-(b\d+)/)
@@ -434,7 +446,8 @@ pipeline {
     stage('Validate Artifacts') {
         agent { label NODE_LABEL }
         when {
-            expression { return params.DRY_RUN == false }
+            expression { return !shouldSkipPipeline && !params.DRY_RUN }
+            // expression { return params.DRY_RUN == false }
         }
         steps {
             script {
@@ -464,7 +477,6 @@ pipeline {
                 // Update array with the validated information
                 ModifiedJDKArray << [PTYPE, PFILE, PSIGN, PDIST, PARCH, PVERS, calculatedChecksum, Binurl]
             }
-
             JDKArray = ModifiedJDKArray
         }
     }
@@ -473,7 +485,7 @@ pipeline {
 stage('Generate Spec File') {
     agent { label NODE_LABEL }
     when {
-        expression { return params.DRY_RUN == false }
+        expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
@@ -706,7 +718,7 @@ dir('linux_new') {
 // Build And Archive Packages Stage - Start
 stage('Build & Archive Package') {
     when {
-        expression { return params.DRY_RUN == false }
+        expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
@@ -788,9 +800,7 @@ stage('Build & Archive Package') {
         } catch (Exception ex) {
             echo "Exception in build for ${DistArrayElement}: ${ex}"
             currentBuild.result = 'FAILURE'
-        } finally { //zz
-          // archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*',
-          // onlyIfSuccessful: false, allowEmptyArchive: false
+        } finally { 
 
           def basePattern = '**/build/ospackage/*,**/build/reports/**'
           def archivePattern = ''
@@ -844,7 +854,7 @@ stage('Publish Packages') {
         jfrog 'jfrog-cli'
     }
     when {
-        expression { return params.DRY_RUN == false }
+        expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
