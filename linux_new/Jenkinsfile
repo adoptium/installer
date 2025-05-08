@@ -188,7 +188,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
         } else {
             echo "Target Doesnt Exist - Upload Files"
             // This Upload Works
-            // jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
+            jf 'rt u ${FILENAME} deb/pool/main/t/temurin-${RELNUM}/ --target-props=${DISTROLIST}deb.component=main;deb.architecture=${BUILDARCH} --flat=true'
             break
         }
         case "Alpine":
@@ -200,7 +200,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         } else {
             // This Upload Works
-            // jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
+            jf 'rt u **/build/ospackage/${FILENAME} apk/alpine/main/${BUILDARCH}/ --flat=true'
             break
         }
         case "RPMS":
@@ -211,7 +211,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             echo "Target Exists - Skipping"
             break
         } else {
-            // jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
+            jf 'rt u ${FILENAME} ${PACKAGEDIR}/ --flat=true'
             break
         }
         default:
@@ -447,7 +447,6 @@ pipeline {
         agent { label NODE_LABEL }
         when {
             expression { return !shouldSkipPipeline && !params.DRY_RUN }
-            // expression { return params.DRY_RUN == false }
         }
         steps {
             script {
@@ -800,52 +799,51 @@ stage('Build & Archive Package') {
         } catch (Exception ex) {
             echo "Exception in build for ${DistArrayElement}: ${ex}"
             currentBuild.result = 'FAILURE'
-        } finally { 
-
-          def basePattern = '**/build/ospackage/*,**/build/reports/**'
-          def archivePattern = ''
-
-          if (DistArrayElement == 'debian' && !params.SKIP_DEBIAN) {
-            archivePattern = "${basePattern},**/packageTest/dependencies/deb/*"
-            archiveArtifacts artifacts: archivePattern,
-              onlyIfSuccessful: false,
-              allowEmptyArchive: false
-          } else if (DistArrayElement == 'debian') {
-            echo "Skipping archive for Debian as SKIP_DEBIAN is true"
-          }
-
-          if (DistArrayElement == 'rhel' && !params.SKIP_RHEL) {
-            archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
-            archiveArtifacts artifacts: archivePattern,
-              onlyIfSuccessful: false,
-              allowEmptyArchive: false
-          } else if (DistArrayElement == 'rhel') {
-            echo "Skipping archive for RHEL as SKIP_RHEL is true"
-          }
-
-          if (DistArrayElement == 'suse' && !params.SKIP_SUSE) {
-            archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
-            archiveArtifacts artifacts: archivePattern,
-              onlyIfSuccessful: false,
-              allowEmptyArchive: false
-          } else if (DistArrayElement == 'suse') {
-            echo "Skipping archive for SUSE as SKIP_SUSE is true"
-          }
-
-          if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
-            archivePattern = "${basePattern},**/packageTest/dependencies/apk/*"
-            archiveArtifacts artifacts: archivePattern,
-              onlyIfSuccessful: false,
-              allowEmptyArchive: false
-          } else if (DistArrayElement == 'alpine') {
-            echo "Skipping archive for Alpine as SKIP_ALPINE is true"
-          }
-          } // zzz
+        } finally {
+            def basePattern = '**/build/ospackage/*,**/build/reports/**'
+            def archivePattern = ''
+            
+            if (DistArrayElement == 'debian' && !params.SKIP_DEBIAN) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/deb/*"
+                archiveArtifacts artifacts: archivePattern,
+                onlyIfSuccessful: false,
+                allowEmptyArchive: false
+            } else if (DistArrayElement == 'debian') {
+                    echo "Skipping archive for Debian as SKIP_DEBIAN is true"
+            }
+            
+            if (DistArrayElement == 'rhel' && !params.SKIP_RHEL) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
+                archiveArtifacts artifacts: archivePattern,
+                onlyIfSuccessful: false,
+                allowEmptyArchive: false
+            } else if (DistArrayElement == 'rhel') {
+                    echo "Skipping archive for RHEL as SKIP_RHEL is true"
+            }
+            
+            if (DistArrayElement == 'suse' && !params.SKIP_SUSE) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
+                archiveArtifacts artifacts: archivePattern,
+                onlyIfSuccessful: false,
+                allowEmptyArchive: false
+            } else if (DistArrayElement == 'suse') {
+                    echo "Skipping archive for SUSE as SKIP_SUSE is true"
+            }
+                    
+            if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/apk/*"
+                archiveArtifacts artifacts: archivePattern,
+                onlyIfSuccessful: false,
+                allowEmptyArchive: false
+            } else if (DistArrayElement == 'alpine') {
+                    echo "Skipping archive for Alpine as SKIP_ALPINE is true"
+            }
           }
         }
       }
     }
   }
+}
 // Build And Archive Packages Stage - End
 // Publish Packages Stage - Start
 stage('Publish Packages') {
@@ -859,7 +857,7 @@ stage('Publish Packages') {
     steps {
         script {
             echo "Entering Stage : Publish Packages"
-            
+
             echo "Done Retrieving Files"
 
             // Distro Specific Uploads
@@ -893,7 +891,7 @@ stage('Publish Packages') {
                 copyArtifacts projectName: "${env.JOB_NAME}",
                 selector: specific("${env.BUILD_NUMBER}"),
                 filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
-                
+
                 echo "Preparing For Debian Upload"
                 def DebFileName = ''
                 def DebTarget = ''
