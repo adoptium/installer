@@ -805,29 +805,29 @@ stage('Build & Archive Package') {
             
             if (DistArrayElement == 'debian' && !params.SKIP_DEBIAN) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/deb/*"
-                archiveArtifacts artifacts: archivePattern,
-                onlyIfSuccessful: false,
-                allowEmptyArchive: false
+                  archiveArtifacts artifacts: archivePattern,
+                  onlyIfSuccessful: false,
+                  allowEmptyArchive: false
             } else if (DistArrayElement == 'debian') {
-                    echo "Skipping archive for Debian as SKIP_DEBIAN is true"
+                echo "Skipping archive for Debian as SKIP_DEBIAN is true"
             }
             
             if (DistArrayElement == 'rhel' && !params.SKIP_RHEL) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
-                archiveArtifacts artifacts: archivePattern,
-                onlyIfSuccessful: false,
-                allowEmptyArchive: false
+                  archiveArtifacts artifacts: archivePattern,
+                  onlyIfSuccessful: false,
+                  allowEmptyArchive: false
             } else if (DistArrayElement == 'rhel') {
-                    echo "Skipping archive for RHEL as SKIP_RHEL is true"
+                echo "Skipping archive for RHEL as SKIP_RHEL is true"
             }
             
             if (DistArrayElement == 'suse' && !params.SKIP_SUSE) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
-                archiveArtifacts artifacts: archivePattern,
-                onlyIfSuccessful: false,
-                allowEmptyArchive: false
+                  archiveArtifacts artifacts: archivePattern,
+                  onlyIfSuccessful: false,
+                  allowEmptyArchive: false
             } else if (DistArrayElement == 'suse') {
-                    echo "Skipping archive for SUSE as SKIP_SUSE is true"
+                echo "Skipping archive for SUSE as SKIP_SUSE is true"
             }
                     
             if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
@@ -836,7 +836,7 @@ stage('Build & Archive Package') {
                 onlyIfSuccessful: false,
                 allowEmptyArchive: false
             } else if (DistArrayElement == 'alpine') {
-                    echo "Skipping archive for Alpine as SKIP_ALPINE is true"
+                echo "Skipping archive for Alpine as SKIP_ALPINE is true"
             }
           }
         }
@@ -913,7 +913,7 @@ stage('Publish Packages') {
                         echo 'SKIP_DEBIAN parameter is set, skipping publish.'
                     }
                 }
-            echo "Preapring For RHEL Upload"
+            echo "Preparing For RHEL Upload"
             def RHELFileName = ''
             def RHELFilePath = ''
             def RHELTarget = ''
