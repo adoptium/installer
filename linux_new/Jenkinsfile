@@ -6,6 +6,7 @@
 def NODE_LABEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure' // Default node
 def PRODUCT = 'temurin'
 def JVM = 'hotspot'
+def shouldSkipPipeline = false
 
 // Artifactory Global Variables
 def baseURL = "https://github.com/adoptium/"
@@ -191,7 +192,7 @@ def CheckAndUpload(String Target, String Distro, String BuildArch, String RelVer
             break
         }
         case "Alpine":
-        echo "Uploading Debian Target : ${Target} For Filename {$Filename}"
+        echo "Uploading Alpine Target : ${Target} For Filename {$Filename}"
         def ResponseCode = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${artBaseURL}${Target}/${FileName}", returnStdout: true).trim()
         echo "File Existence Check Result = = ${ResponseCode}"
         if ( ResponseCode == '200') {
@@ -252,6 +253,13 @@ pipeline {
         string(name: 'PACKAGE_INCREMENT', defaultValue: '1', description: 'This is the incremental number used for re-releases of package versions - Should be set appropriately if RePackage is True')
         string(name: 'TEMURIN_VERSION_INCREMENT', defaultValue: '0', description: 'Final Element Of The Version Number - Used For Temurin Specific Patches - NEARLY ALWAYS ZERO')
 
+        // Add Some Parameter To Allow Selective Builds Of Packages
+        booleanParam(name: 'SKIP_DEBIAN', defaultValue: false, description: 'Tick if you dont want to run the Debian package builds and publishes')
+        booleanParam(name: 'SKIP_ALPINE', defaultValue: false, description: 'Tick if you dont want to run the Alpine package builds and publishes')
+        booleanParam(name: 'SKIP_RHEL', defaultValue: false, description: 'Tick if you dont want to run the RHEL RPM package builds and publishes')
+        booleanParam(name: 'SKIP_SUSE', defaultValue: false, description: 'Tick if you dont want to run the SUSE RPM package builds and publishes')
+        booleanParam(name: 'SKIP_SRC', defaultValue: false, description: 'Tick if you dont want to upload the source files to the github repository')
+
         // Handle Parameters From Upstream Job That Are Not Required.
         string(name: 'UPSTREAM_JOB_NAME', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
         string(name: 'UPSTREAM_JOB_NUMBER', defaultValue: '', description: 'Parameter From Upstream Job Not Required Here')
@@ -292,15 +300,17 @@ pipeline {
             steps {
                 script{
                     echo "Entering Stage : Process Parameters"
-                    // Figure Out Which Dist This Run Is For
+
                     if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
-                        distro  = "alpine-linux"
+                        distro = "alpine-linux"
                     } else if (params.ARTIFACTS_TO_COPY.contains('linux')) {
                         distro = "linux"
                     } else {
-                        println "WARNING: The Artifacts Are For Neither Linux OR Alpine"
-                        currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
-                        error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
+                        echo "[WARNING] Unsupported distro in ARTIFACTS_TO_COPY: ${params.ARTIFACTS_TO_COPY}"
+                        distro = null
+                        currentBuild.result = 'NOT_BUILT'
+                        currentBuild.description = "UNSUPPORTED_DISTRO / UNSUPPORTED_ARCH / ${params.TAG ?: 'NO_TAG'}"
+                        return
                     }
 
                     // Valid architectures
@@ -317,11 +327,19 @@ pipeline {
                         println "Valid architecture identified: ${check_arch}"
                         arch = extractedArchs[0]
                     } else if (extractedArchs.isEmpty()) {
-                        println "WARNING: No valid architecture found in the specified paths: ${params.ARTIFACTS_TO_COPY}"
-                        error("No valid architecture found in the specified paths.")
+                        echo "[WARNING] No valid architecture found in ARTIFACTS_TO_COPY: ${params.ARTIFACTS_TO_COPY}"
+                        arch = null
+                        currentBuild.result = 'NOT_BUILT'
+                        def distroLabel = (distro in ['linux', 'alpine-linux']) ? distro.toUpperCase() : "UNSUPPORTED_DISTRO (${distro ?: 'null'})"
+                        currentBuild.description = "${distroLabel} / UNSUPPORTED_ARCH (null) / ${params.TAG ?: 'NO_TAG'}"
+                        return
                     } else {
-                        println "WARNING: Multiple architectures found: ${extractedArchs}"
-                        error("The Artifacts contain multiple architectures: ${extractedArchs}")
+                        echo "[WARNING] Multiple architectures found: ${extractedArchs}"
+                        arch = null
+                        currentBuild.result = 'NOT_BUILT'
+                        def distroLabel = (distro in ['linux', 'alpine-linux']) ? distro.toUpperCase() : "UNSUPPORTED_DISTRO (${distro ?: 'null'})"
+                        currentBuild.description = "${distroLabel} / MULTIPLE_ARCHS (${extractedArchs.join(',')}) / ${params.TAG ?: 'NO_TAG'}"
+                        return
                     }
 
                      if (params.ARTIFACTS_TO_COPY.contains('alpine-linux')) {
@@ -336,6 +354,12 @@ pipeline {
                         currentBuild.result = 'UNSTABLE' // Also Consider NOT_BUILT
                         error("Pipeline Skipped Due To Triggered For Neither Alpine Or Linux")
                     }
+
+                    // Set build description for supported combinations
+                    def distroLabel = (distro in ['linux', 'alpine-linux']) ? distro.toUpperCase() : "UNSUPPORTED_DISTRO (${distro ?: 'null'})"
+                    def archLabel = (arch in validArchs) ? arch : "UNSUPPORTED_ARCH (${arch ?: 'null'})"
+                    def tagLabel = params.TAG ?: "NO_TAG"
+                    currentBuild.description = "${distroLabel} / ${archLabel} / ${tagLabel}"
 
                     // Map Architectures From Source To Dist Suitable Values
 
@@ -356,14 +380,11 @@ pipeline {
                     'unknown'
 
                     // Version Number Parsing
-
                     def vername = ''
                     def verversion = ''
                     def verbuild = ''
 
                     // Add Special Handling For JDK8 Version Number
-                    // jdk8u432-b06
-
                     if (params.TAG?.startsWith("jdk8")) {
                         echo "JDK 8"
                         def split = (params.TAG =~ /(jdk)(\d+u\d+)-(b\d+)/)
@@ -425,7 +446,7 @@ pipeline {
     stage('Validate Artifacts') {
         agent { label NODE_LABEL }
         when {
-            expression { return params.DRY_RUN == false }
+            expression { return !shouldSkipPipeline && !params.DRY_RUN }
         }
         steps {
             script {
@@ -455,7 +476,6 @@ pipeline {
                 // Update array with the validated information
                 ModifiedJDKArray << [PTYPE, PFILE, PSIGN, PDIST, PARCH, PVERS, calculatedChecksum, Binurl]
             }
-
             JDKArray = ModifiedJDKArray
         }
     }
@@ -464,7 +484,7 @@ pipeline {
 stage('Generate Spec File') {
     agent { label NODE_LABEL }
     when {
-        expression { return params.DRY_RUN == false }
+        expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
@@ -532,7 +552,7 @@ stage('Generate Spec File') {
 
             // Reformat Any Variables For Distribution Specific Oddities
 
-            if (DistArrayElement == 'alpine') {
+            if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
 
                 if (Version == "null") {
                     packagever = "${Release}_p${Build}"
@@ -576,8 +596,7 @@ stage('Generate Spec File') {
                 echo "Result : ${genresult}"
             }
 
-            if (DistArrayElement == 'debian') {
-
+            if (DistArrayElement == "debian" && !params.SKIP_DEBIAN) {
                 echo "Processing Debian Files"
 
                 // Debian Requires 3 Files To Be Generated
@@ -623,7 +642,8 @@ stage('Generate Spec File') {
             }
         }
 
-        if (DistArrayElement == "rhel" || DistArrayElement == "suse") {
+        if ((DistArrayElement == "rhel" && !params.SKIP_RHEL) ||
+            (DistArrayElement == "suse" && !params.SKIP_SUSE)) {
 
             def verparts = Version.tokenize('.')
             if (verparts.size() == 2) {
@@ -697,7 +717,7 @@ dir('linux_new') {
 // Build And Archive Packages Stage - Start
 stage('Build & Archive Package') {
     when {
-        expression { return params.DRY_RUN == false }
+        expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
@@ -744,13 +764,14 @@ stage('Build & Archive Package') {
                 }
 
                 if (params.ENABLEGPGSIGNING) {
-                    if (DistArrayElement =="debian") {
+                    if (DistArrayElement == "debian" && !params.SKIP_DEBIAN) {
                         echo "Debian Does Not Use Signing"
                         buildCli = params.ENABLEDEBUG.toBoolean() ? buildCli + ' --stacktrace' : buildCli
                         sh("$buildCli")
                     }
 
-                    if (DistArrayElement == "rhel" || DistArrayElement == "suse") { // for RPM based: RedHat / Suse / Alpine
+                    if ((DistArrayElement == "rhel" && !params.SKIP_RHEL) ||
+                        (DistArrayElement == "suse" && !params.SKIP_SUSE)) { // for RPM based: RedHat / Suse
                         echo "Using RPM Private KEY"
                         def privateKey = 'adoptium-artifactory-gpg-key'
                         withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
@@ -760,7 +781,7 @@ stage('Build & Archive Package') {
                         }
                     }
 
-                    if (DistArrayElement == "alpine") {
+                    if (DistArrayElement == "alpine" && !params.SKIP_ALPINE) {
                         echo "Using Alpine Private KEY"
                         def privateKey = 'adoptium-artifactory-rsa-key'
                         withCredentials([file(credentialsId: privateKey, variable: 'GPG_KEY')]) {
@@ -779,14 +800,50 @@ stage('Build & Archive Package') {
             echo "Exception in build for ${DistArrayElement}: ${ex}"
             currentBuild.result = 'FAILURE'
         } finally {
-            archiveArtifacts artifacts: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*',
-            onlyIfSuccessful: false, allowEmptyArchive: false
+            def basePattern = '**/build/ospackage/*,**/build/reports/**'
+            def archivePattern = ''
+            
+            if (DistArrayElement == 'debian' && !params.SKIP_DEBIAN) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/deb/*"
+                  archiveArtifacts artifacts: archivePattern,
+                  onlyIfSuccessful: false,
+                  allowEmptyArchive: false
+            } else if (DistArrayElement == 'debian') {
+                echo "Skipping archive for Debian as SKIP_DEBIAN is true"
+            }
+            
+            if (DistArrayElement == 'rhel' && !params.SKIP_RHEL) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
+                  archiveArtifacts artifacts: archivePattern,
+                  onlyIfSuccessful: false,
+                  allowEmptyArchive: false
+            } else if (DistArrayElement == 'rhel') {
+                echo "Skipping archive for RHEL as SKIP_RHEL is true"
+            }
+            
+            if (DistArrayElement == 'suse' && !params.SKIP_SUSE) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
+                  archiveArtifacts artifacts: archivePattern,
+                  onlyIfSuccessful: false,
+                  allowEmptyArchive: false
+            } else if (DistArrayElement == 'suse') {
+                echo "Skipping archive for SUSE as SKIP_SUSE is true"
+            }
+                    
+            if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
+                archivePattern = "${basePattern},**/packageTest/dependencies/apk/*"
+                archiveArtifacts artifacts: archivePattern,
+                onlyIfSuccessful: false,
+                allowEmptyArchive: false
+            } else if (DistArrayElement == 'alpine') {
+                echo "Skipping archive for Alpine as SKIP_ALPINE is true"
             }
           }
         }
       }
     }
   }
+}
 // Build And Archive Packages Stage - End
 // Publish Packages Stage - Start
 stage('Publish Packages') {
@@ -795,20 +852,20 @@ stage('Publish Packages') {
         jfrog 'jfrog-cli'
     }
     when {
-        expression { return params.DRY_RUN == false }
+        expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
             echo "Entering Stage : Publish Packages"
-            copyArtifacts projectName: "${env.JOB_NAME}",
-            selector: specific("${env.BUILD_NUMBER}"),
-            filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
 
             echo "Done Retrieving Files"
 
             // Distro Specific Uploads
-            if (distro == 'alpine-linux') {
+            if (distro == 'alpine-linux' && !params.SKIP_ALPINE) {
                 echo "ALPINE UPLOAD"
+                copyArtifacts projectName: "${env.JOB_NAME}",
+                selector: specific("${env.BUILD_NUMBER}"),
+                filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
                 AlpArch = arch
                 if (arch == 'x64') {
                     echo "Fixing Arch For Alpine"
@@ -822,29 +879,41 @@ stage('Publish Packages') {
                     def AlpFileName = AlpPackFile.name
                     def AlpFilePath = AlpPackFile.path
                     def Target = "apk/alpine/main/${AlpArch}"
-                    CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
+                    if (!params.SKIP_ALPINE) {
+                        CheckAndUpload(Target, AlpDistro, AlpArch, '', '', '', '', '' , AlpFileName)
+                       } else {
+                          echo 'SKIP_ALPINE parameter is set, skipping publish.'
+                       }
                 }
             }
-            if (distro == 'linux') {
+            if (distro == 'linux' && (!params.SKIP_DEBIAN || !params.SKIP_RHEL || !params.SKIP_SUSE)) {
                 echo "Linux Upload"
+                copyArtifacts projectName: "${env.JOB_NAME}",
+                selector: specific("${env.BUILD_NUMBER}"),
+                filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
+
                 echo "Preparing For Debian Upload"
                 def DebFileName = ''
                 def DebTarget = ''
                 // Creates list like deb.distribution=stretch;deb.distribution=buster;
                 deb_distros.each { deb_version ->
                 distro_list += "deb.distribution=${deb_version};"
-            }
-            def DebDistro = "Debian"
-            def DebPackFiles = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
-            for (DebPackFile in DebPackFiles) {
-                DebFileName = DebPackFile.name
-                def DebFilePath = DebPackFile.path
-                DebTarget = "deb/pool/main/t/temurin-${Release}"
-                def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
-                def DebArch = DebArchEx[0][1]
-                CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
-            }
-            echo "Preapring For RHEL Upload"
+                }
+                def DebDistro = "Debian"
+                def DebPackFiles = findFiles(glob: "**/build/ospackage/temurin-*.deb") // List All Packages To Upload
+                for (DebPackFile in DebPackFiles) {
+                    DebFileName = DebPackFile.name
+                    def DebFilePath = DebPackFile.path
+                    DebTarget = "deb/pool/main/t/temurin-${Release}"
+                    def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
+                    def DebArch = DebArchEx[0][1]
+                    if (!params.SKIP_DEBIAN) {
+                        CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
+                    } else {
+                        echo 'SKIP_DEBIAN parameter is set, skipping publish.'
+                    }
+                }
+            echo "Preparing For RHEL Upload"
             def RHELFileName = ''
             def RHELFilePath = ''
             def RHELTarget = ''
@@ -865,10 +934,14 @@ stage('Publish Packages') {
                 rhel_distros.each { rhel_distro ->
                 RHELkey = "${rhel_distro}/${RHELarchitecture}"
                 RHELTarget = "${RHELkey}/Packages"
-                CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
+                if (!params.SKIP_RHEL) {
+                    CheckAndUpload(RHELTarget, RHELDistro, RHELarchitecture, '', '', RHELFileName, RHELTarget, RHELkey, RHELFilePath)
+                   } else {
+                      echo 'SKIP_RHEL parameter is set, skipping publish.'
+                   }
             }
         }
-        echo "Preapring For SUSE Upload"
+        echo "Preparing For SUSE Upload"
         def SUSEFileName = ''
         def SUSEFilePath = ''
         def SUSETarget = ''
@@ -890,7 +963,11 @@ stage('Publish Packages') {
             suse_distros.each { suse_distro ->
             SUSEkey = "${suse_distro}/${SUSEarchitecture}"
             SUSETarget = "${SUSEkey}/Packages"
-            CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', SUSEFileName, SUSETarget, SUSEkey, SUSEFilePath)
+            if (!params.SKIP_SUSE) {
+              CheckAndUpload(SUSETarget, SUSEDistro, SUSEarchitecture, '', '', SUSEFileName, SUSETarget, SUSEkey, SUSEFilePath)
+              } else {
+                echo 'SKIP_SUSE parameter is set, skipping publish.'
+              }
             }
           }
         } // End Of Linux Distro
@@ -909,10 +986,14 @@ post {
                 echo "Release : ${params.TAG}"
                 echo "FileName : ${ArchiveFileName}"
 
-                build job: 'publish_linux_pkg_src', parameters: [
-                    string(name: 'TAG', value: "${params.TAG}"),
-                    string(name: 'FILENAME', value: "${ArchiveFileName}")
-                ]
+                if (!params.SKIP_SRC) {
+                    build job: 'publish_linux_pkg_src', parameters: [
+                        string(name: 'TAG', value: params.TAG),
+                        string(name: 'FILENAME', value: ArchiveFileName)
+                    ]
+                } else {
+                  echo 'SKIP_SRC parameter is set, skipping publish.'
+                }
             } else {
                 echo 'Dry Run is enabled. Skipping downstream job trigger.'
             }
