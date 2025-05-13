@@ -48,4 +48,4 @@ Get-AppPackage -Name "package-name"
 ```shell
 Remove-AppPackage -AllUsers -package "package-full-name"
 ```
-Note: Name must appear as it does when found via `Get-AppPackage`, including the package_ID at the end
+Note: The "package-full-name" must appear as it does in the `PackageFullName` attribute found via `Get-AppPackage`, including the package_ID at the end
