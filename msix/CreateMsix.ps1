@@ -128,12 +128,12 @@ if (-not $VerboseOutput) {
 
 ###### Set environment variables
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-# Run the setup-env.ps1 script located in the scripts folder
+# Run the SetupEnv.ps1 script located in the scripts folder
 # Sets $Env:Windows_tools_base, $Env:srcFolder, $Env:workspace, $Env:output, $Env:appxTemplate, and $Env:priConfig env vars
 # Cleans src and workspace folders
-$setupEnvScriptPath = Join-Path -Path $scriptPath -ChildPath "scripts\setup-env.ps1"
+$setupEnvScriptPath = Join-Path -Path $scriptPath -ChildPath "scripts\SetupEnv.ps1"
 if (-not (Test-Path -Path $setupEnvScriptPath)) {
-    throw "Error: The setup-env.ps1 script was not found at '$setupEnvScriptPath'."
+    throw "Error: The SetupEnv.ps1 script was not found at '$setupEnvScriptPath'."
 }
 & $setupEnvScriptPath
 Write-Host "Environment setup script executed successfully."
@@ -171,7 +171,7 @@ $unzippedFolder = Join-Path -Path $Env:workspace -ChildPath (Get-ChildItem -Path
 Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $Env:srcFolder -Force
 Remove-Item -Path $unzippedFolder -Recurse -Force
 
-# Read the content of the appx template (path from setup-env.ps1)
+# Read the content of the appx template (path from SetupEnv.ps1)
 $content = Get-Content -Path $Env:appxTemplate
 
 # Create a variable by replacing spaces and underscores with dashes in $VendorBranding
@@ -197,7 +197,7 @@ $appxManifestPath = Join-Path -Path $Env:srcFolder -ChildPath "AppXManifest.xml"
 Set-Content -Path $appxManifestPath -Value $updatedContent
 Write-Host "AppXManifest.xml created at '$appxManifestPath'"
 
-# Copy pri_config.xml to the target folder (path from setup-env.ps1)
+# Copy pri_config.xml to the target folder (path from SetupEnv.ps1)
 Copy-Item -Path $Env:priConfig -Destination $Env:srcFolder -Force
 Write-Host "pri_config.xml copied to '$Env:srcFolder'"
 
