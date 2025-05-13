@@ -129,7 +129,8 @@ if (-not $VerboseOutput) {
 ###### Set environment variables
 $scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
 # Run the setup-env.ps1 script located in the scripts folder
-# Setup $Env:Windows_tools_base, $Env:srcFolder, $Env:appxTemplate, and $Env:priConfig env vars
+# Sets $Env:Windows_tools_base, $Env:srcFolder, $Env:workspace, $Env:output, $Env:appxTemplate, and $Env:priConfig env vars
+# Cleans src and workspace folders
 $setupEnvScriptPath = Join-Path -Path $scriptPath -ChildPath "scripts\setup-env.ps1"
 if (-not (Test-Path -Path $setupEnvScriptPath)) {
     throw "Error: The setup-env.ps1 script was not found at '$setupEnvScriptPath'."
