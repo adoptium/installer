@@ -33,7 +33,7 @@ Variables to replace:
     <DisplayName>{VENDOR_BRANDING} {PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}+{PRODUCT_BUILD_NUMBER} ({ARCH})</DisplayName>
     <PublisherDisplayName>{VENDOR}</PublisherDisplayName>
     <Description>{VENDOR_BRANDING} {DESCRIPTION}</Description>
-    <Logo>resources/duke50.png</Logo>
+    <Logo>_msix_logos/duke50.png</Logo>
     <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
     <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
     <uap17:UpdateWhileInUse>defer</uap17:UpdateWhileInUse>
@@ -56,8 +56,8 @@ Variables to replace:
                   desktop4:Subsystem="console">
       <uap:VisualElements DisplayName="java"
                           Description="Run java files with java.exe"
-                          Square150x150Logo="resources/duke150.png"
-                          Square44x44Logo="resources/duke44.png"
+                          Square150x150Logo="_msix_logos/duke150.png"
+                          Square44x44Logo="_msix_logos/duke44.png"
                           BackgroundColor="transparent">
       </uap:VisualElements>
       <Extensions>
@@ -75,8 +75,8 @@ Variables to replace:
                   desktop4:Subsystem="console">
       <uap:VisualElements DisplayName="Run javaw.exe"
                           Description="javaw"
-                          Square150x150Logo="resources/duke150.png"
-                          Square44x44Logo="resources/duke44.png"
+                          Square150x150Logo="_msix_logos/duke150.png"
+                          Square44x44Logo="_msix_logos/duke44.png"
                           BackgroundColor="transparent">
       </uap:VisualElements>
       <Extensions>
