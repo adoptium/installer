@@ -4,6 +4,7 @@ Variables to replace:
   - VENDOR                      - Example: Eclipse Adoptium  
   - VENDOR_BRANDING             - Example: Eclipse Temurin
   - VENDOR_BRANDING_DASHES      - replace all '_' and ' ' with '-' to avoid errors in the Name attribute
+  - OUTPUT_NAME                 - Example: Eclipse-Temurin-17.0.15-6-x64
   - DESCRIPTION                 - This is optional. Example: "Development Kit with Hotspot"
   - PRODUCT_MAJOR_VERSION       - Example: if the version is 17.0.15+6, this is 17
   - PRODUCT_MINOR_VERSION       - Example: if the version is 17.0.15+6, this is 0
@@ -25,7 +26,7 @@ Variables to replace:
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6">
   <!-- Identity name cannot have spaces or underscores in it -->
-  <Identity Name="{VENDOR_BRANDING_DASHES}-{PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}-{PRODUCT_BUILD_NUMBER}-{ARCH}"
+  <Identity Name="{OUTPUT_NAME}"
             Publisher="CN={PUBLISHER_CN}"
             Version="{PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}.0"
             ProcessorArchitecture="{ARCH}" />

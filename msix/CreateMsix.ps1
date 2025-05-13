@@ -50,6 +50,10 @@
     Optional. The password for the signing certificate.
     Only needed if the SigningCertPath is provided.
 
+.PARAMETER outputName
+    Optional. The name of the output file without the file extension.
+    If not provided, a default name will be generated based on the VendorBranding and version information.
+
 .PARAMETER Quiet
     Optional. If specified, suppresses output messages. Recommended for use in automated scripts, or when downloading zip files from a URL.
     This is an alias for -q.
@@ -103,6 +107,9 @@ param (
 
     [Parameter(Mandatory = $false)]
     [string]$SigningPassword,
+
+    [Parameter(Mandatory = $false)]
+    [string]$outputName,
 
     [Parameter(Mandatory = $false, HelpMessage = "Include this flag to output verbose messages.")]
     [Alias("v")]
@@ -176,13 +183,15 @@ $content = Get-Content -Path $Env:appxTemplate
 
 # Create a variable by replacing spaces and underscores with dashes in $VendorBranding
 $vendorBrandingDashes = $VendorBranding -replace "[ _]", "-"
-$outputFileName = "$vendorBrandingDashes-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion-$ProductBuildNumber-$Arch.msix"
-
+if (-not $outputName) {
+    $outputName = "$vendorBrandingDashes-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion-$ProductBuildNumber-$Arch"
+}
 # Replace all instances of placeholders with the provided values
 $updatedContent = $content `
     -replace "\{VENDOR\}", $Vendor `
     -replace "\{VENDOR_BRANDING\}", $VendorBranding `
     -replace "\{VENDOR_BRANDING_DASHES\}", $vendorBrandingDashes `
+    -replace "\{OUTPUT_NAME\}", $outputName `
     -replace "\{DESCRIPTION\}", $Description `
     -replace "\{PRODUCT_MAJOR_VERSION\}", $ProductMajorVersion `
     -replace "\{PRODUCT_MINOR_VERSION\}", $ProductMinorVersion `
@@ -211,7 +220,7 @@ Write-Host "pri_config.xml copied to '$Env:srcFolder'"
 & "$Env:Windows_tools_base\makeappx.exe" pack `
     /o `
     /d "$Env:srcFolder" `
-    /p "$Env:output\$outputFileName"
+    /p "$Env:output\$outputName.msix"
 
 
 if ($SigningCertPath) {
@@ -220,7 +229,7 @@ if ($SigningCertPath) {
         /a `
         /f $SigningCertPath `
         /p "$SigningPassword" `
-        $Env:output\$outputFileName
+        "$Env:output\$outputName.msix"
     Write-Host "MSIX package signed successfully."
 }
 else {
