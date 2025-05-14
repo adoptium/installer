@@ -4,8 +4,9 @@ Variables to replace:
   - VENDOR                      - Example: Eclipse Adoptium  
   - VENDOR_BRANDING             - Example: Eclipse Temurin
   - MSIX_DISPLAYNAME            - Example: Eclipse Temurin with hotspot 17.0.15+6 (x64)
-  - OUTPUT_NAME                 - Example: OpenJDK17U-jdk-x64-windows-hotspot-17.0.15-6
-                                  Note: OUTPUT_NAME cannot contain spaces or underscores.
+  - PACKAGE_NAME                - Example: OpenJDK17U-jdk-x64-windows-hotspot
+                                  IMPORTANT: This needs to be consistent with previous releases for upgrades to work as expected
+                                  Note: PACKAGE_NAME cannot contain spaces or underscores.
   - DESCRIPTION                 - This is optional. Example: "Development Kit with Hotspot"
   - PRODUCT_MAJOR_VERSION       - Example: if the version is 17.0.15+6, this is 17
   - PRODUCT_MINOR_VERSION       - Example: if the version is 17.0.15+6, this is 0
@@ -13,7 +14,7 @@ Variables to replace:
   - PRODUCT_BUILD_NUMBER        - Example: if the version is 17.0.15+6, this is 6
   - ARCH                        - Valid architectures: x86, x64, arm, arm64, x86a64, neutral
   - PUBLISHER_CN                - Set this to anything on the right side of your `CN=` field in your .pfx file.
-                                  This may include additional fields in the name, such as 'O=...'', 'L=...'', 'S=...', and/or others.
+                                  This may include additional fields in the name, such as 'O=...', 'L=...', 'S=...', and/or others.
  -->
 <Package IgnorableNamespaces="desktop4 desktop6 uap uap2 uap3 uap10 uap17 rescap"
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -27,7 +28,7 @@ Variables to replace:
   xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
   xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6">
   <!-- Identity name cannot have spaces or underscores in it -->
-  <Identity Name="{OUTPUT_NAME}"
+  <Identity Name="{PACKAGE_NAME}"
             Publisher="CN={PUBLISHER_CN}"
             Version="{PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}.{PRODUCT_BUILD_NUMBER}"
             ProcessorArchitecture="{ARCH}" />

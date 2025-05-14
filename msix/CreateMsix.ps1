@@ -14,6 +14,12 @@
 .PARAMETER ZipFileUrl
     Optional. The URL of a zip file to be downloaded and unzipped.
 
+.PARAMETER PackageName
+    Optional. The name of the package -- cannot contain spaces or underscores.
+    IMPORTANT: This needs to be consistent with previous releases for upgrades to work as expected
+    Note: The output file will be named: $PackageName.msix
+    If not provided, a default name will have the following format: "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion"
+
 .PARAMETER Vendor
     Optional. Default: Eclipse Adoptium.
 
@@ -56,17 +62,19 @@
     Optional. The password for the signing certificate.
     Only needed if the SigningCertPath is provided.
 
-.PARAMETER outputName
-    Optional. The name of the output file without the file extension.
+.PARAMETER OutputFileName
+    Optional. The name of the output file.
     If not provided, a default name will be generated based on the VendorBranding and version information.
 
-.PARAMETER Quiet
-    Optional. If specified, suppresses output messages. Recommended for use in automated scripts, or when downloading zip files from a URL.
-    This is an alias for -q.
+.PARAMETER VerboseOutput
+    Optional. If specified, $global:ProgressPreference is not set to 'SilentlyContinue'.
+    Note: Unzipping binaries is much faster if not verbose. (Because the progress bar is not shown)
+    Alias: -v.
 
 .EXAMPLE
     .\CreateMsix.ps1 `
         -ZipFilePath "C:\path\to\file.zip" `
+        -PackageName "OpenJDK17U-jdk-x64-windows-hotspot" `
         -PublisherCN "ExamplePublisher" `
         -ProductMajorVersion 17 `
         -ProductMinorVersion 0 `
@@ -78,6 +86,7 @@
     .\CreateMsix.ps1 `
         # Mandatory inputs
         -ZipFileUrl "https://example.com/file.zip" `
+        -PackageName "OpenJDK21U-jdk-x64-windows-hotspot" `
         -PublisherCN "ExamplePublisher" `
         -ProductMajorVersion 21 `
         -ProductMinorVersion 0 `
@@ -88,15 +97,15 @@
         -Vendor "Eclipse Adoptium" `
         -VendorBranding "Eclipse Temurin" `
         -MsixDisplayName "Eclipse Temurin 17.0.15+6 (x64)" `
-        -outputName 'Eclipse-Temurin-21.0.7-aarch64' `
         -Description "Eclipse Temurin" `
         # Optional Inputs: omitting these inputs will cause their associated process to be skipped
         -SigningCertPath "C:\path\to\cert.pfx"
         -SigningPassword "your cert's password"
+        -OutputFileName "OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.msix" `
         -VerboseOutput
 
 .NOTES
-    Ensure thatyou have downloaded the windows SDK (typically through installing Visual Studio). For more information, please see the #Dependencies section of the README.md file. After doing so, please modify the following environment variables if the defaults shown below are not correct:
+    Ensure that you have downloaded the Windows SDK (typically through installing Visual Studio). For more information, please see the #Dependencies section of the README.md file. After doing so, please modify the following environment variables if the defaults shown below are not correct:
     $Env:WIN_SDK_FULL_VERSION = "10.0.22621.0"
     $Env:WIN_SDK_MAJOR_VERSION = "10"
 #>
@@ -108,17 +117,11 @@ param (
     [Parameter(Mandatory = $false)]
     [string]$ZipFileUrl,
 
-    [Parameter(Mandatory = $false)]
-    [string]$Vendor = "Eclipse Adoptium",
+    [Parameter(Mandatory = $true)]
+    [string]$PackageName,
 
-    [Parameter(Mandatory = $false)]
-    [string]$VendorBranding = "Eclipse Temurin",
-
-    [Parameter(Mandatory = $false)]
-    [string]$MsixDisplayName = "",
-
-    [Parameter(Mandatory = $false)]
-    [string]$Description = "",
+    [Parameter(Mandatory = $true)]
+    [string]$PublisherCN,
 
     [Parameter(Mandatory = $true)]
     [int]$ProductMajorVersion,
@@ -135,8 +138,17 @@ param (
     [Parameter(Mandatory = $true)]
     [string]$Arch,
 
-    [Parameter(Mandatory = $true)]
-    [string]$PublisherCN,
+    [Parameter(Mandatory = $false)]
+    [string]$Vendor = "Eclipse Adoptium",
+
+    [Parameter(Mandatory = $false)]
+    [string]$VendorBranding = "Eclipse Temurin",
+
+    [Parameter(Mandatory = $false)]
+    [string]$MsixDisplayName = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$Description = "",
 
     [Parameter(Mandatory = $false)]
     [string]$SigningCertPath,
@@ -145,7 +157,7 @@ param (
     [string]$SigningPassword,
 
     [Parameter(Mandatory = $false)]
-    [string]$outputName,
+    [string]$OutputFileName,
 
     [Parameter(Mandatory = $false, HelpMessage = "Include this flag to output verbose messages.")]
     [Alias("v")]
@@ -162,7 +174,7 @@ if ($ZipFilePath -and $ZipFileUrl) {
 if (($SigningPassword -and -not $SigningCertPath) -or ($SigningCertPath -and -not $SigningPassword)) {
     throw "Error: Both SigningCertPath and SigningPassword must be provided together."
 }
-# Set $ProgressPreference to 'SilentlyContinue' if the the verbose flag is not set
+# Set $ProgressPreference to 'SilentlyContinue' if the verbose flag is not set
 if (-not $VerboseOutput) {
     $OriginalProgressPreference = $global:ProgressPreference
     $global:ProgressPreference = 'SilentlyContinue'
@@ -173,8 +185,8 @@ if (-not $Description) {
 if (-not $MsixDisplayName) {
     $MsixDisplayName = "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
 }
-if (-not $outputName) {
-    $outputName = "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion-$ProductBuildNumber"
+if (-not $OutputFileName) {
+    $OutputFileName = "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber"
 }
 ###### End: Validate inputs
 
@@ -213,7 +225,7 @@ elseif ($ZipFileUrl) {
 
     # unzip file
     Expand-Archive -Path $downloadPath -DestinationPath $Env:workspace -Force
-    # remove zip file since conentets are extracted
+    # remove zip file since contents are extracted
     Remove-Item -Path $downloadPath -Force
     Write-Host "Zip file downloaded and extracted to: $Env:workspace"
 }
@@ -231,7 +243,7 @@ $updatedContent = $content `
     -replace "\{VENDOR\}", $Vendor `
     -replace "\{VENDOR_BRANDING\}", $VendorBranding `
     -replace "\{MSIX_DISPLAYNAME\}", $MsixDisplayName `
-    -replace "\{OUTPUT_NAME\}", $outputName `
+    -replace "\{PACKAGE_NAME\}", $PackageName `
     -replace "\{DESCRIPTION\}", $Description `
     -replace "\{PRODUCT_MAJOR_VERSION\}", $ProductMajorVersion `
     -replace "\{PRODUCT_MINOR_VERSION\}", $ProductMinorVersion `
@@ -260,7 +272,7 @@ Write-Host "pri_config.xml copied to '$Env:srcFolder'"
 & "$Env:Windows_tools_base\makeappx.exe" pack `
     /o `
     /d "$Env:srcFolder" `
-    /p "$Env:output\$outputName.msix"
+    /p "$Env:output\$OutputFileName"
 
 
 if ($SigningCertPath) {
@@ -269,7 +281,7 @@ if ($SigningCertPath) {
         /a `
         /f $SigningCertPath `
         /p "$SigningPassword" `
-        "$Env:output\$outputName.msix"
+        "$Env:output\$OutputFileName"
     Write-Host "MSIX package signed successfully."
 }
 else {

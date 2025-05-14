@@ -1,7 +1,7 @@
 # How to create MSIX files
 
 ## Dependencies
-The following files are required in order to successlfully run `CreateMsix.ps1`. These files can be found within the `Windows Kits` section of `Visual Studio` installation directories.
+The following files are required in order to successfully run `CreateMsix.ps1`. These files can be found within the `Windows Kits` section of `Visual Studio` installation directories.
 - `makepri.exe`
 - `makeappx.exe`
 - `signtool.exe`
@@ -15,10 +15,13 @@ In order to run the commands below, you may need to add the `bin` of the `Window
 ## Creating MSIX files through CreateMsix.ps1
 Please take a look at the [Dependencies](#dependencies) section above to make sure that you have everything needed in order to run our `CreateMsix.ps1` script successfully. In this section, you will find a few examples for how to run our script from a powershell terminal. For more information on each variable, see the `powershell` style header within `msix/CreateMsix.ps1`
 
+IMPORTANT: make sure to set the `-PackageName` since this needs to be consistent between releases for upgrades to work as expected. This also dictates the output file's name (which becomes `$PackageName.msix`)
+
 *First Example*: Running with only required inputs. This will produce an MSIX file, but many values (ex: DisplayName) will take the default Eclipse/Temurin value. Note: either `-ZipFilePath` or `-ZipFileUrl` are required inputs, but you cannot specify both. This example builds an Eclipse Temurin msix for jdk `17.0.15+6`
 ```powershell
 .\CreateMsix.ps1 `
     -ZipFilePath "C:\path\to\file.zip" `
+    -PackageName "OpenJDK17U-jdk-x64-windows-hotspot" `
     -PublisherCN "ExamplePublisher" `
     -ProductMajorVersion 17 `
     -ProductMinorVersion 0 `
@@ -27,11 +30,12 @@ Please take a look at the [Dependencies](#dependencies) section above to make su
     -Arch "x64" `
 ```
 
-*Second Option*: Running with all required + optional inputs. Below, you will see the inputs divided into sections: required, optional with a default value (shows), optional + changes behavior if omitted. This example builds an Eclipse Temurin msix for jdk `21.0.7+6`
+*Second Option*: Running with all required + optional inputs. Below, you will see the inputs divided into sections: required, optional with a default value (shown below), optional + changes behavior if omitted. This example builds an Eclipse Temurin msix for jdk `21.0.7+6`
 ```powershell
 .\CreateMsix.ps1 `
     # Mandatory inputs
     -ZipFileUrl "https://example.com/file.zip" `
+    -PackageName "OpenJDK21U-jdk-x64-windows-hotspot" `
     -PublisherCN "ExamplePublisher" `
     -ProductMajorVersion 21 `
     -ProductMinorVersion 0 `
@@ -42,21 +46,21 @@ Please take a look at the [Dependencies](#dependencies) section above to make su
     -Vendor "Eclipse Adoptium" `
     -VendorBranding "Eclipse Temurin" `
     -MsixDisplayName "Eclipse Temurin 17.0.15+6 (x64)" `
-    -outputName 'Eclipse-Temurin-21.0.7-aarch64' `  # Dictates the output filename without the .msix extension
-    -Description "Eclipse Temurin" `                # Example: "Eclipse Temurin Development Kit with Hotspot"
+    -Description "Eclipse Temurin" `                        # Example: "Eclipse Temurin Development Kit with Hotspot"
     # Optional Inputs: omitting these inputs will cause their associated process to be skipped
-    -SigningCertPath "C:\path\to\cert.pfx"          # Used to sign with signtool.exe, typically .pfx file
+    -SigningCertPath "C:\path\to\cert.pfx"                  # Used to sign with signtool.exe, typically .pfx file
     -SigningPassword "your cert's password"
-    -VerboseOutput                                  # Keeps $global:ProgressPreference at original value (if not verbose, this value is set to 'SilentlyContinue' which increases the speed of unzipping binaries)
+    -OutputFileName "OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.msix" `
+    -VerboseOutput                                          # Keeps $global:ProgressPreference at original value (if not verbose, this value is set to 'SilentlyContinue' which increases the speed of unzipping binaries)
 ```
 ## Creating MSIX Files Manually
-If you would like to create MSIX files manually, there are not that many powershell commands to run. A good amount of the work comes form ensuring that the `AppXManifest.xml` file contains the correct configuration parameters. If you would like to manually build your `msix` files, then you can follow the commands in the sections below after:
-1. Coppying `msix/templates/pri_config.xml` to your project root
+If you would like to create MSIX files manually, there are not that many powershell commands to run. A good amount of the work comes from ensuring that the `AppXManifest.xml` file contains the correct configuration parameters. If you would like to manually build your `msix` files, then you can follow the commands in the sections below after:
+1. Copying `msix/templates/pri_config.xml` to your project root
 2. Creating `AppXManifest.xml` in your project root (you may find that our template file at `msix/templates/AppXManifestTemplate.xml` will be a good place to start)
 3. Following the instructions in the [Dependencies](#dependencies) section
 
 ### Make resources.pri file (Needed for MSIX creation)
-Note: This assumes you have a file in your `/pr` directory called `AppXManifest.xml`. If not, you will need to specify the `/mn` flag and set the path to your manifest xml file. This will create the `.pri` file that we need to create `.msix` files
+Note: This assumes you have a file in your `/pr` (project root) directory called `AppXManifest.xml`. If not, you will need to specify the `/mn` flag and set the path to your manifest xml file. This will create the `.pri` file that we need to create `.msix` files
 ```powershell
 makepri.exe new `
     /o `
@@ -94,7 +98,7 @@ signtool.exe sign `
 Note: These commands must be run from a terminal with administrator privileges
 
 ## Install using MSIX file
-- If your `.msix` file was signed with a cert that is trusted by Microsoft, then you should be able to to double click it and install via the GUI.
+- If your `.msix` file was signed with a cert that is trusted by Microsoft, then you should be able to double click it and install via the GUI.
 - If it was signed by a cert that is only trusted by the local computer, you will need to run the powershell command below from a terminal with admin privileges
 - If your `.msix` file was not signed at all, you will not be able to install from it (even if your machine is in developer mode)
 ```powershell
