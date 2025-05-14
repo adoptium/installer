@@ -29,7 +29,7 @@ Variables to replace:
   <!-- Identity name cannot have spaces or underscores in it -->
   <Identity Name="{OUTPUT_NAME}"
             Publisher="CN={PUBLISHER_CN}"
-            Version="{PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}.0"
+            Version="{PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}.{PRODUCT_BUILD_NUMBER}"
             ProcessorArchitecture="{ARCH}" />
   <Properties>
     <DisplayName>{MSIX_DISPLAYNAME}</DisplayName>
