@@ -15,13 +15,19 @@
     Optional. The URL of a zip file to be downloaded and unzipped.
 
 .PARAMETER Vendor
-    Optional. Example: Eclipse Adoptium.
+    Optional. Default: Eclipse Adoptium.
 
 .PARAMETER VendorBranding
-    Optional. Example: Eclipse Temurin
+    Optional. Default: Eclipse Temurin
+
+.PARAMETER MsixDisplayName
+    Optional. Example: "Eclipse Temurin 17.0.15+6 (x64)".
+    This is the display name of the MSIX package.
+    Default: "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)".
 
 .PARAMETER Description
-    Optional. Example: "Development Kit with Hotspot".
+    Optional. Example: "Eclipse Temurin Development Kit with Hotspot".
+    Default: $VendorBranding.
 
 .PARAMETER ProductMajorVersion
     Example: if the version is 17.0.15+6, this is 17.
@@ -36,7 +42,7 @@
     Example: if the version is 17.0.15+6, this is 6.
 
 .PARAMETER Arch
-    Examples: x86, x64, arm64.
+    Valid architectures: x86, x64, arm, arm64, x86a64, neutral
 
 .PARAMETER PublisherCN
     Set this to anything on the right side of your `CN=` field in your .pfx file.
@@ -62,7 +68,7 @@
     .\create_msix.ps1 -ZipFilePath "C:\path\to\file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -Description "Development Kit with Hotspot" -ProductMajorVersion 17 -ProductMinorVersion 0 -ProductMaintenanceVersion 15 -ProductBuildNumber 6 -Arch "x64" -PublisherCN "ExamplePublisher" -SigningCertPath "C:\path\to\cert.pfx" -SigningPassword "myPass"
 
 .EXAMPLE
-    .\create_msix.ps1 -ZipFileUrl "https://example.com/file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -Description "Development Kit with Hotspot" -ProductMajorVersion 21 -ProductMinorVersion 0 -ProductMaintenanceVersion 7 -ProductBuildNumber 6 -Arch "aarch64" -PublisherCN "ExamplePublisher" --outputName 'Eclipse-Temurin-21.0.7-aarch64' -Quiet
+    .\create_msix.ps1 -ZipFileUrl "https://example.com/file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -MsixDisplayName "Eclipse Temurin 17.0.15+6 (x64)" -Description "Eclipse Temurin Development Kit with Hotspot" -ProductMajorVersion 21 -ProductMinorVersion 0 -ProductMaintenanceVersion 7 -ProductBuildNumber 6 -Arch "aarch64" -PublisherCN "ExamplePublisher" --outputName 'Eclipse-Temurin-21.0.7-aarch64' -Quiet
 
 .NOTES
     Ensure the 'src' folder exists in the current directory before running the script.
@@ -82,7 +88,10 @@ param (
     [string]$VendorBranding = "Eclipse Temurin",
 
     [Parameter(Mandatory = $false)]
-    [string]$Description = "Development Kit with Hotspot",
+    [string]$MsixDisplayName = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$Description = "",
 
     [Parameter(Mandatory = $true)]
     [int]$ProductMajorVersion,
@@ -130,6 +139,15 @@ if (($SigningPassword -and -not $SigningCertPath) -or ($SigningCertPath -and -no
 if (-not $VerboseOutput) {
     $OriginalProgressPreference = $global:ProgressPreference
     $global:ProgressPreference = 'SilentlyContinue'
+}
+if (-not $Description) {
+    $Description = $VendorBranding
+}
+if (-not $MsixDisplayName) {
+    $MsixDisplayName = "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
+}
+if (-not $outputName) {
+    $outputName = "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion-$ProductBuildNumber"
 }
 ###### End: Validate inputs
 
@@ -186,16 +204,11 @@ Remove-Item -Path $unzippedFolder -Recurse -Force
 # Read the content of the appx template (path from SetupEnv.ps1)
 $content = Get-Content -Path $Env:appxTemplate
 
-# Create a variable by replacing spaces and underscores with dashes in $VendorBranding
-$vendorBrandingDashes = $VendorBranding -replace "[ _]", "-"
-if (-not $outputName) {
-    $outputName = "$vendorBrandingDashes-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion-$ProductBuildNumber-$Arch"
-}
 # Replace all instances of placeholders with the provided values
 $updatedContent = $content `
     -replace "\{VENDOR\}", $Vendor `
     -replace "\{VENDOR_BRANDING\}", $VendorBranding `
-    -replace "\{VENDOR_BRANDING_DASHES\}", $vendorBrandingDashes `
+    -replace "\{MSIX_DISPLAYNAME\}", $MsixDisplayName `
     -replace "\{OUTPUT_NAME\}", $outputName `
     -replace "\{DESCRIPTION\}", $Description `
     -replace "\{PRODUCT_MAJOR_VERSION\}", $ProductMajorVersion `
