@@ -65,13 +65,40 @@
     This is an alias for -q.
 
 .EXAMPLE
-    .\create_msix.ps1 -ZipFilePath "C:\path\to\file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -Description "Development Kit with Hotspot" -ProductMajorVersion 17 -ProductMinorVersion 0 -ProductMaintenanceVersion 15 -ProductBuildNumber 6 -Arch "x64" -PublisherCN "ExamplePublisher" -SigningCertPath "C:\path\to\cert.pfx" -SigningPassword "myPass"
+    .\CreateMsix.ps1 `
+        -ZipFilePath "C:\path\to\file.zip" `
+        -PublisherCN "ExamplePublisher" `
+        -ProductMajorVersion 17 `
+        -ProductMinorVersion 0 `
+        -ProductMaintenanceVersion 15 `
+        -ProductBuildNumber 6 `
+        -Arch "x64" `
 
 .EXAMPLE
-    .\create_msix.ps1 -ZipFileUrl "https://example.com/file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -MsixDisplayName "Eclipse Temurin 17.0.15+6 (x64)" -Description "Eclipse Temurin Development Kit with Hotspot" -ProductMajorVersion 21 -ProductMinorVersion 0 -ProductMaintenanceVersion 7 -ProductBuildNumber 6 -Arch "aarch64" -PublisherCN "ExamplePublisher" --outputName 'Eclipse-Temurin-21.0.7-aarch64' -Quiet
+    .\CreateMsix.ps1 `
+        # Mandatory inputs
+        -ZipFileUrl "https://example.com/file.zip" `
+        -PublisherCN "ExamplePublisher" `
+        -ProductMajorVersion 21 `
+        -ProductMinorVersion 0 `
+        -ProductMaintenanceVersion 7 `
+        -ProductBuildNumber 6 `
+        -Arch "aarch64" `
+        # Optional inputs: These are the defaults that will be used if not specified
+        -Vendor "Eclipse Adoptium" `
+        -VendorBranding "Eclipse Temurin" `
+        -MsixDisplayName "Eclipse Temurin 17.0.15+6 (x64)" `
+        -outputName 'Eclipse-Temurin-21.0.7-aarch64' `
+        -Description "Eclipse Temurin" `
+        # Optional Inputs: omitting these inputs will cause their associated process to be skipped
+        -SigningCertPath "C:\path\to\cert.pfx"
+        -SigningPassword "your cert's password"
+        -VerboseOutput
 
 .NOTES
-    Ensure the 'src' folder exists in the current directory before running the script.
+    Ensure thatyou have downloaded the windows SDK (typically through installing Visual Studio). For more information, please see the #Dependencies section of the README.md file. After doing so, please modify the following environment variables if the defaults shown below are not correct:
+    $Env:WIN_SDK_FULL_VERSION = "10.0.22621.0"
+    $Env:WIN_SDK_MAJOR_VERSION = "10"
 #>
 
 param (
