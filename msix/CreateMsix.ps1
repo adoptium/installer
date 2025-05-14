@@ -153,7 +153,7 @@ if ($ZipFilePath) {
     }
     # Copy and unzip the file
     Expand-Archive -Path $ZipFilePath -DestinationPath $Env:workspace -Force
-    Write-Host "Zip file extracted to 'workspace' folder."
+    Write-Host "Zip file extracted to: $Env:workspace."
 }
 # Handles zip from URL
 elseif ($ZipFileUrl) {
@@ -170,12 +170,17 @@ elseif ($ZipFileUrl) {
     Expand-Archive -Path $downloadPath -DestinationPath $Env:workspace -Force
     # remove zip file since conentets are extracted
     Remove-Item -Path $downloadPath -Force
-    Write-Host "Zip file downloaded and extracted to 'workspace' folder."
+    Write-Host "Zip file downloaded and extracted to: $Env:workspace"
 }
+
+Write-Host "Contents of workspace folder:"
+ls $Env:workspace
 
 # Move contents of the unzipped file to $Env:srcFolder
 $unzippedFolder = Join-Path -Path $Env:workspace -ChildPath (Get-ChildItem -Path $Env:workspace -Directory | Select-Object -First 1).Name
 Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $Env:srcFolder -Force
+Write-Host "Contents of zip file moved to: $Env:srcFolder"
+ls $Env:srcFolder
 Remove-Item -Path $unzippedFolder -Recurse -Force
 
 # Read the content of the appx template (path from SetupEnv.ps1)
