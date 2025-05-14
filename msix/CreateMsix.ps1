@@ -62,7 +62,7 @@
     .\create_msix.ps1 -ZipFilePath "C:\path\to\file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -Description "Development Kit with Hotspot" -ProductMajorVersion 17 -ProductMinorVersion 0 -ProductMaintenanceVersion 15 -ProductBuildNumber 6 -Arch "x64" -PublisherCN "ExamplePublisher" -SigningCertPath "C:\path\to\cert.pfx" -SigningPassword "myPass"
 
 .EXAMPLE
-    .\create_msix.ps1 -ZipFileUrl "https://example.com/file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -Description "Development Kit with Hotspot" -ProductMajorVersion 21 -ProductMinorVersion 0 -ProductMaintenanceVersion 7 -ProductBuildNumber 6 -Arch "aarch64" -PublisherCN "ExamplePublisher" -Quiet
+    .\create_msix.ps1 -ZipFileUrl "https://example.com/file.zip" -Vendor "Eclipse Adoptium" -VendorBranding "Eclipse Temurin" -Description "Development Kit with Hotspot" -ProductMajorVersion 21 -ProductMinorVersion 0 -ProductMaintenanceVersion 7 -ProductBuildNumber 6 -Arch "aarch64" -PublisherCN "ExamplePublisher" --outputName 'Eclipse-Temurin-21.0.7-aarch64' -Quiet
 
 .NOTES
     Ensure the 'src' folder exists in the current directory before running the script.
