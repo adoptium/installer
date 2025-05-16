@@ -213,11 +213,11 @@ $WindowsSdkPath = Get-WindowsSdkPath `
 Write-Host "Windows SDK path: $WindowsSdkPath"
 
 # Clean the srce, workspace, and output folders
-$srcFolder = Clean-TargetFolder `
+$srcFolder = Clear-TargetFolder `
     -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "src") `
-    -ExcludeSubfolder "_msix_logos"
-$workspaceFolder = Clean-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "workspace")
-$outputFolder = Clean-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "output")
+    -ExcludeSubfolder "_installation_resouces"
+$workspaceFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "workspace")
+$outputFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "output")
 Write-Host "Folders cleaned: $srcFolder, $workspaceFolder, $outputFolder"
 
 # Download zip file if a URL is provided, otherwise use the local path

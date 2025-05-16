@@ -33,7 +33,7 @@ function Get-WindowsSdkPath {
     return $WindowsSdkPath
 }
 
-function Clean-TargetFolder {
+function Clear-TargetFolder {
     param(
         [string]$TargetFolder,
         [string]$ExcludeSubfolder = $null
@@ -48,7 +48,8 @@ function Clean-TargetFolder {
             $_.FullName -notlike "*\$ExcludeSubfolder*"
         } | Remove-Item -Recurse -Force
         Write-Host "Cleaned $TargetFolder, excluding $ExcludeSubfolder."
-    } else {
+    }
+    else {
         Get-ChildItem -Path $TargetFolder -Recurse | Remove-Item -Recurse -Force
         Write-Host "Cleaned $TargetFolder."
     }
