@@ -69,6 +69,10 @@
     If not provided, a default name will be generated based of the following format:
     "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
 
+.PARAMETER Verbose
+    Optional. If set to $true, the script will output verbose messages.
+    Default: $false
+
 .EXAMPLE
     .\CreateMsix.ps1 `
         -ZipFilePath "C:\path\to\file.zip" `
@@ -154,7 +158,11 @@ param (
     [string]$SigningCertPath,
 
     [Parameter(Mandatory = $false)]
-    [string]$SigningPassword
+    [string]$SigningPassword,
+
+    [Parameter(Mandatory = $false)]
+    [Alias("v")]
+    [switch]$Verbose
 )
 
 # Get the path to msix folder (parent directory of this script)
@@ -246,23 +254,30 @@ $priConfig = Join-Path -Path $MsixDirPath -ChildPath "templates\pri_config.xml"
 Copy-Item -Path $priConfig -Destination $srcFolder -Force
 Write-Host "pri_config.xml copied to '$srcFolder'"
 
+# Set EXTRA_ARGS to '/v' if Verbose is specified
+if ($Verbose) {
+    $EXTRA_ARGS = '/v'
+} else {
+    $EXTRA_ARGS = ''
+}
+
 # Create _resources.pri file based on pri_config.xml
-& "$WindowsSdkPath\makepri.exe" new `
-    /o `
-    /pr $srcFolder `
-    /cf "$srcFolder\pri_config.xml" `
-    /of "$srcFolder\_resources.pri" `
-    /mf appx
+& "$WindowsSdkPath\makepri.exe" new $EXTRA_ARGS`
+    /Overwrite `
+    /ProjectRoot $srcFolder `
+    /ConfigXml "$srcFolder\pri_config.xml" `
+    /OutputFile "$srcFolder\_resources.pri" `
+    /MappingFile appx
 
 # Create the MSIX package
-& "$WindowsSdkPath\makeappx.exe" pack `
-    /o `
+& "$WindowsSdkPath\makeappx.exe" pack $EXTRA_ARGS `
+    /overwrite `
     /d "$srcFolder" `
     /p "$outputFolder\$OutputFileName"
 
 # Sign the MSIX package if a signing certificate is provided
 if ($SigningCertPath) {
-    & "$WindowsSdkPath\signtool.exe" sign `
+    & "$WindowsSdkPath\signtool.exe" sign $EXTRA_ARGS `
         /fd SHA256 `
         /a `
         /f $SigningCertPath `
