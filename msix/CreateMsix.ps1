@@ -269,11 +269,15 @@ else {
     /OutputFile "$srcFolder\_resources.pri" `
     /MappingFile appx
 
+CheckForError -ErrorMessage "Error: makepri.exe failed to create _resources.pri file."
+
 # Create the MSIX package
 & "$WindowsSdkPath\makeappx.exe" pack $EXTRA_ARGS `
     /overwrite `
     /d "$srcFolder" `
     /p "$outputFolder\$OutputFileName"
+
+CheckForError -ErrorMessage "Error: makeappx.exe failed to create the MSIX package."
 
 # Sign the MSIX package if a signing certificate is provided
 if ($SigningCertPath) {
@@ -283,6 +287,8 @@ if ($SigningCertPath) {
         /f $SigningCertPath `
         /p "$SigningPassword" `
         "$outputFolder\$OutputFileName"
+
+    CheckForError -ErrorMessage "Error: signtool.exe failed to sign the MSIX package."
     Write-Host "MSIX package signed successfully."
 }
 else {

@@ -98,3 +98,11 @@ function UnzipFile {
     $global:ProgressPreference = $OriginalProgressPreference
 }
 
+function CheckForError {
+    param (
+        [string]$ErrorMessage
+    )
+    if ($LASTEXITCODE -ne 0) {
+        throw "Error: $ErrorMessage"
+    }
+}
