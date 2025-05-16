@@ -8,13 +8,13 @@ The linux installer packaging process, currently consists of the following eleme
 
 
   ### 1.1. Jenkins Linux Packaging Job
-  
+
   This job which has restricted access. It requires several inputs that drive the packaging process:
 
-  
+
   + JDK / JRE - Whether you would like the packaging process to produce the installer packages for the JDK or JRE
   + Java version option (Which version of Java to produce packages for)
-    + Current Options : 8, 11, 17, 21, 22 
+    + Current Options : 8, 11, 17, 21, 22
   + Architecture - (Which hardware platform to build for)
     + Current Options :
       + x86_64
@@ -45,7 +45,7 @@ Supported Linux Distros:
 Distribution Type| Supported Versions
 ----------|---------
 Apk (Alpine)| All supported version.
-Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Buster (Debian 10)</br> Oracular (Ubuntu 24.10)</br>Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 22.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
+Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Buster (Debian 10)</br> Plucky (Ubuntu 25.04)</br> Oracular (Ubuntu 24.10)</br>Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 22.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
 RPM (RHEL)| centos 7</br> rocky 8</br>RHEL7 , RHEL8 & RHEL9</br> Fedora 35, 36, 37, 38 ,39 , 40</br>Oracle Linux 7 & 8</br>Amazon Linux 2
 RPM(SUSE) | Opensuse 15.3</br>Opensuse 15.4</br>Opensuse 15.5</br>SLES 12</br>SLES15
 
@@ -53,7 +53,7 @@ As part of this process, the packages are first built, using the appropriate mec
 
   ### 1.3. Package Signing & Upload
 
-  The final part of the jenkins job is triggered when either/both of the enable enableGpgSigning and uploadPackage options are selected. 
+  The final part of the jenkins job is triggered when either/both of the enable enableGpgSigning and uploadPackage options are selected.
 
   The Gpg signing uses the Adoptium Gpg key to sign the installer packages prior to their upload to the [Jfrog artifactory, hosted at packages.adoptium.net](https://packages.adoptium.net/)
 
@@ -63,7 +63,7 @@ As part of this process, the packages are first built, using the appropriate mec
 
 Prior to building and releasing any packages, the source code that controls the process requires a number of updates. These updates typically happen once all of the linux platforms for a particular Java version have been released and the binaries uploaded to Github.
 
-Prior to updating the source code, its important to have an understanding of how the source code is structured so that the correct files can be updated. The callout below, highlights the structure of the source code so for example underneath the linux top level directory, a selection of either jdk/jre, followed by the distribution, and then the vendor (temurin in the example), followed by the Java version. 
+Prior to updating the source code, its important to have an understanding of how the source code is structured so that the correct files can be updated. The callout below, highlights the structure of the source code so for example underneath the linux top level directory, a selection of either jdk/jre, followed by the distribution, and then the vendor (temurin in the example), followed by the Java version.
 
 ```
 -- linux
@@ -93,7 +93,7 @@ The following sections will detail the source changes required when a release is
 
   And additionally were an additional architecture being added (Alpine is currently only supported on x86_64 and Alpine from JDK version 21 onwards), then the <b>arch</b> field would also need appending.
 
-  Once all changes are made in the header section, its time to move on to the footer section.  
+  Once all changes are made in the header section, its time to move on to the footer section.
 
     ```
     pkgname=temurin-21
@@ -111,10 +111,10 @@ The following sections will detail the source changes required when a release is
 
 <h5>2.1.2 The footer section (example below)</h5>
 
-  In this section, the key fields that must be amended are the architecture specific checksum, as shown below. These checksums are released alongside the binary files uploaded to Github, so these checksums can be obtained from there. 
+  In this section, the key fields that must be amended are the architecture specific checksum, as shown below. These checksums are released alongside the binary files uploaded to Github, so these checksums can be obtained from there.
 
   Again, were another architecture being added an additional element in the case statement below would be required, along with its checksum.
-  
+
   <b>NB:</b> Note how the case statement uses the values from the <b>arch</b> field in the header section to determine the correct checksum to use.
 
 
@@ -178,7 +178,7 @@ riscv64_checksum = 246acb1db3ef69a7e3328fa378513b2e606e64710626ae8dd29decc0e5253
 
 <h5>2.2.3 The control file (example below:)</h5>
 
-The final file typically only requires updates if this is the first release of a new jdk, or alternatively if a new architecture is being added. 
+The final file typically only requires updates if this is the first release of a new jdk, or alternatively if a new architecture is being added.
 
 
 In the event of a new architecture being added, the <b>Architecture</b> line should have the new value appended.
@@ -194,7 +194,7 @@ Build-Depends: debhelper (>= 11), lsb-release
 
 Package: temurin-21-jdk
 Architecture: amd64 arm64 ppc64el s390x riscv64
-Provides: 
+Provides:
 java15-sdk-headless,
 java16-sdk-headless,
 java17-sdk-headless,
@@ -215,7 +215,7 @@ The process for updating the source files for both RHEL & Suse based distributio
 This section requires updates to the following 2 fields:
 
 <b>global spec version:</b></br> This field should be amended to the FULL version number of the release being processed, e.g , 21.0.3.0.0.9.
-<b>global spec release:</b></br> This field should be reset to 0 for the first release of a package, and then incremented should there be patches or additional rebuilds of this package version. The first version should be 1. This will ultimately be appended to the final package name, e.g temurin-21-jdk-21.0.3.0.0.9-1. 
+<b>global spec release:</b></br> This field should be reset to 0 for the first release of a package, and then incremented should there be patches or additional rebuilds of this package version. The first version should be 1. This will ultimately be appended to the final package name, e.g temurin-21-jdk-21.0.3.0.0.9-1.
 
 In the event that this is a new java major version release, the <b>global priority</b> should also be updated appropriately.
 
@@ -356,7 +356,7 @@ ExclusiveArch: x86_64 ppc64le aarch64 s390x riscv64 somenew
 <details>
 <summary>Architectures To Process & Source Version Lines Example</summary>
 
-```ExclusiveArch: x86_64 ppc64le aarch64 s390x riscv64 
+```ExclusiveArch: x86_64 ppc64le aarch64 s390x riscv64
 
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
@@ -429,6 +429,7 @@ For Debian based distributions a similar process is required, firstly add the di
             "bookworm", // Debian/12
             "bullseye", // Debian/11
             "buster",   // Debian/10
+            "plucky",   // Ubuntu/25.04 (STS)
             "oracular", // Ubuntu/24.10 (STS)
             "noble",    // Ubuntu/24.04 (LTS)
             "jammy",    // Ubuntu/22.04 (LTS)
@@ -447,7 +448,7 @@ In addition to the updates detailed above, it is also important to change the fo
 the following line should be changed :
 
 ```
-debVersionList="trixie bookworm bullseye buster oracular noble jammy focal bionic"
+debVersionList="trixie bookworm bullseye buster plucky oracular noble jammy focal bionic"
 ```
 
 And similarly in the following two files
@@ -464,6 +465,7 @@ The array needs to be updated to add or remove distributions as necessary as sho
           Arguments.of("debian", "bookworm"), // Debian/12 (testing)
           Arguments.of("debian", "bullseye"), // Debian/11 (stable)
           Arguments.of("debian", "buster"),   // Debian/10 (oldstable)
+          Arguments.of("ubuntu", "plucky"),   // Ubuntu/25.04 (STS)
           Arguments.of("ubuntu", "oracular"), // Ubuntu/24.10 (STS)
           Arguments.of("ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
           Arguments.of("ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
@@ -488,7 +490,7 @@ Simply add or remove the supported distributions to the <b>debVersionList</b> li
 - name: Upload deb file to Artifactory
         if: steps.check-deb.outputs.file_exists == 'false'
         run: |
-          debVersionList=("bookworm" "bullseye" "buster" "oracular" "jammy" "focal" "bionic")
+          debVersionList=("bookworm" "bullseye" "buster" "oracular" "jammy" "focal" "bionic" "plucky")
           for debVersion in "${debVersionList[@]}"; do
             distroList+="deb.distribution=${debVersion};"
           done
@@ -509,6 +511,7 @@ def deb_versions = [
 		"bookworm", // Debian/12
 		"bullseye", // Debian/11
 		"buster",   // Debian/10
+		"plucky",   // Ubuntu/25.04 (STS)
 		"oracular"  // Ubuntu/24.10 (STS)
 		"noble",    // Ubuntu/24.04 (LTS)
 		"jammy",    // Ubuntu/22.04 (LTS)
@@ -540,13 +543,13 @@ In addition to the previous changes, the automated test source code also needs u
 linux/ca-certificates/debian/src/packageTest/java/org/adoptium/cacertificates/AptOperationsTest.java
 ```
 
-This file requires that the <b>.contains("Version: 1.0.4-1")</b> line be updated to reflect the new version number added to the <i>changelog</i> above.
+This file requires that the <b>.contains("Version: 1.0.5-1")</b> line be updated to reflect the new version number added to the <i>changelog</i> above.
 ```
 result = runShell(container, "apt-cache show adoptium-ca-certificates");
 			assertThat(result.getExitCode()).isEqualTo(0);
 			assertThat(result.getStdout())
 				.contains("Package: adoptium-ca-certificates")
-				.contains("Version: 1.0.4-1")
+				.contains("Version: 1.0.5-1")
 				.contains("Priority: optional")
 				.contains("Architecture: all")
 				.contains("Status: install ok installed");
@@ -564,6 +567,7 @@ linux/ca-certificates/debian/src/packageTest/java/org/adoptium/cacertificates/Ch
 			"bookworm", // Debian/12
 			"bullseye", // Debian/11
 			"buster",   // Debian/10
+			"plucky",   // Ubuntu/25.04 (STS)
 			"noble",    // Ubuntu/24.04 (LTS)
 			"jammy",    // Ubuntu/22.04 (LTS)
 			"focal",    // Ubuntu/20.04 (LTS)
