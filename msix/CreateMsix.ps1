@@ -15,16 +15,18 @@
     Optional. The URL of a zip file to be downloaded and unzipped.
 
 .PARAMETER PackageName
-    Optional. The name of the package -- cannot contain spaces or underscores.
+    Optional. The name of the package. Cannot contain spaces or underscores.
     IMPORTANT: This needs to be consistent with previous releases for upgrades to work as expected
     Note: The output file will be named: $PackageName.msix
     If not provided, a default name will have the following format: "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion"
 
 .PARAMETER Vendor
-    Optional. Default: Eclipse Adoptium.
+    Optional. Default: Eclipse Adoptium
 
 .PARAMETER VendorBranding
-    Optional. Default: Eclipse Temurin
+    Optional. Helps determine default values for $MSIXDisplayName and $Description,
+    but goes unused if those are both provided.
+    Default: Eclipse Temurin
 
 .PARAMETER MsixDisplayName
     Optional. Example: "Eclipse Temurin 17.0.15+6 (x64)".
@@ -33,25 +35,25 @@
 
 .PARAMETER Description
     Optional. Example: "Eclipse Temurin Development Kit with Hotspot".
-    Default: $VendorBranding.
+    Default: $VendorBranding
 
 .PARAMETER ProductMajorVersion
-    Example: if the version is 17.0.15+6, this is 17.
+    Example: if the version is 17.0.15+6, this is 17
 
 .PARAMETER ProductMinorVersion
-    Example: if the version is 17.0.15+6, this is 0.
+    Example: if the version is 17.0.15+6, this is 0
 
 .PARAMETER ProductMaintenanceVersion
-    Example: if the version is 17.0.15+6, this is 15.
+    Example: if the version is 17.0.15+6, this is 15
 
 .PARAMETER ProductBuildNumber
-    Example: if the version is 17.0.15+6, this is 6.
+    Example: if the version is 17.0.15+6, this is 6
 
 .PARAMETER Arch
     Valid architectures: x86, x64, arm, arm64, x86a64, neutral
 
 .PARAMETER PublisherCN
-    Set this to anything on the right side of your `CN=` field in your .pfx file.
+    Set this to everything on the right side of your `CN=` field in your .pfx file.
     This may include additional fields in the name, such as 'O=...', 'L=...', 'S=...', and/or others.
 
 .PARAMETER SigningCertPath
@@ -64,7 +66,8 @@
 
 .PARAMETER OutputFileName
     Optional. The name of the output file.
-    If not provided, a default name will be generated based on the VendorBranding and version information.
+    If not provided, a default name will be generated based of the following format:
+    "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
 
 .EXAMPLE
     .\CreateMsix.ps1 `
@@ -222,7 +225,6 @@ $content = Get-Content -Path $appxTemplate
 # Replace all instances of placeholders with the provided values
 $updatedContent = $content `
     -replace "\{VENDOR\}", $Vendor `
-    -replace "\{VENDOR_BRANDING\}", $VendorBranding `
     -replace "\{MSIX_DISPLAYNAME\}", $MsixDisplayName `
     -replace "\{PACKAGE_NAME\}", $PackageName `
     -replace "\{DESCRIPTION\}", $Description `

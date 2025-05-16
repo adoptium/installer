@@ -2,7 +2,6 @@
 <!-- 
 Variables to replace:
   - VENDOR                      - Example: Eclipse Adoptium  
-  - VENDOR_BRANDING             - Example: Eclipse Temurin
   - MSIX_DISPLAYNAME            - Example: Eclipse Temurin with hotspot 17.0.15+6 (x64)
   - PACKAGE_NAME                - Example: OpenJDK17U-jdk-x64-windows-hotspot
                                   IMPORTANT: This needs to be consistent with previous releases for upgrades to work as expected
