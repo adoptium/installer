@@ -71,6 +71,7 @@
     Default: $false
 
 .EXAMPLE
+    # Only mandatory inputs are defined here
     .\CreateMsix.ps1 `
         -ZipFilePath "C:\path\to\file.zip" `
         -PackageName "OpenJDK17U-jdk-x64-windows-hotspot" `
@@ -82,6 +83,7 @@
         -Arch "x64" `
 
 .EXAMPLE
+    # All inputs are defined here
     .\CreateMsix.ps1 `
         # Mandatory inputs
         -ZipFileUrl "https://example.com/file.zip" `
