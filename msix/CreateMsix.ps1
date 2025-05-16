@@ -164,79 +164,74 @@ param (
     [switch]$VerboseOutput
 )
 
-###### Validate inputs
-if (-not $ZipFilePath -and -not $ZipFileUrl) {
-    throw "Error: You must provide either -ZipFilePath or -ZipFileUrl."
-}
-if ($ZipFilePath -and $ZipFileUrl) {
-    throw "Error: You cannot provide both -ZipFilePath and -ZipFileUrl."
-}
-if (($SigningPassword -and -not $SigningCertPath) -or ($SigningCertPath -and -not $SigningPassword)) {
-    throw "Error: Both SigningCertPath and SigningPassword must be provided together."
-}
 # Set $ProgressPreference to 'SilentlyContinue' if the verbose flag is not set
+$OriginalProgressPreference = $global:ProgressPreference
 if (-not $VerboseOutput) {
-    $OriginalProgressPreference = $global:ProgressPreference
     $global:ProgressPreference = 'SilentlyContinue'
 }
-if (-not $Description) {
-    $Description = $VendorBranding
-}
-if (-not $MsixDisplayName) {
-    $MsixDisplayName = "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
-}
-if (-not $OutputFileName) {
-    $OutputFileName = "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber"
-}
-###### End: Validate inputs
 
-###### Set environment variables
-$scriptPath = Split-Path -Parent $MyInvocation.MyCommand.Path
-# Run the SetupEnv.ps1 script located in the scripts folder
-# Sets $Env:Windows_tools_base, $Env:srcFolder, $Env:workspace, $Env:output, $Env:appxTemplate, and $Env:priConfig env vars
-# Cleans src and workspace folders
-$setupEnvScriptPath = Join-Path -Path $scriptPath -ChildPath "scripts\SetupEnv.ps1"
-if (-not (Test-Path -Path $setupEnvScriptPath)) {
-    throw "Error: The SetupEnv.ps1 script was not found at '$setupEnvScriptPath'."
+# Get the path to msix folder (parent directory of this script)
+$MsixDirPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+
+# Find and source the Helpers.ps1 script located in the scripts folder to get access to helper functions
+$HelpersScriptPath = Join-Path -Path $MsixDirPath -ChildPath "scripts\Helpers.ps1"
+if (-not (Test-Path -Path $HelpersScriptPath)) {
+    throw "Error: The Helpers.ps1 script was not found at '$HelpersScriptPath'."
 }
-& $setupEnvScriptPath
-Write-Host "Environment setup script executed successfully."
-###### End: Set environment variables
+. $HelpersScriptPath
+# Validate the inputs
+## Ensure that either a local zip file path or a URL is provided, but not both
+ValidateZipFileInput -ZipFilePath $ZipFilePath -ZipFileUrl $ZipFileUrl
+## Ensure that both or neither of the signing inputs are provided
+ValidateSigningInput -SigningCertPath $SigningCertPath -SigningPassword $SigningPassword
 
-# Handles local zip file
-if ($ZipFilePath) {
-    if (-not (Test-Path -Path $ZipFilePath)) {
-        throw "Error: The file at path '$ZipFilePath' does not exist."
-    }
-    # Copy and unzip the file
-    Expand-Archive -Path $ZipFilePath -DestinationPath $Env:workspace -Force
-    Write-Host "Zip file extracted to: $Env:workspace."
+# Set default values if optional parameters are not provided
+$MsixDisplayName = SetDefaultIfEmpty `
+                    -InputValue $MsixDisplayName `
+                    -DefaultValue "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
+
+$Description = SetDefaultIfEmpty `
+                -InputValue $Description `
+                -DefaultValue "$VendorBranding"
+
+$OutputFileName = SetDefaultIfEmpty `
+                    -InputValue $OutputFileName `
+                    -DefaultValue "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
+
+# Ensure SetupEnv.ps1 exists, then source it for access to functions
+$SetupEnvScriptPath = Join-Path -Path $MsixDirPath -ChildPath "scripts\SetupEnv.ps1"
+if (-not (Test-Path -Path $SetupEnvScriptPath)) {
+    throw "Error: The SetupEnv.ps1 script was not found at '$SetupEnvScriptPath'."
 }
-# Handles zip from URL
-elseif ($ZipFileUrl) {
-    $fileName = [System.IO.Path]::GetFileName($ZipFileUrl)
-    $downloadPath = Join-Path -Path $Env:workspace -ChildPath $fileName
+. $SetupEnvScriptPath
+# Get the path to the Windows SDK tools
+$WindowsSdkPath = Get-WindowsSdkPath `
+    -WIN_SDK_FULL_VERSION $Env:WIN_SDK_FULL_VERSION `
+    -WIN_SDK_MAJOR_VERSION $Env:WIN_SDK_MAJOR_VERSION `
+    -Arch $Arch
+Write-Host "Windows SDK path: $WindowsSdkPath"
 
-    # download zip file (needs to be silent or it will print the progress bar and take ~10 times as long to download)
-    $OriginalLocalProgressPreference = $ProgressPreference
-    $ProgressPreference = 'SilentlyContinue'
-    Invoke-WebRequest -Uri $ZipFileUrl -OutFile $downloadPath
-    $ProgressPreference = $OriginalLocalProgressPreference
+# Clean the srce, workspace, and output folders
+$srcFolder = Clean-ChildFolder `
+    -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "src") `
+    -ExcludeSubfolder "_msix_logos"
+$workspaceFolder = Clean-ChildFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "workspace")
+$outputFolder = Clean-ChildFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "output")
+Write-Host "Folders cleaned: $srcFolder, $workspaceFolder, $outputFolder"
 
-    # unzip file
-    Expand-Archive -Path $downloadPath -DestinationPath $Env:workspace -Force
-    # remove zip file since contents are extracted
-    Remove-Item -Path $downloadPath -Force
-    Write-Host "Zip file downloaded and extracted to: $Env:workspace"
+# Download zip file if a URL is provided, otherwise use the local path
+if ($ZipFileUrl) {
+    $ZipFilePath = DownloadFileFromUrl -Url $ZipFileUrl -DestinationDirectory $workspaceFolder
 }
+UnzipFile -ZipFilePath $ZipFilePath -DestinationPath $workspaceFolder
 
-# Move contents of the unzipped file to $Env:srcFolder
-$unzippedFolder = Join-Path -Path $Env:workspace -ChildPath (Get-ChildItem -Path $Env:workspace -Directory | Select-Object -First 1).Name
-Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $Env:srcFolder -Force
+# Move contents of the unzipped file to $srcFolder
+$unzippedFolder = Join-Path -Path $workspaceFolder -ChildPath (Get-ChildItem -Path $workspaceFolder -Directory | Select-Object -First 1).Name
+Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $srcFolder -Force
 Remove-Item -Path $unzippedFolder -Recurse -Force
 
-# Read the content of the appx template (path from SetupEnv.ps1)
-$content = Get-Content -Path $Env:appxTemplate
+$appxTemplate = Join-Path -Path $scriptPath -ChildPath "templates\AppXManifestTemplate.xml"
+$content = Get-Content -Path $appxTemplate
 
 # Replace all instances of placeholders with the provided values
 $updatedContent = $content `
@@ -254,41 +249,41 @@ $updatedContent = $content `
 
 
 # Write the updated content to the new AppXManifest.xml file
-$appxManifestPath = Join-Path -Path $Env:srcFolder -ChildPath "AppXManifest.xml"
+$appxManifestPath = Join-Path -Path $srcFolder -ChildPath "AppXManifest.xml"
 Set-Content -Path $appxManifestPath -Value $updatedContent
 Write-Host "AppXManifest.xml created at '$appxManifestPath'"
 
 # Copy pri_config.xml to the target folder (path from SetupEnv.ps1)
-Copy-Item -Path $Env:priConfig -Destination $Env:srcFolder -Force
-Write-Host "pri_config.xml copied to '$Env:srcFolder'"
+$priConfig = Join-Path -Path $scriptPath -ChildPath "templates\pri_config.xml"
+Copy-Item -Path $priConfig -Destination $srcFolder -Force
+Write-Host "pri_config.xml copied to '$srcFolder'"
 
-& "$Env:Windows_tools_base\makepri.exe" new `
+# Create _resources.pri file based on pri_config.xml
+& "$WindowsSdkPath\makepri.exe" new `
     /o `
-    /pr $Env:srcFolder `
-    /cf "$Env:srcFolder\pri_config.xml" `
-    /of "$Env:srcFolder\_resources.pri" `
+    /pr $srcFolder `
+    /cf "$srcFolder\pri_config.xml" `
+    /of "$srcFolder\_resources.pri" `
     /mf appx
 
-& "$Env:Windows_tools_base\makeappx.exe" pack `
+# Create the MSIX package
+& "$WindowsSdkPath\makeappx.exe" pack `
     /o `
-    /d "$Env:srcFolder" `
-    /p "$Env:output\$OutputFileName"
+    /d "$srcFolder" `
+    /p "$outputFolder\$OutputFileName"
 
-
+# Sign the MSIX package if a signing certificate is provided
 if ($SigningCertPath) {
-    & "$Env:Windows_tools_base\signtool.exe" sign `
+    & "$WindowsSdkPath\signtool.exe" sign `
         /fd SHA256 `
         /a `
         /f $SigningCertPath `
         /p "$SigningPassword" `
-        "$Env:output\$OutputFileName"
+        "$outputFolder\$OutputFileName"
     Write-Host "MSIX package signed successfully."
 }
 else {
     Write-Host "SigningCertPath not provided. Skipping signing process."
 }
 
-# Set $ProgressPreference back to its original value
-if (-not $VerboseOutput) {
-    $global:ProgressPreference = $OriginalProgressPreference
-}
+$global:ProgressPreference = $OriginalProgressPreference
