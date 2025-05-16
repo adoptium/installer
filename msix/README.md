@@ -1,5 +1,5 @@
 # Introduction
-This tool is designed to create MSIX files, the modern installer format supported by Microsoft for Windows applications. MSIX packages provide a reliable, secure, and user-friendly installation experience, including a graphical installer interface that achieves the highest standards for accessibility. When installed, Java is placed at `C:\Users\jmartinjaffe\AppData\Local\${Vendor}\WindowsApps`. MSIX is also the required package type for distributing applications through the Microsoft Store.
+This tool is designed to create MSIX files, the modern installer format supported by Microsoft for Windows applications. MSIX packages provide a reliable, secure, and user-friendly installation experience, including a graphical installer interface that achieves the highest standards for accessibility. When installed, java.exe is placed at `C:\Users\${env:USERNAME}\AppData\Local\${Vendor}\WindowsApps` and the rest of the binary files are downloaded to: `C:\Program Files\WindowsApps\<FULL_PACKAGE_NAME_WITH_ID>` (See [this section](#check-info-of-installed-msix) to see how to get the package ful name). MSIX is also the required package type for distributing applications through the Microsoft Store.
 
 Note: Users must be on `Windows 7 SP1 (Build 7601)` or higher to install from `.msix` files. Windows users on versions prior to `Windows 10 version 1809` may need to enable sideloading in order for this installer format to work on their machine. If you are using a computer with an earlier version, you will need to enable sideloading to use `.msix` files:
 1. Navigate to `Settings` > `Update & Security` > `For Developers`
@@ -46,11 +46,12 @@ IMPORTANT: Make sure to set the `-PackageName`, as this needs to be consistent b
     -VendorBranding "Eclipse Temurin" `     # Only determines default values for $MsixDisplayName and $Description, unused if those both provided
     -MsixDisplayName "Eclipse Temurin 21.0.7+6 (x64)" `
     -OutputFileName "OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.msix" `
-    -Description "Eclipse Temurin" `        # Example: "Eclipse Temurin Development Kit with Hotspot"
+    -Description "Eclipse Temurini using license: https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html" `        # Example: "Eclipse Temurin Development Kit with Hotspot"
     # Optional Inputs: omitting these inputs will cause their associated process to be skipped
     -SigningCertPath "C:\path\to\cert.pfx"  # Used to sign with signtool.exe, typically .pfx file
     -SigningPassword "your cert's password"
-    -VerboseTools                           # Sets Windows SDK tools to verbose output
+    -License "https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html"  # The URL to the license file.
+    -VerboseTools   # Sets Windows SDK tools to verbose output
 ```
 
 **Second Example**: Running with only required inputs. This will produce an MSIX file, but many values (ex: MsixDisplayName) will take the default Eclipse/Adoptium value. Note: either `-ZipFilePath` or `-ZipFileUrl` are required inputs, but you cannot specify both. This example builds an Eclipse Temurin msix file for jdk `17.0.15+6`

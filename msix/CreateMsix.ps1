@@ -66,6 +66,10 @@
     If not provided, a default name will be generated based of the following format:
     "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
 
+.PARAMETER License
+    Optional. The URL to the license file.
+    Default: "https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html"
+
 .PARAMETER VerboseTools
     Optional. If set to $true, the script will output verbose messages.
     Default: $false
@@ -160,6 +164,9 @@ param (
     [string]$SigningPassword,
 
     [Parameter(Mandatory = $false)]
+    [string]$License = "https://www.gnu.org/licenses/old-licenses/lgpl-2.0.html",
+
+    [Parameter(Mandatory = $false)]
     [Alias("v")]
     [switch]$VerboseTools
 )
@@ -234,7 +241,7 @@ $updatedContent = $content `
     -replace "\{VENDOR\}", $Vendor `
     -replace "\{MSIX_DISPLAYNAME\}", $MsixDisplayName `
     -replace "\{PACKAGE_NAME\}", $PackageName `
-    -replace "\{DESCRIPTION\}", $Description `
+    -replace "\{DESCRIPTION\}", "$Description using license: $License" `
     -replace "\{PRODUCT_MAJOR_VERSION\}", $ProductMajorVersion `
     -replace "\{PRODUCT_MINOR_VERSION\}", $ProductMinorVersion `
     -replace "\{PRODUCT_MAINTENANCE_VERSION\}", $ProductMaintenanceVersion `
