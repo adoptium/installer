@@ -25,7 +25,7 @@ In order to run the commands below, you may need to add the `bin` directory of t
 ## Creating MSIX files through CreateMsix.ps1
 Please take a look at the [Dependencies](#dependencies) section above to make sure that you have everything needed in order to run our `CreateMsix.ps1` script successfully. In this section, you will find a few examples for how to run our script from a powershell terminal.
 
-For more information on each variable, see the `powershell` style header within `msix/CreateMsix.ps1`
+For more information on each variable, use the `powershell` command `Get-Help -Detailed .\CreateMsix.ps1` or see the `powershell` style header within `msix/CreateMsix.ps1`
 
 IMPORTANT: Make sure to set the `-PackageName`, as this needs to be consistent between releases for upgrades to work as expected. This also dictates the output file's name (which becomes `$PackageName.msix`)
 
@@ -50,6 +50,7 @@ IMPORTANT: Make sure to set the `-PackageName`, as this needs to be consistent b
     # Optional Inputs: omitting these inputs will cause their associated process to be skipped
     -SigningCertPath "C:\path\to\cert.pfx"  # Used to sign with signtool.exe, typically .pfx file
     -SigningPassword "your cert's password"
+    -VerboseTools                           # Sets Windows SDK tools to verbose output
 ```
 
 **Second Example**: Running with only required inputs. This will produce an MSIX file, but many values (ex: MsixDisplayName) will take the default Eclipse/Adoptium value. Note: either `-ZipFilePath` or `-ZipFileUrl` are required inputs, but you cannot specify both. This example builds an Eclipse Temurin msix file for jdk `17.0.15+6`

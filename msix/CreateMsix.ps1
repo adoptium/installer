@@ -3,10 +3,7 @@
     Script to handle a zip file by either copying it from a local location or downloading it from a URL.
 
 .DESCRIPTION
-    This script accepts one of two optional inputs:
-    1. A local zip file path to copy and unzip into the 'src' folder.
-    2. A URL to download a zip file and unzip it into the 'src' folder.
-    If neither or both inputs are provided, the script will throw an error.
+    This script automates the process of creating an MSIX package for OpenJDK distributions. It accepts either a local zip file path or a URL to a zip file (containing a zip file of the JDK binaries), extracts the contents, and prepares the necessary folder structure. The script generates an AppXManifest.xml file using provided metadata, copies required configuration files, and uses Windows SDK tools to package the files into an MSIX installer. Optionally, it can sign the resulting MSIX package if a signing certificate and password are provided. The script supports customization of package metadata such as display name, description, vendor, and output file name.
 
 .PARAMETER ZipFilePath
     Optional. The local path to a zip file to be copied and unzipped.
@@ -69,7 +66,7 @@
     If not provided, a default name will be generated based of the following format:
     "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
 
-.PARAMETER Verbose
+.PARAMETER VerboseTools
     Optional. If set to $true, the script will output verbose messages.
     Default: $false
 
@@ -162,7 +159,7 @@ param (
 
     [Parameter(Mandatory = $false)]
     [Alias("v")]
-    [switch]$Verbose
+    [switch]$VerboseTools
 )
 
 # Get the path to msix folder (parent directory of this script)
@@ -182,16 +179,16 @@ ValidateSigningInput -SigningCertPath $SigningCertPath -SigningPassword $Signing
 
 # Set default values if optional parameters are not provided
 $MsixDisplayName = SetDefaultIfEmpty `
-                    -InputValue $MsixDisplayName `
-                    -DefaultValue "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
+    -InputValue $MsixDisplayName `
+    -DefaultValue "$VendorBranding $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
 
 $Description = SetDefaultIfEmpty `
-                -InputValue $Description `
-                -DefaultValue "$VendorBranding"
+    -InputValue $Description `
+    -DefaultValue "$VendorBranding"
 
 $OutputFileName = SetDefaultIfEmpty `
-                    -InputValue $OutputFileName `
-                    -DefaultValue "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
+    -InputValue $OutputFileName `
+    -DefaultValue "OpenJDK${ProductMajorVersion}U-jdk-$Arch-windows-hotspot-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion_$ProductBuildNumber.msix"
 
 # Ensure SetupEnv.ps1 exists, then source it for access to functions
 $SetupEnvScriptPath = Join-Path -Path $MsixDirPath -ChildPath "scripts\SetupEnv.ps1"
@@ -254,15 +251,16 @@ $priConfig = Join-Path -Path $MsixDirPath -ChildPath "templates\pri_config.xml"
 Copy-Item -Path $priConfig -Destination $srcFolder -Force
 Write-Host "pri_config.xml copied to '$srcFolder'"
 
-# Set EXTRA_ARGS to '/v' if Verbose is specified
-if ($Verbose) {
+# Set EXTRA_ARGS to '/v' if VerboseTools is specified
+if ($VerboseTools) {
     $EXTRA_ARGS = '/v'
-} else {
+}
+else {
     $EXTRA_ARGS = ''
 }
 
 # Create _resources.pri file based on pri_config.xml
-& "$WindowsSdkPath\makepri.exe" new $EXTRA_ARGS`
+& "$WindowsSdkPath\makepri.exe" new $EXTRA_ARGS `
     /Overwrite `
     /ProjectRoot $srcFolder `
     /ConfigXml "$srcFolder\pri_config.xml" `
