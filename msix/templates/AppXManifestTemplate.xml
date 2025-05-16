@@ -76,8 +76,8 @@ Variables to replace:
                   EntryPoint="Windows.FullTrustApplication"
                   desktop4:SupportsMultipleInstances="true"
                   desktop4:Subsystem="console">
-      <uap:VisualElements DisplayName="Run javaw.exe"
-                          Description="javaw"
+      <uap:VisualElements DisplayName="javaw"
+                          Description="Run javaw.exe"
                           Square150x150Logo="_msix_logos/duke150.png"
                           Square44x44Logo="_msix_logos/duke44.png"
                           BackgroundColor="transparent">
