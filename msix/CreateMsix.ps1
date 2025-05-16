@@ -142,6 +142,9 @@ param (
     [string]$MsixDisplayName = "",
 
     [Parameter(Mandatory = $false)]
+    [string]$OutputFileName
+
+    [Parameter(Mandatory = $false)]
     [string]$Description = "",
 
     [Parameter(Mandatory = $false)]
@@ -149,9 +152,6 @@ param (
 
     [Parameter(Mandatory = $false)]
     [string]$SigningPassword,
-
-    [Parameter(Mandatory = $false)]
-    [string]$OutputFileName
 )
 
 # Get the path to msix folder (parent directory of this script)
