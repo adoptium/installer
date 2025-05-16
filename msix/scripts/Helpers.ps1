@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+    Helper functions for OpenJDK MSIX packaging scripts.
+
+.DESCRIPTION
+    This script provides utility functions for validating input, downloading files, unzipping archives, and handling signing parameters.
+    Intended for use in the OpenJDK MSIX installer build process.
+
+.NOTES
+    File Name:  Helpers.ps1
+
+#>
 
 function ValidateZipFileInput {
     param (

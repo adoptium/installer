@@ -1,3 +1,15 @@
+<#
+.SYNOPSIS
+    Helper script for defining functions that help setup the build environment.
+
+.DESCRIPTION
+    This script provides a helper function to assist with build environment setup.
+    It includes functions to get the path to the Windows SDK and to clean a target folder.
+
+.NOTES
+    File Name:  SetupEnv.ps1
+#>
+
 function Get-WindowsSdkPath {
     param(
         [string]$Arch,
