@@ -1,6 +1,8 @@
 # Introduction
 This tool is designed to create MSIX files, the modern installer format supported by Microsoft for Windows applications. MSIX packages provide a reliable, secure, and user-friendly installation experience, including a graphical installer interface that achieves the highest standards for accessibility. When installed, Java is placed at `C:\Users\jmartinjaffe\AppData\Local\${Vendor}\WindowsApps`. MSIX is also the required package type for distributing applications through the Microsoft Store.
 
+Note: Users must be on Windows 7 or higher to install from `.msix` files. Some users prior to Windows 11 may need to enable sideloading in order for this installer format to work on their machine.
+
 # How to create MSIX files
 
 ## Dependencies
