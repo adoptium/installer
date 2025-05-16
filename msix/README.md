@@ -45,13 +45,12 @@ IMPORTANT: make sure to set the `-PackageName` since this needs to be consistent
     # Optional inputs: These are the defaults that will be used if not specified
     -Vendor "Eclipse Adoptium" `
     -VendorBranding "Eclipse Temurin" `
-    -MsixDisplayName "Eclipse Temurin 17.0.15+6 (x64)" `
+    -MsixDisplayName "Eclipse Temurin 21.0.7+6 (x64)" `
+    -OutputFileName "OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.msix" `
     -Description "Eclipse Temurin" `                        # Example: "Eclipse Temurin Development Kit with Hotspot"
     # Optional Inputs: omitting these inputs will cause their associated process to be skipped
     -SigningCertPath "C:\path\to\cert.pfx"                  # Used to sign with signtool.exe, typically .pfx file
     -SigningPassword "your cert's password"
-    -OutputFileName "OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.msix" `
-    -VerboseOutput                                          # Keeps $global:ProgressPreference at original value (if not verbose, this value is set to 'SilentlyContinue' which increases the speed of unzipping binaries)
 ```
 ## Creating MSIX Files Manually
 If you would like to create MSIX files manually, there are not that many powershell commands to run. A good amount of the work comes from ensuring that the `AppXManifest.xml` file contains the correct configuration parameters. If you would like to manually build your `msix` files, then you can follow the commands in the sections below after:

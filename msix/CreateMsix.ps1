@@ -66,11 +66,6 @@
     Optional. The name of the output file.
     If not provided, a default name will be generated based on the VendorBranding and version information.
 
-.PARAMETER VerboseOutput
-    Optional. If specified, $global:ProgressPreference is not set to 'SilentlyContinue'.
-    Note: Unzipping binaries is much faster if not verbose. (Because the progress bar is not shown)
-    Alias: -v.
-
 .EXAMPLE
     .\CreateMsix.ps1 `
         -ZipFilePath "C:\path\to\file.zip" `
@@ -102,7 +97,6 @@
         -SigningCertPath "C:\path\to\cert.pfx"
         -SigningPassword "your cert's password"
         -OutputFileName "OpenJDK21U-jdk_x64_windows_hotspot_21.0.7_6.msix" `
-        -VerboseOutput
 
 .NOTES
     Ensure that you have downloaded the Windows SDK (typically through installing Visual Studio). For more information, please see the #Dependencies section of the README.md file. After doing so, please modify the following environment variables if the defaults shown below are not correct:
@@ -157,18 +151,8 @@ param (
     [string]$SigningPassword,
 
     [Parameter(Mandatory = $false)]
-    [string]$OutputFileName,
-
-    [Parameter(Mandatory = $false, HelpMessage = "Include this flag to output verbose messages.")]
-    [Alias("v")]
-    [switch]$VerboseOutput
+    [string]$OutputFileName
 )
-
-# Set $ProgressPreference to 'SilentlyContinue' if the verbose flag is not set
-$OriginalProgressPreference = $global:ProgressPreference
-if (-not $VerboseOutput) {
-    $global:ProgressPreference = 'SilentlyContinue'
-}
 
 # Get the path to msix folder (parent directory of this script)
 $MsixDirPath = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -212,17 +196,19 @@ $WindowsSdkPath = Get-WindowsSdkPath `
 Write-Host "Windows SDK path: $WindowsSdkPath"
 
 # Clean the srce, workspace, and output folders
-$srcFolder = Clean-ChildFolder `
+$srcFolder = Clean-TargetFolder `
     -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "src") `
     -ExcludeSubfolder "_msix_logos"
-$workspaceFolder = Clean-ChildFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "workspace")
-$outputFolder = Clean-ChildFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "output")
+$workspaceFolder = Clean-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "workspace")
+$outputFolder = Clean-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "output")
 Write-Host "Folders cleaned: $srcFolder, $workspaceFolder, $outputFolder"
 
 # Download zip file if a URL is provided, otherwise use the local path
 if ($ZipFileUrl) {
+    Write-Host "Downloading zip file from URL: $ZipFileUrl"
     $ZipFilePath = DownloadFileFromUrl -Url $ZipFileUrl -DestinationDirectory $workspaceFolder
 }
+Write-Host "Using ZipFilePath: $ZipFilePath"
 UnzipFile -ZipFilePath $ZipFilePath -DestinationPath $workspaceFolder
 
 # Move contents of the unzipped file to $srcFolder
@@ -230,7 +216,7 @@ $unzippedFolder = Join-Path -Path $workspaceFolder -ChildPath (Get-ChildItem -Pa
 Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $srcFolder -Force
 Remove-Item -Path $unzippedFolder -Recurse -Force
 
-$appxTemplate = Join-Path -Path $scriptPath -ChildPath "templates\AppXManifestTemplate.xml"
+$appxTemplate = Join-Path -Path $MsixDirPath -ChildPath "templates\AppXManifestTemplate.xml"
 $content = Get-Content -Path $appxTemplate
 
 # Replace all instances of placeholders with the provided values
@@ -254,7 +240,7 @@ Set-Content -Path $appxManifestPath -Value $updatedContent
 Write-Host "AppXManifest.xml created at '$appxManifestPath'"
 
 # Copy pri_config.xml to the target folder (path from SetupEnv.ps1)
-$priConfig = Join-Path -Path $scriptPath -ChildPath "templates\pri_config.xml"
+$priConfig = Join-Path -Path $MsixDirPath -ChildPath "templates\pri_config.xml"
 Copy-Item -Path $priConfig -Destination $srcFolder -Force
 Write-Host "pri_config.xml copied to '$srcFolder'"
 
@@ -285,5 +271,3 @@ if ($SigningCertPath) {
 else {
     Write-Host "SigningCertPath not provided. Skipping signing process."
 }
-
-$global:ProgressPreference = $OriginalProgressPreference

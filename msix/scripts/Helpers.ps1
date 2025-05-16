@@ -11,7 +11,7 @@ function ValidateZipFileInput {
         throw "Error: You cannot provide both -ZipFilePath and -ZipFileUrl."
     }
     else {
-        Write-Output "ZipFile input validation passed."
+        Write-Host "ZipFile input validation passed."
     }
 }
 
@@ -21,14 +21,13 @@ function ValidateSigningInput {
         [string]$SigningPassword
     )
     if (
-        ($SigningPassword -and -not $SigningCertPath)
-        -or
+        ($SigningPassword -and -not $SigningCertPath) -or
         ($SigningCertPath -and -not $SigningPassword)
-        ) {
+    ) {
         throw "Error: Both SigningCertPath and SigningPassword must be provided together."
     }
     else {
-        Write-Output "Signing input validation passed."
+        Write-Host "Signing input validation passed."
     }
 }
 
@@ -56,9 +55,9 @@ function DownloadFileFromUrl {
     $fileName = [System.IO.Path]::GetFileName($ZipFileUrl)
     $downloadPath = Join-Path -Path $DestinationDirectory -ChildPath $fileName
 
-    Write-Output "Downloading file from $Url to $DestinationDirectory"
+    Write-Host "Downloading file from $Url to $DestinationDirectory"
 
-    # download zip file (needs to be silent or it will print the progress bar and take ~10 times as long to download)
+    # download zip file (needs to be silent or it will print the progress bar and take ~30 times as long to download)
     $OriginalLocalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     Invoke-WebRequest -Uri $Url -OutFile $downloadPath
@@ -78,7 +77,12 @@ function UnzipFile {
     if (-not (Test-Path -Path $DestinationPath)) {
         New-Item -ItemType Directory -Path $DestinationPath | Out-Null
     }
-    Write-Output "Unzipping file $ZipFilePath to $DestinationPath"
+    Write-Host "Unzipping file $ZipFilePath to $DestinationPath"
+
+    # Unzip file (needs to be silent or it will print the progress bar and take much longer)
+    $OriginalProgressPreference = $global:ProgressPreference
+    $global:ProgressPreference = 'SilentlyContinue'
     Expand-Archive -Path $ZipFilePath -DestinationPath $DestinationPath -Force
+    $global:ProgressPreference = $OriginalProgressPreference
 }
 
