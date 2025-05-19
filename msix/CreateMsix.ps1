@@ -181,6 +181,9 @@ if (-not (Test-Path -Path $HelpersScriptPath)) {
 }
 . $HelpersScriptPath
 # Validate the inputs
+## Ensure that we have an AppXManifestTemplate.xml file corresponding to the provided jdk major version
+ValidateMajorVersion -majorVersion $ProductMajorVersion
+
 ## Ensure that either a local zip file path or a URL is provided, but not both
 ValidateZipFileInput -ZipFilePath $ZipFilePath -ZipFileUrl $ZipFileUrl
 ## Ensure that both or neither of the signing inputs are provided
@@ -233,7 +236,7 @@ $unzippedFolder = Join-Path -Path $workspaceFolder -ChildPath (Get-ChildItem -Pa
 Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $srcFolder -Force
 Remove-Item -Path $unzippedFolder -Recurse -Force
 
-$appxTemplate = Join-Path -Path $MsixDirPath -ChildPath "templates\AppXManifestTemplate.xml"
+$appxTemplate = Join-Path -Path $MsixDirPath -ChildPath "templates\AppXManifestTemplate${ProductMajorVersion}.xml"
 $content = Get-Content -Path $appxTemplate
 
 # Replace all instances of placeholders with the provided values

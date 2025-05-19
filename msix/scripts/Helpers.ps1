@@ -11,6 +11,24 @@
 
 #>
 
+function ValidateMajorVersion {
+    param(
+        [Parameter(Mandatory=$true)]
+        [string]$majorVersion
+    )
+
+    # Define valid major versions
+    $validMajorVersions = @('11', '17', '21')
+
+    if ($validVersions -contains $majorVersion) {
+        Write-Host "The major version ($majorVersion) is valid."
+        exit 0
+    } else {
+        Write-Host "The major version ($majorVersion) is NOT valid. Valid versions are: $($validVersions -join ', ')."
+        exit 1
+    }
+}
+
 function ValidateZipFileInput {
     param (
         [string]$ZipFilePath,
