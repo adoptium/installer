@@ -215,7 +215,7 @@ Write-Host "Windows SDK path: $WindowsSdkPath"
 # Clean the srce, workspace, and output folders
 $srcFolder = Clear-TargetFolder `
     -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "src") `
-    -ExcludeSubfolder "_installation_resouces"
+    -ExcludeSubfolder "_msix_logos"
 $workspaceFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "workspace")
 $outputFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $MsixDirPath -ChildPath "output")
 Write-Host "Folders cleaned: $srcFolder, $workspaceFolder, $outputFolder"
