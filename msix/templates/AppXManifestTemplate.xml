@@ -56,12 +56,6 @@ Variables to replace:
                   EntryPoint="Windows.FullTrustApplication"
                   desktop4:SupportsMultipleInstances="true"
                   desktop4:Subsystem="console">
-      <uap:VisualElements DisplayName="java"
-                          Description="Run java files with java.exe"
-                          Square150x150Logo="_msix_logos/duke150.png"
-                          Square44x44Logo="_msix_logos/duke44.png"
-                          BackgroundColor="transparent">
-      </uap:VisualElements>
       <Extensions>
         <uap5:Extension Category="windows.appExecutionAlias">
           <uap5:AppExecutionAlias desktop4:Subsystem="console">
@@ -75,12 +69,6 @@ Variables to replace:
                   EntryPoint="Windows.FullTrustApplication"
                   desktop4:SupportsMultipleInstances="true"
                   desktop4:Subsystem="console">
-      <uap:VisualElements DisplayName="jshell"
-                          Description="Run an interactive Java shell"
-                          Square150x150Logo="_msix_logos/duke150.png"
-                          Square44x44Logo="_msix_logos/duke44.png"
-                          BackgroundColor="transparent">
-      </uap:VisualElements>
       <Extensions>
         <uap5:Extension Category="windows.appExecutionAlias">
           <uap5:AppExecutionAlias desktop4:Subsystem="console">
@@ -94,12 +82,6 @@ Variables to replace:
                   EntryPoint="Windows.FullTrustApplication"
                   desktop4:SupportsMultipleInstances="true"
                   desktop4:Subsystem="console">
-      <uap:VisualElements DisplayName="javaw"
-                          Description="Run javaw.exe"
-                          Square150x150Logo="_msix_logos/duke150.png"
-                          Square44x44Logo="_msix_logos/duke44.png"
-                          BackgroundColor="transparent">
-      </uap:VisualElements>
       <Extensions>
         <uap3:Extension Category="windows.fileTypeAssociation">
           <uap3:FileTypeAssociation Name="jar">
