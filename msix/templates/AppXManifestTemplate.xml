@@ -70,6 +70,25 @@ Variables to replace:
         </uap5:Extension>
       </Extensions>
     </Application>
+    <Application  Id="JSHELL"
+                  Executable="bin\jshell.exe"
+                  EntryPoint="Windows.FullTrustApplication"
+                  desktop4:SupportsMultipleInstances="true"
+                  desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jshell"
+                          Description="Run an interactive Java shell"
+                          Square150x150Logo="_msix_logos/duke150.png"
+                          Square44x44Logo="_msix_logos/duke44.png"
+                          BackgroundColor="transparent">
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="jshell.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
     <Application  Id="JAVAW"
                   Executable="bin\javaw.exe"
                   EntryPoint="Windows.FullTrustApplication"
