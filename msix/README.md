@@ -118,20 +118,33 @@ Note: These commands must be run from a terminal with administrator privileges
 ## Install using MSIX file
 - If your `.msix` file was signed with a certificate trusted by Microsoft, you should be able to double-click it and install it via the GUI.
 - If it was signed by a certificate trusted only by the local computer, you need to run the PowerShell command below from a terminal with administrator privileges
-- If your `.msix` file is not signed, you will not be able to install it (even if your machine is in developer mode)
+- If your `.msix` file is not signed, you will not be able to install it (even if your machine is in developer mode. See [the developer's section](#installing-test-builds-as-a-developer) for an alternate solution in that case.)
 ```powershell
 Add-AppxPackage -Path C:\path\to\msix\file.msix -AllowUnsigned -verbose
 ```
 
+## Installing test builds as a developer
+
+If you are testing a new `.msix` file as a developer, there is another way to test installation:
+1. Enable Developer Mode enabled on your PC
+1. Rename the `.msix` to a `.zip` file
+1. Extract it
+1. Run the following powershell command to "install" an unsigned package:
+```powershell
+Add-AppxPackage -Register <path to appxmanifest.xml>
+```
+
 ## Check info of installed MSIX
 Get info on all packages installed via MSIX:
+
+**Note**: You can add the `AllUsers` flag to `Get-AppxPackage` to see the output for every user on the PC.
 ```powershell
-Get-AppxPackage -AllUsers | Select Name, PackageFullName
+Get-AppxPackage | Select Name, PackageFullName
 ```
 
 Narrow down the information to only packages containing the substring `jdk`:
 ```powershell
-Get-AppxPackage -AllUsers -Name *jdk* | Select-Object Name, PackageFullName
+Get-AppxPackage -Name *jdk* | Select-Object Name, PackageFullName
 ```
 
 Get more detailed information on a specific MSIX package:
@@ -141,6 +154,8 @@ Get-AppxPackage -Name "package-name"
 
 ## Uninstall MSIX
 ```powershell
-Remove-AppxPackage -AllUsers -package "package-full-name"
+Remove-AppxPackage -package "package-full-name"
 ```
-Note: The `package-full-name` must appear as it does in the `PackageFullName` attribute found via `Get-AppPackage`, including the package_ID at the end
+**Note 1**: The `package-full-name` must appear as it does in the `PackageFullName` attribute found via `Get-AppPackage`, including the package_ID at the end
+
+**Note 2**: You can add the `AllUsers` flag to `Remove-AppxPackage` to remove the package for every user on the PC.
