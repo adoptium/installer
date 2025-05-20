@@ -120,27 +120,27 @@ Note: These commands must be run from a terminal with administrator privileges
 - If it was signed by a certificate trusted only by the local computer, you need to run the PowerShell command below from a terminal with administrator privileges
 - If your `.msix` file is not signed, you will not be able to install it (even if your machine is in developer mode)
 ```powershell
-Add-AppPackage -Path C:\path\to\msix\file.msix -AllowUnsigned -verbose
+Add-AppxPackage -Path C:\path\to\msix\file.msix -AllowUnsigned -verbose
 ```
 
 ## Check info of installed MSIX
 Get info on all packages installed via MSIX:
 ```powershell
-Get-AppPackage -AllUsers | Select Name, PackageFullName
+Get-AppxPackage -AllUsers | Select Name, PackageFullName
 ```
 
 Narrow down the information to only packages containing the substring `jdk`:
 ```powershell
-Get-AppPackage -AllUsers | Select Name, PackageFullName | Select-String -Pattern "jdk"
+Get-AppxPackage -AllUsers -Name *jdk* | Select-Object Name, PackageFullName
 ```
 
 Get more detailed information on a specific MSIX package:
 ```powershell
-Get-AppPackage -Name "package-name"
+Get-AppxPackage -Name "package-name"
 ```
 
 ## Uninstall MSIX
 ```powershell
-Remove-AppPackage -AllUsers -package "package-full-name"
+Remove-AppxPackage -AllUsers -package "package-full-name"
 ```
 Note: The `package-full-name` must appear as it does in the `PackageFullName` attribute found via `Get-AppPackage`, including the package_ID at the end
