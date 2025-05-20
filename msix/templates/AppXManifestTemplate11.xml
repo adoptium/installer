@@ -131,26 +131,6 @@ Variables to replace:
         </uap5:Extension>
       </Extensions>
     </Application>
-    <Application  Id="JAOTC"
-                  Executable="bin\jaotc.exe"
-                  EntryPoint="Windows.FullTrustApplication"
-                  desktop4:SupportsMultipleInstances="true"
-                  desktop4:Subsystem="console">
-      <uap:VisualElements DisplayName="jaotc"
-                          Description="Run jaotc.exe"
-                          Square150x150Logo="_msix_logos/duke150.png"
-                          Square44x44Logo="_msix_logos/duke44.png"
-                          BackgroundColor="transparent"
-                          AppListEntry="none">
-      </uap:VisualElements>
-      <Extensions>
-        <uap5:Extension Category="windows.appExecutionAlias">
-          <uap5:AppExecutionAlias desktop4:Subsystem="console">
-            <uap5:ExecutionAlias Alias="jaotc.exe" />
-          </uap5:AppExecutionAlias>
-        </uap5:Extension>
-      </Extensions>
-    </Application>
     <Application  Id="JAR"
                   Executable="bin\jar.exe"
                   EntryPoint="Windows.FullTrustApplication"
