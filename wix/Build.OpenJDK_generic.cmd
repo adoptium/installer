@@ -13,7 +13,7 @@ REM PRODUCT_CATEGORY=jre|jdk (only one at a time)
 REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM validation and skip smoke.exe )
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
 REM OUTPUT_BASE_FILENAME=customFileName (optional) for setting file names that are not based on the default naming convention
-REM WIX_VERSION=5.0.2 (optional) for setting the version of Wix Toolset to use
+REM WIX_VERSION=6.0.0 (optional) for setting the version of Wix Toolset to use
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
@@ -38,7 +38,7 @@ IF NOT DEFINED PRODUCT_HELP_LINK SET PRODUCT_HELP_LINK=https://github.com/adopti
 IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.net/support
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
 IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
-IF NOT DEFINED WIX_VERSION SET WIX_VERSION=5.0.2
+IF NOT DEFINED WIX_VERSION SET WIX_VERSION=6.0.0
 
 REM default windows_SDK version
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.22621.0]\!PLATFORM!"
