@@ -40,6 +40,7 @@ def rhel_distros = [
     'rpm/rhel/7',
     'rpm/rhel/8',
     'rpm/rhel/9',
+    'rpm/rhel/10',
     'rpm/fedora/35',
     'rpm/fedora/36',
     'rpm/fedora/37',
@@ -802,7 +803,7 @@ stage('Build & Archive Package') {
         } finally {
             def basePattern = '**/build/ospackage/*,**/build/reports/**'
             def archivePattern = ''
-            
+
             if (DistArrayElement == 'debian' && !params.SKIP_DEBIAN) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/deb/*"
                   archiveArtifacts artifacts: archivePattern,
@@ -811,7 +812,7 @@ stage('Build & Archive Package') {
             } else if (DistArrayElement == 'debian') {
                 echo "Skipping archive for Debian as SKIP_DEBIAN is true"
             }
-            
+
             if (DistArrayElement == 'rhel' && !params.SKIP_RHEL) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
                   archiveArtifacts artifacts: archivePattern,
@@ -820,7 +821,7 @@ stage('Build & Archive Package') {
             } else if (DistArrayElement == 'rhel') {
                 echo "Skipping archive for RHEL as SKIP_RHEL is true"
             }
-            
+
             if (DistArrayElement == 'suse' && !params.SKIP_SUSE) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/rpm/*"
                   archiveArtifacts artifacts: archivePattern,
@@ -829,7 +830,7 @@ stage('Build & Archive Package') {
             } else if (DistArrayElement == 'suse') {
                 echo "Skipping archive for SUSE as SKIP_SUSE is true"
             }
-                    
+
             if (DistArrayElement == 'alpine' && !params.SKIP_ALPINE) {
                 archivePattern = "${basePattern},**/packageTest/dependencies/apk/*"
                 archiveArtifacts artifacts: archivePattern,

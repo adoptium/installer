@@ -582,6 +582,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
             'rpm/rhel/7',
             'rpm/rhel/8',
             'rpm/rhel/9',
+            'rpm/rhel/10',
             'rpm/fedora/35',
             'rpm/fedora/36',
             'rpm/fedora/37',
