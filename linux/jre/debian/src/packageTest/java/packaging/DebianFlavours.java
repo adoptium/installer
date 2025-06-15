@@ -38,18 +38,19 @@ public class DebianFlavours implements ArgumentsProvider {
 
 		String containerRegistry = "";
 
-		if (System.getenv("containerRegistry") == null) { 
+		if (System.getenv("containerRegistry") == null) {
 			System.out.println("Using docker.io as the default container registry");
 		} else {
 			containerRegistry = System.getenv("containerRegistry");
 			System.out.println("Using container registry: " + containerRegistry);
 		}
-		 
+
 		return Stream.of(
 			Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)
 			Arguments.of(containerRegistry + "debian", "bookworm"), // Debian/12 (testing)
 			Arguments.of(containerRegistry + "debian", "bullseye"), // Debian/11 (stable)
 			Arguments.of(containerRegistry + "debian", "buster"),   // Debian/10 (oldstable)
+			Arguments.of(containerRegistry + "ubuntu", "plucky"),   // Ubuntu/25.04 (STS)
 			Arguments.of(containerRegistry + "ubuntu", "oracular"), // Ubuntu/24.10 (STS)
 			Arguments.of(containerRegistry + "ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
 			Arguments.of(containerRegistry + "ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
