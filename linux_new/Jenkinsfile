@@ -24,7 +24,6 @@ def deb_distros = [
 "trixie", // Debian/13
 "bookworm", // Debian/12
 "bullseye", // Debian/11
-"buster",   // Debian/10
 "oracular", // Ubuntu/24.10 (STS)
 "noble",    // Ubuntu/24.04 (LTS)
 "jammy",    // Ubuntu/22.04 (LTS)
@@ -896,7 +895,7 @@ stage('Publish Packages') {
                 echo "Preparing For Debian Upload"
                 def DebFileName = ''
                 def DebTarget = ''
-                // Creates list like deb.distribution=stretch;deb.distribution=buster;
+                // Creates list like deb.distribution=stretch;deb.distribution=trixie;
                 deb_distros.each { deb_version ->
                 distro_list += "deb.distribution=${deb_version};"
                 }
