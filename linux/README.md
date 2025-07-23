@@ -201,7 +201,6 @@ Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available 
 |------------------------------|:----------------------:|:----:|
 | debian/12 (bookworm/testing) |         x86_64         |      |
 | debian/11 (bullseye/stable)  |         x86_64         |      |
-| debian/10 (buster/oldstable) |         x86_64         |      |
 | ubuntu/24.10 (oracular)      |         x86_64         |      |
 | ubuntu/24.04 (noble)         |         x86_64         |      |
 | ubuntu/22.04 (jammy)         |         x86_64         |      |
