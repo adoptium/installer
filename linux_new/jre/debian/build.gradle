@@ -144,7 +144,7 @@ task packageJreDebian {
 		project.exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
-				"--build-arg", "IMAGE=ppc64le/debian:bullseye",
+				"--build-arg", "IMAGE=ppc64le/debian:bookworm",
 				"-t", "adoptium-packages-linux-jdk-debian",
 				"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 				"-f", "Dockerfile",
