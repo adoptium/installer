@@ -108,7 +108,7 @@ task packageJreDebian {
 				project.exec {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache", "--pull",
-						"--build-arg", "IMAGE=arm32v7/debian:bullseye",
+						"--build-arg", "IMAGE=arm32v7/debian:bookworm",
 						"-t", "adoptium-packages-linux-jdk-debian",
 						"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 						"-f", "Dockerfile",
@@ -132,7 +132,7 @@ task packageJreDebian {
 				project.exec {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache", "--pull",
-						"--build-arg", "IMAGE=s390x/debian:bullseye",
+						"--build-arg", "IMAGE=s390x/debian:bookworm",
 						"-t", "adoptium-packages-linux-jdk-debian",
 						"--build-arg=CONTAINER_REGISTRY=${containerRegistry}",
 						"-f", "Dockerfile",
