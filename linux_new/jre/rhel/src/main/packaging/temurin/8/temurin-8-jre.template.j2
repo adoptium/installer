@@ -18,6 +18,7 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
+%global altname java-8-temurin-jre
 
 Name:        temurin-8-jre
 Version:     %{spec_version}
@@ -31,7 +32,7 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: /usr/lib/jvm/%{name}
+Prefix: /usr/lib/jvm/%{altname}
 
 ExclusiveArch: {{ hardware_architecture }}
 
@@ -72,6 +73,19 @@ Provides: jre-headless
 Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
 
+# Add Virtual Provides For Altname
+Provides: %{altname}
+
+# Obsolete Previous JDK8 v0 package due to naming change
+Obsoletes: temurin-8-jre < 8.0.462.0.0.8-1
+
+# Add Provides For Java Public Libraries
+Provides: libjawt.so%{?_isa}
+Provides: libjvm.so%{?_isa}
+Provides: libjava.so%{?_isa}
+Provides: libverify.so%{?_isa}
+Provides: libjsig.so%{?_isa}
+
 # First architecture ({{ hardware_architecture }})
 Source0: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz
 Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_dash}.tar.gz.sha256.txt
@@ -107,6 +121,9 @@ popd
 # noop
 
 %install
+if [ -L %{buildroot}/usr/lib/jvm/%{name} ]; then
+  rm -f %{buildroot}/usr/lib/jvm/%{name}
+fi
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
@@ -150,6 +167,14 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1
 fi
 
+%posttrans
+# Ensure compatibility path points to the new prefix after upgrade
+if [ -e /usr/lib/jvm/%{name} ] && [ ! -L /usr/lib/jvm/%{name} ]; then
+    # If a (now empty) directory remains, try to remove it
+    rmdir /usr/lib/jvm/%{name} >/dev/null 2>&1 || true
+fi
+ln -sfn %{prefix} /usr/lib/jvm/%{name}
+
 %preun
 if [ $1 -eq 0 ]; then
     update-alternatives --remove java %{prefix}/bin/java
@@ -159,6 +184,8 @@ fi
 %defattr(-,root,root)
 %{prefix}
 /usr/lib/tmpfiles.d/%{name}.conf
+# Ghost The Symlink to avoid conflicts
+%ghost /usr/lib/jvm/%{name}
 
 %changelog
 * {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}
