@@ -18,7 +18,7 @@ begin
   if TaskName = 'METADATA' then
   begin
     SetIniString('Metadata', 'InstallDate', GetDateTimeString('yyyy/mm/dd hh:nn:ss', #0, #0), TaskStateFile);
-    SetIniString('Metadata', 'Version', '{#FullJdkVersion}', TaskStateFile);
+    SetIniString('Metadata', 'Version', '{#ExeProductVersion}', TaskStateFile);
   end
   // Create the INI file with task selections
   else if WizardIsTaskSelected(TaskName) then
