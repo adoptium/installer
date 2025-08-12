@@ -19,6 +19,7 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
+%global altname java-21-temurin-jdk
 
 Name:        temurin-21-jdk
 Version:     %{spec_version}
@@ -32,7 +33,7 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
-Prefix: /usr/lib/jvm/%{name}
+Prefix: /usr/lib/jvm/%{altname}
 
 ExclusiveArch: {{ hardware_architecture }}
 
@@ -80,6 +81,19 @@ Provides: java-sdk-21
 Provides: java-sdk-21-%{java_provides}
 Provides: java-sdk-%{java_provides}
 
+# Add Virtual Provides For Altname
+Provides: %{altname}
+
+# Obsolete Previous JDK21 v0 package due to naming change
+Obsoletes: temurin-21-jdk < 21.0.8.0.0.9-1
+
+# Add Provides For Java Public Libraries
+Provides: libjawt.so%{?_isa}
+Provides: libjvm.so%{?_isa}
+Provides: libjava.so%{?_isa}
+Provides: libverify.so%{?_isa}
+Provides: libjsig.so%{?_isa}
+
 # First architecture ({{ hardware_architecture }})
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
@@ -109,6 +123,9 @@ popd
 # noop
 
 %install
+if [ -L %{buildroot}/usr/lib/jvm/%{name} ]; then
+  rm -f %{buildroot}/usr/lib/jvm/%{name}
+fi
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
@@ -189,6 +206,14 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/serialver.1 serialver.1 %{prefix}/man/man1/serialver.1
 fi
 
+%posttrans
+# Ensure compatibility path points to the new prefix after upgrade
+if [ -e /usr/lib/jvm/%{name} ] && [ ! -L /usr/lib/jvm/%{name} ]; then
+    # If a (now empty) directory remains, try to remove it
+    rmdir /usr/lib/jvm/%{name} >/dev/null 2>&1 || true
+fi
+ln -sfn %{prefix} /usr/lib/jvm/%{name}
+
 %preun
 if [ $1 -eq 0 ]; then
     update-alternatives --remove java %{prefix}/bin/java
@@ -199,6 +224,8 @@ fi
 %defattr(-,root,root)
 %{prefix}
 /usr/lib/tmpfiles.d/%{name}.conf
+# Ghost The Symlink to avoid conflicts
+%ghost /usr/lib/jvm/%{name}
 
 %changelog
 * {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}
