@@ -1,8 +1,6 @@
 #ifndef GET_CONSTANTS_INCLUDED
 #define GET_CONSTANTS_INCLUDED
 
-; This file contiains helper functions that retrieve constants based on the installation mode
-
 [Code]
 // Returns appropriate registry root based on installation mode
 // (returns an int representing an enum)
