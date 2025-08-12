@@ -5,29 +5,34 @@
 ;  Modify this file to customize the installer behavior and options.
 ;------------------------------------------------------------------------------
 
-#define Vendor "Eclipse Adoptium"
-#define VendorBranding "Eclipse Temurin"
-#define ProductCategory "jdk"
-#define Architecture "x64"
-#define JVM "hotspot"
-#define ProductMajorVersion "17"
-#define ProductMinorVersion "0"
-#define ProductMaintenanceVersion "15"
-#define ProductBuildVersion "6"
-#define FullJdkVersion ProductMajorVersion + "." + ProductMinorVersion + "." + ProductMaintenanceVersion + "." + ProductBuildVersion
-#define FullJdkPlusVersion ProductMajorVersion + "." + ProductMinorVersion + "." + ProductMaintenanceVersion + "+" + ProductBuildVersion
-#define AppURL "https://adoptium.net/temurin/releases"
-#define OutputExeName "OpenJDK" + ProductMajorVersion + "-" + ProductCategory + "_" + Architecture + "_windows_" + JVM + FullJdkVersion
-#define ProductFolder ProductCategory + "-" + FullJdkVersion + "-" + JVM
-
+#define AppName "<APPNAME>"
+#define Vendor "<VENDOR>"
+#define VendorBranding "<VENDOR_BRANDING>"
+#define ProductCategory "<PRODUCT_CATEGORY>"
+#define JVM "<JVM>"
+#define ProductMajorVersion "<PRODUCT_MAJOR_VERSION>"
+#define ProductMinorVersion "<PRODUCT_MINOR_VERSION>"
+#define ProductMaintenanceVersion "<PRODUCT_MAINTENANCE_VERSION>"
+#define ProductPatchVersion "<PRODUCT_PATCH_VERSION>"
+#define ProductBuildNumber "<PRODUCT_BUILD_NUMBER>"
+#define ExeProductVersion "<EXE_PRODUCT_VERSION>"
+#define OutputExeName "<OUTPUT_EXE_NAME>"
+#define AppURL "<APP_URL>"
+#define VendorBrandingLogo "<VENDOR_BRANDING_LOGO>"
+#define VendorBrandingDialog "<VENDOR_BRANDING_DIALOG>"
+#define VendorBrandingSmallIcon "<VENDOR_BRANDING_SMALL_ICON>"
+#define LicenseFile "<LICENSE_FILE>"
+#define SingingTool "<SIGNING_TOOL>"
 ; Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-#define AppName VendorBranding + " " + Uppercase(ProductCategory) + " with " + JVM + " " + FullJdkPlusVersion + " (" + Architecture + ")"
+#define AppId "<APPID>"
 ; TODO: Decide on AppID approach
-#define AppId "{{767A46AB-EDEE-4F76-8987-842A6397F37A}"
+; "{{767A46AB-EDEE-4F76-8987-842A6397F37A}"
+
+; Define useful variables based off inputs
+#define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
 
 ; #define SourceDir ""
 #define OutputDir "output"
-#define SetupIconFile "logos\logo.ico"
 #define IniFile '{app}\install_tasks.ini'
 
 
@@ -42,7 +47,8 @@
 
 ;; Inno settings
 ; $command="dotnet ${env:MBSIGN_APPFOLDER}\DDSignFiles.dll -- /file:" + '$f' + " /certs:${env:WindowsCert}"
-SignTool=signtool
+; $command='dotnet $${env:MBSIGN_APPFOLDER}\DDSignFiles.dll -- /file:" + '$f' + " /certs:400'
+SignTool={#SingingTool}
 Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
@@ -57,7 +63,7 @@ ChangesEnvironment=yes
 ;; App info
 AppId={#AppId}
 AppName={#AppName}
-AppVersion={#FullJdkVersion}
+AppVersion={#ExeProductVersion}
 AppPublisher={#Vendor}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
@@ -72,11 +78,11 @@ DefaultDirName={code:GetDefaultDir}
 ; Enable the user to select the installation directory every time
 UsePreviousAppDir=no
 UninstallFilesDir={app}\uninstall
-SetupIconFile={#SetupIconFile}
-LicenseFile=licenses\license-GPLv2+CE.en-us.rtf
+LicenseFile={#LicenseFile}
+SetupIconFile={#VendorBrandingLogo}
 ; Add these lines to change the banner images
-WizardImageFile=logos\welcome-dialog.bmp
-WizardSmallImageFile=logos\logo_small.bmp
+WizardImageFile={#VendorBrandingDialog}
+WizardSmallImageFile={#VendorBrandingSmallIcon}
 
 ;; Dialog settings
 DisableDirPage=no
@@ -130,24 +136,24 @@ Type: files; Name: "{app}\install_tasks.ini"
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\"; \
     ValueType: none; \
     Flags: uninsdeletekeyifempty;
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}"; \
     ValueType: none; \
     Flags: uninsdeletekey;
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: string; ValueName: "Path"; ValueData: "{app}"; \
     Flags: uninsdeletekey;
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
-    ValueType: dword;  ValueName: "Main"; ValueData: "1";   \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
+    ValueType: dword;  ValueName: "Main"; ValueData: "1"; \
     Flags: uninsdeletekey;
 
 ; pathMod: Add Environment Path keys if the user requests them
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "EnvironmentPath"; ValueData: "1"; \
     Flags: uninsdeletekey; Check: WasTaskSelected('pathMod');
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "EnvironmentPathSetForSystem"; ValueData: "1"; \
     Flags: uninsdeletekey; Check: IsAdminInstallMode and WasTaskSelected('pathMod');
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "EnvironmentPathSetForUser";   ValueData: "1"; \
     Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('pathMod');
 
@@ -172,13 +178,13 @@ Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open\command"; \
 ; OR: decide that EXEs will no longer support JDK8 and remove this TODO
 
 ; javaHomeMod: Add JavaHome keys if the user requests them
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "JavaHome"; ValueData: "1"; \
     Flags: uninsdeletekey; Check: WasTaskSelected('javaHomeMod');
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "JavaHomeSetForSystem"; ValueData: "1"; \
     Flags: uninsdeletekey; Check: IsAdminInstallMode and WasTaskSelected('javaHomeMod');
-Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#FullJdkVersion}\{#JVM}\EXE"; \
+Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "JavaHomeSetForUser"; ValueData: "1"; \
     Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('javaHomeMod');
 ; Add JAVA_HOME env var for system-level environment variables (admin install)
@@ -197,15 +203,15 @@ Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}"; \
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ProductMajorVersion}"; \
     ValueType: string; ValueName: "JavaHome"; ValueData: "{app}"; \
     Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('javasoftMod');
-Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#FullJdkVersion}"; \
+Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ExeProductVersion}"; \
     ValueType: string; ValueName: "JavaHome"; ValueData: "{app}"; \
     Flags: uninsdeletekey; Check: WasTaskSelected('javasoftMod');
 ; The RuntimeLib key is only used by JREs, not JDKs
 #if ProductCategory == "JRE"
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ProductMajorVersion}"; \
     ValueType: string; ValueName: "RuntimeLib"; ValueData: "{app}\bin\server\jvm.dll"; \
-    Flags: uninsdeletevalue  uninsdeletekeyifempty; Check: WasTaskSelected('javasoftMod');
-Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#FullJdkVersion}"; \
+    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('javasoftMod');
+Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ExeProductVersion}"; \
     ValueType: string; ValueName: "RuntimeLib"; ValueData: "{app}\bin\server\jvm.dll"; \
     Flags: uninsdeletekey; Check: WasTaskSelected('javasoftMod');
 #endif
