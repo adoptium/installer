@@ -18,10 +18,10 @@
 #define FullJdkPlusVersion ProductMajorVersion + "." + ProductMinorVersion + "." + ProductMaintenanceVersion + "+" + ProductBuildVersion
 #define AppURL "https://adoptium.net/temurin/releases"
 #define OutputExeName "OpenJDK" + ProductMajorVersion + "-" + ProductCategory + "_" + Architecture + "_windows_" + JVM + FullJdkVersion
-#define ProductFolder ProductCategory "-" + FullJdkVersion + "-" + JVM
+#define ProductFolder ProductCategory + "-" + FullJdkVersion + "-" + JVM
 
 ; Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-#define AppName VendorBranding + " " + {code:Uppercase, ProductCategory} " with " + JVM + " " + FullJdkPlusVersion + " (" + Architecture + ")"
+#define AppName VendorBranding + " " + Uppercase(ProductCategory) + " with " + JVM + " " + FullJdkPlusVersion + " (" + Architecture + ")"
 ; TODO: Decide on AppID approach
 #define AppId "{{767A46AB-EDEE-4F76-8987-842A6397F37A}"
 
@@ -32,7 +32,7 @@
 
 
 ; Include external files after definitions so those definitions can be used in the included files
-#include "translations\default.iss"
+#include "tranlsations\default.iss"
 #include "scripts\install_handler.iss"
 #include "scripts\uninstall_handler.iss"
 #include "scripts\boolean_checks.iss"
@@ -66,7 +66,7 @@ AppUpdatesURL={#AppURL}
 ;; Dirs and logos
 OutputDir={#OutputDir}
 OutputBaseFilename={#OutputExeName}
-SourceDir={#SourceDir}
+; SourceDir={#SourceDir}
 ; Setting default installDir based on the install mode
 DefaultDirName={code:GetDefaultDir}
 ; Enable the user to select the installation directory every time
@@ -108,8 +108,8 @@ Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           
 Name: "{autoprograms}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"
 
 [Files]
-Source: "jdk-17.0.15+6\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-; Source: "logos\*";         DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+; Source: "jdk-17.0.15+6\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: "logos\*";         DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}"

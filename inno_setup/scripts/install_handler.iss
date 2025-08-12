@@ -1,8 +1,6 @@
 #ifndef INSTALL_HANDLER_INCLUDED
 #define INSTALL_HANDLER_INCLUDED
 
-; This file contains the main installation logic and  some helper functions
-
 #include "get_constants.iss"
 #include "boolean_checks.iss"
 

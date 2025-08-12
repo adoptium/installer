@@ -1,8 +1,6 @@
 #ifndef UNINSTALL_HANDLER_INCLUDED
 #define UNINSTALL_HANDLER_INCLUDED
 
-; This file contains the main uninstallation logic and some helper functions
-
 #include "get_constants.iss"
 #include "boolean_checks.iss"
 
