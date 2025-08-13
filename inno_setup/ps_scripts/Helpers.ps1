@@ -11,23 +11,6 @@
 
 #>
 
-# function ValidateMajorVersion {
-#     param(
-#         [Parameter(Mandatory=$true)]
-#         [int]$majorVersion
-#     )
-
-#     # Define valid major versions
-#     $validMajorVersions = @(11, 17, 21)
-
-#     if ($validMajorVersions -contains $majorVersion) {
-#         Write-Host "The major version ($majorVersion) is valid."
-#     } else {
-#         Write-Host "The major version ($majorVersion) is NOT valid. Valid versions are: $($validVersions -join ', ')."
-#         exit 1
-#     }
-# }
-
 function ValidateZipFileInput {
     param (
         [string]$ZipFilePath,
@@ -43,22 +26,6 @@ function ValidateZipFileInput {
         Write-Host "ZipFile input validation passed."
     }
 }
-
-# function ValidateSigningInput {
-#     param (
-#         [string]$SigningCertPath,
-#         [string]$SigningPassword
-#     )
-#     if (
-#         ($SigningPassword -and -not $SigningCertPath) -or
-#         ($SigningCertPath -and -not $SigningPassword)
-#     ) {
-#         throw "Error: Both SigningCertPath and SigningPassword must be provided together."
-#     }
-#     else {
-#         Write-Host "Signing input validation passed."
-#     }
-# }
 
 function SetDefaultIfEmpty {
     param (
