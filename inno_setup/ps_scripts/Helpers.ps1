@@ -48,12 +48,12 @@ function DownloadFileFromUrl {
     if (-not (Test-Path -Path $DestinationDirectory)) {
         New-Item -ItemType Directory -Path $DestinationDirectory | Out-Null
     }
-    $fileName = [System.IO.Path]::GetFileName($ZipFileUrl)
+    $fileName = [System.IO.Path]::GetFileName($Url)
     $downloadPath = Join-Path -Path $DestinationDirectory -ChildPath $fileName
 
     Write-Host "Downloading file from $Url to $DestinationDirectory"
 
-    # download zip file (needs to be silent or it will print the progress bar and take ~30 times as long to download)
+    # Download zip file (needs to be silent or it will print the progress bar and take ~30 times as long to download)
     $OriginalLocalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue'
     Invoke-WebRequest -Uri $Url -OutFile $downloadPath

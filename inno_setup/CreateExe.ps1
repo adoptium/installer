@@ -31,7 +31,7 @@
     Example: if the version is 17.0.16+8, this is 8
 
 .PARAMETER ExeProductVersion
-    The full version of the JDK/EXE product. This is used to determine
+    The full version of the JDK/EXE product as written with only '.' and numbers.
     Example: if the version is 17.0.16+8, this is "17.0.16.8"
 
 .PARAMETER Arch
@@ -76,12 +76,12 @@
     Default: "logos\logo_small.bmp"
 
 .PARAMETER OutputFileName
-    Optional. The name of the output file. Note: inno setup will automatically add the '.exe' file extension
+    Optional. The name of the output file. Note: Inno Setup will automatically add the '.exe' file extension
     Default:
-        "OpenJDK${ProductMajorVersion}-$ProductCategory_$Arch-windows-$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.ProductPatchVersion.$ProductBuildNumber"
+        "OpenJDK${ProductMajorVersion}-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion.$ProductBuildNumber"
 
 .PARAMETER License
-    Optional. The Path to the license file. This can either be a full path to any file, or a relative path to a license file in the inno_setup/licenses folder.
+    Optional. The path to the license file. This can either be a full path to any file, or a relative path to a license file in the inno_setup/licenses folder.
     Default: "licenses/license-GPLv2+CE.en-us.rtf"
 
 .PARAMETER UpgradeCodeSeed
@@ -141,12 +141,12 @@
 
 .NOTES
     Ensure that you have downloaded Inno Setup (can be done through winget or directly from their website: https://jrsoftware.org/isdl.php). For more information, please see the #Dependencies section of the README.md file.
-    If you do not have inno setup installed, you can install it using the following command:
+    If you do not have Inno Setup installed, you can install it using the following command:
         winget install --id JRSoftware.InnoSetup -e -s winget --scope <machine|user>
     Or directly by modifying this link to the latest version:
         https://files.jrsoftware.org/is/6/innosetup-#.#.#.exe
         Example: https://files.jrsoftware.org/is/6/innosetup-6.5.0.exe
-    Afterwards, please set the following environment variable to the path of the inno setup executable (if the default, machine-scope path below is incorrect):
+    Afterwards, please set the following environment variable to the path of the Inno Setup executable (if the default, machine-scope path below is incorrect):
         $env:INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 #>
 
@@ -217,11 +217,11 @@ param (
     [string]$SigningCommand = ""
 )
 
-# Get the path to inno setup folder (parent directory of this script)
-$InnoSetupWorkDirPath = Split-Path -Parent $MyInvocation.MyCommand.Path
+# Get the path to Inno Setup folder (parent directory of this script)
+$InnoSetupRootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Find and source the Helpers.ps1 script located in the scripts folder to get access to helper functions
-$HelpersScriptPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "ps_scripts\Helpers.ps1"
+$HelpersScriptPath = Join-Path -Path $InnoSetupRootDir -ChildPath "ps_scripts\Helpers.ps1"
 if (-not (Test-Path -Path $HelpersScriptPath)) {
     throw "Error: The Helpers.ps1 script was not found at '$HelpersScriptPath'."
 }
@@ -241,15 +241,15 @@ $AppName = SetDefaultIfEmpty `
     -InputValue $AppName `
     -DefaultValue "$VendorBranding $($ProductCategory.ToUpper()) with ${CapitalizedJVM} ${VersionMajorToMaintenance}+${ProductBuildNumber} ($Arch)"
 
-## Note: inno setup will add the '.exe' file extension automatically
+## Note: Inno Setup will add the '.exe' file extension automatically
 $OutputFileName = SetDefaultIfEmpty `
     -InputValue $OutputFileName `
     -DefaultValue "OpenJDK${ProductMajorVersion}-${ProductCategory}_${Arch}_windows_${JVM}-${VersionMajorToMaintenance}.${ProductPatchVersion}.${ProductBuildNumber}"
 
 # Clean the src, workspace, and output folders
-$srcFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupWorkDirPath -ChildPath "src")
-$workspaceFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupWorkDirPath -ChildPath "workspace")
-$outputFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupWorkDirPath -ChildPath "output")
+$srcFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupRootDir -ChildPath "src")
+$workspaceFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupRootDir -ChildPath "workspace")
+$outputFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupRootDir -ChildPath "output")
 Write-Host "Folders cleaned: $srcFolder, $workspaceFolder, $outputFolder"
 
 # Download zip file if a URL is provided, otherwise use the local path
@@ -261,7 +261,7 @@ Write-Host "Using ZipFilePath: $ZipFilePath"
 UnzipFile -ZipFilePath $ZipFilePath -DestinationPath $srcFolder
 $unzippedFolder = (Get-ChildItem -Path $srcFolder -Directory | Select-Object -First 1).FullName
 
-$exeTemplate = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "templates\create_exe.template.iss"
+$exeTemplate = Join-Path -Path $InnoSetupRootDir -ChildPath "templates\create_exe.template.iss"
 $content = Get-Content -Path $exeTemplate
 
 if (-not $UpgradeCodeSeed) {
@@ -274,7 +274,7 @@ if (-not $UpgradeCodeSeed) {
     $SOURCE_TEXT_GUID = "${ProductCategory}-${ProductMajorVersion}-${Arch}-${JVM}"
     Write-Host "SOURCE_TEXT_GUID (without displaying secret UpgradeCodeSeed): $SOURCE_TEXT_GUID"
     # Call getGuid.ps1 to generate a GUID based on SOURCE_TEXT_GUID and UpgradeCodeSeed
-    $getGuidScriptPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "getGuid.ps1"
+    $getGuidScriptPath = Join-Path -Path $InnoSetupRootDir -ChildPath "getGuid.ps1"
     $PRODUCT_UPGRADE_CODE = GenerateGuidFromString -SeedString "${SOURCE_TEXT_GUID}-${UpgradeCodeSeed}"
     Write-Host "Constant PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
 }
@@ -299,14 +299,15 @@ $updatedContent = $content `
     -replace "<VENDOR_BRANDING_SMALL_ICON>", $VendorBrandingSmallIcon `
     -replace "<LICENSE_FILE>", $License `
     -replace "<PRODUCT_UPGRADE_CODE>", $PRODUCT_UPGRADE_CODE `
+    -replace "<MAIN_DIR>", $InnoSetupRootDir `
     -replace "<SOURCE_FILES>", $unzippedFolder
 
 # Write the updated content to the new create_exe.iss file
-$exeIssPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "create_exe.iss"
+$exeIssPath = Join-Path -Path $InnoSetupRootDir -ChildPath "create_exe.iss"
 Set-Content -Path $exeIssPath -Value $updatedContent
 Write-Host "create_exe.iss created at '$exeIssPath'"
 
-# if $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
+# If $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
 if ([string]::IsNullOrEmpty($env:INNO_SETUP_PATH)) {
     $INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
     Write-Host "env:INNO_SETUP_PATH not set. Defaulting to '$INNO_SETUP_PATH'"
@@ -315,7 +316,7 @@ if ([string]::IsNullOrEmpty($env:INNO_SETUP_PATH)) {
 }
 
 # Create .exe file based on create_exe.iss. Sign it only if $SigningCommand is not empty or null
-# See the following link for more info on issc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+# See the following link for more info on iscc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
 if (![string]::IsNullOrEmpty($SigningCommand)) {
     Write-Host "Executing Inno Setup with signing."
     & "$INNO_SETUP_PATH" `
