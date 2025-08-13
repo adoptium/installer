@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Script to handle a zip file by either copying it from a local location or downloading it from a URL.
+    Script that uses Inno Setup to create an EXE installer (for a JDK/JRE) from a zip file by either copying it from a local directory or downloading it from a URL.
 
 .DESCRIPTION
     This script automates the process of creating an EXE installer for OpenJDK distributions. It accepts either a local zip file path or a URL to a zip file (containing a zip file of the JDK binaries), extracts the contents, and prepares the necessary folder structure. This script is designed to be used with Inno Setup, a tool for creating Windows installers. First, a template Inno Setup script is modified with the provided parameters. The script then generates an EXE installer package that can be used to install OpenJDK on Windows systems. If a signing cli command is provided, the script will also sign the resulting EXE package (Note: this is the only way to also sign the uninstall script that goes into the EXE). The script supports various parameters to customize the installer, such as application name, vendor information, architecture, and versioning details.
@@ -101,21 +101,21 @@
 
 .EXAMPLE
     # Only mandatory inputs are defined here
-    .\CreateMsix.ps1 `
+    .\CreateExe.ps1 `
         -ZipFilePath "C:\path\to\file.zip" `
         -ProductMajorVersion 17 `
         -ProductMinorVersion 0 `
         -ProductMaintenanceVersion 16 `
-        -ProductPatchVersion 0
+        -ProductPatchVersion 0 `
         -ProductBuildNumber 8 `
         -ExeProductVersion "17.0.16.8" `
         -Arch "x64" `
         -JVM "hotspot" `
-        -ProductCategory "jdk" `
+        -ProductCategory "jdk"
 
 .EXAMPLE
     # All inputs are defined here
-    .\CreateMsix.ps1 `
+    .\CreateExe.ps1 `
         # Mandatory inputs
         -ZipFileUrl "https://example.com/file.zip" `
         -ProductMajorVersion 21 `
@@ -128,13 +128,13 @@
         -JVM "hotspot" `
         -ProductCategory "jdk" `
         # Optional inputs: These are the defaults that will be used if not specified
-        -AppName "Eclipse Temurin JDK with Hotspot 21.0.8.9 (aarch64)" `
+        -AppName "Eclipse Temurin JDK with Hotspot 21.0.8+9 (aarch64)" `
         -Vendor "Eclipse Adoptium" `
         -VendorBranding "Eclipse Temurin" `
         -VendorBrandingLogo "logos\logo.ico" `
         -VendorBrandingDialog "logos\welcome-dialog.bmp" `
         -VendorBrandingSmallIcon "logos\logo_small.bmp" `
-        -OutputFileName "OpenJDK21-jdk_aarch64_windows_hotspot-
+        -OutputFileName "OpenJDK21-jdk_aarch64_windows_hotspot-21.0.8.0.9" `
         -License "licenses/license-GPLv2+CE.en-us.rtf" `
         # Additional Optional Inputs: Omitting these inputs will cause their associated process to be skipped
         -SigningCommand "signtool.exe sign /f C:\path\to\cert"
@@ -214,10 +214,10 @@ param (
     [string]$UpgradeCodeSeed = "",
 
     [Parameter(Mandatory = $false)]
-    [string]$SigningCommand = "",
+    [string]$SigningCommand = ""
 )
 
-# Get the path to msix folder (parent directory of this script)
+# Get the path to inno setup folder (parent directory of this script)
 $InnoSetupWorkDirPath = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Find and source the Helpers.ps1 script located in the scripts folder to get access to helper functions
@@ -232,22 +232,21 @@ ValidateZipFileInput -ZipFilePath $ZipFilePath -ZipFileUrl $ZipFileUrl
 
 # Set values needed in file
 $CapitalizedJVM = CapitalizeString `
-    -InputValue $JVM `
-    -AllLetters
+    -InputString $JVM `
 
-$VersionMajorToMaintenance = $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion
+$VersionMajorToMaintenance = "${ProductMajorVersion}.${ProductMinorVersion}.${ProductMaintenanceVersion}"
 
 # Set default values if optional parameters are not provided
 $AppName = SetDefaultIfEmpty `
     -InputValue $AppName `
-    -DefaultValue "$VendorBranding $($ProductCategory.ToUpper()) with $CapitalizedJVM $VersionMajorToMaintenance+$ProductBuildNumber ($Arch)"
+    -DefaultValue "$VendorBranding $($ProductCategory.ToUpper()) with ${CapitalizedJVM} ${VersionMajorToMaintenance}+${ProductBuildNumber} ($Arch)"
 
 ## Note: inno setup will add the '.exe' file extension automatically
 $OutputFileName = SetDefaultIfEmpty `
     -InputValue $OutputFileName `
-    -DefaultValue "OpenJDK${ProductMajorVersion}-$ProductCategory_$Arch_windows_$JVM-$VersionMajorToMaintenance.$ProductPatchVersion.$ProductBuildNumber"
+    -DefaultValue "OpenJDK${ProductMajorVersion}-${ProductCategory}_${Arch}_windows_${JVM}-${VersionMajorToMaintenance}.${ProductPatchVersion}.${ProductBuildNumber}"
 
-# Clean the srce, workspace, and output folders
+# Clean the src, workspace, and output folders
 $srcFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupWorkDirPath -ChildPath "src")
 $workspaceFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupWorkDirPath -ChildPath "workspace")
 $outputFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupWorkDirPath -ChildPath "output")
@@ -260,13 +259,9 @@ if ($ZipFileUrl) {
 }
 Write-Host "Using ZipFilePath: $ZipFilePath"
 UnzipFile -ZipFilePath $ZipFilePath -DestinationPath $srcFolder
+$unzippedFolder = (Get-ChildItem -Path $srcFolder -Directory | Select-Object -First 1).FullName
 
-# Move contents of the unzipped file to $srcFolder
-# $unzippedFolder = Join-Path -Path $workspaceFolder -ChildPath (Get-ChildItem -Path $workspaceFolder -Directory | Select-Object -First 1).Name
-# Move-Item -Path (Join-Path -Path $unzippedFolder -ChildPath "*") -Destination $srcFolder -Force
-# Remove-Item -Path $unzippedFolder -Recurse -Force
-
-$exeTemplate = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "create_exe.iss"
+$exeTemplate = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "templates\create_exe.template.iss"
 $content = Get-Content -Path $exeTemplate
 
 if (-not $UpgradeCodeSeed) {
@@ -276,11 +271,11 @@ if (-not $UpgradeCodeSeed) {
 } else {
     # Generate a deterministic PRODUCT_UPGRADE_CODE based on input values and UpgradeCodeSeed
     # Compose SOURCE_TEXT_GUID similar to the original script
-    $SOURCE_TEXT_GUID = "$ProductCategory-$ProductMajorVersion-$Arch-$JVM"
+    $SOURCE_TEXT_GUID = "${ProductCategory}-${ProductMajorVersion}-${Arch}-${JVM}"
     Write-Host "SOURCE_TEXT_GUID (without displaying secret UpgradeCodeSeed): $SOURCE_TEXT_GUID"
     # Call getGuid.ps1 to generate a GUID based on SOURCE_TEXT_GUID and UpgradeCodeSeed
     $getGuidScriptPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "getGuid.ps1"
-    $PRODUCT_UPGRADE_CODE = GenerateGuidFromString -SeedString "$SOURCE_TEXT_GUID-$UpgradeCodeSeed"
+    $PRODUCT_UPGRADE_CODE = GenerateGuidFromString -SeedString "${SOURCE_TEXT_GUID}-${UpgradeCodeSeed}"
     Write-Host "Constant PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
 }
 
@@ -303,7 +298,8 @@ $updatedContent = $content `
     -replace "<VENDOR_BRANDING_DIALOG>", $VendorBrandingDialog `
     -replace "<VENDOR_BRANDING_SMALL_ICON>", $VendorBrandingSmallIcon `
     -replace "<LICENSE_FILE>", $License `
-    -replace "<PRODUCT_UPGRADE_CODE>", $PRODUCT_UPGRADE_CODE
+    -replace "<PRODUCT_UPGRADE_CODE>", $PRODUCT_UPGRADE_CODE `
+    -replace "<SOURCE_FILES>", $unzippedFolder
 
 # Write the updated content to the new create_exe.iss file
 $exeIssPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "create_exe.iss"
@@ -312,22 +308,27 @@ Write-Host "create_exe.iss created at '$exeIssPath'"
 
 # if $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
 if ([string]::IsNullOrEmpty($env:INNO_SETUP_PATH)) {
-    $env:INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-    Write-Host "INNO_SETUP_PATH not set. Defaulting to '$env:INNO_SETUP_PATH'"
+    $INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+    Write-Host "env:INNO_SETUP_PATH not set. Defaulting to '$INNO_SETUP_PATH'"
+} else {
+    $INNO_SETUP_PATH = $env:INNO_SETUP_PATH
 }
 
-# Create .exe file based on create_exe.iss only if $SigningCommand is not empty or null
+# Create .exe file based on create_exe.iss. Sign it only if $SigningCommand is not empty or null
 # See the following link for more info on issc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
 if (![string]::IsNullOrEmpty($SigningCommand)) {
     Write-Host "Executing Inno Setup with signing."
-    & "$env:INNO_SETUP_PATH" `
+    & "$INNO_SETUP_PATH" `
         /S $SigningCommand `
         $exeIssPath `
 } else {
     Write-Host "Executing Inno Setup without signing."
-    & "$env:INNO_SETUP_PATH" $exeIssPath
+    & "$INNO_SETUP_PATH" $exeIssPath
 }
 
 CheckForError -ErrorMessage "Error: iscc.exe failed to create .exe file."
 
-Write-Host "EXE file created successfully in '$outputFolder'."
+Write-Host "EXE file created successfully in '$outputFolder'"
+
+Move-Item -Path $exeIssPath -Destination $workspaceFolder -Force
+Write-Host "Moved create_exe.iss to '$workspaceFolder'"
