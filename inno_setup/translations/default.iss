@@ -14,14 +14,14 @@ Name: "ChineseCN"; MessagesFile: "compiler:Languages\Unofficial\ChineseSimplifie
 
 [CustomMessages]
 ; Notes:
-; 1) All translations in the intial PR were pulled directly from the wix MSI installer translation files (Jul 2025)
+; 1) All translations in the initial PR were pulled directly from the wix MSI installer translation files (Jul 2025)
 ; 2) Any missing translations will default to English
 ; 3) When testing translations, the `Yes` and `No` buttons will always be in the language of the user's machine (regardless of the selected language in the installer)
 ; 4) All commented out translations were made by copilot and need to be verified before using/uncommenting
 ; 5) Translation entries allow us to have input arguments. They are specified as %1, %2, etc.
 
 ; For a list of default custom messages (Translated by Inno Setup), see: https://jrsoftware.org/ishelp/index.php?topic=custommessagessection
-; Examlpe: we are using AssocFileExtension from this list
+; Example: we are using AssocFileExtension from this list
 
 ; Custom task descriptions - English (default)
 PathModDesc=Modify PATH environment variable by prepending the JDK installation directory to the beginning of PATH.
@@ -50,7 +50,7 @@ Spanish.RegKeysTitle=Claves de registro JavaSoft (Oracle)
 
 French.PathModDesc=Ajouter à la variable d'environnement PATH.
 French.JavaHomeModDesc=Définir la variable d'environnement JAVA_HOME.
-French.JavaSoftModDesc=Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'%1, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Résintaller Oracle Java si besoin
+French.JavaSoftModDesc=Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'%1, Oracle Java lancé depuis le PATH "C:\Program Files (x86)\Common Files\Oracle\Java\javapath" ne fonctionne plus. Réinstaller Oracle Java si besoin
 French.PathModTitle=Ajouter au PATH
 French.JavaHomeModTitle=Définir la variable JAVA_HOME
 French.FileAssocTitle=Associer les .jar
