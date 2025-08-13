@@ -44,8 +44,6 @@
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=setupsection
 
 ;; Inno settings
-; $command="dotnet ${env:MBSIGN_APPFOLDER}\DDSignFiles.dll -- /file:" + '$f' + " /certs:${env:WindowsCert}"
-; $command='dotnet $${env:MBSIGN_APPFOLDER}\DDSignFiles.dll -- /file:" + '$f' + " /certs:400'
 Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
@@ -100,6 +98,7 @@ PrivilegesRequiredOverridesAllowed=dialog
 UsePreviousPrivileges=no
 
 [Tasks]
+; For more info, see https://jrsoftware.org/ishelp/index.php?topic=taskssection
 Name: "pathMod";      Description: "{cm:PathModDesc}";                          GroupDescription: "{cm:PathModTitle}";  
 ; AssocFileExtension is an Inno Setup provided translation provides this message into every language: &Associate %1 with the %2 file extension
 Name: "jarfileMod";   Description: "{cm:AssocFileExtension,{#AppName},.jar}";   GroupDescription: "{cm:FileAssocTitle}";
@@ -107,22 +106,24 @@ Name: "javaHomeMod";  Description: "{cm:JavaHomeModDesc}";                      
 ; HKLM keys can only be created/modified in Admin Install Mode
 Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           GroupDescription: "{cm:RegKeysTitle}";      Flags: unchecked;   Check: IsAdminInstallMode;
 
-[Icons]
-Name: "{autoprograms}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"
-
 [Files]
+; For more info, see https://jrsoftware.org/ishelp/index.php?topic=filessection
 Source: "<SOURCE_FILES>\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
 [InstallDelete]
+; For more info, see https://jrsoftware.org/ishelp/index.php?topic=installdeletesection
 Type: filesandordirs; Name: "{app}"
 Type: files; Name: "{app}\install_tasks.ini"
 
 [UninstallDelete]
+; For more info, see https://jrsoftware.org/ishelp/index.php?topic=uninstalldeletesection
 ; This section is needed since uninstall misses the install_tasks.ini file
 Type: files; Name: "{app}\install_tasks.ini"
 
-; All registry key info translated from current wix/msi installer scripts
 [Registry]
+; For more info, see https://jrsoftware.org/ishelp/index.php?topic=registrysection
+; All registry key info translated from current wix/msi installer scripts
+
 ; HKLM = HKEY_LOCAL_MACHINE
 ; HKA:
 ;   On per machine install = HKLM = HKEY_LOCAL_MACHINE
