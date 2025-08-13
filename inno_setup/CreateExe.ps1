@@ -84,16 +84,34 @@
     Optional. The Path to the license file. This can either be a full path to any file, or a relative path to a license file in the inno_setup/licenses folder.
     Default: "licenses/license-GPLv2+CE.en-us.rtf"
 
+.PARAMETER UpgradeCodeSeed
+    Optional. A seed string used to generate a deterministic PRODUCT_UPGRADE_CODE.
+    This is used to ensure that the PRODUCT_UPGRADE_CODE is consistent across builds.
+    If this is not provided, a random PRODUCT_UPGRADE_CODE will be generated.
+    Default: ""
+
+.PARAMETER SigningCommand
+    Optional. The command to sign the resulting EXE file. This is typically a command that
+    uses signtool.exe to sign the EXE file. If this is not provided, the EXE will not be signed.
+    See the following link for more info on input variables that can be used within the command: https://jrsoftware.org/ishelp/index.php?topic=setup_signtool
+    Examples:
+        'signtool.exe sign /fd SHA256 $f'
+        'signtool.exe sign /a /n $qMy Common Name$q /t http://timestamp.comodoca.com/authenticode /d $qMy Program$q $f'
+    Default: ""
+
 .EXAMPLE
     # Only mandatory inputs are defined here
     .\CreateMsix.ps1 `
         -ZipFilePath "C:\path\to\file.zip" `
-        -AppName "Eclipse Temurin JDK with Hotspot 17.0.15+6 (x64)" `
         -ProductMajorVersion 17 `
         -ProductMinorVersion 0 `
-        -ProductMaintenanceVersion 15 `
-        -ProductBuildNumber 6 `
+        -ProductMaintenanceVersion 16 `
+        -ProductPatchVersion 0
+        -ProductBuildNumber 8 `
+        -ExeProductVersion "17.0.16.8" `
         -Arch "x64" `
+        -JVM "hotspot" `
+        -ProductCategory "jdk" `
 
 .EXAMPLE
     # All inputs are defined here
@@ -102,20 +120,34 @@
         -ZipFileUrl "https://example.com/file.zip" `
         -ProductMajorVersion 21 `
         -ProductMinorVersion 0 `
-        -ProductMaintenanceVersion 7 `
-        -ProductBuildNumber 6 `
+        -ProductMaintenanceVersion 8 `
+        -ProductPatchVersion 0 `
+        -ProductBuildNumber 9 `
+        -ExeProductVersion "21.0.8.9" `
         -Arch "aarch64" `
+        -JVM "hotspot" `
+        -ProductCategory "jdk" `
         # Optional inputs: These are the defaults that will be used if not specified
+        -AppName "Eclipse Temurin JDK with Hotspot 21.0.8.9 (aarch64)" `
         -Vendor "Eclipse Adoptium" `
         -VendorBranding "Eclipse Temurin" `
-        -AppName "Eclipse Temurin 17.0.15+6 (x64)" `
-        # Optional Inputs: omitting these inputs will cause their associated process to be skipped
-        -OutputFileName "OpenJDK21-jdk_x64_windows_hotspot-21.0.8.0.9" `
+        -VendorBrandingLogo "logos\logo.ico" `
+        -VendorBrandingDialog "logos\welcome-dialog.bmp" `
+        -VendorBrandingSmallIcon "logos\logo_small.bmp" `
+        -OutputFileName "OpenJDK21-jdk_aarch64_windows_hotspot-
+        -License "licenses/license-GPLv2+CE.en-us.rtf" `
+        # Additional Optional Inputs: Omitting these inputs will cause their associated process to be skipped
+        -SigningCommand "signtool.exe sign /f C:\path\to\cert"
 
 .NOTES
-    Ensure that you have downloaded the Windows SDK (typically through installing Visual Studio). For more information, please see the #Dependencies section of the README.md file. After doing so, please modify the following environment variables if the defaults shown below are not correct:
-    $Env:WIN_SDK_FULL_VERSION = "10.0.22621.0"
-    $Env:WIN_SDK_MAJOR_VERSION = "10"
+    Ensure that you have downloaded Inno Setup (can be done through winget or directly from their website: https://jrsoftware.org/isdl.php). For more information, please see the #Dependencies section of the README.md file.
+    If you do not have inno setup installed, you can install it using the following command:
+        winget install --id JRSoftware.InnoSetup -e -s winget --scope <machine|user>
+    Or directly by modifying this link to the latest version:
+        https://files.jrsoftware.org/is/6/innosetup-#.#.#.exe
+        Example: https://files.jrsoftware.org/is/6/innosetup-6.5.0.exe
+    Afterwards, please set the following environment variable to the path of the inno setup executable (if the default, machine-scope path below is incorrect):
+        $env:INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
 #>
 
 param (
@@ -176,7 +208,13 @@ param (
     [string]$OutputFileName,
 
     [Parameter(Mandatory = $false)]
-    [string]$License = "licenses/license-GPLv2+CE.en-us.rtf"
+    [string]$License = "licenses/license-GPLv2+CE.en-us.rtf",
+
+    [Parameter(Mandatory = $false)]
+    [string]$UpgradeCodeSeed = "",
+
+    [Parameter(Mandatory = $false)]
+    [string]$SigningCommand = "",
 )
 
 # Get the path to msix folder (parent directory of this script)
@@ -231,6 +269,21 @@ UnzipFile -ZipFilePath $ZipFilePath -DestinationPath $srcFolder
 $exeTemplate = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "create_exe.iss"
 $content = Get-Content -Path $exeTemplate
 
+if (-not $UpgradeCodeSeed) {
+    # If no UpgradeCodeSeed is given, generate a new PRODUCT_UPGRADE_CODE (random GUID, not upgradable)
+    $PRODUCT_UPGRADE_CODE = [guid]::NewGuid().ToString("B").ToUpper()
+    Write-Host "Unique PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
+} else {
+    # Generate a deterministic PRODUCT_UPGRADE_CODE based on input values and UpgradeCodeSeed
+    # Compose SOURCE_TEXT_GUID similar to the original script
+    $SOURCE_TEXT_GUID = "$ProductCategory-$ProductMajorVersion-$Arch-$JVM"
+    Write-Host "SOURCE_TEXT_GUID (without displaying secret UpgradeCodeSeed): $SOURCE_TEXT_GUID"
+    # Call getGuid.ps1 to generate a GUID based on SOURCE_TEXT_GUID and UpgradeCodeSeed
+    $getGuidScriptPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "getGuid.ps1"
+    $PRODUCT_UPGRADE_CODE = GenerateGuidFromString -SeedString "$SOURCE_TEXT_GUID-$UpgradeCodeSeed"
+    Write-Host "Constant PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
+}
+
 # Replace all instances of placeholders with the provided values
 $updatedContent = $content `
     -replace "<APPNAME>", $AppName `
@@ -241,7 +294,7 @@ $updatedContent = $content `
     -replace "<PRODUCT_MAJOR_VERSION>", $ProductMajorVersion `
     -replace "<PRODUCT_MINOR_VERSION>", $ProductMinorVersion `
     -replace "<PRODUCT_MAINTENANCE_VERSION>", $ProductMaintenanceVersion `
-    # ProductPatchVersion
+    -replace "<PRODUCT_PATCH_VERSION>", $ProductPatchVersion `
     -replace "<PRODUCT_BUILD_NUMBER>", $ProductBuildNumber `
     -replace "<EXE_PRODUCT_VERSION>", $ExeProductVersion `
     -replace "<OUTPUT_EXE_NAME>", $OutputFileName `
@@ -250,14 +303,31 @@ $updatedContent = $content `
     -replace "<VENDOR_BRANDING_DIALOG>", $VendorBrandingDialog `
     -replace "<VENDOR_BRANDING_SMALL_ICON>", $VendorBrandingSmallIcon `
     -replace "<LICENSE_FILE>", $License `
-    -replace "<SIGNING_TOOL>", "signtool.exe" `
-    # Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-    -replace "<APPID>", "{{}}" ########################
-
+    -replace "<PRODUCT_UPGRADE_CODE>", $PRODUCT_UPGRADE_CODE
 
 # Write the updated content to the new create_exe.iss file
 $exeIssPath = Join-Path -Path $InnoSetupWorkDirPath -ChildPath "create_exe.iss"
 Set-Content -Path $exeIssPath -Value $updatedContent
 Write-Host "create_exe.iss created at '$exeIssPath'"
 
+# if $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
+if ([string]::IsNullOrEmpty($env:INNO_SETUP_PATH)) {
+    $env:INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+    Write-Host "INNO_SETUP_PATH not set. Defaulting to '$env:INNO_SETUP_PATH'"
+}
 
+# Create .exe file based on create_exe.iss only if $SigningCommand is not empty or null
+# See the following link for more info on issc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+if (![string]::IsNullOrEmpty($SigningCommand)) {
+    Write-Host "Executing Inno Setup with signing."
+    & "$env:INNO_SETUP_PATH" `
+        /S $SigningCommand `
+        $exeIssPath `
+} else {
+    Write-Host "Executing Inno Setup without signing."
+    & "$env:INNO_SETUP_PATH" $exeIssPath
+}
+
+CheckForError -ErrorMessage "Error: iscc.exe failed to create .exe file."
+
+Write-Host "EXE file created successfully in '$outputFolder'."

@@ -169,3 +169,13 @@ function Clear-TargetFolder {
     return $TargetFolder
 }
 
+function GenerateGuidFromString {
+    param(
+        [string] $SeedString = ""
+    )
+    $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
+    $utf8 = new-object -TypeName System.Text.UTF8Encoding
+    $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($SeedString))) -replace "-", ""
+    $guid = [System.Guid]::Parse($hash)
+    Write-Output $guid.ToString('b').ToUpper()
+}

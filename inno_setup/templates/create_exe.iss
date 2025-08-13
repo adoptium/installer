@@ -22,11 +22,8 @@
 #define VendorBrandingDialog "<VENDOR_BRANDING_DIALOG>"
 #define VendorBrandingSmallIcon "<VENDOR_BRANDING_SMALL_ICON>"
 #define LicenseFile "<LICENSE_FILE>"
-#define SingingTool "<SIGNING_TOOL>"
 ; Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-#define AppId "<APPID>"
-; TODO: Decide on AppID approach
-; "{{767A46AB-EDEE-4F76-8987-842A6397F37A}"
+#define AppId "{" + "<APPID>"
 
 ; Define useful variables based off inputs
 #define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
@@ -48,7 +45,6 @@
 ;; Inno settings
 ; $command="dotnet ${env:MBSIGN_APPFOLDER}\DDSignFiles.dll -- /file:" + '$f' + " /certs:${env:WindowsCert}"
 ; $command='dotnet $${env:MBSIGN_APPFOLDER}\DDSignFiles.dll -- /file:" + '$f' + " /certs:400'
-SignTool={#SingingTool}
 Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
