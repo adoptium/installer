@@ -30,3 +30,7 @@ Thumbs.db
 
 node_modules/
 wix/Workdir/
+
+inno_setup/output/
+inno_setup/src/
+inno_setup/workspace/
