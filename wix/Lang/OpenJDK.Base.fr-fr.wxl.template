@@ -17,7 +17,7 @@
 	<String Id="DowngradeDenied" Value="&quot;Une version ultérieur de [ProductName] est déjà installé. L'installation va maintenant quitter.&quot;" />
 	<String Id="FeatureOracleJavaSoftName" Value="Clés de registre JavaSoft (Oracle)" />
 	<!-- ! Description limité à 255 charactères -->
-	<String Id="FeatureOracleJavaSoftDescription" Value="Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{vendor_branding}, Oracle Java lancé depuis le PATH &quot;C:\Program Files (x86)\Common Files\Oracle\Java\javapath&quot; ne fonctionne plus. Résintaller Oracle Java si besoin" />
+	<String Id="FeatureOracleJavaSoftDescription" Value="Écrase les clés de registre HKLM\Software\JavaSoft (Oracle). Après la désinstallation d'{vendor_branding}, Oracle Java lancé depuis le PATH &quot;C:\Program Files (x86)\Common Files\Oracle\Java\javapath&quot; ne fonctionne plus. Réinstaller Oracle Java si besoin" />
 	<String Id="FeatureIcedTeaWebTitle" Value="IcedTea-Web" />
 	<String Id="FeatureIcedTeaWebDescription" Value="Install the IcedTea-Web package" />
 	<String Id="FeatureJNLPFileRunWithTitle" Value="Associate .jnlp" />
