@@ -28,13 +28,14 @@
 ; Define useful variables based off inputs
 #define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
 
-; #define SourceDir ""
+; Note: this SourceDir is the directory that all relative paths are based off of
+#define SourceDir "<MAIN_DIR>"
 #define OutputDir "output"
 #define IniFile '{app}\install_tasks.ini'
 
 
 ; Include external files after definitions so those definitions can be used in the included files
-#include "tranlsations\default.iss"
+#include "translations\default.iss"
 #include "inno_scripts\install_handler.iss"
 #include "inno_scripts\uninstall_handler.iss"
 #include "inno_scripts\boolean_checks.iss"
@@ -49,9 +50,9 @@ Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-; Ensure correct install dirs by setting the archs that are 64-bit
+; Ensure correct install dirs by setting the architectures that are 64-bit
 ArchitecturesInstallIn64BitMode=x64compatible arm64
-; Notify windows explorer that the environment variables have changed
+; Notify Windows Explorer that the environment variables have changed
 ChangesEnvironment=yes
 ; Debug
 ; SetupLogging=yes
@@ -103,7 +104,7 @@ Name: "pathMod";      Description: "{cm:PathModDesc}";                          
 ; AssocFileExtension is an Inno Setup provided translation provides this message into every language: &Associate %1 with the %2 file extension
 Name: "jarfileMod";   Description: "{cm:AssocFileExtension,{#AppName},.jar}";   GroupDescription: "{cm:FileAssocTitle}";
 Name: "javaHomeMod";  Description: "{cm:JavaHomeModDesc}";                      GroupDescription: "{cm:JavaHomeModTitle}";  Flags: unchecked;
-; HKLM keys can only be created/modified in Amin Install Mode
+; HKLM keys can only be created/modified in Admin Install Mode
 Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           GroupDescription: "{cm:RegKeysTitle}";      Flags: unchecked;   Check: IsAdminInstallMode;
 
 [Icons]
@@ -165,7 +166,7 @@ Root: HKA; Subkey: "SOFTWARE\Classes\.jar"; \
 Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile";            ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
 Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell";      ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
 Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open"; ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
-; Two doublequotes (") are used in the ValueName to escape the quotes properly. Example value writen to key: "C:\Program Files\Adoptium\jdk-17.0.15.6-hotspot\bin\javaw.exe" -jar "%1" %*
+; Two doublequotes (") are used in the ValueName to escape the quotes properly. Example value written to key: "C:\Program Files\Adoptium\jdk-17.0.15.6-hotspot\bin\javaw.exe" -jar "%1" %*
 Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open\command"; \
     ValueType: string; ValueName: ""; ValueData: """{app}\bin\javaw.exe"" -jar ""%1"" %*"; \
     Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
