@@ -23,7 +23,7 @@
 #define VendorBrandingSmallIcon "<VENDOR_BRANDING_SMALL_ICON>"
 #define LicenseFile "<LICENSE_FILE>"
 ; Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-#define AppId "{" + "<APPID>"
+#define AppId "{<PRODUCT_UPGRADE_CODE>"
 
 ; Define useful variables based off inputs
 #define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
@@ -35,9 +35,9 @@
 
 ; Include external files after definitions so those definitions can be used in the included files
 #include "tranlsations\default.iss"
-#include "scripts\install_handler.iss"
-#include "scripts\uninstall_handler.iss"
-#include "scripts\boolean_checks.iss"
+#include "inno_scripts\install_handler.iss"
+#include "inno_scripts\uninstall_handler.iss"
+#include "inno_scripts\boolean_checks.iss"
 
 [Setup]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=setupsection
@@ -110,8 +110,7 @@ Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           
 Name: "{autoprograms}\{cm:UninstallProgram,{#AppName}}"; Filename: "{uninstallexe}"
 
 [Files]
-; Source: "jdk-17.0.15+6\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
-Source: "logos\*";         DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: "<SOURCE_FILES>\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
 [InstallDelete]
 Type: filesandordirs; Name: "{app}"
