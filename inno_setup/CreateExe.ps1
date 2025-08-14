@@ -75,6 +75,15 @@
     This can be a full path to any file, or a relative path to a logo file in the inno_setup/logos folder.
     Default: "logos\logo_small.bmp"
 
+.PARAMETER ProductPublisherLink
+    Optional. The URL that represents the product publisher. Default: "https://adoptium.net"
+
+.PARAMETER ProductSupportLink
+    Optional. The URL for where customers can go to for support. Default: "https://adoptium.net/support"
+
+.PARAMETER ProductUpdateInfoLink
+    Optional. The URL for product update information. Default: "https://adoptium.net/temurin/releases"
+
 .PARAMETER OutputFileName
     Optional. The name of the output file. Note: Inno Setup will automatically add the '.exe' file extension
     Default:
@@ -89,6 +98,11 @@
     This is used to ensure that the PRODUCT_UPGRADE_CODE is consistent across builds.
     If this is not provided, a random PRODUCT_UPGRADE_CODE will be generated.
     Default: ""
+
+.PARAMETER TranslationFile
+    Optional. The path to the translation file .iss containing text translations for the installer's custom messages.
+    This can be a path relative to the `installer/inno_setup` directory, or this can be an absolute path.
+    Default: "translations\default.iss"
 
 .PARAMETER SigningCommand
     Optional. The command to sign the resulting EXE file. This is typically a command that
@@ -134,8 +148,13 @@
         -VendorBrandingLogo "logos\logo.ico" `
         -VendorBrandingDialog "logos\welcome-dialog.bmp" `
         -VendorBrandingSmallIcon "logos\logo_small.bmp" `
+        -ProductPublisherLink "https://adoptium.net" `
+        -ProductSupportLink "https://adoptium.net/support" `
+        -ProductUpdateInfoLink "https://adoptium.net/temurin/releases" `
         -OutputFileName "OpenJDK21-jdk_aarch64_windows_hotspot-21.0.8.0.9" `
         -License "licenses/license-GPLv2+CE.en-us.rtf" `
+        -UpgradeCodeSeed "MySecretSeedCode(SameAsWix)" `
+        -TranslationFile "translations/default.iss" `
         # Additional Optional Inputs: Omitting these inputs will cause their associated process to be skipped
         -SigningCommand "signtool.exe sign /f C:\path\to\cert"
 
@@ -223,6 +242,9 @@ param (
     [string]$UpgradeCodeSeed = "",
 
     [Parameter(Mandatory = $false)]
+    [string]$TranslationFile = "translations\default.iss",
+
+    [Parameter(Mandatory = $false)]
     [string]$SigningCommand = ""
 )
 
@@ -306,7 +328,9 @@ if (![string]::IsNullOrEmpty($SigningCommand)) {
 # /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
 $AppId = "{" + "${PRODUCT_UPGRADE_CODE}"
 
+# For info on CLI options: https://jrsoftware.org/ishelp/index.php?topic=isppcc
 & "$INNO_SETUP_PATH" $ExtraArgs `
+    /J$TranslationFile `
     /DAppName="$AppName" `
     /DVendor="$Vendor" `
     /DProductCategory="$ProductCategory" `
