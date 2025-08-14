@@ -37,6 +37,7 @@ ChangesEnvironment=yes
 ;; App info
 AppId={#AppId}
 AppName={#AppName}
+AppVerName={#AppName}
 AppVersion={#ExeProductVersion}
 AppPublisher={#Vendor}
 AppPublisherURL={#AppPublisherURL}
