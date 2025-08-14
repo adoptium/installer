@@ -896,7 +896,7 @@ stage('Publish Packages') {
                 echo "Preparing For Debian Upload"
                 def DebFileName = ''
                 def DebTarget = ''
-                // Creates list like deb.distribution=stretch;deb.distribution=buster;
+                // Creates list like deb.distribution=stretch;deb.distribution=trixie;
                 deb_distros.each { deb_version ->
                 distro_list += "deb.distribution=${deb_version};"
                 }

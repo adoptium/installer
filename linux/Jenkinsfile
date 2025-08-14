@@ -541,7 +541,7 @@ def uploadDebArtifacts(String buildArch, String Version) {
     ]
     def distro_list = ''
     deb_versions.each { deb_version ->
-        // Creates list like deb.distribution=stretch;deb.distribution=buster;
+        // Creates list like deb.distribution=stretch;deb.distribution=trixie;
         distro_list += "deb.distribution=${deb_version};"
     }
 
