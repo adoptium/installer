@@ -5,31 +5,9 @@
 ;  Modify this file to customize the installer behavior and options.
 ;------------------------------------------------------------------------------
 
-#define AppName "<APPNAME>"
-#define Vendor "<VENDOR>"
-#define VendorBranding "<VENDOR_BRANDING>"
-#define ProductCategory "<PRODUCT_CATEGORY>"
-#define JVM "<JVM>"
-#define ProductMajorVersion "<PRODUCT_MAJOR_VERSION>"
-#define ProductMinorVersion "<PRODUCT_MINOR_VERSION>"
-#define ProductMaintenanceVersion "<PRODUCT_MAINTENANCE_VERSION>"
-#define ProductPatchVersion "<PRODUCT_PATCH_VERSION>"
-#define ProductBuildNumber "<PRODUCT_BUILD_NUMBER>"
-#define ExeProductVersion "<EXE_PRODUCT_VERSION>"
-#define OutputExeName "<OUTPUT_EXE_NAME>"
-#define AppURL "<APP_URL>"
-#define VendorBrandingLogo "<VENDOR_BRANDING_LOGO>"
-#define VendorBrandingDialog "<VENDOR_BRANDING_DIALOG>"
-#define VendorBrandingSmallIcon "<VENDOR_BRANDING_SMALL_ICON>"
-#define LicenseFile "<LICENSE_FILE>"
-; Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-#define AppId "{<PRODUCT_UPGRADE_CODE>"
-
 ; Define useful variables based off inputs
 #define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
 
-; Note: this SourceDir is the directory that all relative paths are based off of
-#define SourceDir "<MAIN_DIR>"
 #define OutputDir "output"
 #define IniFile '{app}\install_tasks.ini'
 
@@ -44,6 +22,7 @@
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=setupsection
 
 ;; Inno settings
+SignTool=signCli
 Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
@@ -108,7 +87,8 @@ Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           
 
 [Files]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=filessection
-Source: "<SOURCE_FILES>\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+; Source: "<SOURCE_FILES>\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
+Source: "{#SourceFiles}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
 [InstallDelete]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=installdeletesection
