@@ -429,6 +429,7 @@ For Debian based distributions a similar process is required, firstly add the di
             "trixie", // Debian/13
             "bookworm", // Debian/12
             "bullseye", // Debian/11
+            "buster",   // Debian/10
             "oracular", // Ubuntu/24.10 (STS)
             "noble",    // Ubuntu/24.04 (LTS)
             "jammy",    // Ubuntu/22.04 (LTS)
@@ -487,7 +488,7 @@ Simply add or remove the supported distributions to the <b>debVersionList</b> li
 - name: Upload deb file to Artifactory
         if: steps.check-deb.outputs.file_exists == 'false'
         run: |
-          debVersionList=("bookworm" "bullseye" "oracular" "jammy" "focal" "bionic")
+          debVersionList=("bookworm" "bullseye" "buster" "oracular" "jammy" "focal" "bionic")
           for debVersion in "${debVersionList[@]}"; do
             distroList+="deb.distribution=${debVersion};"
           done
@@ -507,6 +508,7 @@ def deb_versions = [
 		"trixie",   // Debian/13
 		"bookworm", // Debian/12
 		"bullseye", // Debian/11
+    "buster",   // Debian/10
 		"oracular"  // Ubuntu/24.10 (STS)
 		"noble",    // Ubuntu/24.04 (LTS)
 		"jammy",    // Ubuntu/22.04 (LTS)
