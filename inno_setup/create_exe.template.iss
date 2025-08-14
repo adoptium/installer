@@ -11,9 +11,7 @@
 #define OutputDir "output"
 #define IniFile '{app}\install_tasks.ini'
 
-
-; Include external files after definitions so those definitions can be used in the included files
-#include "translations\default.iss"
+; Include code helper scripts
 #include "inno_scripts\install_handler.iss"
 #include "inno_scripts\uninstall_handler.iss"
 #include "inno_scripts\boolean_checks.iss"
@@ -88,7 +86,6 @@ Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           
 
 [Files]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=filessection
-; Source: "<SOURCE_FILES>\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 Source: "{#SourceFiles}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs sortfilesbyextension sortfilesbyname
 
 [InstallDelete]
