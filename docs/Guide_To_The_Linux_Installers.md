@@ -387,6 +387,7 @@ The versions of each specific distribution supported can be viewed can be found 
 <details>
 <summary>Table Of Currently Supported Versions As Of 05/2024 </summary>
 Supported Linux Distros:
+
 Distribution Type| Supported Versions
 ----------|---------
 Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Buster (Debian 10)</br> Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 24.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
