@@ -246,6 +246,11 @@ $OutputFileName = SetDefaultIfEmpty `
     -InputValue $OutputFileName `
     -DefaultValue "OpenJDK${ProductMajorVersion}-${ProductCategory}_${Arch}_windows_${JVM}-${VersionMajorToMaintenance}.${ProductPatchVersion}.${ProductBuildNumber}"
 
+## If $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
+$INNO_SETUP_PATH = SetDefaultIfEmpty `
+    -InputValue $env:INNO_SETUP_PATH `
+    -DefaultValue "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
+
 # Clean the src, workspace, and output folders
 $srcFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupRootDir -ChildPath "src")
 $workspaceFolder = Clear-TargetFolder -TargetFolder (Join-Path -Path $InnoSetupRootDir -ChildPath "workspace")
@@ -260,9 +265,6 @@ if ($ZipFileUrl) {
 Write-Host "Using ZipFilePath: $ZipFilePath"
 UnzipFile -ZipFilePath $ZipFilePath -DestinationPath $srcFolder
 $unzippedFolder = (Get-ChildItem -Path $srcFolder -Directory | Select-Object -First 1).FullName
-
-$exeTemplate = Join-Path -Path $InnoSetupRootDir -ChildPath "templates\create_exe.template.iss"
-$content = Get-Content -Path $exeTemplate
 
 if (-not $UpgradeCodeSeed) {
     # If no UpgradeCodeSeed is given, generate a new PRODUCT_UPGRADE_CODE (random GUID, not upgradable)
@@ -279,57 +281,42 @@ if (-not $UpgradeCodeSeed) {
     Write-Host "Constant PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
 }
 
-# Replace all instances of placeholders with the provided values
-$updatedContent = $content `
-    -replace "<APPNAME>", $AppName `
-    -replace "<VENDOR>", $Vendor `
-    -replace "<VENDOR_BRANDING>", $VendorBranding `
-    -replace "<PRODUCT_CATEGORY>", $ProductCategory `
-    -replace "<JVM>", $JVM `
-    -replace "<PRODUCT_MAJOR_VERSION>", $ProductMajorVersion `
-    -replace "<PRODUCT_MINOR_VERSION>", $ProductMinorVersion `
-    -replace "<PRODUCT_MAINTENANCE_VERSION>", $ProductMaintenanceVersion `
-    -replace "<PRODUCT_PATCH_VERSION>", $ProductPatchVersion `
-    -replace "<PRODUCT_BUILD_NUMBER>", $ProductBuildNumber `
-    -replace "<EXE_PRODUCT_VERSION>", $ExeProductVersion `
-    -replace "<OUTPUT_EXE_NAME>", $OutputFileName `
-    -replace "<APP_URL>", "https://adoptium.net/" `
-    -replace "<VENDOR_BRANDING_LOGO>", $VendorBrandingLogo `
-    -replace "<VENDOR_BRANDING_DIALOG>", $VendorBrandingDialog `
-    -replace "<VENDOR_BRANDING_SMALL_ICON>", $VendorBrandingSmallIcon `
-    -replace "<LICENSE_FILE>", $License `
-    -replace "<PRODUCT_UPGRADE_CODE>", $PRODUCT_UPGRADE_CODE `
-    -replace "<MAIN_DIR>", $InnoSetupRootDir `
-    -replace "<SOURCE_FILES>", $unzippedFolder
-
-# Write the updated content to the new create_exe.iss file
-$exeIssPath = Join-Path -Path $InnoSetupRootDir -ChildPath "create_exe.iss"
-Set-Content -Path $exeIssPath -Value $updatedContent
-Write-Host "create_exe.iss created at '$exeIssPath'"
-
-# If $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
-if ([string]::IsNullOrEmpty($env:INNO_SETUP_PATH)) {
-    $INNO_SETUP_PATH = "C:\Program Files (x86)\Inno Setup 6\ISCC.exe"
-    Write-Host "env:INNO_SETUP_PATH not set. Defaulting to '$INNO_SETUP_PATH'"
-} else {
-    $INNO_SETUP_PATH = $env:INNO_SETUP_PATH
-}
+# $exeIssPath = Join-Path -Path $InnoSetupRootDir -ChildPath "create_exe.template.iss"
 
 # Create .exe file based on create_exe.iss. Sign it only if $SigningCommand is not empty or null
 # See the following link for more info on iscc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
 if (![string]::IsNullOrEmpty($SigningCommand)) {
     Write-Host "Executing Inno Setup with signing."
-    & "$INNO_SETUP_PATH" `
-        /S $SigningCommand `
-        $exeIssPath `
+    $ExtraArgs = "/SsignCli=$SigningCommand"
+    # $ExtraArgs = "/SsignCli=$SigningCommand" + ' /DSignToolName="signCli"'
 } else {
     Write-Host "Executing Inno Setup without signing."
-    & "$INNO_SETUP_PATH" $exeIssPath
+    $ExtraArgs = '/SsignCli=$f'
 }
+# /DAppURL #################################
+# /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
+& "$INNO_SETUP_PATH" $ExtraArgs `
+    /DAppName="$AppName" `
+    /DVendor="$Vendor" `
+    /DVendorBranding="$VendorBranding" `
+    /DProductCategory="$ProductCategory" `
+    /DJVM="$JVM" `
+    /DProductMajorVersion="$ProductMajorVersion" `
+    /DProductMinorVersion="$ProductMinorVersion" `
+    /DProductMaintenanceVersion="$ProductMaintenanceVersion" `
+    /DProductPatchVersion="$ProductPatchVersion" `
+    /DProductBuildNumber="$ProductBuildNumber" `
+    /DExeProductVersion="$ExeProductVersion" `
+    /DAppURL="$AppURL" `
+    /DOutputExeName="$OutputFileName" `
+    /DVendorBrandingLogo="$VendorBrandingLogo" `
+    /DVendorBrandingDialog="$VendorBrandingDialog" `
+    /DVendorBrandingSmallIcon="$VendorBrandingSmallIcon" `
+    /DLicenseFile="$License" `
+    /DAppId="{${PRODUCT_UPGRADE_CODE}" `
+    /DSourceFiles="$unzippedFolder" `
+    "${InnoSetupRootDir}\create_exe.template.iss"
 
-CheckForError -ErrorMessage "Error: iscc.exe failed to create .exe file."
+CheckForError -ErrorMessage "ISCC.exe failed to create .exe file."
 
 Write-Host "EXE file created successfully in '$outputFolder'"
-
-Move-Item -Path $exeIssPath -Destination $workspaceFolder -Force
-Write-Host "Moved create_exe.iss to '$workspaceFolder'"

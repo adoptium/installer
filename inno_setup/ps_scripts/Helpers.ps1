@@ -87,7 +87,7 @@ function CheckForError {
         [string]$ErrorMessage
     )
     if ($LASTEXITCODE -ne 0) {
-        throw "Error: $ErrorMessage"
+        throw "Last exit code: $LASTEXITCODE. Error: $ErrorMessage"
     }
 }
 
