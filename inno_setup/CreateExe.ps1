@@ -302,8 +302,10 @@ if (![string]::IsNullOrEmpty($SigningCommand)) {
     Write-Host "Executing Inno Setup without signing."
     $ExtraArgs = '/SsignCli=$f'
 }
-# /DAppURL #################################
+
 # /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
+$AppId = "{" + "${PRODUCT_UPGRADE_CODE}"
+
 & "$INNO_SETUP_PATH" $ExtraArgs `
     /DAppName="$AppName" `
     /DVendor="$Vendor" `
@@ -323,7 +325,7 @@ if (![string]::IsNullOrEmpty($SigningCommand)) {
     /DVendorBrandingDialog="$VendorBrandingDialog" `
     /DVendorBrandingSmallIcon="$VendorBrandingSmallIcon" `
     /DLicenseFile="$License" `
-    /DAppId="{${PRODUCT_UPGRADE_CODE}" `
+    /DAppId="$AppId" `
     /DSourceFiles="$unzippedFolder" `
     "${InnoSetupRootDir}\create_exe.template.iss"
 
