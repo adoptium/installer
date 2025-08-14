@@ -140,6 +140,7 @@ function GenerateGuidFromString {
     param(
         [string] $SeedString = ""
     )
+    # This is the same function used for the WIX upgrade code generation
     $md5 = new-object -TypeName System.Security.Cryptography.MD5CryptoServiceProvider
     $utf8 = new-object -TypeName System.Text.UTF8Encoding
     $hash = [System.BitConverter]::ToString($md5.ComputeHash($utf8.GetBytes($SeedString))) -replace "-", ""
