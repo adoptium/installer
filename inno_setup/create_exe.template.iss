@@ -39,13 +39,13 @@ AppId={#AppId}
 AppName={#AppName}
 AppVersion={#ExeProductVersion}
 AppPublisher={#Vendor}
-AppPublisherURL={#AppURL}
-AppSupportURL={#AppURL}
-AppUpdatesURL={#AppURL}
+AppPublisherURL={#AppPublisherURL}
+AppSupportURL={#AppSupportURL}
+AppUpdatesURL={#AppUpdatesURL}
 
 ;; Dirs and logos
 OutputDir={#OutputDir}
-OutputBaseFilename={#OutputExeName}
+OutputBaseFilename={#OutputFileName}
 ; SourceDir={#SourceDir}
 ; Setting default installDir based on the install mode
 DefaultDirName={code:GetDefaultDir}

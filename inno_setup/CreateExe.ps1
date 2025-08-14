@@ -205,6 +205,15 @@ param (
     [string]$VendorBrandingSmallIcon = "logos\logo_small.bmp",
 
     [Parameter(Mandatory = $false)]
+    [string]$ProductPublisherLink = "https://adoptium.net",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ProductSupportLink = "https://adoptium.net/support",
+
+    [Parameter(Mandatory = $false)]
+    [string]$ProductUpdateInfoLink = "https://adoptium.net/temurin/releases",
+
+    [Parameter(Mandatory = $false)]
     [string]$OutputFileName,
 
     [Parameter(Mandatory = $false)]
@@ -298,7 +307,6 @@ if (![string]::IsNullOrEmpty($SigningCommand)) {
 & "$INNO_SETUP_PATH" $ExtraArgs `
     /DAppName="$AppName" `
     /DVendor="$Vendor" `
-    /DVendorBranding="$VendorBranding" `
     /DProductCategory="$ProductCategory" `
     /DJVM="$JVM" `
     /DProductMajorVersion="$ProductMajorVersion" `
@@ -307,8 +315,10 @@ if (![string]::IsNullOrEmpty($SigningCommand)) {
     /DProductPatchVersion="$ProductPatchVersion" `
     /DProductBuildNumber="$ProductBuildNumber" `
     /DExeProductVersion="$ExeProductVersion" `
-    /DAppURL="$AppURL" `
-    /DOutputExeName="$OutputFileName" `
+    /DAppPublisherURL="$ProductPublisherLink" `
+    /DAppSupportURL="$ProductSupportLink" `
+    /DAppUpdatesURL="$ProductUpdateInfoLink" `
+    /DOutputFileName="$OutputFileName" `
     /DVendorBrandingLogo="$VendorBrandingLogo" `
     /DVendorBrandingDialog="$VendorBrandingDialog" `
     /DVendorBrandingSmallIcon="$VendorBrandingSmallIcon" `
