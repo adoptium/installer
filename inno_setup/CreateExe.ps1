@@ -104,6 +104,12 @@
     This can be a path relative to the `installer/inno_setup` directory, or this can be an absolute path.
     Default: "translations\default.iss"
 
+.PARAMETER IncludeUnofficialTranslations
+    Optional. Set this flag to support unofficial Inno Setup translations like Chinese.
+    ## Note: Here, unofficial means that there are a few default messages that do not
+    ##       have translations (from English) supported by Inno Setup yet.
+    Default: "false"
+
 .PARAMETER SigningCommand
     Optional. The command to sign the resulting EXE file. This is typically a command that
     uses signtool.exe to sign the EXE file. If this is not provided, the EXE will not be signed.
@@ -245,6 +251,9 @@ param (
     [string]$TranslationFile = "translations\default.iss",
 
     [Parameter(Mandatory = $false)]
+    [string]$IncludeUnofficialTranslations = "false",
+
+    [Parameter(Mandatory = $false)]
     [string]$SigningCommand = ""
 )
 
@@ -312,8 +321,6 @@ if (-not $UpgradeCodeSeed) {
     Write-Host "Constant PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
 }
 
-# $exeIssPath = Join-Path -Path $InnoSetupRootDir -ChildPath "create_exe.template.iss"
-
 # Create .exe file based on create_exe.iss. Sign it only if $SigningCommand is not empty or null
 # See the following link for more info on iscc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
 if (![string]::IsNullOrEmpty($SigningCommand)) {
@@ -323,6 +330,14 @@ if (![string]::IsNullOrEmpty($SigningCommand)) {
 } else {
     Write-Host "Executing Inno Setup without signing."
     $ExtraArgs = '/SsignCli=$f'
+}
+
+# Set this flag to support unofficial inno_setup translations like Chinese
+## Note: Here, unofficial means that there are a few default messages that do not
+##       have translations (from English) supported by Inno Setup yet
+if ($IncludeUnofficialTranslations -ne "false") {
+    Write-Host "Including unofficial translations."
+    $ExtraArgs += ' /DINCLUDE_UNOFFICIAL_TRANSLATIONS="true"'
 }
 
 # /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped

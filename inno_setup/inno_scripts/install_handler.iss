@@ -17,8 +17,9 @@ begin
   // Add metadata to the INI file only if TaskName is 'METADATA'
   if TaskName = 'METADATA' then
   begin
+    SetIniString('Metadata', 'Publisher', ExpandConstant('{#Vendor}'), TaskStateFile);
     SetIniString('Metadata', 'InstallDate', GetDateTimeString('yyyy/mm/dd hh:nn:ss', #0, #0), TaskStateFile);
-    SetIniString('Metadata', 'Version', '{#ExeProductVersion}', TaskStateFile);
+    SetIniString('Metadata', 'Version', ExpandConstant('{#ExeProductVersion}'), TaskStateFile);
   end
   // Create the INI file with task selections
   else if WizardIsTaskSelected(TaskName) then
