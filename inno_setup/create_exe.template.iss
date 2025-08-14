@@ -6,10 +6,9 @@
 ;------------------------------------------------------------------------------
 
 ; Define useful variables based off inputs
-#define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
-
 #define OutputDir "output"
 #define IniFile '{app}\install_tasks.ini'
+#define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
 
 ; Include code helper scripts
 #include "inno_scripts\install_handler.iss"
@@ -53,6 +52,7 @@ UsePreviousAppDir=no
 UninstallFilesDir={app}\uninstall
 LicenseFile={#LicenseFile}
 SetupIconFile={#VendorBrandingLogo}
+UninstallDisplayIcon={app}\uninstall\unins000.exe
 ; Add these lines to change the banner images
 WizardImageFile={#VendorBrandingDialog}
 WizardSmallImageFile={#VendorBrandingSmallIcon}
