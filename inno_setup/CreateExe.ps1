@@ -320,16 +320,20 @@ if (-not $UpgradeCodeSeed) {
     $PRODUCT_UPGRADE_CODE = GenerateGuidFromString -SeedString "${SOURCE_TEXT_GUID}-${UpgradeCodeSeed}"
     Write-Host "Constant PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
 }
+# /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
+$AppId = "{" + "${PRODUCT_UPGRADE_CODE}"
 
-# Create .exe file based on create_exe.iss. Sign it only if $SigningCommand is not empty or null
-# See the following link for more info on iscc.exe: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+# Sign only if $SigningCommand is not empty or null
+# See the following link for more info on Inno Setup signing: https://jrsoftware.org/ishelp/index.php?topic=setup_signtool
+# See here for info on /S flag format: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
 if (![string]::IsNullOrEmpty($SigningCommand)) {
     Write-Host "Executing Inno Setup with signing."
-    $ExtraArgs = "/SsignCli=$SigningCommand"
-    # $ExtraArgs = "/SsignCli=$SigningCommand" + ' /DSignToolName="signCli"'
+    $SigningArg = "/SsigningCommand=$SigningCommand"
+    $ExtraArgs = '/DsignFiles="true"' # set this flag to enable signing with above command
 } else {
     Write-Host "Executing Inno Setup without signing."
-    $ExtraArgs = '/SsignCli=$f'
+    $SigningArg = ""
+    $ExtraArgs = ""
 }
 
 # Set this flag to support unofficial inno_setup translations like Chinese
@@ -340,11 +344,10 @@ if ($IncludeUnofficialTranslations -ne "false") {
     $ExtraArgs += ' /DINCLUDE_UNOFFICIAL_TRANSLATIONS="true"'
 }
 
-# /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
-$AppId = "{" + "${PRODUCT_UPGRADE_CODE}"
-
 # For info on CLI options: https://jrsoftware.org/ishelp/index.php?topic=isppcc
-& "$INNO_SETUP_PATH" $ExtraArgs `
+# and https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+# Create .exe file based on create_exe.template.iss.
+& "$INNO_SETUP_PATH" $SigningArg `
     /J$TranslationFile `
     /DAppName="$AppName" `
     /DVendor="$Vendor" `
@@ -366,7 +369,7 @@ $AppId = "{" + "${PRODUCT_UPGRADE_CODE}"
     /DLicenseFile="$License" `
     /DAppId="$AppId" `
     /DSourceFiles="$unzippedFolder" `
-    "${InnoSetupRootDir}\create_exe.template.iss"
+    $ExtraArgs "${InnoSetupRootDir}\create_exe.template.iss"
 
 CheckForError -ErrorMessage "ISCC.exe failed to create .exe file."
 
