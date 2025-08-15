@@ -51,7 +51,7 @@ OutputBaseFilename={#OutputFileName}
 DefaultDirName={code:GetDefaultDir}
 ; Enable the user to select the installation directory every time
 UsePreviousAppDir=no
-UninstallFilesDir={app}\uninstall
+; UninstallFilesDir={app}\uninstall
 LicenseFile={#LicenseFile}
 SetupIconFile={#VendorBrandingLogo}
 UninstallDisplayIcon={uninstallexe}
