@@ -19,7 +19,9 @@
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=setupsection
 
 ;; Inno settings
-SignTool=signCli
+#ifdef signFiles
+SignTool=signingCommand
+#endif
 Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
@@ -52,7 +54,7 @@ UsePreviousAppDir=no
 UninstallFilesDir={app}\uninstall
 LicenseFile={#LicenseFile}
 SetupIconFile={#VendorBrandingLogo}
-UninstallDisplayIcon={app}\uninstall\unins000.exe
+UninstallDisplayIcon={uninstallexe}
 ; Add these lines to change the banner images
 WizardImageFile={#VendorBrandingDialog}
 WizardSmallImageFile={#VendorBrandingSmallIcon}
