@@ -168,7 +168,7 @@
     Ensure that you have downloaded Inno Setup (can be done through winget or directly from their website: https://jrsoftware.org/isdl.php). For more information, please see the #Dependencies section of the README.md file.
     If you do not have Inno Setup installed, you can install it using the following command:
         winget install --id JRSoftware.InnoSetup -e -s winget --scope <machine|user>
-    Or directly by modifying this link to the latest version:
+    Or directly download the installation exe by modifying this link to the latest version:
         https://files.jrsoftware.org/is/6/innosetup-#.#.#.exe
         Example: https://files.jrsoftware.org/is/6/innosetup-6.5.0.exe
     Afterwards, please set the following environment variable to the path of the Inno Setup executable (if the default, machine-scope path below is incorrect):
