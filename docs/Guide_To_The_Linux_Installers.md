@@ -45,7 +45,7 @@ Supported Linux Distros:
 Distribution Type| Supported Versions
 ----------|---------
 Apk (Alpine)| All supported version.
-Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Buster (Debian 10)</br> Oracular (Ubuntu 24.10)</br>Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 22.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
+Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Oracular (Ubuntu 24.10)</br>Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 22.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
 RPM (RHEL)| centos 7</br> rocky 8</br>RHEL7 , RHEL8 & RHEL9</br> Fedora 35, 36, 37, 38 ,39 , 40</br>Oracle Linux 7 & 8</br>Amazon Linux 2
 RPM(SUSE) | Opensuse 15.3</br>Opensuse 15.4</br>Opensuse 15.5</br>SLES 12</br>SLES15
 
@@ -387,9 +387,10 @@ The versions of each specific distribution supported can be viewed can be found 
 <details>
 <summary>Table Of Currently Supported Versions As Of 05/2024 </summary>
 Supported Linux Distros:
+
 Distribution Type| Supported Versions
 ----------|---------
-Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Buster (Debian 10)</br> Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 24.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
+Deb (Debian)| Trixie (Debian 13)<br>Bookworm (Debian 12)</br>Bullseye (Debian 11)<br>Noble (Ubuntu 24.04)</br>Jammy (Ubuntu 24.04)</br>Focal (Ubuntu 20.04)</br>Bionic (Ubuntu 18.04)
 RPM (RHEL)| centos 7</br> rocky 8</br>RHEL7 , RHEL8 & RHEL9</br> Fedora 35, 36, 37, 38 ,39 , 40</br>Oracle Linux 7 & 8</br>Amazon Linux 2
 RPM(SUSE) | Opensuse 15.3</br>Opensuse 15.4</br>Opensuse 15.5</br>SLES 12</br>SLES15
 </details></br>
@@ -447,7 +448,7 @@ In addition to the updates detailed above, it is also important to change the fo
 the following line should be changed :
 
 ```
-debVersionList="trixie bookworm bullseye buster oracular noble jammy focal bionic"
+debVersionList="trixie bookworm bullseye oracular noble jammy focal bionic"
 ```
 
 And similarly in the following two files
@@ -463,7 +464,6 @@ The array needs to be updated to add or remove distributions as necessary as sho
        	  Arguments.of("debian", "trixie"),   // Debian/13 (testing)
           Arguments.of("debian", "bookworm"), // Debian/12 (testing)
           Arguments.of("debian", "bullseye"), // Debian/11 (stable)
-          Arguments.of("debian", "buster"),   // Debian/10 (oldstable)
           Arguments.of("ubuntu", "oracular"), // Ubuntu/24.10 (STS)
           Arguments.of("ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
           Arguments.of("ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
@@ -563,7 +563,6 @@ linux/ca-certificates/debian/src/packageTest/java/org/adoptium/cacertificates/Ch
 		  "trixie", // Debian/13
 			"bookworm", // Debian/12
 			"bullseye", // Debian/11
-			"buster",   // Debian/10
 			"noble",    // Ubuntu/24.04 (LTS)
 			"jammy",    // Ubuntu/22.04 (LTS)
 			"focal",    // Ubuntu/20.04 (LTS)
@@ -580,7 +579,6 @@ linux/ca-certificates/debian/src/packageTest/java/org/adoptium/cacertificates/De
 	  Arguments.of("debian", "trixie"),   // Debian/13 (testing)
 		Arguments.of("debian", "bookworm"), // Debian/12 (testing)
 		Arguments.of("debian", "bullseye"), // Debian/11 (stable)
-		Arguments.of("debian", "buster"),   // Debian/10 (oldstable)
 		Arguments.of("ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
 		Arguments.of("ubuntu", "jammy"),    // Ubuntu/22.04 (LTS)
 		Arguments.of("ubuntu", "focal"),    // Ubuntu/20.04 (LTS)
