@@ -411,7 +411,7 @@ pipeline {
                     }
 
                     // Construct the Filename
-                    def filennameFinal =""
+                    def filenameFinal =""
                     def filenamePrefix = "Open"
                     def filenameSuffix = "tar.gz"
                     def filenameVersion = params.VERSION.toUpperCase() + "U"
@@ -988,10 +988,10 @@ post {
                 echo "FileName : ${ArchiveFileName}"
 
                 if (!params.SKIP_SRC) {
-                    build job: 'publish_linux_pkg_src', parameters: [
-                        string(name: 'TAG', value: params.TAG),
-                        string(name: 'FILENAME', value: ArchiveFileName)
-                    ]
+                  build job: 'publish_linux_pkg_src', parameters: [
+                      string(name: 'TAG', value: params.TAG),
+                      string(name: 'FILENAME', value: ArchiveFileName)
+                  ]
                 } else {
                   echo 'SKIP_SRC parameter is set, skipping publish.'
                 }
