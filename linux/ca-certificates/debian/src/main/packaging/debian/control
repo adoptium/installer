@@ -6,6 +6,7 @@ Build-Depends: debhelper (>= 11), lsb-release
 
 Package: adoptium-ca-certificates
 Architecture: all
+Multi-Arch: foreign
 Depends: ca-certificates, p11-kit
 Description: CA certificates for OpenJDK, Adoptium and compatible runtimes
  Provides a Java keystore with CA certificates for OpenJDK, Eclipse Adoptium
