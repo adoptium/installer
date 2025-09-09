@@ -162,6 +162,7 @@
         -UpgradeCodeSeed "MySecretSeedCode(SameAsWix)" `
         -TranslationFile "translations/default.iss" `
         # Additional Optional Inputs: Omitting these inputs will cause their associated process to be skipped
+        -IncludeUnofficialTranslations "true" `
         -SigningCommand "signtool.exe sign /f C:\path\to\cert"
 
 .NOTES
