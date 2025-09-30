@@ -1,4 +1,4 @@
-%global upstream_version 25+34
+%global upstream_version 25+36
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
@@ -207,5 +207,5 @@ fi
 %{prefix}
 
 %changelog
-* Tue Aug 19 2025 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.0-1
-- Microsoft 25.0.0+34 initial release.
+* Tue Sep 16 2025 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.0-1
+- Microsoft 25.0.0+36 initial release.
