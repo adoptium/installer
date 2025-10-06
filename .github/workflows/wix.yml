@@ -91,6 +91,7 @@ jobs:
         run: call Build.OpenJDK_generic.cmd
         working-directory: wix
         env:
+          WIN_SDK_FULL_VERSION: "10.0.26100.0"
           PRODUCT_CATEGORY: jdk
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
@@ -100,6 +101,7 @@ jobs:
         run: call Build.OpenJDK_generic.cmd
         working-directory: wix
         env:
+          WIN_SDK_FULL_VERSION: "10.0.26100.0"
           PRODUCT_CATEGORY: jre
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
