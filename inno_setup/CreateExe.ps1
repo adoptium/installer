@@ -261,6 +261,9 @@ param (
 # Get the path to Inno Setup folder (parent directory of this script)
 $InnoSetupRootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+# Validate Architecture input and get ArchitecturesAllowed value for template input
+$ArchitecturesAllowed = GetArchitectureAllowedTemplateInput -Arch $Arch
+
 # Find and source the Helpers.ps1 script located in the scripts folder to get access to helper functions
 $HelpersScriptPath = Join-Path -Path $InnoSetupRootDir -ChildPath "ps_scripts\Helpers.ps1"
 if (-not (Test-Path -Path $HelpersScriptPath)) {
@@ -350,6 +353,7 @@ if ($IncludeUnofficialTranslations -ne "false") {
 # Create .exe file based on create_exe.template.iss.
 & "$INNO_SETUP_PATH" $SigningArg `
     /J$TranslationFile `
+    /DArchitecturesAllowed="$ArchitecturesAllowed" `
     /DAppName="$AppName" `
     /DVendor="$Vendor" `
     /DProductCategory="$ProductCategory" `
