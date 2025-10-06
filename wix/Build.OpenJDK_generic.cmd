@@ -41,9 +41,9 @@ IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
 IF NOT DEFINED WIX_VERSION SET WIX_VERSION=6.0.0
 
 REM default windows_SDK version
-REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.22621.0]\!PLATFORM!"
+REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.20348.0]\!PLATFORM!"
 IF NOT DEFINED WIN_SDK_MAJOR_VERSION SET WIN_SDK_MAJOR_VERSION=10
-IF NOT DEFINED WIN_SDK_FULL_VERSION SET WIN_SDK_FULL_VERSION=10.0.22621.0
+IF NOT DEFINED WIN_SDK_FULL_VERSION SET WIN_SDK_FULL_VERSION=10.0.20348.0
 
 powershell -ExecutionPolicy Bypass -File "%~dp0\helpers\Validate-Input.ps1" ^
     -toValidate '%ARCH%' ^
