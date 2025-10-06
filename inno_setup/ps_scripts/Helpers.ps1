@@ -27,6 +27,21 @@ function ValidateZipFileInput {
     }
 }
 
+function GetArchitectureAllowedTemplateInput {
+    param (
+        [string]$Arch
+    )
+    if ($Arch -eq "x86" -or $Arch -like "*32*" -or $Arch -eq "all") {
+        return "x86compatible"
+    } elseif ($Arch -eq "x64") {
+        return "x64os"
+    } elseif ($Arch -like "arm*" -or $Arch -eq "aarch64") {
+        return "arm64"
+    } else {
+        throw "Error: Unsupported architecture '$Arch'. Supported architectures are: x86, x86_32, x64, arm, arm64, aarch64, or all."
+    }
+}
+
 function SetDefaultIfEmpty {
     param (
         [string]$InputValue,
