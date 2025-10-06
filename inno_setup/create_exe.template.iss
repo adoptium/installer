@@ -26,8 +26,11 @@ Uninstallable=yes
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+; Specify the architectures that the installer supports (e.g., x86compatible, x64os, x64compatible,arm64, etc.)
+; See this link to learn more: https://jrsoftware.org/ishelp/index.php?topic=archidentifiers
+ArchitecturesAllowed={#ArchitecturesAllowed}
 ; Ensure correct install dirs by setting the architectures that are 64-bit
-ArchitecturesInstallIn64BitMode=x64compatible arm64
+ArchitecturesInstallIn64BitMode=win64
 ; Notify Windows Explorer that the environment variables have changed
 ChangesEnvironment=yes
 ; Debug
