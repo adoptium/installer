@@ -70,8 +70,8 @@ DirExistsWarning=auto
 DisableProgramGroupPage=yes
 DisableWelcomePage=no
 UsedUserAreasWarning=no
-; Enable the user to select the installation language
-ShowLanguageDialog=yes
+; Enable the user to select the installation language if one is not detected
+ShowLanguageDialog=auto
 
 ;; Privileges settings
 ; Add these lines to enable installation scope selection
