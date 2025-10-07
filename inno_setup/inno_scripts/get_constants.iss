@@ -26,7 +26,7 @@ function GetDefaultDir(Param: string): string;
 begin
   if IsAdminInstallMode then
     // Here {commonpf}='C:\Program Files' for x64, aarch64, and x86 Archs since
-    //  'ArchitecturesInstallIn64BitMode=x64compatible arm64' was set in [Setup]
+    //  'ArchitecturesInstallIn64BitMode=win64' was set in [Setup]
     Result := ExpandConstant('{commonpf}\{#Vendor}\{#ProductFolder}')
   else
     // {userpf}='C:\Users\<USERNAME>\AppData\Local\Programs'
