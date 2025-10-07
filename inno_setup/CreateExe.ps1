@@ -261,9 +261,6 @@ param (
 # Get the path to Inno Setup folder (parent directory of this script)
 $InnoSetupRootDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
-# Validate Architecture input and get ArchitecturesAllowed value for template input
-$ArchitecturesAllowed = GetArchitectureAllowedTemplateInput -Arch $Arch
-
 # Find and source the Helpers.ps1 script located in the scripts folder to get access to helper functions
 $HelpersScriptPath = Join-Path -Path $InnoSetupRootDir -ChildPath "ps_scripts\Helpers.ps1"
 if (-not (Test-Path -Path $HelpersScriptPath)) {
@@ -273,6 +270,9 @@ if (-not (Test-Path -Path $HelpersScriptPath)) {
 # Validate the inputs
 ## Ensure that either a local zip file path or a URL is provided, but not both
 ValidateZipFileInput -ZipFilePath $ZipFilePath -ZipFileUrl $ZipFileUrl
+
+# Validate Architecture input and get ArchitecturesAllowed value for template input
+$ArchitecturesAllowed = GetArchitectureAllowedTemplateInput -Arch $Arch
 
 # Set values needed in file
 $CapitalizedJVM = CapitalizeString `
