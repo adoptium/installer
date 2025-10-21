@@ -18,6 +18,10 @@ override_dh_auto_clean:
 override_dh_auto_test:
 override_dh_auto_build:
 override_dh_strip:
+# Fix for https://github.com/adoptium/installer/issues/1274
+# Don't let dh_strip_nondeterminism rewrite JDK jars/jmods used by jlink
+override_dh_strip_nondeterminism:
+	dh_strip_nondeterminism -Xjrt-fs.jar -Xjmods -X$(jvm_home)
 override_dh_auto_install:
 	# Download and verify checksum of JRE
 	wget --progress=dot:mega -O jre.tar.gz $($(DEB_HOST_ARCH)_tarball_url)
