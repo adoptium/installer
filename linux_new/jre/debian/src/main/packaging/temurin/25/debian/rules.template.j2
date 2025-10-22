@@ -19,7 +19,7 @@ override_dh_auto_test:
 override_dh_auto_build:
 override_dh_strip:
 # Fix for https://github.com/adoptium/installer/issues/1274
-# Don't let dh_strip_nondeterminism rewrite JDK jars/jmods used by jlink
+# Don't let dh_strip_nondeterminism rewrite JDK jars used by jlink with JEP 493 (e.g. ct.sym or jrt-fs.jar)
 override_dh_strip_nondeterminism:
 	dh_strip_nondeterminism -X$(jvm_home)
 override_dh_auto_install:
