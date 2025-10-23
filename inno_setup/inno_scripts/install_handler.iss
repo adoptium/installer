@@ -1,6 +1,7 @@
 #ifndef INSTALL_HANDLER_INCLUDED
 #define INSTALL_HANDLER_INCLUDED
 
+#include "helpers.iss"
 #include "get_constants.iss"
 #include "boolean_checks.iss"
 
@@ -49,73 +50,6 @@ begin
 
     // Write back to registry
     RegWriteStringValue(RegRoot, EnvRegKey, 'PATH', UserPath);
-  end;
-end;
-
-// Remove ampersand characters from a string (used to remove mnemonics from messages)
-function RemoveAmpersand(InputString: string): string;
-var
-  i: Integer;
-begin
-  Result := '';
-  for i := 1 to Length(InputString) do
-  begin
-    if InputString[i] <> '&' then
-      Result := Result + InputString[i];
-  end;
-end;
-
-// Compare two version strings in X.X.X.X format
-// Returns: -1 if Version1 < Version2, 0 if equal, 1 if Version1 > Version2
-function CompareVersions(Version1: string; Version2: string): Integer;
-var
-  V1Parts, V2Parts: TStringList;
-  i, MaxLen, Part1, Part2: Integer;
-begin
-  Result := 0;
-  V1Parts := TStringList.Create;
-  V2Parts := TStringList.Create;
-  try
-    // Split versions by '.'
-    V1Parts.Delimiter := '.';
-    V1Parts.DelimitedText := Version1;
-    V2Parts.Delimiter := '.';
-    V2Parts.DelimitedText := Version2;
-
-    // We do not have a Max() function available to us, so we do it manually
-    if V1Parts.Count > V2Parts.Count then
-      MaxLen := V1Parts.Count
-    else
-      MaxLen := V2Parts.Count;
-
-    // Compare each part
-    for i := 0 to MaxLen do
-    begin
-      // Get the part as integer (default to 0 if not present)
-      if i < V1Parts.Count then
-        Part1 := StrToIntDef(V1Parts[i], 0)
-      else
-        Part1 := 0;
-
-      if i < V2Parts.Count then
-        Part2 := StrToIntDef(V2Parts[i], 0)
-      else
-        Part2 := 0;
-
-      if Part1 < Part2 then
-      begin
-        Result := -1;
-        Exit;
-      end
-      else if Part1 > Part2 then
-      begin
-        Result := 1;
-        Exit;
-      end;
-    end;
-  finally
-    V1Parts.Free;
-    V2Parts.Free;
   end;
 end;
 
@@ -244,6 +178,7 @@ begin
       Log('Previous version display name: ' + DisplayName);
 
       // Compare versions and exit if existing version is higher
+      // Note: see helpers.iss for CompareVersions() function
       VersionComparison := CompareVersions(DisplayVersion, ExpandConstant('{#ExeProductVersion}'));
       if VersionComparison > 0 then
       begin
@@ -264,6 +199,7 @@ begin
         //    The file already exists. Overwrite the existing file "{APP_NAME}"?
         // Example:
         //    The file already exists. Overwrite the existing file "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)"?
+        // Note: see helpers.iss for RemoveAmpersand() function
         VersionAlreadyInstalledString := SetupMessage(msgFileExists2) + ' ' + RemoveAmpersand(SetupMessage(msgFileExistsOverwriteExisting)) + ' "' + ExpandConstant('{#AppName}') + '"?';
         // For info on MsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_msgbox
         if MsgBox(VersionAlreadyInstalledString, mbInformation, MB_YESNO) = IDYES then
