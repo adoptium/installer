@@ -49,7 +49,6 @@ AppUpdatesURL={#AppUpdatesURL}
 ;; Dirs and logos
 OutputDir={#OutputDir}
 OutputBaseFilename={#OutputFileName}
-; SourceDir={#SourceDir}
 ; Setting default installDir based on the install mode
 DefaultDirName={code:GetDefaultDir}
 ; Enable the user to select the installation directory every time
@@ -82,7 +81,7 @@ UsePreviousPrivileges=no
 
 [Tasks]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=taskssection
-Name: "pathMod";      Description: "{cm:PathModDesc}";                          GroupDescription: "{cm:PathModTitle}";  
+Name: "pathMod";      Description: "{cm:PathModDesc}";                          GroupDescription: "{cm:PathModTitle}";
 ; AssocFileExtension is an Inno Setup provided translation provides this message into every language: &Associate %1 with the %2 file extension
 Name: "jarfileMod";   Description: "{cm:AssocFileExtension,{#AppName},.jar}";   GroupDescription: "{cm:FileAssocTitle}";
 Name: "javaHomeMod";  Description: "{cm:JavaHomeModDesc}";                      GroupDescription: "{cm:JavaHomeModTitle}";  Flags: unchecked;
@@ -108,7 +107,8 @@ Type: files; Name: "{app}\install_tasks.ini"
 ; All registry key info translated from current wix/msi installer scripts
 
 ; HKLM = HKEY_LOCAL_MACHINE
-; HKA:
+; HKCU = HKEY_CURRENT_USER
+; HKA changes based on install mode:
 ;   On per machine install = HKLM = HKEY_LOCAL_MACHINE
 ;   On per user install    = HKCU = HKEY_CURRENT_USER
 
@@ -138,7 +138,7 @@ Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{
     Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('pathMod');
 
 ; jarfileMod: Add .jar file association keys if the user requests them
-; Note: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jar\OpenWithProgids is 
+; Note: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jar\OpenWithProgids is
 ;       automatically created by Windows when running jar file for the first time
 Root: HKA; Subkey: "SOFTWARE\Classes\.jar"; \
     ValueType: string; ValueName: ""; ValueData: "{#Vendor}.jarfile"; \
