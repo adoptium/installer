@@ -13,7 +13,7 @@ var
 begin
   // Store each task selection state in an INI file during installation
   TaskStateFile := ExpandConstant('{#IniFile}');
-  
+
   // Add metadata to the INI file only if TaskName is 'METADATA'
   if TaskName = 'METADATA' then
   begin
@@ -36,7 +36,7 @@ begin
   // Read current PATH
   if not RegQueryStringValue(RegRoot, EnvRegKey, 'PATH', UserPath) then
     UserPath := '';
-  
+
   // Check if our path entry is already in PATH (returns 0 if not found)
   if Pos(AppBinPath, UserPath) = 0 then
   begin
@@ -81,7 +81,7 @@ begin
   begin
     CurrentRoot := RegistryRoots[i];
     RootName := RootNames[i];
-    
+
     if RegQueryStringValue(CurrentRoot, UninstallKey, 'UninstallString', UninstallString) then
     begin
       if RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayName', DisplayName) then
@@ -90,7 +90,7 @@ begin
       end;
       Log('Uninstall string (with quotes): ' + UninstallString);
       Log('Uninstall string (quotes removed): ' + RemoveQuotes(UninstallString));
-      
+
       // Run the uninstaller silently (the Uninstall string has quotes that we need to remove)
       if Exec(RemoveQuotes(UninstallString), '/VERYSILENT /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
       begin
@@ -115,7 +115,6 @@ end;
 // For more info, see the CurStepChanged section in https://jrsoftware.org/ishelp/index.php?topic=scriptevents
 procedure CurStepChanged(CurStep: TSetupStep);
 begin
-  // Store task selections just before the actual installation starts
   if CurStep = ssInstall then
   begin
     // Uninstall previous version if it exists
@@ -129,7 +128,7 @@ begin
     StoreTaskSelections('javaHomeMod');
     StoreTaskSelections('javasoftMod');
     StoreTaskSelections('METADATA');
-    
+
     // Add {app}\bin to PATH only if the user requested it
     if WasTaskSelected('pathMod') then
       AddToPath(ExpandConstant('{app}\bin'), GetEnvironmentRegPath(), GetRegistryRoot());
