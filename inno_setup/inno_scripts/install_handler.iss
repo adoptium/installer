@@ -52,12 +52,25 @@ begin
   end;
 end;
 
+// Remove ampersand characters from a string (used to remove mnemonics from messages)
+function RemoveAmpersand(InputString: string): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 1 to Length(InputString) do
+  begin
+    if InputString[i] <> '&' then
+      Result := Result + InputString[i];
+  end;
+end;
+
 // Compare two version strings in X.X.X.X format
 // Returns: -1 if Version1 < Version2, 0 if equal, 1 if Version1 > Version2
-function CompareVersions(Version1: string, Version2: string): Integer;
+function CompareVersions(Version1: string; Version2: string): Integer;
 var
   V1Parts, V2Parts: TStringList;
-  i, Part1, Part2: Integer;
+  i, MaxLen, Part1, Part2: Integer;
 begin
   Result := 0;
   V1Parts := TStringList.Create;
@@ -69,8 +82,14 @@ begin
     V2Parts.Delimiter := '.';
     V2Parts.DelimitedText := Version2;
 
+    // We do not have a Max() function available to us, so we do it manually
+    if V1Parts.Count > V2Parts.Count then
+      MaxLen := V1Parts.Count
+    else
+      MaxLen := V2Parts.Count;
+
     // Compare each part
-    for i := 0 to Max(V1Parts.Count - 1, V2Parts.Count - 1) do
+    for i := 0 to MaxLen do
     begin
       // Get the part as integer (default to 0 if not present)
       if i < V1Parts.Count then
@@ -183,7 +202,9 @@ begin
   end;
 end;
 
-// Initialize setup and check for existing versions
+// As the EXE installer initializes, compare the version being installed with any existing version
+// If an existing version is newer, abort installation with an error message
+// For more info, see https://jrsoftware.org/ishelp/index.php?topic=scriptevents
 function InitializeSetup(): Boolean;
 var
   UninstallKey: string;
@@ -243,7 +264,7 @@ begin
         //    The file already exists. Overwrite the existing file "{APP_NAME}"?
         // Example:
         //    The file already exists. Overwrite the existing file "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)"?
-        VersionAlreadyInstalledString := SetupMessage(msgFileExists2) + ' ' + SetupMessage(msgFileExistsOverwriteExisting) + ' "' + ExpandConstant('{#AppName}') + '"?';
+        VersionAlreadyInstalledString := SetupMessage(msgFileExists2) + ' ' + RemoveAmpersand(SetupMessage(msgFileExistsOverwriteExisting)) + ' "' + ExpandConstant('{#AppName}') + '"?';
         // For info on MsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_msgbox
         if MsgBox(VersionAlreadyInstalledString, mbInformation, MB_YESNO) = IDYES then
         begin
