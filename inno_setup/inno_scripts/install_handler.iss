@@ -52,6 +52,54 @@ begin
   end;
 end;
 
+// Compare two version strings in X.X.X.X format
+// Returns: -1 if Version1 < Version2, 0 if equal, 1 if Version1 > Version2
+function CompareVersions(Version1: string, Version2: string): Integer;
+var
+  V1Parts, V2Parts: TStringList;
+  i, Part1, Part2: Integer;
+begin
+  Result := 0;
+  V1Parts := TStringList.Create;
+  V2Parts := TStringList.Create;
+  try
+    // Split versions by '.'
+    V1Parts.Delimiter := '.';
+    V1Parts.DelimitedText := Version1;
+    V2Parts.Delimiter := '.';
+    V2Parts.DelimitedText := Version2;
+
+    // Compare each part
+    for i := 0 to Max(V1Parts.Count - 1, V2Parts.Count - 1) do
+    begin
+      // Get the part as integer (default to 0 if not present)
+      if i < V1Parts.Count then
+        Part1 := StrToIntDef(V1Parts[i], 0)
+      else
+        Part1 := 0;
+
+      if i < V2Parts.Count then
+        Part2 := StrToIntDef(V2Parts[i], 0)
+      else
+        Part2 := 0;
+
+      if Part1 < Part2 then
+      begin
+        Result := -1;
+        Exit;
+      end
+      else if Part1 > Part2 then
+      begin
+        Result := 1;
+        Exit;
+      end;
+    end;
+  finally
+    V1Parts.Free;
+    V2Parts.Free;
+  end;
+end;
+
 // Uninstall the previous version of the same openJDK package if it exists
 // Logs if /LOG is passed into compile cli, or if SetupLogging=yes in [Setup] section
 //  Without a specified log location, logs to: '%TEMP%\Setup Log YYYY-MM-DD #001.txt' by default
@@ -132,6 +180,83 @@ begin
     // Add {app}\bin to PATH only if the user requested it
     if WasTaskSelected('pathMod') then
       AddToPath(ExpandConstant('{app}\bin'), GetEnvironmentRegPath(), GetRegistryRoot());
+  end;
+end;
+
+// Initialize setup and check for existing versions
+function InitializeSetup(): Boolean;
+var
+  UninstallKey: string;
+  DisplayVersion: string;
+  DisplayName: string;
+  RegistryRoots: array[0..1] of Integer;
+  RootNames: array[0..1] of string;
+  i: Integer;
+  CurrentRoot: Integer;
+  RootName: string;
+  VersionComparison: Integer;
+  NewerVersionInstalledString: string;
+  VersionAlreadyInstalledString: string;
+begin
+  Result := True;
+
+  // Initialize arrays for registry roots and their names
+  RegistryRoots[0] := HKLM;
+  RegistryRoots[1] := HKCU;
+  RootNames[0] := 'system';
+  RootNames[1] := 'user';
+
+  // All EXE info is stored here, regardless of vendor
+  UninstallKey := ExpandConstant('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppID}_is1');
+
+  // Loop through both HKLM and HKCU
+  for i := 0 to 1 do
+  begin
+    CurrentRoot := RegistryRoots[i];
+    RootName := RootNames[i];
+
+    // Check if a previous version was installed and compare
+    if RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayVersion', DisplayVersion) then
+    begin
+      RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayName', DisplayName);
+      Log('Previous version to uninstall: ' + DisplayVersion);
+      Log('Previous version display name: ' + DisplayName);
+
+      // Compare versions and exit if existing version is higher
+      VersionComparison := CompareVersions(DisplayVersion, ExpandConstant('{#ExeProductVersion}'));
+      if VersionComparison > 0 then
+      begin
+        // This message (translated into all languages supported by Inno Setup), reads:
+        //    The existing file is newer than the one Setup is trying to install "{APP_NAME}" < "{APP_NAME}"
+        // Example:
+        //    The existing file is newer than the one Setup is trying to install "Eclipse Temurin JDK with Hotspot 25.0.0+36 (x64)" < "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)".
+        NewerVersionInstalledString := SetupMessage(msgExistingFileNewer2) + ' "' + ExpandConstant('{#AppName}') + '" < "' + DisplayName + '"';
+        // For info on MsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_msgbox
+        MsgBox(NewerVersionInstalledString, mbError, MB_OK);
+        Log('Newer version detected. Exiting installation.');
+        Result := False;
+        Exit;
+      end
+      else if VersionComparison = 0 then
+      begin
+        // This message (translated into all languages supported by Inno Setup), reads:
+        //    The file already exists. Overwrite the existing file "{APP_NAME}"?
+        // Example:
+        //    The file already exists. Overwrite the existing file "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)"?
+        VersionAlreadyInstalledString := SetupMessage(msgFileExists2) + ' ' + SetupMessage(msgFileExistsOverwriteExisting) + ' "' + ExpandConstant('{#AppName}') + '"?';
+        // For info on MsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_msgbox
+        if MsgBox(VersionAlreadyInstalledString, mbInformation, MB_YESNO) = IDYES then
+        begin
+          Log('Same version detected: "' + DisplayVersion + '". Proceeding with reinstallation.');
+        end
+        else
+        begin
+          Log('User chose not to reinstall same version.');
+          Result := False;
+          Exit;
+        end;
+      end;
+    end;
   end;
 end;
 
