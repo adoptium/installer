@@ -92,7 +92,7 @@ begin
       Log('Uninstall string (quotes removed): ' + RemoveQuotes(UninstallString));
       
       // Run the uninstaller silently (the Uninstall string has quotes that we need to remove)
-      if Exec(RemoveQuotes(UninstallString), '/SILENT /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+      if Exec(RemoveQuotes(UninstallString), '/VERYSILENT /NORESTART', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
       begin
         Log('Previous ' + RootName + ' installation uninstalled successfully. Result code: ' + IntToStr(ResultCode));
       end
