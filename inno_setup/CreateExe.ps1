@@ -49,7 +49,7 @@
 
 .PARAMETER AppName
     Optional. The name of the App.
-    Example: "Eclipse Temurin JDK with Hotspot 17.0.15+6 (x64)"
+    Example: "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)"
     Default: "$VendorBranding $($ProductCategory.ToUpper()) with $CapitalizedJVM $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
 
 .PARAMETER Vendor
@@ -66,14 +66,14 @@
     Default: "logos\logo.ico"
 
 .PARAMETER VendorBrandingDialog
-    Optional. The path to the ".bmp" file to be used as the welcome dialog in the installer.
+    Optional. The path to the ".png" file to be used as the welcome dialog in the installer.
     This can be a full path to any file, or a relative path to a logo file in the inno_setup/logos folder.
-    Default: "logos\welcome-dialog.bmp"
+    Default: "logos\welcome-dialog.png"
 
 .PARAMETER VendorBrandingSmallIcon
-    Optional. The path to the ".bmp" file to be used as the small icon in the installer.
+    Optional. The path to the ".png" file to be used as the small icon in the installer.
     This can be a full path to any file, or a relative path to a logo file in the inno_setup/logos folder.
-    Default: "logos\logo_small.bmp"
+    Default: "logos\logo-small.png"
 
 .PARAMETER ProductPublisherLink
     Optional. The URL that represents the product publisher. Default: "https://adoptium.net"
@@ -152,8 +152,8 @@
         -Vendor "Eclipse Adoptium" `
         -VendorBranding "Eclipse Temurin" `
         -VendorBrandingLogo "logos\logo.ico" `
-        -VendorBrandingDialog "logos\welcome-dialog.bmp" `
-        -VendorBrandingSmallIcon "logos\logo_small.bmp" `
+        -VendorBrandingDialog "logos\welcome-dialog.png" `
+        -VendorBrandingSmallIcon "logos\logo-small.png" `
         -ProductPublisherLink "https://adoptium.net" `
         -ProductSupportLink "https://adoptium.net/support" `
         -ProductUpdateInfoLink "https://adoptium.net/temurin/releases" `
@@ -225,10 +225,10 @@ param (
     [string]$VendorBrandingLogo = "logos\logo.ico",
 
     [Parameter(Mandatory = $false)]
-    [string]$VendorBrandingDialog = "logos\welcome-dialog.bmp",
+    [string]$VendorBrandingDialog = "logos\welcome-dialog.png",
 
     [Parameter(Mandatory = $false)]
-    [string]$VendorBrandingSmallIcon = "logos\logo_small.bmp",
+    [string]$VendorBrandingSmallIcon = "logos\logo-small.png",
 
     [Parameter(Mandatory = $false)]
     [string]$ProductPublisherLink = "https://adoptium.net",
