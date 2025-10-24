@@ -150,8 +150,7 @@ var
   CurrentRoot: Integer;
   RootName: string;
   VersionComparison: Integer;
-  NewerVersionInstalledString: string;
-  VersionAlreadyInstalledString: string;
+  MsgBoxString: string;
 begin
   Result := True;
 
@@ -183,12 +182,15 @@ begin
       if VersionComparison > 0 then
       begin
         // This message (translated into all languages supported by Inno Setup), reads:
-        //    The existing file is newer than the one Setup is trying to install.  version {Installer_ExeProductVersion} < version {Existing_ExeProductVersion}
+        //    The existing file is newer than the one Setup is trying to install. version {Existing_ExeProductVersion} > version {Installer_ExeProductVersion}
         // Example:
-        //    The existing file is newer than the one Setup is trying to install.  version 25.0.0.36 < version 25.0.1.8
-        NewerVersionInstalledString := SetupMessage(msgExistingFileNewer2) + ' ' + FmtMessage(CustomMessage('NameAndVersion'), ['', ExpandConstant('{#ExeProductVersion}')]) + ' <' + FmtMessage(CustomMessage('NameAndVersion'), ['', DisplayVersion]);
+        //    The existing file is newer than the one Setup is trying to install. version 25.0.1.8 > version 25.0.0.36
+        MsgBoxString := SetupMessage(msgExistingFileNewer2) +
+          FmtMessage(CustomMessage('NameAndVersion'), ['', DisplayVersion]) +
+          ' >' +
+          FmtMessage(CustomMessage('NameAndVersion'), ['', ExpandConstant('{#ExeProductVersion}')]);
         // For info on MsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_msgbox
-        MsgBox(NewerVersionInstalledString, mbError, MB_OK);
+        MsgBox(MsgBoxString, mbError, MB_OK);
         Log('Newer version detected. Exiting installation.');
         Result := False;
         Exit;
@@ -196,13 +198,14 @@ begin
       else if VersionComparison = 0 then
       begin
         // This message (translated into all languages supported by Inno Setup), reads:
-        //    {APP_NAME} -- The file already exists. Overwrite the existing file?
+        //    Setup is preparing to install {APP_NAME} on your computer. The file already exists. Overwrite the existing file?
         // Example:
-        //    Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64) -- The file already exists. Overwrite the existing file?
-        // Note: see helpers.iss for RemoveAmpersand() function
-        VersionAlreadyInstalledString := ExpandConstant('{#AppName}') + ' -- ' + SetupMessage(msgFileExists2) + ' ' + RemoveAmpersand(SetupMessage(msgFileExistsOverwriteExisting)) + '?';
+        //    Setup is preparing to install Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64) on your computer. The file already exists. Overwrite the existing file?
+        MsgBoxString := ReplaceSubstring(SetupMessage(msgPreparingDesc), '[name]', ExpandConstant('{#AppName}')) +
+                 ' ' + SetupMessage(msgFileExists2) +
+                 ' ' + ReplaceSubstring(SetupMessage(msgFileExistsOverwriteExisting), '&', '') + '?';
         // For info on SuppressibleMsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_suppressiblemsgbox
-        if SuppressibleMsgBox(VersionAlreadyInstalledString, mbInformation, MB_YESNO, IDYES) = IDYES then
+        if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
         begin
           Log('Same version detected: "' + DisplayVersion + '". Proceeding with reinstallation.');
         end

@@ -3,17 +3,12 @@
 
 [Code]
 
-// Remove ampersand characters from a string (used to remove mnemonics from messages)
-function RemoveAmpersand(InputString: string): string;
-var
-  i: Integer;
+// Replace OldSubstring with the specified NewSubstring in InputString
+function ReplaceSubstring(InputString: string; OldSubstring: string; NewSubstring: string): string;
 begin
-  Result := '';
-  for i := 1 to Length(InputString) do
-  begin
-    if InputString[i] <> '&' then
-      Result := Result + InputString[i];
-  end;
+  // For info on StringChangeEx: https://jrsoftware.org/ishelp/index.php?topic=isxfunc_stringchange
+  Result := InputString;
+  StringChangeEx(Result, OldSubstring, NewSubstring, True);
 end;
 
 // Compare two version strings in X.X.X.X format
