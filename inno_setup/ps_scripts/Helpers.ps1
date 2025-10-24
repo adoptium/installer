@@ -33,11 +33,14 @@ function GetArchitectureAllowedTemplateInput {
     )
     if ($Arch -eq "x86" -or $Arch -like "*32*" -or $Arch -eq "all") {
         return "x86compatible"
-    } elseif ($Arch -eq "x64") {
-        return "x64os"
-    } elseif ($Arch -like "arm*" -or $Arch -eq "aarch64") {
+    }
+    elseif ($Arch -eq "x64") {
+        return "x64compatible"
+    }
+    elseif ($Arch -like "arm*" -or $Arch -eq "aarch64") {
         return "arm64"
-    } else {
+    }
+    else {
         throw "Error: Unsupported architecture '$Arch'. Supported architectures are: x86, x86_32, x64, arm, arm64, aarch64, or all."
     }
 }
@@ -108,9 +111,9 @@ function CheckForError {
 
 function CapitalizeString {
     param (
-        [Parameter(Mandatory=$true)]
+        [Parameter(Mandatory = $true)]
         [string]$InputString,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [switch]$AllLetters
     )
 
@@ -121,7 +124,8 @@ function CapitalizeString {
     if ($AllLetters) {
         # Capitalize all letters (uppercase)
         return $InputString.ToUpper()
-    } else {
+    }
+    else {
         # Capitalize only the first letter
         return $InputString.Substring(0, 1).ToUpper() + $InputString.Substring(1).ToLower()
     }

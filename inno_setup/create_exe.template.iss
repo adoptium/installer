@@ -94,13 +94,13 @@ Source: "{#SourceFiles}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdir
 
 [InstallDelete]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=installdeletesection
-Type: filesandordirs; Name: "{app}"
 Type: files; Name: "{app}\install_tasks.ini"
 
 [UninstallDelete]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=uninstalldeletesection
 ; This section is needed since uninstall misses the install_tasks.ini file
 Type: files; Name: "{app}\install_tasks.ini"
+Type: dirifempty; Name: "{app}"
 
 [Registry]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=registrysection
