@@ -48,7 +48,7 @@ begin
   if CurUninstallStep = usUninstall then
   begin
     // Remove {app}\bin from PATH only if added during installation
-    if WasTaskSelected('pathMod') then
+    if WasTaskSelected('FeatureEnvironment') then
       RemoveFromPath(ExpandConstant('{app}\bin'), GetEnvironmentRegPath(), GetRegistryRoot());
   end;
 end;
