@@ -81,7 +81,7 @@ UsePreviousPrivileges=no
 
 [Tasks]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=taskssection
-Name: "pathMod";      Description: "{cm:PathModDesc}";                          GroupDescription: "{cm:PathModTitle}";
+Name: "FeatureEnvironment";         Description: "{cm:FeatureEnvironmentDesc}";                         GroupDescription: "{cm:FeatureEnvironmentTitle}";
 ; AssocFileExtension is an Inno Setup provided translation provides this message into every language: &Associate %1 with the %2 file extension
 Name: "jarfileMod";   Description: "{cm:AssocFileExtension,{#AppName},.jar}";   GroupDescription: "{cm:FileAssocTitle}";
 Name: "javaHomeMod";  Description: "{cm:JavaHomeModDesc}";                      GroupDescription: "{cm:JavaHomeModTitle}";  Flags: unchecked;
@@ -126,16 +126,16 @@ Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{
     ValueType: dword;  ValueName: "Main"; ValueData: "1"; \
     Flags: uninsdeletekey;
 
-; pathMod: Add Environment Path keys if the user requests them
+; FeatureEnvironment: Add Environment Path keys if the user requests them
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "EnvironmentPath"; ValueData: "1"; \
-    Flags: uninsdeletekey; Check: WasTaskSelected('pathMod');
+    Flags: uninsdeletekey; Check: WasTaskSelected('FeatureEnvironment');
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "EnvironmentPathSetForSystem"; ValueData: "1"; \
-    Flags: uninsdeletekey; Check: IsAdminInstallMode and WasTaskSelected('pathMod');
+    Flags: uninsdeletekey; Check: IsAdminInstallMode and WasTaskSelected('FeatureEnvironment');
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "EnvironmentPathSetForUser";   ValueData: "1"; \
-    Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('pathMod');
+    Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('FeatureEnvironment');
 
 ; jarfileMod: Add .jar file association keys if the user requests them
 ; Note: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jar\OpenWithProgids is
