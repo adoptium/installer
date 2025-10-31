@@ -314,7 +314,8 @@ if (-not $UpgradeCodeSeed) {
     # If no UpgradeCodeSeed is given, generate a new PRODUCT_UPGRADE_CODE (random GUID, not upgradable)
     $PRODUCT_UPGRADE_CODE = [guid]::NewGuid().ToString("B").ToUpper()
     Write-Host "Unique PRODUCT_UPGRADE_CODE: $PRODUCT_UPGRADE_CODE"
-} else {
+}
+else {
     # Generate a deterministic PRODUCT_UPGRADE_CODE based on input values and UpgradeCodeSeed
     # Compose SOURCE_TEXT_GUID similar to the original script
     $SOURCE_TEXT_GUID = "${ProductCategory}-${ProductMajorVersion}-${Arch}-${JVM}"
@@ -327,54 +328,59 @@ if (-not $UpgradeCodeSeed) {
 # /DAppId: Inno setup needs us to escape '{' literals by putting two together. The '}' does not need to be escaped
 $AppId = "{" + "${PRODUCT_UPGRADE_CODE}"
 
-# Sign only if $SigningCommand is not empty or null
-# See the following link for more info on Inno Setup signing: https://jrsoftware.org/ishelp/index.php?topic=setup_signtool
-# See here for info on /S flag format: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
-if (![string]::IsNullOrEmpty($SigningCommand)) {
-    Write-Host "Executing Inno Setup with signing."
-    $SigningArg = "/SsigningCommand=$SigningCommand"
-    $ExtraArgs = '/DsignFiles="true"' # set this flag to enable signing with above command
-} else {
-    Write-Host "Executing Inno Setup without signing."
-    $SigningArg = ""
-    $ExtraArgs = ""
-}
+# Build the argument list
+# For info on CLI options: https://jrsoftware.org/ishelp/index.php?topic=isppcc
+# and https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+$InnoSetupArgs = @()
+
+$InnoSetupArgs += "/J$TranslationFile"
+$InnoSetupArgs += "/DArchitecturesAllowed=`"$ArchitecturesAllowed`""
+$InnoSetupArgs += "/DAppName=`"$AppName`""
+$InnoSetupArgs += "/DVendor=`"$Vendor`""
+$InnoSetupArgs += "/DProductCategory=`"$ProductCategory`""
+$InnoSetupArgs += "/DJVM=`"$JVM`""
+$InnoSetupArgs += "/DProductMajorVersion=`"$ProductMajorVersion`""
+$InnoSetupArgs += "/DProductMinorVersion=`"$ProductMinorVersion`""
+$InnoSetupArgs += "/DProductMaintenanceVersion=`"$ProductMaintenanceVersion`""
+$InnoSetupArgs += "/DProductPatchVersion=`"$ProductPatchVersion`""
+$InnoSetupArgs += "/DProductBuildNumber=`"$ProductBuildNumber`""
+$InnoSetupArgs += "/DExeProductVersion=`"$ExeProductVersion`""
+$InnoSetupArgs += "/DAppPublisherURL=`"$ProductPublisherLink`""
+$InnoSetupArgs += "/DAppSupportURL=`"$ProductSupportLink`""
+$InnoSetupArgs += "/DAppUpdatesURL=`"$ProductUpdateInfoLink`""
+$InnoSetupArgs += "/DOutputFileName=`"$OutputFileName`""
+$InnoSetupArgs += "/DVendorBrandingLogo=`"$VendorBrandingLogo`""
+$InnoSetupArgs += "/DVendorBrandingDialog=`"$VendorBrandingDialog`""
+$InnoSetupArgs += "/DVendorBrandingSmallIcon=`"$VendorBrandingSmallIcon`""
+$InnoSetupArgs += "/DLicenseFile=`"$License`""
+$InnoSetupArgs += "/DAppId=`"$AppId`""
+$InnoSetupArgs += "/DSourceFiles=`"$unzippedFolder`""
 
 # Set this flag to support unofficial inno_setup translations like Chinese
 ## Note: Here, unofficial means that there are a few default messages that do not
 ##       have translations (from English) supported by Inno Setup yet
 if ($IncludeUnofficialTranslations -ne "false") {
     Write-Host "Including unofficial translations."
-    $ExtraArgs += ' /DINCLUDE_UNOFFICIAL_TRANSLATIONS="true"'
+    $InnoSetupArgs += '/DINCLUDE_UNOFFICIAL_TRANSLATIONS="true"'
 }
 
-# For info on CLI options: https://jrsoftware.org/ishelp/index.php?topic=isppcc
-# and https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+# Sign only if $SigningCommand is not empty or null
+# See the following link for more info on Inno Setup signing: https://jrsoftware.org/ishelp/index.php?topic=setup_signtool
+# See here for info on /S flag format: https://jrsoftware.org/ishelp/index.php?topic=compilercmdline
+if (![string]::IsNullOrEmpty($SigningCommand)) {
+    Write-Host "Executing Inno Setup with signing."
+    $InnoSetupArgs += "/SsigningCommand=$SigningCommand"
+    # set flag /DsignFiles to enable signing with above command
+    $InnoSetupArgs += '/DsignFiles="true"'
+}
+else {
+    Write-Host "Executing Inno Setup without signing."
+}
+
 # Create .exe file based on create_exe.template.iss.
-& "$INNO_SETUP_PATH" $SigningArg `
-    /J$TranslationFile `
-    /DArchitecturesAllowed="$ArchitecturesAllowed" `
-    /DAppName="$AppName" `
-    /DVendor="$Vendor" `
-    /DProductCategory="$ProductCategory" `
-    /DJVM="$JVM" `
-    /DProductMajorVersion="$ProductMajorVersion" `
-    /DProductMinorVersion="$ProductMinorVersion" `
-    /DProductMaintenanceVersion="$ProductMaintenanceVersion" `
-    /DProductPatchVersion="$ProductPatchVersion" `
-    /DProductBuildNumber="$ProductBuildNumber" `
-    /DExeProductVersion="$ExeProductVersion" `
-    /DAppPublisherURL="$ProductPublisherLink" `
-    /DAppSupportURL="$ProductSupportLink" `
-    /DAppUpdatesURL="$ProductUpdateInfoLink" `
-    /DOutputFileName="$OutputFileName" `
-    /DVendorBrandingLogo="$VendorBrandingLogo" `
-    /DVendorBrandingDialog="$VendorBrandingDialog" `
-    /DVendorBrandingSmallIcon="$VendorBrandingSmallIcon" `
-    /DLicenseFile="$License" `
-    /DAppId="$AppId" `
-    /DSourceFiles="$unzippedFolder" `
-    $ExtraArgs "${InnoSetupRootDir}\create_exe.template.iss"
+$InnoSetupArgs += "${InnoSetupRootDir}\create_exe.template.iss"
+# Run the Inno Setup Compiler (ISCC.exe) with the arguments
+& "$INNO_SETUP_PATH" @InnoSetupArgs
 
 CheckForError -ErrorMessage "ISCC.exe failed to create .exe file."
 
