@@ -81,12 +81,12 @@ UsePreviousPrivileges=no
 
 [Tasks]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=taskssection
-Name: "FeatureEnvironment";         Description: "{cm:FeatureEnvironmentDesc}";                         GroupDescription: "{cm:FeatureEnvironmentTitle}";
+Name: "FeatureEnvironment";     Description: "{cm:FeatureEnvironmentDesc}";                 GroupDescription: "{cm:FeatureEnvironmentTitle}";
 ; AssocFileExtension is an Inno Setup provided translation. This message is translated into every language: &Associate %1 with the %2 file extension
-Name: "FeatureJarFileRunWith";      Description: "{cm:AssocFileExtension,{#AppName},.jar}";             GroupDescription: "{cm:FeatureJarFileRunWithTitle}";
-Name: "FeatureJavaHome";            Description: "{cm:FeatureJavaHomeDesc}";                            GroupDescription: "{cm:FeatureJavaHomeTitle}";  Flags: unchecked;
+Name: "FeatureJarFileRunWith";  Description: "{cm:AssocFileExtension,{#AppName},.jar}";     GroupDescription: "{cm:FeatureJarFileRunWithTitle}";
+Name: "FeatureJavaHome";        Description: "{cm:FeatureJavaHomeDesc}";                    GroupDescription: "{cm:FeatureJavaHomeTitle}";          Flags: unchecked;
 ; HKLM keys can only be created/modified in Admin Install Mode
-Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           GroupDescription: "{cm:RegKeysTitle}";      Flags: unchecked;   Check: IsAdminInstallMode;
+Name: "FeatureOracleJavaSoft";  Description: "{cm:FeatureOracleJavaSoftDesc,{#AppName}}";   GroupDescription: "{cm:FeatureOracleJavaSoftTitle}";    Flags: unchecked;   Check: IsAdminInstallMode;
 
 [Files]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=filessection
@@ -176,24 +176,24 @@ Root: HKCU; Subkey: "Environment"; \
     ValueType: string; ValueName: "JAVA_HOME"; ValueData: "{app}"; \
     Flags: uninsdeletevalue; Check: not IsAdminInstallMode and WasTaskSelected('FeatureJavaHome');
 
-; javasoftMod: Add JavaSoft Keys if the user requests them
+; FeatureOracleJavaSoft: Add JavaSoft Keys if the user requests them
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}"; \
     ValueType: string; ValueName: "CurrentVersion"; ValueData: "{#ProductMajorVersion}"; \
-    Flags: uninsdeletevalue; Check: (ShouldUpdateJavaVersion and not IsUninstaller and WasTaskSelected('javasoftMod')) or (IsUninstaller and WasTaskSelected('javasoftMod'));
+    Flags: uninsdeletevalue; Check: (ShouldUpdateJavaVersion and not IsUninstaller and WasTaskSelected('FeatureOracleJavaSoft')) or (IsUninstaller and WasTaskSelected('FeatureOracleJavaSoft'));
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ProductMajorVersion}"; \
     ValueType: string; ValueName: "JavaHome"; ValueData: "{app}"; \
-    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('javasoftMod');
+    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureOracleJavaSoft');
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ExeProductVersion}"; \
     ValueType: string; ValueName: "JavaHome"; ValueData: "{app}"; \
-    Flags: uninsdeletekey; Check: WasTaskSelected('javasoftMod');
+    Flags: uninsdeletekey; Check: WasTaskSelected('FeatureOracleJavaSoft');
 ; The RuntimeLib key is only used by JREs, not JDKs
 #if ProductCategory == "JRE"
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ProductMajorVersion}"; \
     ValueType: string; ValueName: "RuntimeLib"; ValueData: "{app}\bin\server\jvm.dll"; \
-    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('javasoftMod');
+    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureOracleJavaSoft');
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ExeProductVersion}"; \
     ValueType: string; ValueName: "RuntimeLib"; ValueData: "{app}\bin\server\jvm.dll"; \
-    Flags: uninsdeletekey; Check: WasTaskSelected('javasoftMod');
+    Flags: uninsdeletekey; Check: WasTaskSelected('FeatureOracleJavaSoft');
 #endif
 ; TODO: Add HKLM key for JDK8 on x64 (if IcedTeaWeb is bundled) below
 ; OR: decide that EXEs will no longer support JDK8 and remove this TODO

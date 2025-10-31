@@ -127,7 +127,7 @@ begin
     StoreTaskSelections('FeatureEnvironment');
     StoreTaskSelections('FeatureJarFileRunWith');
     StoreTaskSelections('FeatureJavaHome');
-    StoreTaskSelections('javasoftMod');
+    StoreTaskSelections('FeatureOracleJavaSoft');
     StoreTaskSelections('METADATA');
 
     // Add {app}\bin to PATH only if the user requested it
