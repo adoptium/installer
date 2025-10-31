@@ -125,7 +125,7 @@ begin
   else if CurStep = ssPostInstall then
   begin
     StoreTaskSelections('FeatureEnvironment');
-    StoreTaskSelections('jarfileMod');
+    StoreTaskSelections('FeatureJarFileRunWith');
     StoreTaskSelections('javaHomeMod');
     StoreTaskSelections('javasoftMod');
     StoreTaskSelections('METADATA');

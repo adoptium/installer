@@ -82,8 +82,8 @@ UsePreviousPrivileges=no
 [Tasks]
 ; For more info, see https://jrsoftware.org/ishelp/index.php?topic=taskssection
 Name: "FeatureEnvironment";         Description: "{cm:FeatureEnvironmentDesc}";                         GroupDescription: "{cm:FeatureEnvironmentTitle}";
-; AssocFileExtension is an Inno Setup provided translation provides this message into every language: &Associate %1 with the %2 file extension
-Name: "jarfileMod";   Description: "{cm:AssocFileExtension,{#AppName},.jar}";   GroupDescription: "{cm:FileAssocTitle}";
+; AssocFileExtension is an Inno Setup provided translation. This message is translated into every language: &Associate %1 with the %2 file extension
+Name: "FeatureJarFileRunWith";      Description: "{cm:AssocFileExtension,{#AppName},.jar}";             GroupDescription: "{cm:FeatureJarFileRunWithTitle}";
 Name: "javaHomeMod";  Description: "{cm:JavaHomeModDesc}";                      GroupDescription: "{cm:JavaHomeModTitle}";  Flags: unchecked;
 ; HKLM keys can only be created/modified in Admin Install Mode
 Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           GroupDescription: "{cm:RegKeysTitle}";      Flags: unchecked;   Check: IsAdminInstallMode;
@@ -137,23 +137,23 @@ Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{
     ValueType: dword; ValueName: "EnvironmentPathSetForUser";   ValueData: "1"; \
     Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('FeatureEnvironment');
 
-; jarfileMod: Add .jar file association keys if the user requests them
+; FeatureJarFileRunWith: Add .jar file association keys if the user requests them
 ; Note: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.jar\OpenWithProgids is
 ;       automatically created by Windows when running jar file for the first time
 Root: HKA; Subkey: "SOFTWARE\Classes\.jar"; \
     ValueType: string; ValueName: ""; ValueData: "{#Vendor}.jarfile"; \
-    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
+    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureJarFileRunWith');
 Root: HKA; Subkey: "SOFTWARE\Classes\.jar"; \
     ValueType: string; ValueName: "Content Type"; ValueData: "application/java-archive"; \
-    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
+    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureJarFileRunWith');
 ; Creating null keys this way to make sure that they are removed as expected during uninstallation
-Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile";            ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
-Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell";      ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
-Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open"; ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
+Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile";            ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('FeatureJarFileRunWith');
+Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell";      ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('FeatureJarFileRunWith');
+Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open"; ValueType: none; Flags: uninsdeletekeyifempty; Check: WasTaskSelected('FeatureJarFileRunWith');
 ; Two doublequotes (") are used in the ValueName to escape the quotes properly. Example value written to key: "C:\Program Files\Adoptium\jdk-17.0.15.6-hotspot\bin\javaw.exe" -jar "%1" %*
 Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open\command"; \
     ValueType: string; ValueName: ""; ValueData: """{app}\bin\javaw.exe"" -jar ""%1"" %*"; \
-    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('jarfileMod');
+    Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureJarFileRunWith');
 ; TODO: Add HKA keys for JDK8 on x64 (if IcedTeaWeb is bundled) to process .jnlp files (similar to the .jar file handling above).
 ; OR: decide that EXEs will no longer support JDK8 and remove this TODO
 
