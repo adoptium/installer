@@ -124,14 +124,14 @@ begin
   // Store task selections just after the actual installation finishes but before registry entries are created
   else if CurStep = ssPostInstall then
   begin
-    StoreTaskSelections('pathMod');
+    StoreTaskSelections('FeatureEnvironment');
     StoreTaskSelections('jarfileMod');
     StoreTaskSelections('javaHomeMod');
     StoreTaskSelections('javasoftMod');
     StoreTaskSelections('METADATA');
 
     // Add {app}\bin to PATH only if the user requested it
-    if WasTaskSelected('pathMod') then
+    if WasTaskSelected('FeatureEnvironment') then
       AddToPath(ExpandConstant('{app}\bin'), GetEnvironmentRegPath(), GetRegistryRoot());
   end;
 end;
