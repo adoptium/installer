@@ -3,17 +3,17 @@
 ; [CustomMessages]: contains the list of translations for the custom tasks that the user can select during installation.
 
 [Languages]
-Name: "English"; MessagesFile: "compiler:Default.isl"
-Name: "German"; MessagesFile: "compiler:Languages\German.isl"
-Name: "Spanish"; MessagesFile: "compiler:Languages\Spanish.isl"
-Name: "French"; MessagesFile: "compiler:Languages\French.isl"
-Name: "Japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "English";    MessagesFile: "compiler:Default.isl"
+Name: "German";     MessagesFile: "compiler:Languages\German.isl"
+Name: "Spanish";    MessagesFile: "compiler:Languages\Spanish.isl"
+Name: "French";     MessagesFile: "compiler:Languages\French.isl"
+Name: "Japanese";   MessagesFile: "compiler:Languages\Japanese.isl"
 
 #ifdef INCLUDE_UNOFFICIAL_TRANSLATIONS
 
 ; Note: ChineseTW and ChineseCN still need translations for certain progress-bar screen messages
-Name: "ChineseTW"; MessagesFile: "compiler:Languages\Unofficial\ChineseTraditional.isl"
-Name: "ChineseCN"; MessagesFile: "compiler:Languages\Unofficial\ChineseSimplified.isl"
+Name: "ChineseTW";  MessagesFile: "compiler:Languages\Unofficial\ChineseTraditional.isl"
+Name: "ChineseCN";  MessagesFile: "compiler:Languages\Unofficial\ChineseSimplified.isl"
 
 #endif
 
@@ -22,7 +22,7 @@ Name: "ChineseCN"; MessagesFile: "compiler:Languages\Unofficial\ChineseSimplifie
 ; 1) All translations in the initial PR were pulled directly from the wix MSI installer translation files (Jul 2025)
 ; 2) Any missing translations will default to English
 ; 3) When testing translations, the `Yes` and `No` buttons will always be in the language of the user's machine (regardless of the selected language in the installer)
-; 4) All commented out translations were made by copilot and need to be verified before using/uncommenting
+; 4) All commented out translations were made by AI and need to be verified before using/uncommenting
 ; 5) Translation entries allow us to have input arguments. They are specified as %1, %2, etc.
 
 ; For a list of default custom messages (Translated by Inno Setup), see: https://jrsoftware.org/ishelp/index.php?topic=custommessagessection
