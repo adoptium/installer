@@ -126,7 +126,7 @@ begin
   begin
     StoreTaskSelections('FeatureEnvironment');
     StoreTaskSelections('FeatureJarFileRunWith');
-    StoreTaskSelections('javaHomeMod');
+    StoreTaskSelections('FeatureJavaHome');
     StoreTaskSelections('javasoftMod');
     StoreTaskSelections('METADATA');
 

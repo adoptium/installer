@@ -84,7 +84,7 @@ UsePreviousPrivileges=no
 Name: "FeatureEnvironment";         Description: "{cm:FeatureEnvironmentDesc}";                         GroupDescription: "{cm:FeatureEnvironmentTitle}";
 ; AssocFileExtension is an Inno Setup provided translation. This message is translated into every language: &Associate %1 with the %2 file extension
 Name: "FeatureJarFileRunWith";      Description: "{cm:AssocFileExtension,{#AppName},.jar}";             GroupDescription: "{cm:FeatureJarFileRunWithTitle}";
-Name: "javaHomeMod";  Description: "{cm:JavaHomeModDesc}";                      GroupDescription: "{cm:JavaHomeModTitle}";  Flags: unchecked;
+Name: "FeatureJavaHome";            Description: "{cm:FeatureJavaHomeDesc}";                            GroupDescription: "{cm:FeatureJavaHomeTitle}";  Flags: unchecked;
 ; HKLM keys can only be created/modified in Admin Install Mode
 Name: "javasoftMod";  Description: "{cm:JavaSoftModDesc,{#AppName}}";           GroupDescription: "{cm:RegKeysTitle}";      Flags: unchecked;   Check: IsAdminInstallMode;
 
@@ -157,24 +157,24 @@ Root: HKA; Subkey: "SOFTWARE\Classes\{#Vendor}.jarfile\shell\open\command"; \
 ; TODO: Add HKA keys for JDK8 on x64 (if IcedTeaWeb is bundled) to process .jnlp files (similar to the .jar file handling above).
 ; OR: decide that EXEs will no longer support JDK8 and remove this TODO
 
-; javaHomeMod: Add JavaHome keys if the user requests them
+; FeatureJavaHome: Add JavaHome keys if the user requests them
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "JavaHome"; ValueData: "1"; \
-    Flags: uninsdeletekey; Check: WasTaskSelected('javaHomeMod');
+    Flags: uninsdeletekey; Check: WasTaskSelected('FeatureJavaHome');
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "JavaHomeSetForSystem"; ValueData: "1"; \
-    Flags: uninsdeletekey; Check: IsAdminInstallMode and WasTaskSelected('javaHomeMod');
+    Flags: uninsdeletekey; Check: IsAdminInstallMode and WasTaskSelected('FeatureJavaHome');
 Root: HKA; Subkey: "SOFTWARE\{#Vendor}\{#ProductCategory}\{#ExeProductVersion}\{#JVM}\EXE"; \
     ValueType: dword; ValueName: "JavaHomeSetForUser"; ValueData: "1"; \
-    Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('javaHomeMod');
+    Flags: uninsdeletekey; Check: not IsAdminInstallMode and WasTaskSelected('FeatureJavaHome');
 ; Add JAVA_HOME env var for system-level environment variables (admin install)
 Root: HKLM; Subkey: "SYSTEM\CurrentControlSet\Control\Session Manager\Environment"; \
     ValueType: string; ValueName: "JAVA_HOME"; ValueData: "{app}"; \
-    Flags: uninsdeletevalue; Check: IsAdminInstallMode and WasTaskSelected('javaHomeMod');
+    Flags: uninsdeletevalue; Check: IsAdminInstallMode and WasTaskSelected('FeatureJavaHome');
 ; Add JAVA_HOME env var for user-level environment variables (user install)
 Root: HKCU; Subkey: "Environment"; \
     ValueType: string; ValueName: "JAVA_HOME"; ValueData: "{app}"; \
-    Flags: uninsdeletevalue; Check: not IsAdminInstallMode and WasTaskSelected('javaHomeMod');
+    Flags: uninsdeletevalue; Check: not IsAdminInstallMode and WasTaskSelected('FeatureJavaHome');
 
 ; javasoftMod: Add JavaSoft Keys if the user requests them
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}"; \
