@@ -94,7 +94,7 @@ end;
 
 // Reverses an MSI PRODUCT_UPGRADE_CODE to standard GUID format and vice versa
 // Needed for determining the mapping between MSI PRODUCT_UPGRADE_CODE and MSI Product Codes in the registry
-function ReverseMSIGUID(const RevCode: string; AddFormatting: Boolean): string;
+function ReverseMsiGuid(const RevCode: string; AddFormatting: Boolean): string;
 var
   RevCodePlain, part1, part2, part3, part4, part5: string;
 begin
@@ -137,13 +137,13 @@ var
   ValueNames: TArrayOfString;
   i: Integer;
 begin
-  if RegGetValueNames(RegistryRoot, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UpgradeCodes\' + ReverseMSIGUID(UpgradeCode, False), ValueNames) then
+  if RegGetValueNames(RegistryRoot, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UpgradeCodes\' + ReverseMsiGuid(UpgradeCode, False), ValueNames) then
   begin
     for i := 0 to GetArrayLength(ValueNames)-1 do
     begin
       if ValueNames[i] <> '' then  // skip empty or default
       begin
-        MsiGuid := ReverseMSIGUID(ValueNames[i], True);
+        MsiGuid := ReverseMsiGuid(ValueNames[i], True);
         Result := True;
         Exit;
       end;
