@@ -173,6 +173,7 @@ var
   CurrentRoot: Integer;
   VersionComparison: Integer;
   MsgBoxString: string;
+  MsiGuid: string;
 begin
   Result := True;
 
@@ -187,6 +188,21 @@ begin
   for i := 0 to 1 do
   begin
     CurrentRoot := RegistryRoots[i];
+
+    if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
+    begin
+      MsgBoxString := 'Found installed MSI: ' + MsiGuid + '. Should we continue the installation?';
+      if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
+      begin
+        Log('Found installed MSI: ' + MsiGuid);
+      end
+      else
+      begin
+        Log('User chose not to continue installation due to existing MSI: ' + MsiGuid);
+        Result := False;
+        Exit;
+      end;
+    end;
 
     // Check if a previous version was installed and compare
     if RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayVersion', DisplayVersion) then
