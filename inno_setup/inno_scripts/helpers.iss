@@ -67,11 +67,26 @@ end;
 
 // Reverses an MSI GUID upgrade code to standard GUID format
 // Needed for determining the mapping between MSI Upgrade Codes and MSI Product Codes in the registry
-function ReverseMSIGUID(const RevCode: string; IncludeHyphens: Boolean): string;
+function ReverseMSIGUID(const RevCode: string; AddFormatting: Boolean): string;
 var
   RevCodePlain, part1, part2, part3, part4, part5: string;
 
   function ReversePairs(const s: string): string;
+  // Switches each pair of characters in the string
+  // Example: "A1B2C3" becomes "1A2B3C"
+  // Note: All MSI GUID segments have even lengths, so no need to handle odd-length strings
+  var
+    i: Integer;
+    resultStr: string;
+  begin
+    Result := '';
+    for i := 1 to Length(s) step 2 do
+      Result := Result + s[i+1] + s[i];
+  end;
+
+  function ReverseChars(const s: string): string;
+  // Reverses the order of characters in the string
+  // Example: "ABCDEF" becomes "FEDCBA"
   var
     i: Integer;
     resultStr: string;
@@ -97,15 +112,15 @@ begin
   part5 := Copy(RevCodePlain, 21, 12);
 
   // Reverse each segment in pairs
-  part1 := ReversePairs(part1);
-  part2 := ReversePairs(part2);
-  part3 := ReversePairs(part3);
+  part1 := ReverseChars(part1);
+  part2 := ReverseChars(part2);
+  part3 := ReverseChars(part3);
   part4 := ReversePairs(part4);
   part5 := ReversePairs(part5);
 
   // Combine into GUID format
-  if IncludeHyphens then
-    Result := part1 + '-' + part2 + '-' + part3 + '-' + part4 + '-' + part5
+  if AddFormatting then
+    Result := '{' + part1 + '-' + part2 + '-' + part3 + '-' + part4 + '-' + part5 + '}'
   else
     Result := part1 + part2 + part3 + part4 + part5;
 end;
