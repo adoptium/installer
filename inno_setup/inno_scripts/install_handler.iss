@@ -58,7 +58,9 @@ end;
 //  Without a specified log location, logs to: '%TEMP%\Setup Log YYYY-MM-DD #001.txt' by default
 procedure UninstallPreviousVersion();
 var
-  UninstallKey: string;
+  UninstallKeyPath: string;
+  UninstallKeyExe: string;
+  MsiGuid: string;
   UninstallString: string;
   ResultCode: Integer;
   DisplayName: string;
@@ -67,6 +69,7 @@ var
   i: Integer;
   CurrentRoot: Integer;
   RootName: string;
+  FoundInstallation: Boolean;
 begin
   // Initialize arrays for registry roots and their names
   RegistryRoots[0] := HKLM;
@@ -75,20 +78,24 @@ begin
   RootNames[1] := 'user';
 
   // All EXE uninstall strings are stored here, regardless of vendor
-  UninstallKey := ExpandConstant('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppID}_is1');
+  UninstallKeyPath := 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall';
+  UninstallKeyExe := UninstallKeyPath + '\' + ExpandConstant('{#AppID}_is1');
 
   // Loop through both HKLM and HKCU
   for i := 0 to 1 do
   begin
+    FoundInstallation := False;
     CurrentRoot := RegistryRoots[i];
     RootName := RootNames[i];
 
-    if RegQueryStringValue(CurrentRoot, UninstallKey, 'UninstallString', UninstallString) then
+    // Check for EXE uninstaller. If found, var UninstallString is assigned
+    if RegQueryStringValue(CurrentRoot, UninstallKeyExe, 'UninstallString', UninstallString) then
     begin
-      if RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayName', DisplayName) then
+      if RegQueryStringValue(CurrentRoot, UninstallKeyExe, 'DisplayName', DisplayName) then
       begin
         Log('Found previous ' + RootName + ' installation: ' + DisplayName);
       end;
+      FoundInstallation := True;
       Log('Uninstall string (with quotes): ' + UninstallString);
       Log('Uninstall string (quotes removed): ' + RemoveQuotes(UninstallString));
 
@@ -101,8 +108,25 @@ begin
       begin
         Log('Failed to uninstall previous ' + RootName + ' installation. Result code: ' + IntToStr(ResultCode));
       end;
-    end
-    else
+    end;
+
+    // Check for MSI uninstaller. If found, var MsiGuid is assigned
+    if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
+    begin
+      Log('Found installed MSI: ' + MsiGuid);
+      FoundInstallation := True;
+      // Uninstall the MSI silently
+      if Exec('MsiExec.exe', '/x ' + MsiGuid + ' /qn /norestart', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+      begin
+        Log('Previous ' + RootName + ' MSI installation uninstalled successfully. Result code: ' + IntToStr(ResultCode));
+      end
+      else
+      begin
+        Log('Failed to uninstall previous ' + RootName + ' MSI installation. Result code: ' + IntToStr(ResultCode));
+      end;
+    end;
+
+    if not FoundInstallation then
     begin
       Log('No previous ' + RootName + ' installation found.');
     end;
@@ -145,10 +169,8 @@ var
   DisplayVersion: string;
   DisplayName: string;
   RegistryRoots: array[0..1] of Integer;
-  RootNames: array[0..1] of string;
   i: Integer;
   CurrentRoot: Integer;
-  RootName: string;
   VersionComparison: Integer;
   MsgBoxString: string;
 begin
@@ -157,8 +179,6 @@ begin
   // Initialize arrays for registry roots and their names
   RegistryRoots[0] := HKLM;
   RegistryRoots[1] := HKCU;
-  RootNames[0] := 'system';
-  RootNames[1] := 'user';
 
   // All EXE info is stored here, regardless of vendor
   UninstallKey := ExpandConstant('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppID}_is1');
@@ -167,7 +187,6 @@ begin
   for i := 0 to 1 do
   begin
     CurrentRoot := RegistryRoots[i];
-    RootName := RootNames[i];
 
     // Check if a previous version was installed and compare
     if RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayVersion', DisplayVersion) then

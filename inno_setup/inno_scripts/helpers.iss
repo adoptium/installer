@@ -6,7 +6,7 @@
 // Replace OldSubstring with the specified NewSubstring in InputString
 function ReplaceSubstring(InputString: string; OldSubstring: string; NewSubstring: string): string;
 begin
-  // For info on StringChangeEx: https://jrsoftware.org/ishelp/index.php?topic=isxfunc_stringchange
+  // For info on StringChangeEx: https://jrsoftware.org/ishelp/index.php?topic=isxfunc_stringchangeex
   Result := InputString;
   StringChangeEx(Result, OldSubstring, NewSubstring, True);
 end;
@@ -63,6 +63,73 @@ begin
     V1Parts.Free;
     V2Parts.Free;
   end;
+end;
+
+// Reverses an MSI GUID upgrade code to standard GUID format
+// Needed for determining the mapping between MSI Upgrade Codes and MSI Product Codes in the registry
+function ReverseMSIGUID(const RevCode: string; IncludeHyphens: Boolean): string;
+var
+  RevCodePlain, part1, part2, part3, part4, part5: string;
+
+  function ReversePairs(const s: string): string;
+  var
+    i: Integer;
+    resultStr: string;
+  begin
+    Result := '';
+    for i := Length(s) downto 1 do
+      Result := Result + s[i];
+  end;
+
+begin
+  // Remove hyphens if present
+  // Revcodes stored in '<ROOT>\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UpgradeCodes' do not have hyphens
+  RevCodePlain := ReplaceSubstring(RevCode, '-', '');
+  // Remove braces if present -- same issue as above
+  RevCodePlain := ReplaceSubstring(RevCodePlain, '{', '');
+  RevCodePlain := ReplaceSubstring(RevCodePlain, '}', '');
+
+  // Break into segments
+  part1 := Copy(RevCodePlain, 1, 8);
+  part2 := Copy(RevCodePlain, 9, 4);
+  part3 := Copy(RevCodePlain, 13, 4);
+  part4 := Copy(RevCodePlain, 17, 4);
+  part5 := Copy(RevCodePlain, 21, 12);
+
+  // Reverse each segment in pairs
+  part1 := ReversePairs(part1);
+  part2 := ReversePairs(part2);
+  part3 := ReversePairs(part3);
+  part4 := ReversePairs(part4);
+  part5 := ReversePairs(part5);
+
+  // Combine into GUID format
+  if IncludeHyphens then
+    Result := part1 + '-' + part2 + '-' + part3 + '-' + part4 + '-' + part5
+  else
+    Result := part1 + part2 + part3 + part4 + part5;
+end;
+
+// Returns true if an MSI installation with the given UpgradeCode exists in the specified RegistryRoot,
+// and sets MsiGuid to the corresponding ProductCode if found. Otherwise, returns false.
+function GetInstalledMsiString(RegistryRoot: Integer; var UpgradeCode: string; var MsiGuid: string): Boolean;
+var
+  ValueNames: TArrayOfString;
+  i: Integer;
+begin
+  if RegGetValueNames(RegistryRoot, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UpgradeCodes\' + ReverseMSIGUID(UpgradeCode, False), ValueNames) then
+  begin
+    for i := 0 to GetArrayLength(ValueNames)-1 do
+    begin
+      if ValueNames[i] <> '' then  // skip empty or default
+      begin
+        MsiGuid := ReverseMSIGUID(ValueNames[i], True);
+        Result := True;
+        Exit;
+      end;
+    end;
+  end;
+  Result := False;
 end;
 
 #endif
