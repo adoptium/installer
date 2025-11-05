@@ -65,37 +65,38 @@ begin
   end;
 end;
 
-// Reverses an MSI GUID upgrade code to standard GUID format
-// Needed for determining the mapping between MSI Upgrade Codes and MSI Product Codes in the registry
+// Switches each pair of characters in the string
+// Example: "A1B2C3" becomes "1A2B3C"
+// Note: All MSI GUID segments have even lengths, so no need to handle odd-length strings
+function ReversePairs(const s: string): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  i := 1;
+  while i <= Length(s) do
+  begin
+    Result := Result + s[i+1] + s[i];
+    i := i + 2;
+  end;
+end;
+
+// Reverses the order of characters in the string
+// Example: "ABCDEF" becomes "FEDCBA"
+function ReverseChars(const s: string): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := Length(s) downto 1 do
+    Result := Result + s[i];
+end;
+
+// Reverses an MSI PRODUCT_UPGRADE_CODE to standard GUID format and vice versa
+// Needed for determining the mapping between MSI PRODUCT_UPGRADE_CODE and MSI Product Codes in the registry
 function ReverseMSIGUID(const RevCode: string; AddFormatting: Boolean): string;
 var
   RevCodePlain, part1, part2, part3, part4, part5: string;
-
-  function ReversePairs(const s: string): string;
-  // Switches each pair of characters in the string
-  // Example: "A1B2C3" becomes "1A2B3C"
-  // Note: All MSI GUID segments have even lengths, so no need to handle odd-length strings
-  var
-    i: Integer;
-    resultStr: string;
-  begin
-    Result := '';
-    for i := 1 to Length(s) step 2 do
-      Result := Result + s[i+1] + s[i];
-  end;
-
-  function ReverseChars(const s: string): string;
-  // Reverses the order of characters in the string
-  // Example: "ABCDEF" becomes "FEDCBA"
-  var
-    i: Integer;
-    resultStr: string;
-  begin
-    Result := '';
-    for i := Length(s) downto 1 do
-      Result := Result + s[i];
-  end;
-
 begin
   // Remove hyphens if present
   // Revcodes stored in '<ROOT>\SOFTWARE\Microsoft\Windows\CurrentVersion\Installer\UpgradeCodes' do not have hyphens
@@ -125,9 +126,9 @@ begin
     Result := part1 + part2 + part3 + part4 + part5;
 end;
 
-// Returns true if an MSI installation with the given UpgradeCode exists in the specified RegistryRoot,
-// and sets MsiGuid to the corresponding ProductCode if found. Otherwise, returns false.
-function GetInstalledMsiString(RegistryRoot: Integer; var UpgradeCode: string; var MsiGuid: string): Boolean;
+// Returns true if an MSI installation with the given PRODUCT_UPGRADE_CODE exists in the specified RegistryRoot,
+// and sets MsiGuid to the corresponding mapping if found. Otherwise, returns false.
+function GetInstalledMsiString(RegistryRoot: Integer; UpgradeCode: string; var MsiGuid: string): Boolean;
 var
   ValueNames: TArrayOfString;
   i: Integer;

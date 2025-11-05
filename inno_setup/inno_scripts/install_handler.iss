@@ -58,7 +58,6 @@ end;
 //  Without a specified log location, logs to: '%TEMP%\Setup Log YYYY-MM-DD #001.txt' by default
 procedure UninstallPreviousVersion();
 var
-  UninstallKeyPath: string;
   UninstallKeyExe: string;
   MsiGuid: string;
   UninstallString: string;
@@ -69,7 +68,6 @@ var
   i: Integer;
   CurrentRoot: Integer;
   RootName: string;
-  FoundInstallation: Boolean;
 begin
   // Initialize arrays for registry roots and their names
   RegistryRoots[0] := HKLM;
@@ -78,13 +76,11 @@ begin
   RootNames[1] := 'user';
 
   // All EXE uninstall strings are stored here, regardless of vendor
-  UninstallKeyPath := 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall';
-  UninstallKeyExe := UninstallKeyPath + '\' + ExpandConstant('{#AppID}_is1');
+  UninstallKeyExe := ExpandConstant('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppID}_is1');
 
   // Loop through both HKLM and HKCU
   for i := 0 to 1 do
   begin
-    FoundInstallation := False;
     CurrentRoot := RegistryRoots[i];
     RootName := RootNames[i];
 
@@ -95,7 +91,6 @@ begin
       begin
         Log('Found previous ' + RootName + ' installation: ' + DisplayName);
       end;
-      FoundInstallation := True;
       Log('Uninstall string (with quotes): ' + UninstallString);
       Log('Uninstall string (quotes removed): ' + RemoveQuotes(UninstallString));
 
@@ -114,7 +109,7 @@ begin
     if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
     begin
       Log('Found installed MSI: ' + MsiGuid);
-      FoundInstallation := True;
+
       // Uninstall the MSI silently
       if Exec('MsiExec.exe', '/x ' + MsiGuid + ' /qn /norestart', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
       begin
@@ -126,10 +121,6 @@ begin
       end;
     end;
 
-    if not FoundInstallation then
-    begin
-      Log('No previous ' + RootName + ' installation found.');
-    end;
   end;
 end;
 
@@ -165,7 +156,7 @@ end;
 // For more info, see https://jrsoftware.org/ishelp/index.php?topic=scriptevents
 function InitializeSetup(): Boolean;
 var
-  UninstallKey: string;
+  UninstallKeyExe: string;
   DisplayVersion: string;
   DisplayName: string;
   RegistryRoots: array[0..1] of Integer;
@@ -182,32 +173,17 @@ begin
   RegistryRoots[1] := HKCU;
 
   // All EXE info is stored here, regardless of vendor
-  UninstallKey := ExpandConstant('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppID}_is1');
+  UninstallKeyExe := ExpandConstant('SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#AppID}_is1');
 
   // Loop through both HKLM and HKCU
   for i := 0 to 1 do
   begin
     CurrentRoot := RegistryRoots[i];
 
-    if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
+    // Check if a previous version was installed via EXE and compare
+    if RegQueryStringValue(CurrentRoot, UninstallKeyExe, 'DisplayVersion', DisplayVersion) then
     begin
-      MsgBoxString := 'Found installed MSI: ' + MsiGuid + '. Should we continue the installation?';
-      if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
-      begin
-        Log('Found installed MSI: ' + MsiGuid);
-      end
-      else
-      begin
-        Log('User chose not to continue installation due to existing MSI: ' + MsiGuid);
-        Result := False;
-        Exit;
-      end;
-    end;
-
-    // Check if a previous version was installed and compare
-    if RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayVersion', DisplayVersion) then
-    begin
-      RegQueryStringValue(CurrentRoot, UninstallKey, 'DisplayName', DisplayName);
+      RegQueryStringValue(CurrentRoot, UninstallKeyExe, 'DisplayName', DisplayName);
       Log('Previous version to uninstall: ' + DisplayVersion);
       Log('Previous version display name: ' + DisplayName);
 
@@ -243,6 +219,8 @@ begin
         if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
         begin
           Log('Same version detected: "' + DisplayVersion + '". Proceeding with reinstallation.');
+          // Exit here since we do not need to ask the user again if they want to overwrite older installations
+          Exit;
         end
         else
         begin
@@ -252,6 +230,30 @@ begin
         end;
       end;
     end;
+
+    // Check if a previous version was installed via MSI
+    if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
+    begin
+      // This message (translated into all languages supported by Inno Setup), reads:
+      //    Setup is preparing to install {APP_NAME} on your computer. The file already exists. Overwrite the existing file?
+      // Example:
+      //    Setup is preparing to install Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64) on your computer. The file already exists. Overwrite the existing file?
+      MsgBoxString := ReplaceSubstring(SetupMessage(msgPreparingDesc), '[name]', ExpandConstant('{#AppName}')) +
+                ' ' + SetupMessage(msgFileExists2) +
+                ' ' + ReplaceSubstring(SetupMessage(msgFileExistsOverwriteExisting), '&', '') + '? + MSI';
+      // For info on SuppressibleMsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_suppressiblemsgbox
+      if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
+      begin
+        Log('Legacy MSI version detected. Proceeding with overwriting.');
+      end
+      else
+      begin
+        Log('User chose not to overwrite legacy version.');
+        Result := False;
+        Exit;
+      end;
+    end;
+
   end;
 end;
 
