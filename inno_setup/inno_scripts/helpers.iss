@@ -132,7 +132,7 @@ end;
 
 // Returns true if an MSI installation with the given PRODUCT_UPGRADE_CODE exists in the specified RegistryRoot,
 // and sets MsiGuid to the corresponding mapping if found. Otherwise, returns false.
-function GetInstalledMsiString(RegistryRoot: Integer; UpgradeCode: string; var MsiGuid: string): Boolean;
+function GetInstalledMsiGuid(RegistryRoot: Integer; UpgradeCode: string; var MsiGuid: string): Boolean;
 var
   ValueNames: TArrayOfString;
   i: Integer;
