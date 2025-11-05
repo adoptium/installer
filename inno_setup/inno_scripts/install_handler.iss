@@ -106,7 +106,7 @@ begin
     end;
 
     // Check for MSI uninstaller. If found, var MsiGuid is assigned
-    if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
+    if GetInstalledMsiGuid(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
     begin
       Log('Found installed MSI: ' + MsiGuid);
 
@@ -232,7 +232,7 @@ begin
     end;
 
     // Check if a previous version was installed via MSI
-    if GetInstalledMsiString(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
+    if GetInstalledMsiGuid(CurrentRoot, ExpandConstant('{#AppID}'), MsiGuid) then
     begin
       // This message (translated into all languages supported by Inno Setup), reads:
       //    Setup is preparing to install {APP_NAME} on your computer. The file already exists. Overwrite the existing file?
