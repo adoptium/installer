@@ -112,10 +112,14 @@ begin
   part4 := Copy(RevCodePlain, 17, 4);
   part5 := Copy(RevCodePlain, 21, 12);
 
-  // Reverse each segment in pairs
+  // This is the process that Windows Installer uses to map UpgradeCodes to ProductCodes
+
+  // Reverse the first three parts by character
   part1 := ReverseChars(part1);
   part2 := ReverseChars(part2);
   part3 := ReverseChars(part3);
+
+// Reverse the final two parts by pair
   part4 := ReversePairs(part4);
   part5 := ReversePairs(part5);
 
