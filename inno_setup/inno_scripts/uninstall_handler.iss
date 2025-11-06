@@ -91,7 +91,9 @@ begin
     begin
       // No JDKs with FeatureOracleJavaSoft remaining on the user's system, so delete the RegistryKey
       RegDeleteValue(HKLM, ExpandConstant('SOFTWARE\JavaSoft\{#ProductCategory}'), 'CurrentVersion');
+      // Delete the remaining JavaSoft keys if empty
       RegDeleteKeyIfEmpty(HKLM, ExpandConstant('SOFTWARE\JavaSoft\{#ProductCategory}'));
+      RegDeleteKeyIfEmpty(HKLM, ExpandConstant('SOFTWARE\JavaSoft'));
     end;
   end;
 end;

@@ -240,7 +240,7 @@ begin
       //    Setup is preparing to install Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64) on your computer. The file already exists. Overwrite the existing file?
       MsgBoxString := ReplaceSubstring(SetupMessage(msgPreparingDesc), '[name]', ExpandConstant('{#AppName}')) +
                 ' ' + SetupMessage(msgFileExists2) +
-                ' ' + ReplaceSubstring(SetupMessage(msgFileExistsOverwriteExisting), '&', '') + '? + MSI';
+                ' ' + ReplaceSubstring(SetupMessage(msgFileExistsOverwriteExisting), '&', '') + '?';
       // For info on SuppressibleMsgBox(), see https://jrsoftware.org/ishelp/index.php?topic=isxfunc_suppressiblemsgbox
       if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
       begin
