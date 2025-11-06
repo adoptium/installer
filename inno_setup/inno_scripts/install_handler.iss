@@ -56,7 +56,7 @@ end;
 // Uninstall the previous version of the same openJDK package if it exists
 // Logs if /LOG is passed into compile cli, or if SetupLogging=yes in [Setup] section
 //  Without a specified log location, logs to: '%TEMP%\Setup Log YYYY-MM-DD #001.txt' by default
-procedure UninstallPreviousVersion();
+procedure UninstallPreviousInstallation();
 var
   UninstallKeyExe: string;
   MsiGuid: string;
@@ -110,14 +110,24 @@ begin
     begin
       Log('Found installed MSI: ' + MsiGuid);
 
-      // Uninstall the MSI silently
-      if Exec('MsiExec.exe', '/x ' + MsiGuid + ' /qn /norestart', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+      // Uninstall the MSI silently - try with elevation if needed
+      if not Exec('MsiExec.exe', '/x ' + MsiGuid + ' /qn /norestart', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) or (ResultCode = 1603) then
       begin
-        Log('Previous ' + RootName + ' MSI installation uninstalled successfully. Result code: ' + IntToStr(ResultCode));
+        Log('MSI uninstall failed or requires elevation. Result code: ' + IntToStr(ResultCode) + '. Attempting with elevation.');
+        // Try with elevated permissions using ShellExec
+        // 'runas' verb to request elevation. Allowed verbs documented at: https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecutea#parameters
+        if ShellExec('runas', 'MsiExec.exe', '/x ' + MsiGuid + ' /qn /norestart', '', SW_HIDE, ewWaitUntilTerminated, ResultCode) then
+        begin
+          Log('Previous ' + RootName + ' MSI installation uninstalled successfully with elevation. Result code: ' + IntToStr(ResultCode));
+        end
+        else
+        begin
+          Log('Failed to uninstall previous ' + RootName + ' MSI installation even with elevation. Result code: ' + IntToStr(ResultCode));
+        end;
       end
       else
       begin
-        Log('Failed to uninstall previous ' + RootName + ' MSI installation. Result code: ' + IntToStr(ResultCode));
+        Log('Previous ' + RootName + ' MSI installation uninstalled successfully. Result code: ' + IntToStr(ResultCode));
       end;
     end;
 
@@ -133,8 +143,8 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssInstall then
   begin
-    // Uninstall previous version if it exists
-    UninstallPreviousVersion();
+    // Uninstall previous installation if it exists
+    UninstallPreviousInstallation();
   end
   // Store task selections just after the actual installation finishes but before registry entries are created
   else if CurStep = ssPostInstall then
@@ -245,6 +255,7 @@ begin
       if SuppressibleMsgBox(MsgBoxString, mbInformation, MB_YESNO, IDYES) = IDYES then
       begin
         Log('Legacy MSI version detected. Proceeding with overwriting.');
+        Exit;
       end
       else
       begin
