@@ -23,14 +23,18 @@ end;
 
 // Returns the default installation directory based on the installation mode and system architecture
 function GetDefaultDir(Param: string): string;
+var
+  DefaultProductFolder: string;
 begin
+  //  Example: jdk-25.0.1.8-hotspot
+  DefaultProductFolder := Lowercase(ExpandConstant('{#ProductCategory}')) + '-' + ExpandConstant('{#ExeProductVersion}') + '-' + ExpandConstant('{#JVM}');
   if IsAdminInstallMode then
     // Here {commonpf}='C:\Program Files' for x64, aarch64, and x86 Archs since
     //  'ArchitecturesInstallIn64BitMode=win64' was set in [Setup]
-    Result := ExpandConstant('{commonpf}\{#Vendor}\{#ProductFolder}')
+    Result := ExpandConstant('{commonpf}\{#Vendor}\' + DefaultProductFolder)
   else
     // {userpf}='C:\Users\<USERNAME>\AppData\Local\Programs'
-    Result := ExpandConstant('{userpf}\{#Vendor}\{#ProductFolder}');
+    Result := ExpandConstant('{userpf}\{#Vendor}\' + DefaultProductFolder);
 end;
 
 #endif

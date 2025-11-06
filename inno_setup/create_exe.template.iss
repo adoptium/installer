@@ -8,7 +8,6 @@
 ; Define useful variables based off inputs
 #define OutputDir "output"
 #define IniFile '{app}\install_tasks.ini'
-#define ProductFolder ProductCategory + "-" + ExeProductVersion + "-" + JVM
 
 ; Include code helper scripts
 #include "inno_scripts\install_handler.iss"
@@ -187,7 +186,7 @@ Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ExeProductVersion}";
     ValueType: string; ValueName: "JavaHome"; ValueData: "{app}"; \
     Flags: uninsdeletekey; Check: WasTaskSelected('FeatureOracleJavaSoft');
 ; The RuntimeLib key is only used by JREs, not JDKs
-#if ProductCategory == "jre"
+#if ProductCategory == "JRE"
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ProductMajorVersion}"; \
     ValueType: string; ValueName: "RuntimeLib"; ValueData: "{app}\bin\server\jvm.dll"; \
     Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureOracleJavaSoft');
