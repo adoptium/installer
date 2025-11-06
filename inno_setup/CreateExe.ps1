@@ -50,7 +50,7 @@
 .PARAMETER AppName
     Optional. The name of the App.
     Example: "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)"
-    Default: "$VendorBranding $($ProductCategory.ToUpper()) with $CapitalizedJVM $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
+    Default: "$VendorBranding $($ProductCategory.ToUpper()) with $CapitalizedJVM $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.+$ProductBuildNumber ($Arch)"
 
 .PARAMETER Vendor
     Optional. Default: Eclipse Adoptium
@@ -87,7 +87,7 @@
 .PARAMETER OutputFileName
     Optional. The name of the output file. Note: Inno Setup will automatically add the '.exe' file extension
     Default:
-        "OpenJDK${ProductMajorVersion}-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion.$ProductBuildNumber"
+        "OpenJDK${ProductMajorVersion}U-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion_$ProductBuildNumber"
 
 .PARAMETER License
     Optional. The path to the license file. This can either be a full path to any file, or a relative path to a license file in the inno_setup/licenses folder.
@@ -288,7 +288,7 @@ $AppName = SetDefaultIfEmpty `
 ## Note: Inno Setup will add the '.exe' file extension automatically
 $OutputFileName = SetDefaultIfEmpty `
     -InputValue $OutputFileName `
-    -DefaultValue "OpenJDK${ProductMajorVersion}-${ProductCategory}_${Arch}_windows_${JVM}-${VersionMajorToMaintenance}.${ProductPatchVersion}.${ProductBuildNumber}"
+    -DefaultValue "OpenJDK${ProductMajorVersion}U-${ProductCategory}_${Arch}_windows_${JVM}_${VersionMajorToMaintenance}_${ProductBuildNumber}"
 
 ## If $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
 $INNO_SETUP_PATH = SetDefaultIfEmpty `
@@ -337,7 +337,7 @@ $InnoSetupArgs += "/J$TranslationFile"
 $InnoSetupArgs += "/DArchitecturesAllowed=`"$ArchitecturesAllowed`""
 $InnoSetupArgs += "/DAppName=`"$AppName`""
 $InnoSetupArgs += "/DVendor=`"$Vendor`""
-$InnoSetupArgs += "/DProductCategory=`"$ProductCategory`""
+$InnoSetupArgs += "/DProductCategory=`"$($ProductCategory.ToUpper())`""
 $InnoSetupArgs += "/DJVM=`"$JVM`""
 $InnoSetupArgs += "/DProductMajorVersion=`"$ProductMajorVersion`""
 $InnoSetupArgs += "/DProductMinorVersion=`"$ProductMinorVersion`""
