@@ -179,7 +179,7 @@ Root: HKCU; Subkey: "Environment"; \
 ; FeatureOracleJavaSoft: Add JavaSoft Keys if the user requests them
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}"; \
     ValueType: string; ValueName: "CurrentVersion"; ValueData: "{#ProductMajorVersion}"; \
-    Flags: uninsdeletevalue; Check: (ShouldUpdateJavaVersion and not IsUninstaller and WasTaskSelected('FeatureOracleJavaSoft')) or (IsUninstaller and WasTaskSelected('FeatureOracleJavaSoft'));
+    Flags: uninsdeletekeyifempty; Check: (ShouldUpdateJavaVersion and not IsUninstaller and WasTaskSelected('FeatureOracleJavaSoft')) or (IsUninstaller and WasTaskSelected('FeatureOracleJavaSoft'));
 Root: HKLM; Subkey: "SOFTWARE\JavaSoft\{#ProductCategory}\{#ProductMajorVersion}"; \
     ValueType: string; ValueName: "JavaHome"; ValueData: "{app}"; \
     Flags: uninsdeletevalue uninsdeletekeyifempty; Check: WasTaskSelected('FeatureOracleJavaSoft');
