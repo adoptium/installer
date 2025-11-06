@@ -37,17 +37,19 @@ begin
     // Compare each part
     for i := 0 to MaxLen do
     begin
-      // Get the part as integer (default to 0 if not present)
+      // Get the part of V1 as integer (default to 0 if not present)
       if i < V1Parts.Count then
         Part1 := StrToIntDef(V1Parts[i], 0)
       else
         Part1 := 0;
 
+      // Get the part of V2 as integer (default to 0 if not present)
       if i < V2Parts.Count then
         Part2 := StrToIntDef(V2Parts[i], 0)
       else
         Part2 := 0;
 
+      // Compare the part
       if Part1 < Part2 then
       begin
         Result := -1;
@@ -119,7 +121,7 @@ begin
   part2 := ReverseChars(part2);
   part3 := ReverseChars(part3);
 
-// Reverse the final two parts by pair
+  // Reverse the final two parts by pair
   part4 := ReversePairs(part4);
   part5 := ReversePairs(part5);
 
