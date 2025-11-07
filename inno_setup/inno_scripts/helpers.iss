@@ -68,6 +68,7 @@ begin
 end;
 
 // Switches each pair of characters in the string
+// This is needed to programmatically "reverse" MSI GUID segments to find its mapping to the Product Upgrade Code
 // Example: "A1B2C3" becomes "1A2B3C"
 // Note: All MSI GUID segments have even lengths, so no need to handle odd-length strings
 function ReversePairs(const s: string): string;
@@ -84,8 +85,9 @@ begin
 end;
 
 // Reverses the order of characters in the string
+// This is needed to programmatically "reverse" MSI GUID segments to find its mapping to the Product Upgrade Code
 // Example: "ABCDEF" becomes "FEDCBA"
-function ReverseChars(const s: string): string;
+function ReverseString(const s: string): string;
 var
   i: Integer;
 begin
@@ -117,9 +119,9 @@ begin
   // This is the process that Windows Installer uses to map UpgradeCodes to ProductCodes
 
   // Reverse the first three parts by character
-  part1 := ReverseChars(part1);
-  part2 := ReverseChars(part2);
-  part3 := ReverseChars(part3);
+  part1 := ReverseString(part1);
+  part2 := ReverseString(part2);
+  part3 := ReverseString(part3);
 
   // Reverse the final two parts by pair
   part4 := ReversePairs(part4);
