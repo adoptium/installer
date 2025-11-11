@@ -143,7 +143,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssInstall then
   begin
-    // Uninstall previous installation if it exists
+    // Uninstall existing JDK of the same LTS if it exists
     UninstallPreviousInstallation();
   end
   // Store task selections just after the actual installation finishes but before registry entries are created
