@@ -50,7 +50,7 @@
 .PARAMETER AppName
     Optional. The name of the App.
     Example: "Eclipse Temurin JDK with Hotspot 25.0.1+8 (x64)"
-    Default: "$VendorBranding $($ProductCategory.ToUpper()) with $CapitalizedJVM $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.+$ProductBuildNumber ($Arch)"
+    Default: "$VendorBranding $($ProductCategory.ToUpper()) with $CapitalizedJVM $ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion+$ProductBuildNumber ($Arch)"
 
 .PARAMETER Vendor
     Optional. Default: Eclipse Adoptium
