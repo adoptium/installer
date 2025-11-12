@@ -3,7 +3,7 @@
 pkg_name = msopenjdk-11
 priority = 1111
 jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jjs jlink jmap jmod jps jrunscript jshell jstack jstat jstatd keytool pack200 rmic rmid rmiregistry serialver unpack200 jexec jspawnhelper
-url_version = 11.0.28
+url_version = 11.0.29
 amd64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz
 amd64_checksum_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-x64.tar.gz.sha256sum.txt
 arm64_tarball_url = https://aka.ms/download-jdk/microsoft-jdk-$(url_version)-linux-aarch64.tar.gz
