@@ -1,3 +1,9 @@
+msopenjdk-17 (17.0.17-1) STABLE; urgency=medium
+
+  * Microsoft 17.0.17-1 release.
+
+ -- Microsoft Package Maintainers <openjdk@microsoft.com>  Mon, 13 Oct 2025 23:16:38 +0000
+
 msopenjdk-17 (17.0.16-1) STABLE; urgency=medium
 
   * Microsoft 17.0.16-1 release.
