@@ -1,3 +1,9 @@
+msopenjdk-25 (25.0.1-1) STABLE; urgency=medium
+
+  * Microsoft 25.0.1-1 release.
+
+ -- Microsoft Package Maintainers <openjdk@microsoft.com>  Mon, 13 Oct 2025 23:08:26 +0000
+
 msopenjdk-25 (25.0.0-1) STABLE; urgency=medium
 
   * Microsoft 25.0.0-1 release.
