@@ -12,7 +12,7 @@ jobs:
       checks: write
     runs-on: ubuntu-latest
     steps:
-    - uses: dorny/test-reporter@dc3a92680fcc15842eef52e8c4606ea7ce6bd3f3 # v2.1.1
+    - uses: dorny/test-reporter@7b7927aa7da8b82e81e755810cb51f39941a2cc7 # v2.2.0
       with:
         artifact: test-results            # artifact name
         name: JUnit Test Report           # Name of the check run which will be created
