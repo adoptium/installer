@@ -20,6 +20,9 @@
 .PARAMETER jvm
     The JVM to be used. If not provided, the script will attempt to extract the JVM from the filename.
 
+.PARAMETER wix_path
+    The path to an existing WixToolset.Heat installation. If provided, the script will use this path instead of downloading WixToolset.Heat.
+
 .PARAMETER wix_version
     The version wix that is currently installed.
     Used to determine WixToolset.Heat version to be installed. Default is 6.0.0.
@@ -44,6 +47,8 @@ param (
   [string]$jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)",
   [Parameter(Mandatory = $false)]
   [string]$jvm = "",
+  [Parameter(Mandatory = $false)]
+  [string]$wix_path = "",
   [Parameter(Mandatory = $false)]
   [string]$wix_version = "6.0.0"
 )
@@ -118,12 +123,19 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name | ForEach-Object {
 }
 
 # Install wixtoolset.heat version $wix_version
-Write-Host "Installing WixToolset.Heat version $wix_version"
-mkdir wix_extension
-$sourceURI = 'https://www.nuget.org/api/v2/package/WixToolset.Heat/' + $wix_version
-$outFile = '.\wix_extension\wixtoolset.heat.' + $wix_version + '.zip'
-Invoke-WebRequest -Uri $sourceURI -OutFile $outFile
-Expand-Archive -Path "$outFile" -DestinationPath ./wix_extension/
+if (Test-Path -Path $wix_path) {
+  Write-Host "Using provided WixToolset.Heat path: $wix_path"
+  mkdir wix_extension
+  Copy-Item -Path $wix_path -Destination .\wix_extension -Recurse -Force
+}
+else {
+  Write-Host "Installing WixToolset.Heat version $wix_version"
+  mkdir wix_extension
+  $sourceURI = 'https://www.nuget.org/api/v2/package/WixToolset.Heat/' + $wix_version
+  $outFile = '.\wix_extension\wixtoolset.heat.' + $wix_version + '.zip'
+  Invoke-WebRequest -Uri $sourceURI -OutFile $outFile
+  Expand-Archive -Path "$outFile" -DestinationPath ./wix_extension/
+}
 
 # Determine the architecture of the operating system
 if ([Environment]::Is64BitOperatingSystem) {
