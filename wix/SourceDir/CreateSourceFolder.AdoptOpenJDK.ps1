@@ -123,7 +123,11 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name | ForEach-Object {
 }
 
 # Install wixtoolset.heat version $wix_version
-if (Test-Path -Path $wix_path) {
+$wix_path_provided = -not [string]::IsNullOrEmpty($wix_path)
+if ($wix_path_provided) {
+  if (-not (Test-Path -Path $wix_path)) {
+    throw "Provided WixToolset.Heat path '$wix_path' does not exist."
+  }
   Write-Host "Using provided WixToolset.Heat path: $wix_path"
   mkdir wix_extension
   Copy-Item -Path $wix_path -Destination .\wix_extension -Recurse -Force
