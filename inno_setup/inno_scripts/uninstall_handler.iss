@@ -99,7 +99,6 @@ begin
 end;
 
 
-
 // This function defines uninstallation logic at each step of the uninstallation process:
 //    usUninstall     - just before the actual uninstallation starts
 //    usPostUninstall - just after the actual uninstallation finishes
