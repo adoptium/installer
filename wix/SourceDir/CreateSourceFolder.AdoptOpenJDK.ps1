@@ -20,6 +20,9 @@
 .PARAMETER jvm
     The JVM to be used. If not provided, the script will attempt to extract the JVM from the filename.
 
+.PARAMETER wix_path
+    The path to an existing WixToolset.Heat installation. If provided, the script will use this path instead of downloading WixToolset.Heat.
+
 .PARAMETER wix_version
     The version wix that is currently installed.
     Used to determine WixToolset.Heat version to be installed. Default is 6.0.0.
@@ -44,6 +47,8 @@ param (
   [string]$jvm_regex = "(?<jvm>hotspot|openj9|dragonwell)",
   [Parameter(Mandatory = $false)]
   [string]$jvm = "",
+  [Parameter(Mandatory = $false)]
+  [string]$wix_path = "",
   [Parameter(Mandatory = $false)]
   [string]$wix_version = "6.0.0"
 )
@@ -118,12 +123,28 @@ Get-ChildItem -Path .\ -Filter *.zip -File -Name | ForEach-Object {
 }
 
 # Install wixtoolset.heat version $wix_version
-Write-Host "Installing WixToolset.Heat version $wix_version"
-mkdir wix_extension
-$sourceURI = 'https://www.nuget.org/api/v2/package/WixToolset.Heat/' + $wix_version
-$outFile = '.\wix_extension\wixtoolset.heat.' + $wix_version + '.zip'
-Invoke-WebRequest -Uri $sourceURI -OutFile $outFile
-Expand-Archive -Path "$outFile" -DestinationPath ./wix_extension/
+$wix_path_provided = -not [string]::IsNullOrEmpty($wix_path)
+# Always stage wix_extension alongside the script's working directory.
+$wix_extension_dir = Join-Path -Path (Get-Location).Path -ChildPath "wix_extension"
+if (Test-Path -Path $wix_extension_dir) {
+  Remove-Item -Path $wix_extension_dir -Recurse -Force
+}
+New-Item -ItemType Directory -Path $wix_extension_dir -Force | Out-Null
+
+if ($wix_path_provided) {
+  if (-not (Test-Path -Path $wix_path)) {
+    throw "Provided WixToolset.Heat path '$wix_path' does not exist."
+  }
+  Write-Host "Using provided WixToolset.Heat path: $wix_path"
+  Copy-Item -Path $wix_path -Destination $wix_extension_dir -Recurse -Force
+}
+else {
+  Write-Host "Installing WixToolset.Heat version $wix_version"
+  $sourceURI = 'https://www.nuget.org/api/v2/package/WixToolset.Heat/' + $wix_version
+  $outFile = Join-Path -Path $wix_extension_dir -ChildPath ("wixtoolset.heat." + $wix_version + '.zip')
+  Invoke-WebRequest -Uri $sourceURI -OutFile $outFile
+  Expand-Archive -Path $outFile -DestinationPath $wix_extension_dir
+}
 
 # Determine the architecture of the operating system
 if ([Environment]::Is64BitOperatingSystem) {
@@ -136,7 +157,7 @@ else {
 }
 
 # Copy heat.exe to expected location in Resources Dir
-$ORIG_WIX_HEAT_DIR = (Get-ChildItem -Path .\wix_extension -Recurse -Filter "$current_arch").FullName
+$ORIG_WIX_HEAT_DIR = (Get-ChildItem -Path $wix_extension_dir -Recurse -Filter "$current_arch").FullName
 Copy-Item -Path $ORIG_WIX_HEAT_DIR -Destination ..\Resources -Force -Recurse
 Rename-Item -Path "..\Resources\$current_arch" -NewName heat_dir
 
@@ -145,4 +166,4 @@ $env:WIX_HEAT_PATH = "$PWD/../Resources/heat_dir/heat.exe"
 Write-Host "wixtoolset.heat.exe path saved at location $env:WIX_HEAT_PATH"
 
 # Cleanup
-Remove-Item -Path .\wix_extension -Recurse -Force
+Remove-Item -Path $wix_extension_dir -Recurse -Force
