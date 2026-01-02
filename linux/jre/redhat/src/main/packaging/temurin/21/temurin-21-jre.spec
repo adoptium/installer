@@ -1,12 +1,15 @@
-%global upstream_version 21.0.5+11
+%global upstream_version 21.0.9+10
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 21.0.0.0.0___21.0.0.0.0+1
 #  20.0.0.0.0___1 == 21.0.0.0.0+35
-%global spec_version 21.0.5.0.0.11
+%global spec_version 21.0.9.0.0.10
 %global spec_release 1
 %global priority 2100
+
+# if rpmbuild  will be executed as `rpmbuild -bb ...spec --without headfull ...` then headless package will be generated
+%bcond_without headfull
 
 %global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
@@ -67,7 +70,11 @@
 %global sha_src_num 1
 %endif
 
+%if %{with headfull}
 Name:        temurin-21-jre
+%else
+Name:        temurin-21-jre-headless
+%endif
 Version:     %{spec_version}
 Release:     %{spec_release}
 Summary:     Eclipse Temurin 21 JRE
@@ -89,25 +96,30 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
+%if %{with headfull}
+Requires: dejavu-sans-fonts  #?
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
 Requires: libXi%{?_isa}
 Requires: libXrender%{?_isa}
 Requires: libXtst%{?_isa}
-Requires: alsa-lib%{?_isa}
+Requires: alsa-lib%{?_isa}  #?
+Requires: fontconfig%{?_isa}
+%endif
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
-Requires: fontconfig%{?_isa}
 
+%if %{with headfull}
 Provides: jre
 Provides: jre-21
-Provides: jre-21-headless
 Provides: jre-21-%{java_provides}
+Provides: jre-%{java_provides}
+%else
+Provides: jre-21-headless
 Provides: jre-21-%{java_provides}-headless
 Provides: jre-headless
-Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
+%endif
 
 # First architecture (x86_64)
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
@@ -159,6 +171,15 @@ rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/lib/security"
 ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
+
+%if %{with headfull}
+echo "this is headfull version, nothing will be removed"
+%else
+echo "this is headless version, headfull libraries will be removed"
+pushd "%{buildroot}%{prefix}/lib"
+ rm -v libsplashscreen.so libawt_xawt.so libjawt.so
+popd
+%endif
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
 # https://bugzilla.redhat.com/show_bug.cgi?id=1704608
