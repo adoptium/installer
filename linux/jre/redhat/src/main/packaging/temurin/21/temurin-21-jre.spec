@@ -97,13 +97,13 @@ Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
 %if %{with headfull}
-Requires: dejavu-sans-fonts  #?
+Requires: dejavu-sans-fonts
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
 Requires: libXi%{?_isa}
 Requires: libXrender%{?_isa}
 Requires: libXtst%{?_isa}
-Requires: alsa-lib%{?_isa}  #?
+Requires: alsa-lib%{?_isa}
 Requires: fontconfig%{?_isa}
 %endif
 Requires: glibc%{?_isa}
