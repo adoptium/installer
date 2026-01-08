@@ -22,12 +22,13 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
-%global altname java-21-temurin-jre
 
 %if %{with headful}
 Name:        temurin-21-jre
+%global altname java-21-temurin-jre
 %else
 Name:        temurin-21-jre-headless
+%global altname java-21-temurin-jre-headless
 %endif
 Version:     %{spec_version}
 Release:     %{spec_release}
