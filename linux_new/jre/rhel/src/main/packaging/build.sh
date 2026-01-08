@@ -4,28 +4,21 @@ set -euxo pipefail
 # Ensure necessary directories for rpmbuild operation are present.
 rpmdev-setuptree
 
-if [ "${buildLocalFlag}" == "true" ]; then
+if [ "$buildLocalFlag" == "true" ]; then
   # Copy all sha256 files into SOURCE directory
   count=1
-  for sha in /home/builder/build/jre/*.sha256*.txt; do
-    [ -e "$sha" ] || continue
+  for sha in $(ls /home/builder/build/jre/*.sha256*.txt); do
     cp "$sha" /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz.sha256.txt
     count=$((count + 1))
   done
 
   # Copy all source tar files into SOURCE directory
   count=1
-  for jre in /home/builder/build/jre/*.tar.gz; do
-    [ -e "$jre" ] || continue
+  for jre in $(ls /home/builder/build/jre/*.tar.gz); do
     cp "$jre" /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz
 
     # Change name of *.tar.gz in .sha256.txt contents to match new name (local_build_jre#.tar.gz)
-    # Example:
-    # f579751fdcd627552a550e37ee00f8ff7a04e53bb385154ac17a0fb1fbb6ed12  <vendor>-jre-17.0.7-linux-x64.tar.gz
-    # To
-    # f579751fdcd627552a550e37ee00f8ff7a04e53bb385154ac17a0fb1fbb6ed12  local_build_jre1.tar.gz
-    sed -i "s/$(basename "$jre")/local_build_jre${count}.tar.gz/" \
-      /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz.sha256.txt
+    sed -i "s/$(basename "$jre")/local_build_jre${count}.tar.gz/" /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz.sha256.txt
 
     count=$((count + 1))
   done
@@ -43,18 +36,14 @@ fi
 
 # loop spec file originally from src/main/packaging/$product/$productVersion/*.spec
 for spec in /home/builder/build/generated/packaging/*.spec; do
-  [ -e "$spec" ] || continue
-
-  spectool -g -R "$spec"
-
-  # Build BOTH variants (and therefore BOTH SRPMs):
-  #  - headful:   rpmbuild --with headful
-  #  - headless:  rpmbuild --without headful (also default in spec via %bcond_without headful)
+  # Build BOTH variants; re-run spectool before each SRPM build because SOURCES may get cleaned
   for bcond in "--with headful" "--without headful"; do
-    rpmbuild $bcond --define "local_build ${buildLocalFlag}" \
-      --nodeps -bs "$spec" # build src.rpm for this variant
+    spectool -g -R "$spec"
 
-    # Capture the SRPM we just created (avoid rebuilding all SRPMS/*.src.rpm)
+    rpmbuild $bcond --define "local_build ${buildLocalFlag}" \
+      --nodeps -bs "$spec" # build src.rpm
+
+    # Capture the SRPM we just built for THIS variant
     srpm="$(ls -1t /home/builder/rpmbuild/SRPMS/*.src.rpm | head -n 1)"
 
     # if buildArch == all, extract ExclusiveArch from the spec file
@@ -70,15 +59,16 @@ for spec in /home/builder/build/generated/packaging/*.spec; do
     for target in $targets; do
       rpmbuild $bcond --target "$target" \
         --define "local_build ${buildLocalFlag}" \
-        --rebuild "$srpm" # build binary package from this variant's src.rpm
+        --rebuild "$srpm" # build binary package from THIS src.rpm
     done
   done
 done
 
 # Copy generated SRPMS, RPMs to destination folder
+mkdir -p /home/builder/out
 find /home/builder/rpmbuild/SRPMS /home/builder/rpmbuild/RPMS -type f -name "*.rpm" -print0 | xargs -0 -I {} cp {} /home/builder/out
 
-# Rename Src RPM To Include Architecture (idempotent; ensures both SRPMs end in .${buildArch}.src.rpm)
+# Rename Src RPM To Include Architecture (idempotent)
 cd /home/builder/out/
 for file in *.src.rpm; do
   [ -e "$file" ] || continue
@@ -86,12 +76,12 @@ for file in *.src.rpm; do
     *".${buildArch}.src.rpm") continue ;;
   esac
   filename="$(basename -s .src.rpm "$file")"
-  SRCTarget="${filename}.${buildArch}.src.rpm"
+  SRCTarget="$filename.${buildArch}.src.rpm"
   mv -f "$file" "$SRCTarget"
 done
 cd -
 
-# Sign generated RPMs with rpmsign (includes both SRPMs because they match *.rpm)
+# Sign generated RPMs with rpmsign.
 if grep -q %_gpg_name /home/builder/.rpmmacros; then
   rm -f ~/.gnupg/public-keys.d/pubring.db.lock
   for file in /home/builder/out/*.rpm; do
