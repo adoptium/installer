@@ -8,8 +8,8 @@
 %global spec_release 1
 %global priority 2100
 
-# if rpmbuild  will be executed as `rpmbuild -bb ...spec --without headfull ...` then headless package will be generated
-%bcond_without headfull
+# if rpmbuild  will be executed as `rpmbuild -bb ...spec --without headful ...` then headless package will be generated
+%bcond_without headful
 
 %global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
@@ -70,7 +70,7 @@
 %global sha_src_num 1
 %endif
 
-%if %{with headfull}
+%if %{with headful}
 Name:        temurin-21-jre
 %else
 Name:        temurin-21-jre-headless
@@ -96,7 +96,7 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-%if %{with headfull}
+%if %{with headful}
 Requires: dejavu-sans-fonts
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
@@ -109,7 +109,7 @@ Requires: fontconfig%{?_isa}
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
 
-%if %{with headfull}
+%if %{with headful}
 Provides: jre
 Provides: jre-21
 Provides: jre-21-%{java_provides}
@@ -172,10 +172,10 @@ pushd "%{buildroot}%{prefix}/lib/security"
 ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
 
-%if %{with headfull}
-echo "this is headfull version, nothing will be removed"
+%if %{with headful}
+echo "this is headful version, nothing will be removed"
 %else
-echo "this is headless version, headfull libraries will be removed"
+echo "this is headless version, headful libraries will be removed"
 pushd "%{buildroot}%{prefix}/lib"
  rm -v libsplashscreen.so libawt_xawt.so libjawt.so
 popd
