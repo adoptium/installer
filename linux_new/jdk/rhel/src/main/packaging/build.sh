@@ -55,9 +55,17 @@ for spec in "$(ls /home/builder/build/generated/packaging/*.spec)"; do
 		[ -n "$ExclusiveArch" ] && targets="${ExclusiveArch}"
 	fi
 	for target in $targets; do
-		rpmbuild --target "$target" \
-					--define "local_build ${buildLocalFlag}" \
-					--rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm; # build binary package from src.rpm
+		if echo $spec | grep jre > /dev/null; then
+			without_variants="nothing headful"
+		else
+			without_variants="nothing"
+		fi
+		for without_variant in $without_variants ; do
+			rpmbuild --target "$target" \
+						--without ${without_variant} \
+						--define "local_build ${buildLocalFlag}" \
+						--rebuild /home/builder/rpmbuild/SRPMS/*.src.rpm; # build binary package from src.rpm
+		done
 	done;
 done;
 
@@ -72,5 +80,5 @@ if grep -q %_gpg_name /home/builder/.rpmmacros; then
 	for file in `ls /home/builder/out/*.rpm`; do
 		echo Signing: $file
 	  	rpmsign --addsign $file
-  done
+	done
 fi;
