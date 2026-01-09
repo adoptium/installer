@@ -5,21 +5,20 @@ set -euxo pipefail
 rpmdev-setuptree
 
 if [ "$buildLocalFlag" == "true" ]; then
-  # Copy all sha256 files into SOURCE directory
+  # Copy all sha256 files into SOURCES directory
   count=1
   for sha in $(ls /home/builder/build/jre/*.sha256*.txt); do
     cp "$sha" /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz.sha256.txt
     count=$((count + 1))
   done
 
-  # Copy all source tar files into SOURCE directory
+  # Copy all source tar files into SOURCES directory
   count=1
   for jre in $(ls /home/builder/build/jre/*.tar.gz); do
     cp "$jre" /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz
 
     # Change name of *.tar.gz in .sha256.txt contents to match new name (local_build_jre#.tar.gz)
     sed -i "s/$(basename "$jre")/local_build_jre${count}.tar.gz/" /home/builder/rpmbuild/SOURCES/local_build_jre${count}.tar.gz.sha256.txt
-
     count=$((count + 1))
   done
 fi

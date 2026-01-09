@@ -8,7 +8,7 @@
 %global spec_release {{ package_release_version }}
 %global priority 2100
 
-# if rpmbuild  will be executed as `rpmbuild -bb ...spec --without headful ...` then headless package will be generated
+# if rpmbuild is executed as: `rpmbuild -bb ...spec --without headful ...` then a headless package will be generated
 %bcond_without headful
 
 %global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
@@ -143,9 +143,9 @@ ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
 
 %if %{with headful}
-echo "this is headful version, nothing will be removed"
+echo "This is the headful version, nothing will be removed"
 %else
-echo "this is headless version, headful libraries will be removed"
+echo "This is the headless version, headful libraries will be removed"
 pushd "%{buildroot}%{prefix}/lib"
  rm -v libsplashscreen.so libawt_xawt.so libjawt.so
 popd
