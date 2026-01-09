@@ -8,6 +8,9 @@
 %global spec_release {{ package_release_version }}
 %global priority 1082
 
+# if rpmbuild is executed as: `rpmbuild -bb ...spec --without headful ...` then a headless package will be generated
+%bcond_without headful
+
 %global source_url_base https://github.com/adoptium/temurin8-binaries/releases/download
 %global upstream_version_no_dash %(echo %{upstream_version} | sed 's/-//g')
 %global java_provides openjre
@@ -18,9 +21,14 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
-%global altname java-8-temurin-jre
 
+%if %{with headful}
 Name:        temurin-8-jre
+%global altname java-8-temurin-jre
+%else
+Name:        temurin-8-jre-headless
+%global altname java-8-temurin-jre-headless
+%endif
 Version:     %{spec_version}
 Release:     %{spec_release}
 Summary:     Eclipse Temurin 8 JRE
@@ -50,28 +58,33 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
-Requires: dejavu-sans-fonts
 %ifarch %{arm}
 Requires: libatomic
 %endif
+%if %{with headful}
+Requires: dejavu-sans-fonts
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
 Requires: libXi%{?_isa}
 Requires: libXrender%{?_isa}
 Requires: libXtst%{?_isa}
 Requires: alsa-lib%{?_isa}
+Requires: fontconfig%{?_isa}
+%endif
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
-Requires: fontconfig%{?_isa}
 
+%if %{with headful}
 Provides: jre
 Provides: jre-1.8.0
-Provides: jre-1.8.0-headless
 Provides: jre-1.8.0-%{java_provides}
+Provides: jre-%{java_provides}
+%else
+Provides: jre-1.8.0-headless
 Provides: jre-1.8.0-%{java_provides}-headless
 Provides: jre-headless
-Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
+%endif
 
 # Add Virtual Provides For Altname
 Provides: %{altname}
@@ -80,7 +93,9 @@ Provides: %{altname}
 Obsoletes: temurin-8-jre < 8.0.462.0.0.8-1
 
 # Add Provides For Java Public Libraries
+%if %{with headful}
 Provides: libjawt.so%{?_isa}
+%endif
 Provides: libjvm.so%{?_isa}
 Provides: libjava.so%{?_isa}
 Provides: libverify.so%{?_isa}
@@ -133,6 +148,15 @@ rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/lib/security"
 ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
+
+%if %{with headful}
+echo "This is the headful version, nothing will be removed"
+%else
+echo "This is the headless version, headful libraries will be removed"
+for x in libsplashscreen.so libawt_xawt.so libjawt.so ; do 
+ rm -v  %{buildroot}%{prefix}/lib/*/$x
+done
+%endif
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
 # https://bugzilla.redhat.com/show_bug.cgi?id=1704608
