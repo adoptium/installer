@@ -8,6 +8,9 @@
 %global spec_release {{ package_release_version }}
 %global priority 1112
 
+# if rpmbuild is executed as: `rpmbuild -bb ...spec --without headful ...` then a headless package will be generated
+%bcond_without headful
+
 %global source_url_base https://github.com/adoptium/temurin11-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
@@ -19,9 +22,14 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
-%global altname java-11-temurin-jre
 
+%if %{with headful}
 Name:        temurin-11-jre
+%global altname java-11-temurin-jre
+%else
+Name:        temurin-11-jre-headless
+%global altname java-11-temurin-jre-headless
+%endif
 Version:     %{spec_version}
 Release:     %{spec_release}
 Summary:     Eclipse Temurin 11 JRE
@@ -51,6 +59,7 @@ BuildRequires:  wget
 Requires: /bin/sh
 Requires: /usr/sbin/alternatives
 Requires: ca-certificates
+%if %{with headful}
 Requires: dejavu-sans-fonts
 Requires: libX11%{?_isa}
 Requires: libXext%{?_isa}
@@ -58,18 +67,22 @@ Requires: libXi%{?_isa}
 Requires: libXrender%{?_isa}
 Requires: libXtst%{?_isa}
 Requires: alsa-lib%{?_isa}
+Requires: fontconfig%{?_isa}
+%endif
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
-Requires: fontconfig%{?_isa}
 
+%if %{with headful}
 Provides: jre
 Provides: jre-11
-Provides: jre-11-headless
 Provides: jre-11-%{java_provides}
+Provides: jre-%{java_provides}
+%else
+Provides: jre-11-headless
 Provides: jre-11-%{java_provides}-headless
 Provides: jre-headless
-Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
+%endif
 
 # Add Virtual Provides For Altname
 Provides: %{altname}
@@ -78,7 +91,9 @@ Provides: %{altname}
 Obsoletes: temurin-11-jre < 11.0.28.0.0.6-1
 
 # Add Provides For Java Public Libraries
+%if %{with headful}
 Provides: libjawt.so%{?_isa}
+%endif
 Provides: libjvm.so%{?_isa}
 Provides: libjava.so%{?_isa}
 Provides: libverify.so%{?_isa}
@@ -125,6 +140,15 @@ rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/lib/security"
 ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
 popd
+
+%if %{with headful}
+echo "This is the headful version, nothing will be removed"
+%else
+echo "This is the headless version, headful libraries will be removed"
+pushd "%{buildroot}%{prefix}/lib"
+ rm -v libsplashscreen.so libawt_xawt.so libjawt.so
+popd
+%endif
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
 # https://bugzilla.redhat.com/show_bug.cgi?id=1704608
