@@ -1,5 +1,5 @@
 # Introduction
-This tool is designed to create EXE files which are modern and accessibility-friendly. This EXE format provides a reliable and user-friendly installation experience, including a graphical installer interface that achieves the highest standards for accessibility. When installed, the folder `jdk-${ExeProductVersion}-${JVM}` is placed at `C:\Program Files\${Vendor}\` (for machine-wide installs), or `C:\Users\${env:USERNAME}\AppData\Local\Programs\${Vendor}\` (for user installs). 
+This tool is designed to create EXE files which are modern and accessibility-friendly. This EXE format provides a reliable and user-friendly installation experience, including a graphical installer interface that achieves the highest standards for accessibility. When installed, the folder `jdk-${ExeProductVersion}-${JVM}` is placed at `C:\Program Files\${Vendor}\` (for machine-wide installs), or `C:\Users\${env:USERNAME}\AppData\Local\Programs\${Vendor}\` (for user installs).
 
 # How to create EXE files
 
