@@ -138,7 +138,7 @@ def getPackageBuildLabel(String arch, String distro) {
     switch (distro) {
         case 'APK':
             if (arch == 'x64') {
-                return 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
+                return 'build&&linux&&x64&&dockerBuild&&apkbuild'
             } else if (arch == 'aarch64') {
                 return 'build&&docker&&linux&&aarch64&&apkbuild'
             } else {
