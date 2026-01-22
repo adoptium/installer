@@ -65,9 +65,6 @@ override_dh_auto_install:
 	# Add jinfo file (alternatives support).
 	cp debian/jinfo "$(d)/$(jvm_home)/.$(pkg_alias).jinfo"
 
-	# Strip bundled Freetype and use OS package instead.
-	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/libfreetype.so"
-
 	# Replace bundled cacerts and redirect to adoptium-ca-certificates.
 	rm -f "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"
 	ln -s /etc/ssl/certs/adoptium/cacerts "$(d)/$(jvm_home)/$(jvm_dir)/lib/security/cacerts"

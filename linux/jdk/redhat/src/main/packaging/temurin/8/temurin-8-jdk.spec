@@ -160,9 +160,6 @@ mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
 
-# Strip bundled Freetype and use OS package instead.
-rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
-
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/jre/lib/security/cacerts"
 pushd "%{buildroot}%{prefix}/jre/lib/security"
