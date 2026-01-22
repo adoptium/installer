@@ -114,7 +114,6 @@ Requires: alsa-lib%{?_isa}
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
 Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
 
 Provides: java
 Provides: java-17
@@ -189,9 +188,6 @@ popd
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
-
-# Strip bundled Freetype and use OS package instead.
-rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
 
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/lib/security/cacerts"

@@ -90,7 +90,6 @@ Requires: libasound2%{?_isa}
 Requires: glibc%{?_isa}
 Requires: libz1%{?_isa}
 Requires: fontconfig%{?_isa}
-Requires: libfreetype6%{?_isa}
 
 Provides: java
 Provides: java-1.8.0
@@ -153,9 +152,6 @@ popd
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
-
-# Strip bundled Freetype and use OS package instead.
-rm -f "%{buildroot}%{prefix}/lib/libfreetype.so"
 
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/jre/lib/security/cacerts"
