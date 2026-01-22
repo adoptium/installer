@@ -75,7 +75,6 @@ Requires: alsa-lib%{?_isa}
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
 Requires: fontconfig%{?_isa}
-Requires: freetype%{?_isa}
 
 Provides: java
 Provides: java-20
