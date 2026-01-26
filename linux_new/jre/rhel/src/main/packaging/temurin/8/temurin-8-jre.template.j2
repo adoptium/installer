@@ -118,6 +118,11 @@ Source1: %{source_url_base}/jdk%{upstream_version}/OpenJDK8U-jre_%{vers_arch}_li
 %description
 Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
 applications and components using the programming language Java.
+%if ! %{with headful}
+%{name} is missing several audio and GUI libraries, and many dependencies.
+The package is sufficient for most server operations and for experienced admins.
+to get full functionality, use full JRE or SKD
+%endif
 
 %prep
 pushd "%{_sourcedir}"
