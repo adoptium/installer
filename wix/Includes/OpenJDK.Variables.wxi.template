@@ -27,7 +27,7 @@
     <?define FeatureMainDescription="!(loc.JREFeatureMainDescription)" ?>
 
     <?define ProductCategory="JRE" ?>
-    <?define AppFolder="jre-$(var.ProductVersion)-$(var.JVM)" ?>
+    <?define AppFolder="temurin-$(var.ProductMajorVersion)-jre" ?>
   <?else?>
     <?define ProductName="!(loc.JDKProductName)" ?>
     <?define ProductNameWithVersion="!(loc.JDKProductName) $(var.ProductVersionString) $(var.Arch)" ?>
@@ -36,7 +36,7 @@
     <?define FeatureMainDescription="!(loc.JDKFeatureMainDescription)" ?>
 
     <?define ProductCategory="JDK" ?>
-    <?define AppFolder="jdk-$(var.ProductVersion)-$(var.JVM)" ?>
+    <?define AppFolder="temurin-$(var.ProductMajorVersion)-jdk" ?>
   <?endif?>
 
   <!-- Registry key change with new numbering format since Java 9 -->
@@ -46,16 +46,16 @@
       <?define OracleJavasoftBaseKey="JRE" ?>
     <?else?>
       <?define OracleJavasoftBaseKey="JDK" ?>
-    <?endif?>            
+    <?endif?>
   <?else?>
     <?define OracleVersionKey="1.8" ?>
     <?if $(env.PRODUCT_CATEGORY)="jre"?>
       <?define OracleJavasoftBaseKey="Java Runtime Environment" ?>
     <?else?>
       <?define OracleJavasoftBaseKey="Java Development Kit" ?>
-    <?endif?>    
+    <?endif?>
   <?endif?>
-  
+
   <?if $(var.JVM)="openj9" ?>
     <?define license="license-OpenJ9.en-us.rtf" ?>
     <?define license_shown="1" ?>
@@ -92,7 +92,7 @@
   <?else?>
     <?define DllPath="no DllPath known for $(var.JVM)" ?>
   <?endif?>
-  
+
   <!-- Static settings, DO NOT TOUCH or upgrades will break! -->
   <?define RTMProductVersion="1.0.0" ?>
 </Include>
