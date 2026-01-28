@@ -26,7 +26,9 @@ jobs:
     - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
     - name: Install dependencies
-      run: brew install --cask packages
+      run: | 
+        brew update
+        brew install --cask packages
 
     - name: Fetch latest macOS version from Adoptium API
       run: |
