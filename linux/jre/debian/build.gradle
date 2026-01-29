@@ -82,7 +82,7 @@ task packageJreDebian {
 			throw new IllegalArgumentException("Input directory '$input_dir' not found")
 		}
 
-		project.copy {
+		copy {
 			from("src/main/packaging/$product/$productVersion/")
 			into("${buildDir}/generated/packaging")
 		}
@@ -106,7 +106,7 @@ task packageJreDebian {
 
 
 		if ("$arch" == "armhf") {
-				project.exec {
+				exec {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache", "--pull",
 					  "--build-arg", "IMAGE=arm32v7/debian:bullseye",
@@ -118,7 +118,7 @@ task packageJreDebian {
 			}
 
 		if ("$arch" == "riscv64") {
-				project.exec {
+				exec {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache", "--pull",
 						"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
@@ -130,7 +130,7 @@ task packageJreDebian {
 				}
 
 		if ("$arch" != "armhf" && "$arch" != "riscv64"){
-				project.exec {
+				exec {
 					workingDir "src/main/packaging"
 					commandLine "docker", "build", "--no-cache", "--pull",
 						"-t", "adoptium-packages-linux-jdk-debian",
@@ -140,7 +140,7 @@ task packageJreDebian {
 		     }
 			}
 
-		project.exec {
+		exec {
 			workingDir getRootDir()
 			commandLine "docker", "run",
 				"--rm",
