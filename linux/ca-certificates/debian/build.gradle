@@ -78,11 +78,11 @@ task packageCaCertificatesDebian {
 	def containerRegistry = getContainerRegistry()
 
 	doLast {
-		project.copy {
+		copy {
 			from("src/main/packaging/")
 			into("${buildDir}/generated/packaging")
 		}
-		project.exec {
+		exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"-t", "adoptium-packages-linux-cacerts-debian",
@@ -91,7 +91,7 @@ task packageCaCertificatesDebian {
 				getProjectDir().absolutePath + "/src/main/packaging"
 		}
 
-		project.exec {
+		exec {
 			workingDir getRootDir()
 			commandLine "docker", "run", "--rm",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
