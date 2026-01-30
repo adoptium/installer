@@ -56,6 +56,7 @@ configurations {
 
 dependencies {
 	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestRuntimeOnly "org.junit.platform:junit-platform-launcher"
 	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
 	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
 	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
