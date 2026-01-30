@@ -2,10 +2,23 @@ plugins {
 	id "java"
 }
 
+import javax.inject.Inject
+import org.gradle.process.ExecOperations
+
 ext {
 	junitVersion = "5.11.4"
 	testcontainersVersion = "1.21.4"
 	assertjCoreVersion = "3.27.7"
+}
+
+// Helper class for Gradle 9.x compatible exec operations
+abstract class ExecHelper {
+	@Inject
+	abstract ExecOperations getExecOperations()
+
+	void exec(Closure closure) {
+		execOperations.exec(closure)
+	}
 }
 
 repositories {
@@ -72,6 +85,9 @@ task packageJreAlpine {
 	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
 
+	// Create ExecHelper instance for Gradle 9.x compatible exec operations
+	def execHelper = objects.newInstance(ExecHelper)
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -82,7 +98,7 @@ task packageJreAlpine {
 			into("${buildDir}/generated/packaging")
 		}
 		if (gpgKey) {
-			project.exec {
+			execHelper.exec {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-alpine",
@@ -92,7 +108,7 @@ task packageJreAlpine {
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
 		} else {
-			project.exec {
+			execHelper.exec {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-alpine",
@@ -101,7 +117,7 @@ task packageJreAlpine {
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
 		}
-		project.exec {
+		execHelper.exec {
 			workingDir getRootDir()
 			commandLine "docker", "run",
 				"--rm",

@@ -2,10 +2,23 @@ plugins {
 	id "java"
 }
 
+import javax.inject.Inject
+import org.gradle.process.ExecOperations
+
 ext {
 	junitVersion = "5.11.4"
 	testcontainersVersion = "1.21.4"
 	assertjCoreVersion = "3.27.7"
+}
+
+// Helper class for Gradle 9.x compatible exec operations
+abstract class ExecHelper {
+	@Inject
+	abstract ExecOperations getExecOperations()
+
+	void exec(Closure closure) {
+		execOperations.exec(closure)
+	}
 }
 
 repositories {
@@ -77,12 +90,15 @@ task packageCaCertificatesDebian {
 	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
 
+	// Create ExecHelper instance for Gradle 9.x compatible exec operations
+	def execHelper = objects.newInstance(ExecHelper)
+
 	doLast {
 		copy {
 			from("src/main/packaging/")
 			into("${buildDir}/generated/packaging")
 		}
-		exec {
+		execHelper.exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"-t", "adoptium-packages-linux-cacerts-debian",
@@ -91,7 +107,7 @@ task packageCaCertificatesDebian {
 				getProjectDir().absolutePath + "/src/main/packaging"
 		}
 
-		exec {
+		execHelper.exec {
 			workingDir getRootDir()
 			commandLine "docker", "run", "--rm",
 				"--mount", "type=bind,source=${buildDir},target=/home/builder/build",
