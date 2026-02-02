@@ -977,11 +977,11 @@ stage('Publish Packages') {
     }
 // Publish Packages Stage - End
 // Housekeeping Step
-post {
-  always {
-    cleanWs(deleteDirs: true, disableDeferredWipeout: true)
-  }
-}
+    post {
+      always {
+        cleanWs(deleteDirs: true, disableDeferredWipeout: true)
+      }
+    }
 // End Housekeeping
   }
 // Stage Definition - End
