@@ -909,7 +909,7 @@ stage('Publish Packages') {
                     def DebArchEx = (DebFileName =~ /_(\w+)\.deb$/)
                     def DebArch = DebArchEx[0][1]
                     if (!params.SKIP_DEBIAN) {
-                        CheckAndUpload(DebTarget, DebDistro, DebArch,, '', distro_list, '', '', DebFileName, DebPackFile.path)
+                        CheckAndUpload(DebTarget, DebDistro, DebArch, '', distro_list, '', '', DebFileName, DebPackFile.path)
                     } else {
                         echo 'SKIP_DEBIAN parameter is set, skipping publish.'
                     }
@@ -976,6 +976,13 @@ stage('Publish Packages') {
 // End OF Script
     }
 // Publish Packages Stage - End
+// Housekeeping Step
+    post {
+      always {
+        cleanWs(deleteDirs: true, disableDeferredWipeout: true)
+      }
+    }
+// End Housekeeping
   }
 // Stage Definition - End
 }
