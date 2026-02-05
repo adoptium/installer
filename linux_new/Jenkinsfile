@@ -995,11 +995,10 @@ post {
                 echo "FileName : ${ArchiveFileName}"
 
                 if (!params.SKIP_SRC) {
-                  echo "Disabled Uploads For Testing"
-                  // build job: 'publish_linux_pkg_src', parameters: [
-                  //    string(name: 'TAG', value: params.TAG),
-                  //    string(name: 'FILENAME', value: ArchiveFileName)
-                  // ]
+                    build job: 'publish_linux_pkg_src', parameters: [
+                    string(name: 'TAG', value: params.TAG),
+                    string(name: 'FILENAME', value: ArchiveFileName)
+                  ]
                 } else {
                   echo 'SKIP_SRC parameter is set, skipping publish.'
                 }
