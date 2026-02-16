@@ -2,23 +2,12 @@ plugins {
 	id "java"
 }
 
-import javax.inject.Inject
-import org.gradle.process.ExecOperations
+import org.adoptium.ExecHelper
 
 ext {
 	junitVersion = "5.11.4"
 	testcontainersVersion = "1.21.4"
 	assertjCoreVersion = "3.27.7"
-}
-
-// Helper class for Gradle 9.x compatible exec operations
-abstract class ExecHelper {
-	@Inject
-	abstract ExecOperations getExecOperations()
-
-	void exec(Closure closure) {
-		execOperations.exec(closure)
-	}
 }
 
 repositories {
