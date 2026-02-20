@@ -1,0 +1,769 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+Variables to replace:
+  - VENDOR                      - Example: Eclipse Adoptium  
+  - MSIX_DISPLAYNAME            - Example: Eclipse Temurin with hotspot 17.0.15+6 (x64)
+  - PACKAGE_NAME                - Example: OpenJDK17U-jdk-x64-windows-hotspot
+                                  IMPORTANT: This needs to be consistent with previous releases for upgrades to work as expected
+                                  Note: PACKAGE_NAME cannot contain spaces or underscores.
+  - DESCRIPTION                 - This is optional. Example: "Development Kit with Hotspot"
+  - PRODUCT_MAJOR_VERSION       - Example: if the version is 17.0.15+6, this is 17
+  - PRODUCT_MINOR_VERSION       - Example: if the version is 17.0.15+6, this is 0
+  - PRODUCT_MAINTENANCE_VERSION - Example: if the version is 17.0.15+6, this is 15
+  - PRODUCT_BUILD_NUMBER        - Example: if the version is 17.0.15+6, this is 6
+  - ARCH                        - Valid architectures: x86, x64, arm, arm64, x86a64, neutral
+  - PUBLISHER_CN                - Set this to anything on the right side of your `CN=` field in your .pfx file.
+                                  This may include additional fields in the name, such as 'O=...', 'L=...', 'S=...', and/or others.
+ -->
+<Package IgnorableNamespaces="desktop4 desktop6 uap uap2 uap3 uap10 uap17 rescap"
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  xmlns:uap2="http://schemas.microsoft.com/appx/manifest/uap/windows10/2"
+  xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+  xmlns:uap5="http://schemas.microsoft.com/appx/manifest/uap/windows10/5"
+  xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
+  xmlns:uap17="http://schemas.microsoft.com/appx/manifest/uap/windows10/17"
+  xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
+  xmlns:desktop4="http://schemas.microsoft.com/appx/manifest/desktop/windows10/4"
+  xmlns:desktop6="http://schemas.microsoft.com/appx/manifest/desktop/windows10/6">
+  <!-- Identity name cannot have spaces or underscores in it -->
+  <Identity Name="{PACKAGE_NAME}"
+            Publisher="CN={PUBLISHER_CN}"
+            Version="{PRODUCT_MAJOR_VERSION}.{PRODUCT_MINOR_VERSION}.{PRODUCT_MAINTENANCE_VERSION}.{PRODUCT_BUILD_NUMBER}"
+            ProcessorArchitecture="{ARCH}" />
+  <Properties>
+    <DisplayName>{MSIX_DISPLAYNAME}</DisplayName>
+    <PublisherDisplayName>{VENDOR}</PublisherDisplayName>
+    <Description>{DESCRIPTION}</Description>
+    <Logo>_msix_logos/duke50.png</Logo>
+    <desktop6:RegistryWriteVirtualization>disabled</desktop6:RegistryWriteVirtualization>
+    <desktop6:FileSystemWriteVirtualization>disabled</desktop6:FileSystemWriteVirtualization>
+    <uap17:UpdateWhileInUse>defer</uap17:UpdateWhileInUse>
+    <uap10:PackageIntegrity>
+      <uap10:Content Enforcement="on" />
+    </uap10:PackageIntegrity>
+  </Properties>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="MSIXCore.Desktop" MinVersion="6.1.7601.0" MaxVersionTested="10.0.26100.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.26100.0" />
+  </Dependencies>
+  <Applications>
+    <Application  Id="JAVA"
+                  Executable="bin\java.exe"
+                  EntryPoint="Windows.FullTrustApplication"
+                  desktop4:SupportsMultipleInstances="true"
+                  desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="java"
+                          Description="Run java files with java.exe"
+                          Square150x150Logo="_msix_logos/duke150.png"
+                          Square44x44Logo="_msix_logos/duke44.png"
+                          BackgroundColor="transparent"
+                          AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="java.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JABSWITCH"
+            Executable="bin\jabswitch.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jabswitch"
+                Description="Run jabswitch.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jabswitch.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JACCESSINSPECTOR"
+            Executable="bin\jaccessinspector.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jaccessinspector"
+                Description="Run jaccessinspector.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jaccessinspector.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JACCESSWALKER"
+            Executable="bin\jaccesswalker.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jaccesswalker"
+                Description="Run jaccesswalker.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jaccesswalker.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JAR"
+            Executable="bin\jar.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jar"
+                Description="Run jar.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jar.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JARSIGNER"
+            Executable="bin\jarsigner.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jarsigner"
+                Description="Run jarsigner.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jarsigner.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JAVAC"
+            Executable="bin\javac.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="javac"
+                Description="Run javac.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="javac.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JAVADOC"
+            Executable="bin\javadoc.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="javadoc"
+                Description="Run javadoc.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="javadoc.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JAVAP"
+            Executable="bin\javap.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="javap"
+                Description="Run javap.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="javap.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JCMD"
+            Executable="bin\jcmd.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jcmd"
+                Description="Run jcmd.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jcmd.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JCONSOLE"
+            Executable="bin\jconsole.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jconsole"
+                Description="Run jconsole.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jconsole.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JDB"
+            Executable="bin\jdb.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jdb"
+                Description="Run jdb.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jdb.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JDEPRSCAN"
+            Executable="bin\jdeprscan.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jdeprscan"
+                Description="Run jdeprscan.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jdeprscan.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JDEPS"
+            Executable="bin\jdeps.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jdeps"
+                Description="Run jdeps.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jdeps.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JFR"
+            Executable="bin\jfr.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jfr"
+                Description="Run jfr.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jfr.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JHSDB"
+            Executable="bin\jhsdb.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jhsdb"
+                Description="Run jhsdb.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jhsdb.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JIMAGE"
+            Executable="bin\jimage.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jimage"
+                Description="Run jimage.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jimage.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JINFO"
+            Executable="bin\jinfo.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jinfo"
+                Description="Run jinfo.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jinfo.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JLINK"
+            Executable="bin\jlink.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jlink"
+                Description="Run jlink.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jlink.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JMAP"
+            Executable="bin\jmap.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jmap"
+                Description="Run jmap.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jmap.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JMOD"
+            Executable="bin\jmod.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jmod"
+                Description="Run jmod.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jmod.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JPACKAGE"
+            Executable="bin\jpackage.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jpackage"
+                Description="Run jpackage.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jpackage.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JPS"
+            Executable="bin\jps.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jps"
+                Description="Run jps.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jps.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JRUNSCRIPT"
+            Executable="bin\jrunscript.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jrunscript"
+                Description="Run jrunscript.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jrunscript.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JSTACK"
+            Executable="bin\jstack.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jstack"
+                Description="Run jstack.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jstack.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JSTAT"
+            Executable="bin\jstat.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jstat"
+                Description="Run jstat.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jstat.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JSTATD"
+            Executable="bin\jstatd.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jstatd"
+                Description="Run jstatd.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="jstatd.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="KEYTOOL"
+            Executable="bin\keytool.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="keytool"
+                Description="Run keytool.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="keytool.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="KINIT"
+            Executable="bin\kinit.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="kinit"
+                Description="Run kinit.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="kinit.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="KLIST"
+            Executable="bin\klist.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="klist"
+                Description="Run klist.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="klist.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="KTAB"
+            Executable="bin\ktab.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="ktab"
+                Description="Run ktab.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="ktab.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="RMIREGISTRY"
+            Executable="bin\rmiregistry.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="rmiregistry"
+                Description="Run rmiregistry.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="rmiregistry.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="SERIALVER"
+            Executable="bin\serialver.exe"
+            EntryPoint="Windows.FullTrustApplication"
+            desktop4:SupportsMultipleInstances="true"
+            desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="serialver"
+                Description="Run serialver.exe"
+                Square150x150Logo="_msix_logos/duke150.png"
+                Square44x44Logo="_msix_logos/duke44.png"
+                BackgroundColor="transparent"
+                AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+      <uap5:Extension Category="windows.appExecutionAlias">
+        <uap5:AppExecutionAlias desktop4:Subsystem="console">
+        <uap5:ExecutionAlias Alias="serialver.exe" />
+        </uap5:AppExecutionAlias>
+      </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JSHELL"
+                  Executable="bin\jshell.exe"
+                  EntryPoint="Windows.FullTrustApplication"
+                  desktop4:SupportsMultipleInstances="true"
+                  desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="jshell"
+                          Description="Run an interactive Java shell"
+                          Square150x150Logo="_msix_logos/duke150.png"
+                          Square44x44Logo="_msix_logos/duke44.png"
+                          BackgroundColor="transparent"
+                          AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="jshell.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+    <Application  Id="JAVAW"
+                  Executable="bin\javaw.exe"
+                  EntryPoint="Windows.FullTrustApplication"
+                  desktop4:SupportsMultipleInstances="true"
+                  desktop4:Subsystem="console">
+      <uap:VisualElements DisplayName="javaw"
+                          Description="Run javaw.exe"
+                          Square150x150Logo="_msix_logos/duke150.png"
+                          Square44x44Logo="_msix_logos/duke44.png"
+                          BackgroundColor="transparent"
+                          AppListEntry="none">
+      </uap:VisualElements>
+      <Extensions>
+        <uap3:Extension Category="windows.fileTypeAssociation">
+          <uap3:FileTypeAssociation Name="jar">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.jar</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap2:SupportedVerbs>
+              <uap3:Verb Id="open" Parameters="-jar &quot;%1&quot; %*">open</uap3:Verb>
+            </uap2:SupportedVerbs>
+          </uap3:FileTypeAssociation>
+        </uap3:Extension>
+        <uap5:Extension Category="windows.appExecutionAlias">
+          <uap5:AppExecutionAlias desktop4:Subsystem="console">
+            <uap5:ExecutionAlias Alias="javaw.exe" />
+          </uap5:AppExecutionAlias>
+        </uap5:Extension>
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust" />
+    <rescap:Capability Name="unvirtualizedResources" />
+  </Capabilities>
+</Package>
