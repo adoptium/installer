@@ -2,16 +2,16 @@
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 21.0.0.0.0___21.0.0.0.0+1
-#  20.0.0.0.0___1 == 21.0.0.0.0+35
+#  $ rpmdev-vercmp 26.0.0.0.0___26.0.0.0.0+0
+#  26.0.0.0.0___1 == 26.0.0.0.0+0
 %global spec_version {{ package_version }}
 %global spec_release {{ package_release_version }}
-%global priority 2100
+%global priority 2600
 
 # if rpmbuild is executed as: `rpmbuild -bb ...spec --without headful ...` then a headless package will be generated
 %bcond_without headful
 
-%global source_url_base https://github.com/adoptium/temurin21-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin26-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjre
@@ -24,15 +24,16 @@
 %global sha_src_num 1
 
 %if %{with headful}
-Name:        temurin-21-jre
-%global altname java-21-temurin-jre
+Name: temurin-26-jre
+%global altname java-26-temurin-jre
 %else
-Name:        temurin-21-jre-headless
-%global altname java-21-temurin-jre-headless
+Name: temurin-26-jre-headless
+%global altname java-26-temurin-jre-headless
 %endif
+
 Version:     %{spec_version}
 Release:     %{spec_release}
-Summary:     Eclipse Temurin 21 JRE
+Summary:     Eclipse Temurin 26 JRE
 
 Group:       java
 License:     GPLv2 with exceptions
@@ -74,22 +75,18 @@ Requires: zlib%{?_isa}
 
 %if %{with headful}
 Provides: jre
-Provides: jre-21
-Provides: jre-21-%{java_provides}
+Provides: jre-26
+Provides: jre-26-%{java_provides}
 Provides: jre-%{java_provides}
 %else
-Provides: jre-21-headless
-Provides: jre-21-%{java_provides}-headless
+Provides: jre-26-headless
+Provides: jre-26-%{java_provides}-headless
 Provides: jre-headless
 Provides: jre-%{java_provides}-headless
 %endif
 
 # Add Virtual Provides For Altname
 Provides: %{altname}
-
-# Obsolete Previous JRE21 v0 package due to naming change
-Obsoletes: temurin-21-jre < 21.0.8.0.0.9-1
-
 
 # Add Provides For Java Public Libraries
 %if %{with headful}
@@ -101,8 +98,8 @@ Provides: libverify.so%{?_isa}
 Provides: libjsig.so%{?_isa}
 
 # First architecture ({{ hardware_architecture }})
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK26U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK26U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
