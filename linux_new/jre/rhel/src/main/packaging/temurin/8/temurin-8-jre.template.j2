@@ -158,10 +158,10 @@ popd
 echo "This is the headful version, nothing will be removed"
 %else
 echo "This is the headless version, headful libraries will be removed"
-for x in libsplashscreen.so libawt_xawt.so libjawt.so libjsoundalsa.so; do 
- rm -v  %{buildroot}%{prefix}/lib/*/$x
+for x in libsplashscreen.so libawt_xawt.so libjawt.so libjsoundalsa.so; do
+ rm -vf  %{buildroot}%{prefix}/lib/*/$x
 done
-rm -v  %{buildroot}%{prefix}/bin/policytool
+rm -vf  %{buildroot}%{prefix}/bin/policytool
 %endif
 
 # Ensure systemd-tmpfiles-clean does not remove pid files
