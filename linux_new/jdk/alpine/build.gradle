@@ -2,8 +2,10 @@ plugins {
 	id "java"
 }
 
+import org.gradle.process.ExecOperations
+
 ext {
-	junitVersion = "5.11.3"
+	junitVersion = "6.0.3"
 	testcontainersVersion = "1.20.3"
 	assertjCoreVersion = "3.26.3"
 }
@@ -25,8 +27,8 @@ version "1.0.0-SNAPSHOT"
  * **Attention**: If you alter the list, check if the class AlpineFlavours needs to be updated, too.
  */
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
@@ -43,6 +45,7 @@ configurations {
 
 dependencies {
 	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitVersion"
 	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
 	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
 	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
@@ -82,7 +85,7 @@ task packageJdkAlpine {
 			into("${buildDir}/generated/packaging")
 		}
 		if (gpgKey) {
-			project.exec {
+			project.services.get(ExecOperations).exec {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-alpine",
@@ -92,7 +95,7 @@ task packageJdkAlpine {
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
 		} else {
-			project.exec {
+			project.services.get(ExecOperations).exec {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-alpine",
@@ -101,7 +104,7 @@ task packageJdkAlpine {
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
 		}
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir getRootDir()
 			commandLine "docker", "run",
 				"--rm",
