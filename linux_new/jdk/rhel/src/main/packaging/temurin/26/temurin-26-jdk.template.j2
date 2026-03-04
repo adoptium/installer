@@ -94,6 +94,10 @@ Provides: libjsig.so%{?_isa}
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK26U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK26U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
+# Do Not Allow JDK & JRE to co-exist (Temurin 26+ Policy) - https://github.com/adoptium/installer/issues/1360
+Conflicts: temurin-26-jre
+Conflicts: temurin-26-jre-headless
+
 # Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
 # is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
 # lists the available options.

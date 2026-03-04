@@ -94,6 +94,10 @@ Provides: libjsig.so%{?_isa}
 Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK26U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
 Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK26U-jdk_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
+# Do Not Allow JDK & JRE to co-exist (Temurin 26+ Policy) - https://github.com/adoptium/installer/issues/1360
+Conflicts: temurin-26-jre
+Conflicts: temurin-26-jre-headless
+
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
 %global __brp_strip %{nil}
