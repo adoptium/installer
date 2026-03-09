@@ -26,10 +26,16 @@
 %if %{with headful}
 Name: temurin-26-jre
 %global altname java-26-temurin-jre
+# Prevent headful and headless JRE being installed together
+Conflicts: temurin-26-jre-headless
 %else
 Name: temurin-26-jre-headless
 %global altname java-26-temurin-jre-headless
+# Prevent headful and headless JRE being installed together
+Conflicts: temurin-26-jre
 %endif
+# Prevent JDK and any JRE variant being installed together
+Conflicts: temurin-26-jdk
 
 Version:     %{spec_version}
 Release:     %{spec_release}
