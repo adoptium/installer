@@ -3,7 +3,7 @@ plugins {
 }
 
 ext {
-	junitVersion = "5.7.0"
+	junitVersion = "6.0.3"
 	testcontainersVersion = "1.15.1"
 	assertjCoreVersion = "3.18.1"
 }
@@ -16,8 +16,8 @@ group "org.adoptium"
 version "1.0.0-SNAPSHOT"
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 tasks.register("package") {
