@@ -110,6 +110,9 @@ Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK25U-jre_%{vers_ar
 %global debug_package %{nil}
 %global __brp_strip %{nil}
 
+# Surpress /usr/lib/.build-id entries in the installed RPM (jre/jre-headless only)
+%global _build_id_links none
+
 %description
 Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
 applications and components using the programming language Java.
