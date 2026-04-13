@@ -155,7 +155,7 @@ echo "This is the headful version, nothing will be removed"
 %else
 echo "This is the headless version, headful libraries will be removed"
 pushd "%{buildroot}%{prefix}/lib"
- rm -v libsplashscreen.so libawt_xawt.so libjawt.so
+ rm -vf libsplashscreen.so libawt_xawt.so libjawt.so
 popd
 %endif
 
