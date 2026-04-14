@@ -165,6 +165,20 @@ popd
 echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 
+# Avoid a build-id file conflict for lib/jexec only.
+# Issue https://github.com/adoptium/installer/issues/1384
+# Temporarily remove the executable bit so find-debuginfo does not process it.
+chmod 0644 "%{buildroot}%{prefix}/lib/jexec"
+
+# Generate the package file list excluding jexec, which will be added back
+# explicitly in %%files with the correct final permissions.
+find "%{buildroot}%{prefix}" \
+  ! -path "%{buildroot}%{prefix}/lib/jexec" \
+  -print | sed "s#^%{buildroot}##" | sort > "%{_builddir}/%{name}.files"
+
+# Readd jexec
+echo "%attr(0755,root,root) %{prefix}/lib/jexec" >> "%{_builddir}/%{name}.files"
+
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
@@ -188,9 +202,8 @@ if [ $1 -eq 0 ]; then
     update-alternatives --remove java %{prefix}/bin/java
 fi
 
-%files
+%files -f %{_builddir}/%{name}.files
 %defattr(-,root,root)
-%{prefix}
 /usr/lib/tmpfiles.d/%{name}.conf
 # Ghost The Symlink to avoid conflicts
 %ghost /usr/lib/jvm/%{name}
