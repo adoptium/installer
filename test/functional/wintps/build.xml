@@ -15,7 +15,6 @@
 -->
 
 <project name="WinTPS Installer tests" default="build" basedir=".">
-	<taskdef resource="net/sf/antcontrib/antlib.xml" />
 	<description>
 		WinTPS Installer tests
 	</description>
