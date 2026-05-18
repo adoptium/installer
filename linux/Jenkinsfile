@@ -524,7 +524,7 @@ def uploadDebArtifacts(String buildArch, String Version) {
 
     /*
         Debian     10.0      11.0     12.0
-        Ubuntu     18.04     20.04    22.04    24.04    24.10
+        Ubuntu     18.04     20.04    22.04    24.04    24.10    26.04
         add more into list when available for release
         also update linux/{jdk,jre}/debian/main/packing/build.sh
     */
@@ -533,6 +533,7 @@ def uploadDebArtifacts(String buildArch, String Version) {
             "bookworm", // Debian/12
             "bullseye", // Debian/11
             "buster",   // Debian/10
+            "resolute", // Ubuntu/26.04 (LTS)
             "oracular", // Ubuntu/24.10 (STS)
             "noble",    // Ubuntu/24.04 (LTS)
             "jammy",    // Ubuntu/22.04 (LTS)
