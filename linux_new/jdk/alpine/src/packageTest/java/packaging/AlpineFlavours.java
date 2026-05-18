@@ -32,7 +32,7 @@ public class AlpineFlavours implements ArgumentsProvider {
 		 * Alpine policy: current (alive) releases and development version.
 		 *     (https://alpinelinux.org/releases/)
 		 */
-		
+
 		String containerRegistry = "";
 
 		if (System.getenv("containerRegistry") == null) {
@@ -45,9 +45,9 @@ public class AlpineFlavours implements ArgumentsProvider {
 		return Stream.of(
 			Arguments.of(containerRegistry + "alpine", "edge"),
 			Arguments.of(containerRegistry + "alpine", "latest"),
-			Arguments.of(containerRegistry + "alpine", "3.19"),
-			Arguments.of(containerRegistry + "alpine", "3.18"),
-			Arguments.of(containerRegistry + "alpine", "3.17")
+			Arguments.of(containerRegistry + "alpine", "3.21"),
+			Arguments.of(containerRegistry + "alpine", "3.22"),
+			Arguments.of(containerRegistry + "alpine", "3.23")
 		);
 	}
 }

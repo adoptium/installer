@@ -592,6 +592,7 @@ def uploadRpmArtifacts(String DISTRO, String rpmArch, String Version) {
             'rpm/fedora/41',
             'rpm/fedora/42',
             'rpm/fedora/43',
+            'rpm/fedora/44',
             'rpm/fedora/rawhide',
             'rpm/oraclelinux/7',
             'rpm/oraclelinux/8',

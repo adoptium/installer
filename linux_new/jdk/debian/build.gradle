@@ -2,8 +2,10 @@ plugins {
 	id "java"
 }
 
+import org.gradle.process.ExecOperations
+
 ext {
-	junitVersion = "5.11.3"
+	junitVersion = "6.0.3"
 	testcontainersVersion = "1.20.3"
 	assertjCoreVersion = "3.26.3"
 }
@@ -25,8 +27,8 @@ version "1.0.0-SNAPSHOT"
  * **Attention**: If you alter the list, check if the class DebianFlavours needs to be updated, too.
  */
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
@@ -43,6 +45,7 @@ configurations {
 
 dependencies {
 	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitVersion"
 	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
 	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
 	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
@@ -105,7 +108,7 @@ task packageJdkDebian {
 println "The Value Of ARCH is: $arch"
 
 if ("$arch" == "armhf") {
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"--build-arg", "IMAGE=arm32v7/debian:bookworm",
@@ -117,7 +120,7 @@ if ("$arch" == "armhf") {
 	}
 
 if ("$arch" == "riscv64") {
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"--build-arg", "IMAGE=riscv64/ubuntu:jammy",
@@ -129,7 +132,7 @@ if ("$arch" == "riscv64") {
 		}
 
 if ("$arch" == "ppc64el") {
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"--build-arg", "IMAGE=ppc64le/debian:bookworm",
@@ -141,7 +144,7 @@ if ("$arch" == "ppc64el") {
 	}
 
 if ("$arch" == "s390x") {
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"--build-arg", "IMAGE=s390x/debian:bookworm",
@@ -152,7 +155,7 @@ if ("$arch" == "s390x") {
 		}
 	}
 if ("$arch" != "armhf" && "$arch" != "riscv64" && "$arch" != "s390x" && "$arch" != "ppc64el" ){
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir "src/main/packaging"
 			commandLine "docker", "build", "--no-cache", "--pull",
 				"-t", "adoptium-packages-linux-jdk-debian",
@@ -162,7 +165,7 @@ if ("$arch" != "armhf" && "$arch" != "riscv64" && "$arch" != "s390x" && "$arch" 
      }
 	}
 
-		project.exec {
+		project.services.get(ExecOperations).exec {
 			workingDir getRootDir()
 			commandLine "docker", "run",
 				"--rm",
@@ -186,7 +189,7 @@ task checkJdkDebian(type: Test) {
 
 	def product = getProduct()
 	def productVersion = getProductVersion()
-	
+
 	def containerRegistry = getContainerRegistry()
 
 	// If product is microsoft set it as msopenjdk
