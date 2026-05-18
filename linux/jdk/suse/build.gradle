@@ -2,8 +2,10 @@ plugins {
 	id "java"
 }
 
+import org.adoptium.ExecHelper
+
 ext {
-	junitVersion = "5.11.4"
+	junitVersion = "6.0.3"
 	testcontainersVersion = "1.21.4"
 	assertjCoreVersion = "3.27.7"
 }
@@ -16,8 +18,8 @@ group "org.adoptium"
 version "1.0.0-SNAPSHOT"
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 sourceSets {
@@ -34,6 +36,7 @@ configurations {
 
 dependencies {
 	packageTestImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+	packageTestRuntimeOnly "org.junit.platform:junit-platform-launcher:$junitVersion"
 	packageTestImplementation "org.testcontainers:testcontainers:$testcontainersVersion"
 	packageTestImplementation "org.testcontainers:junit-jupiter:$testcontainersVersion"
 	packageTestImplementation "org.assertj:assertj-core:$assertjCoreVersion"
@@ -66,6 +69,9 @@ task packageJdkSuse {
 	// Get container registry property. If not set, return empty string that is equivalent to dockerhub
 	def containerRegistry = getContainerRegistry()
 
+	// Create ExecHelper instance for Gradle 9.x compatible exec operations
+	def execHelper = objects.newInstance(ExecHelper)
+
 	doLast {
 		if (!file("src/main/packaging/$product/$productVersion").exists()) {
 			throw new IllegalArgumentException("Unknown product $product/$productVersion")
@@ -95,7 +101,7 @@ task packageJdkSuse {
 		}
 
 		if (gpgKey) {
-			project.exec {
+			execHelper.exec {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-suse",
@@ -105,7 +111,7 @@ task packageJdkSuse {
 					getProjectDir().absolutePath + "/src/main/packaging"
 			}
 		} else {
-			project.exec {
+			execHelper.exec {
 				workingDir "src/main/packaging"
 				commandLine "docker", "build", "--no-cache", "--pull",
 					"-t", "adoptium-packages-linux-jdk-suse",
@@ -115,7 +121,7 @@ task packageJdkSuse {
 			}
 		}
 
-		project.exec {
+		execHelper.exec {
 			workingDir getRootDir()
 			commandLine "docker", "run",
 				"--rm",
