@@ -35,6 +35,7 @@ class ChangesVerificationTest {
 		    "trixie",   // Debian/13
 			"bookworm", // Debian/12
 			"bullseye", // Debian/11
+			"resolute", // Ubuntu/26.04 (LTS)
 			"noble",    // Ubuntu/24.04 (LTS)
 			"jammy",    // Ubuntu/22.04 (LTS)
 			"focal",    // Ubuntu/20.04 (LTS)
