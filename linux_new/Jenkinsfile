@@ -54,6 +54,8 @@ def rhel_distros = [
     'rpm/fedora/rawhide',
     'rpm/oraclelinux/7',
     'rpm/oraclelinux/8',
+    'rpm/oraclelinux/9',
+    'rpm/oraclelinux/10',
     'rpm/amazonlinux/2'
     ]
 
