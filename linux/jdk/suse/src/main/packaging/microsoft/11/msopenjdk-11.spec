@@ -1,10 +1,10 @@
-%global upstream_version 11.0.31+11
+%global upstream_version 11.0.32.1+1
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
 #  $ rpmdev-vercmp 11.0.13.0.1___7 11.0.13.0.0+8
 #  11.0.13.0.0___8 == 11.0.13.0.0+8
-%global spec_version 11.0.31
+%global spec_version 11.0.32.1
 %global spec_release 1
 %global priority 1111
 
@@ -219,6 +219,8 @@ fi
 %{prefix}
 
 %changelog
+* Mon Aug 10 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.32.1-1
+- Microsoft 11.0.32.1+1 initial release.
 * Sat Apr 18 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.31-1
 - Microsoft 11.0.31+11 initial release.
 * Wed Jan 14 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 11.0.30-1
