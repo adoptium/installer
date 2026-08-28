@@ -140,7 +140,7 @@ Note:
 - FeatureOracleJavaSoft can't and must not be used per user install as it only write to HKLM. ([see details](https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB)
 - Machine PATH is always loaded before User PATH (FeatureEnvironment) ( If another java is installed per machine it will be the default one when using the PATH )
 
-[See Details](https://docs.microsoft.com/windows/desktop/Msi/allusers)
+[See Details](https://learn.microsoft.com/windows/win32/msi/allusers)
 
 Windows 7 and later : use MSIINSTALLPERUSER=1
 
@@ -150,7 +150,7 @@ msiexec /i OpenJDK8-jdk_xxx.msii INSTALLDIR=D:\testAdopt ADDLOCAL=FeatureMain,Fe
 
 #### Reinstall option
 
-[CF](https://docs.microsoft.com/windows/desktop/msi/reinstallmode)
+[CF](https://learn.microsoft.com/windows/win32/msi/reinstallmode)
 
 usage sample:
 
