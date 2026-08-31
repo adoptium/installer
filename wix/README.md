@@ -45,6 +45,11 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET WIX_VERSION=6.0.0 (make sure this is the same version that is installed on the build machine)
   ```
 
+  ```batch
+  @REM optional
+  SET TAG=jdk-11.0.18+10
+  ```
+
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
 
   ```batch
