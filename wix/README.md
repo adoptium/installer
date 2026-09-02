@@ -1,9 +1,9 @@
 # Requirements for build environment
 
 1. [Windows Installer XML (WiX) toolset, 6.0.0 or later](https://wixtoolset.org/docs/intro/#nettool)
-1. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK 10](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk) for building multi-lingual setups.
-1. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK 10 feature "Windows SDK Signing Tools for Desktops Apps".
-1. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK 10 (optional).
+1. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK](https://learn.microsoft.com/windows/apps/windows-sdk/) for building multi-lingual setups.
+1. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK feature "Windows SDK Signing Tools for Desktops Apps".
+1. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK (optional).
 
 ## How to upgrade to a new OpenJDK version
 
@@ -43,6 +43,11 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET JVM=hotspot|openj9|dragonwell or both JVM=hotspot openj9
   SET PRODUCT_CATEGORY=jre|jdk (only one at a time)
   SET WIX_VERSION=6.0.0 (make sure this is the same version that is installed on the build machine)
+  ```
+
+  ```batch
+  @REM optional
+  SET TAG=jdk-11.0.18+10
   ```
 
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
@@ -140,7 +145,7 @@ Note:
 - FeatureOracleJavaSoft can't and must not be used per user install as it only write to HKLM. ([see details](https://docs.oracle.com/javase/9/install/installation-jdk-and-jre-microsoft-windows-platforms.htm#JSJIG-GUID-47C269A3-5220-412F-9E31-4B8C37A82BFB)
 - Machine PATH is always loaded before User PATH (FeatureEnvironment) ( If another java is installed per machine it will be the default one when using the PATH )
 
-[See Details](https://docs.microsoft.com/fr-fr/windows/desktop/Msi/allusers)
+[See Details](https://learn.microsoft.com/windows/win32/msi/allusers)
 
 Windows 7 and later : use MSIINSTALLPERUSER=1
 
@@ -150,7 +155,7 @@ msiexec /i OpenJDK8-jdk_xxx.msii INSTALLDIR=D:\testAdopt ADDLOCAL=FeatureMain,Fe
 
 #### Reinstall option
 
-[CF](https://docs.microsoft.com/en-us/windows/desktop/msi/reinstallmode)
+[CF](https://learn.microsoft.com/windows/win32/msi/reinstallmode)
 
 usage sample:
 
@@ -161,7 +166,7 @@ msiexec /i OpenJDK11-jdk_x64_windows_hotspot-11.0.3.9.msi REINSTALL=ALL REINSTAL
 
 ## MSI upgrade limitation
 
-Upgradable MSI work only for first 3 digit from the build number (due to MSI limitation) : [Details](https://docs.microsoft.com/fr-fr/windows/desktop/Msi/productversion)
+Upgradable MSI work only for first 3 digit from the build number (due to MSI limitation) : [Details](https://learn.microsoft.com/windows/win32/msi/productversion)
 
 - Upgradable : 8.0.2.1 -> 8.0.3.1 Yes
 - Upgradable : 8.0.2.1 -> 8.0.2.2 No ( You must uninstall previous msi and install new one )

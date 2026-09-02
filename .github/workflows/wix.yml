@@ -40,7 +40,8 @@ jobs:
           $major = $json.version_data.major
           $minor = $json.version_data.minor
           $security = $json.version_data.security
-          $patch = 0
+          # Some builds do not have a patch number (json returns null). In this case, we want this to default to 0.
+          $patch = if ($null -ne $json.version_data.patch) { $json.version_data.patch } else { 0 }
           $build = $json.version_data.build
 
           echo "PRODUCT_MAJOR_VERSION=$major" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf8 -Append
