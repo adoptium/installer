@@ -588,14 +588,19 @@ stage('Generate Spec File') {
                 outputfile = "APKBUILD"
 
                 // Figure Out Template name
-                templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}.${PTYPE}${Release}.template.j2"
+                // JDK8 keeps its own version-specific template; all other versions share a common template
+                if (Release == "8") {
+                    templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}.${PTYPE}${Release}.template.j2"
+                } else {
+                    templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${DistArrayElement}.${PTYPE}.template.j2"
+                }
 
                 // Check If Template Exists
                 if (!fileExists(templatebase)) {
                     error("Template File Not Found At : ${templatebase}")
                 }
 
-                def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearch}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDate}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${packagever}\" \"${upstreamversion}\""
+                def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearch}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDate}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${packagever}\" \"${upstreamversion}\" \"${Release}\""
                 echo "Spec Command : ${speccmd}"
                 def genresult = sh(script: speccmd, returnStatus: true)
                 echo "Result : ${genresult}"
