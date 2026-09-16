@@ -1,0 +1,47 @@
+Source: temurin-{{ java_version }}-jre
+Section: java
+Priority: optional
+Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+Build-Depends: debhelper (>= 11), lsb-release
+
+Package: temurin-{{ java_version }}-jre
+Architecture: {{ hardware_architecture }}
+Depends: adoptium-ca-certificates,
+         java-common,
+         libasound2,
+         libc6,
+         libfontconfig1,
+         libfreetype6,
+         libx11-6,
+         libxext6,
+         libxi6,
+         libxrender1,
+         libxtst6,
+         zlib1g
+Recommends: fonts-dejavu-core,
+            fonts-dejavu-extra
+Provides: java-runtime (= {{ java_version }}),
+          java-runtime-headless (= {{ java_version }}),
+          java2-runtime,
+          java5-runtime,
+          java6-runtime,
+          java7-runtime,
+          java8-runtime,
+          java9-runtime,
+          java10-runtime,
+{%- for v in range(11, java_version | int + 1) %}
+          java{{ v }}-runtime,
+{%- endfor %}
+          java2-runtime-headless,
+          java5-runtime-headless,
+          java6-runtime-headless,
+          java7-runtime-headless,
+          java8-runtime-headless,
+          java9-runtime-headless,
+          java10-runtime-headless,
+{%- for v in range(11, java_version | int + 1) %}
+          java{{ v }}-runtime-headless{% if not loop.last %},{% endif %}
+{%- endfor %}
+Description: Eclipse Temurin {{ java_version }} JRE
+ Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
+ Java applications and services.
