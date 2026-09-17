@@ -697,7 +697,12 @@ stage('Generate Spec File') {
             }
 
             // Figure Out Template name
-            templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${PRODUCT}-${Release}-${PTYPE}.template.j2"
+            // JDK/JRE 8 keeps its own version-specific template; all 11+ share common/
+            if (Release == "8") {
+                templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${PRODUCT}-${Release}-${PTYPE}.template.j2"
+            } else {
+                templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${PRODUCT}-${PTYPE}.template.j2"
+            }
             // Output File Name Only ( defaults to outputting in same location as template )
             outputfile = "${PRODUCT}-${Release}-${PTYPE}.spec"
 
@@ -706,7 +711,7 @@ stage('Generate Spec File') {
                 error("Template File Not Found At : ${templatebase}")
             }
 
-            def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearchRhel}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDateRHEL}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${changelogversion}\" \"${upstreamversionARM32}\""
+            def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearchRhel}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDateRHEL}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${changelogversion}\" \"${upstreamversionARM32}\" \"${Release}\""
             def genresult = sh(script: speccmd, returnStatus: true)
             // End Of RHEL SUSE CODE
         }
