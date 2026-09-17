@@ -2,13 +2,25 @@
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
 # also not very intuitive:
-#  $ rpmdev-vercmp 24.0.0.0.0___24.0.0.0.0+0
-#  24.0.0.0.0___1 == 24.0.0.0.0+0
+#  $ rpmdev-vercmp {{ java_version }}.0.0.0.0___{{ java_version }}.0.0.0.0+1
+#  {{ java_version }}.0.0.0.0___1 == {{ java_version }}.0.0.0.0+X
 %global spec_version {{ package_version }}
 %global spec_release {{ package_release_version }}
+{% if java_version | int >= 25 %}
+%global priority {{ java_version }}00
+{% elif java_version | int == 24 %}
 %global priority 2400
+{% elif java_version | int == 23 %}
+%global priority 2300
+{% elif java_version | int == 21 %}
+%global priority 2100
+{% elif java_version | int == 17 %}
+%global priority 1712
+{% elif java_version | int == 11 %}
+%global priority 1112
+{% endif %}
 
-%global source_url_base https://github.com/adoptium/temurin24-binaries/releases/download
+%global source_url_base https://github.com/adoptium/temurin{{ java_version }}-binaries/releases/download
 %global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
 %global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
 %global java_provides openjre
@@ -19,12 +31,14 @@
 %global vers_arch {{ hardware_architecture }}
 %global src_num 0
 %global sha_src_num 1
-%global altname java-24-temurin-jre
+{% if java_version | int >= 25 %}
+%global altname java-{{ java_version }}-temurin-jre
+{% endif %}
 
-Name:        temurin-24-jre
+Name:        temurin-{{ java_version }}-jre
 Version:     %{spec_version}
 Release:     %{spec_release}
-Summary:     Eclipse Temurin 24 JRE
+Summary:     Eclipse Temurin {{ java_version }} JRE
 
 Group:       java
 License:     GPLv2 with exceptions
@@ -33,7 +47,11 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
+{% if java_version | int >= 25 %}
 Prefix: %{_libdir}/jvm/%{altname}
+{% else %}
+Prefix: %{_libdir}/jvm/%{name}
+{% endif %}
 
 ExclusiveArch: {{ hardware_architecture }}
 
@@ -63,19 +81,17 @@ Requires: libz1%{?_isa}
 Requires: fontconfig%{?_isa}
 
 Provides: jre
-Provides: jre-24
-Provides: jre-24-headless
-Provides: jre-24-%{java_provides}
-Provides: jre-24-%{java_provides}-headless
+Provides: jre-{{ java_version }}
+Provides: jre-{{ java_version }}-headless
+Provides: jre-{{ java_version }}-%{java_provides}
+Provides: jre-{{ java_version }}-%{java_provides}-headless
 Provides: jre-headless
 Provides: jre-%{java_provides}
 Provides: jre-%{java_provides}-headless
 
+{% if java_version | int >= 25 %}
 # Add Virtual Provides For Altname
 Provides: %{altname}
-
-# Obsolete JRE24 v0 package due to naming
-Obsoletes: java-24-temurin-jre < 24.0.0.0.0.36-1
 
 # Add Provides For Java Public Libraries
 Provides: libjawt.so%{?_isa}
@@ -84,9 +100,10 @@ Provides: libjava.so%{?_isa}
 Provides: libverify.so%{?_isa}
 Provides: libjsig.so%{?_isa}
 
+{% endif %}
 # First architecture ({{ hardware_architecture }})
-Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK24U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
-Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK24U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK{{ java_version }}U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK{{ java_version }}U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
 
 # Avoid build failures on some distros due to missing build-id in binaries.
 %global debug_package %{nil}
@@ -107,13 +124,17 @@ popd
 # noop
 
 %install
+{% if java_version | int >= 25 %}
 if [ -L %{buildroot}%{_libdir}/jvm/%{name} ]; then
   rm -f %{buildroot}%{_libdir}/jvm/%{name}
 fi
+{% endif %}
 mkdir -p %{buildroot}%{prefix}
 cd %{buildroot}%{prefix}
 tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
+{% if java_version | int >= 25 %}
 ln -s %{prefix} %{buildroot}%{_libdir}/jvm/%{name}
+{% endif %}
 
 # Use cacerts included in OS
 rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
@@ -127,11 +148,36 @@ popd
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
+{% if java_version | int == 11 %}
+                        --slave %{_bindir}/jaotc jaotc %{prefix}/bin/jaotc \
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
+                        --slave %{_bindir}/jjs jjs %{prefix}/bin/jjs \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
+                        --slave %{_bindir}/pack200 pack200 %{prefix}/bin/pack200 \
+                        --slave %{_bindir}/rmid rmid %{prefix}/bin/rmid \
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry \
+                        --slave %{_bindir}/unpack200 unpack200 %{prefix}/bin/unpack200 \
+                        \
+                        --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
+                        --slave  %{_mandir}/man1/jjs.1 jjs.1 %{prefix}/man/man1/jjs.1 \
+                        --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
+                        --slave  %{_mandir}/man1/pack200.1 pack200.1 %{prefix}/man/man1/pack200.1 \
+                        --slave  %{_mandir}/man1/rmid.1 rmid.1 %{prefix}/man/man1/rmid.1 \
+                        --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
+                        --slave  %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1
+{% elif java_version | int >= 21 %}
                         --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
                         --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/jwebserver jwebserver %{prefix}/bin/jwebserver \
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
                         --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry
+{% elif java_version | int == 17 %}
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry
+{% endif %}
 fi
 
 %preun
@@ -142,7 +188,9 @@ fi
 %files
 %defattr(-,root,root)
 %{prefix}
+{% if java_version | int >= 25 %}
 %{_libdir}/jvm/%{name}
+{% endif %}
 
 %changelog
 * {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}
