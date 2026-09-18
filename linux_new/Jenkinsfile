@@ -718,6 +718,65 @@ def publishBuiltPackages() {
         }
     }
 }
+
+// Helper function to collect all published artifact URLs for post-publish verification
+def collectPublishedArtifacts() {
+    echo "Entering : collectPublishedArtifacts()"
+    def artBaseURL = "https://adoptium.jfrog.io/artifactory/"
+    def pairs = []
+
+    if (distro == 'alpine-linux' && !params.SKIP_ALPINE) {
+        copyArtifacts projectName: "${env.JOB_NAME}",
+            selector: specific("${env.BUILD_NUMBER}"),
+            filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
+        def alpArch = (arch == 'x64') ? 'x86_64' : arch
+        def packFiles = findFiles(glob: '**/build/ospackage/temurin-*j*.apk')
+        def srcFiles  = findFiles(glob: '**/build/ospackage/temurin-*src*.apk')
+        (packFiles + srcFiles).each { f ->
+            def url = "${artBaseURL}apk/alpine/main/${alpArch}/${f.name}"
+            pairs << [url, f.name]
+        }
+    }
+
+    if (distro == 'linux') {
+        copyArtifacts projectName: "${env.JOB_NAME}",
+            selector: specific("${env.BUILD_NUMBER}"),
+            filter: '**/build/ospackage/*,**/build/reports/**,**/packageTest/dependencies/deb/*'
+
+        if (!params.SKIP_DEBIAN) {
+            findFiles(glob: '**/build/ospackage/temurin-*.deb').each { f ->
+                def url = "${artBaseURL}deb/pool/main/t/temurin-${Release}/${f.name}"
+                pairs << [url, f.name]
+            }
+        }
+
+        if (!params.SKIP_RHEL) {
+            (findFiles(glob: '**/rhel/build/ospackage/t*.rpm') + findFiles(glob: '**/rhel/build/ospackage/j*.rpm')).each { f ->
+                def archex = f.name =~ /(?:\d+\.\d+-\d+)\.(\w+)\.(?:src\.)?rpm/
+                def rhelArch = archex ? archex[0][1] : null
+                if (f.name.contains('.src.rpm')) { rhelArch = 'source' }
+                getRhelDistros().each { rhel_distro ->
+                    def url = "${artBaseURL}${rhel_distro}/${rhelArch}/Packages/${f.name}"
+                    pairs << [url, f.name]
+                }
+            }
+        }
+
+        if (!params.SKIP_SUSE) {
+            (findFiles(glob: '**/suse/build/ospackage/t*.rpm') + findFiles(glob: '**/suse/build/ospackage/j*.rpm')).each { f ->
+                def archex = f.name =~ /(?:\d+\.\d+-\d+)\.(\w+)\.(?:src\.)?rpm/
+                def suseArch = archex ? archex[0][1] : null
+                if (f.name.contains('.src.rpm')) { suseArch = 'source' }
+                getSuseDistros().each { suse_distro ->
+                    def url = "${artBaseURL}${suse_distro}/${suseArch}/Packages/${f.name}"
+                    pairs << [url, f.name]
+                }
+            }
+        }
+    }
+
+    return pairs
+}
 // Function Definitions End
 
 /* Pipeline Declaration */
@@ -1016,6 +1075,46 @@ stage('Publish Packages') {
     }
 }
 // Publish Packages Stage - End
+// Verify Publication Stage - Start
+stage('Verify Publication') {
+    agent { label NODE_LABEL }
+    when {
+        expression { return !shouldSkipPipeline && !params.DRY_RUN && !params.SKIP_UPLOAD }
+    }
+    steps {
+        script {
+            echo "Entering Stage : Verify Publication"
+            def pairs = collectPublishedArtifacts()
+            def passed = []
+            def failed = []
+            pairs.each { pair ->
+                def url      = pair[0]
+                def fileName = pair[1]
+                def code = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${url}", returnStdout: true).trim()
+                if (code == '200') {
+                    passed << [url, code]
+                } else {
+                    failed << [url, code]
+                }
+            }
+            def distrosStr = DISTS_TO_BUILD.join(', ')
+            echo "===== Publication Verification Summary ====="
+            echo "TAG     : ${params.TAG}"
+            echo "Arch    : ${arch}"
+            echo "Distros : ${distrosStr}"
+            echo "-------------------------------------------"
+            passed.each { p -> echo "PASS  ${p[0]}" }
+            failed.each { f -> echo "FAIL  ${f[0]}  [HTTP ${f[1]}]" }
+            echo "-------------------------------------------"
+            echo "Total: ${pairs.size()} checked, ${passed.size()} passed, ${failed.size()} FAILED"
+            echo "============================================"
+            if (failed.size() > 0) {
+                error("Publication verification failed: ${failed.size()} artifact(s) not reachable in Artifactory. See summary above.")
+            }
+        }
+    }
+}
+// Verify Publication Stage - End
 // Stage Definition - End
     }
     // Housekeeping + Post Build
@@ -1028,6 +1127,11 @@ stage('Publish Packages') {
         success {
             script {
                 if (!params.DRY_RUN) {
+                    echo "===== Build Complete ====="
+                    echo "TAG     : ${params.TAG}"
+                    echo "Arch    : ${arch}"
+                    echo "Distros : ${DISTS_TO_BUILD.join(', ')}"
+                    echo "=========================="
                     echo 'Build succeeded. Triggering downstream job...'
                     echo "Release : ${params.TAG}"
                     echo "FileName : ${ArchiveFileName}"
