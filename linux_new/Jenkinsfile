@@ -107,9 +107,9 @@ PKGBUILDLABELRHEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 // Helper function to download and validate files
 def downloadArtifact(url) {
     echo "Downloading: ${url}"
-    def result = sh(script: "curl -sSL -O ${url}", returnStatus: true)
+    def result = sh(script: "curl -sSLf --retry 5 --retry-delay 30 --retry-all-errors -O ${url}", returnStatus: true)
     if (result != 0) {
-        error("Failed to download ${url}. File not found or an error occurred. Download result := ${result}")
+        error("Failed to download ${url} after retries. File not found or an error occurred (HTTP error or network failure). curl exit code: ${result}")
     }
     echo "Downloaded: ${url}"
 }
