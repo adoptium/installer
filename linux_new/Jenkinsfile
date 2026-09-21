@@ -460,21 +460,23 @@ def generateSpecFiles() {
 
 // Helper function to validate generated packages
 def validateArtifactsForDist(String dist, String ver) {
-    def globPattern
+    def builtFiles
     if (dist == 'alpine') {
-        globPattern = '**/build/ospackage/temurin-*.apk'
+        // Ant glob does not support {a,b} alternation — query jdk and src subpackages separately
+        // to exclude the tiny metapackage (temurin-27-27_p35-r0.apk ~200 KB)
+        builtFiles = (findFiles(glob: '**/build/ospackage/temurin-*jdk*.apk') +
+                      findFiles(glob: '**/build/ospackage/temurin-*src*.apk')) as Object[]
     } else if (dist == 'debian') {
-        globPattern = '**/build/ospackage/temurin-*.deb'
+        builtFiles = findFiles(glob: '**/build/ospackage/temurin-*.deb')
     } else if (dist == 'rhel') {
-        globPattern = '**/rhel/build/ospackage/t*.rpm'
+        builtFiles = findFiles(glob: '**/rhel/build/ospackage/t*.rpm')
     } else if (dist == 'suse') {
-        globPattern = '**/suse/build/ospackage/t*.rpm'
+        builtFiles = findFiles(glob: '**/suse/build/ospackage/t*.rpm')
     } else {
         return
     }
-    def builtFiles = findFiles(glob: globPattern)
     if (builtFiles.length == 0) {
-        error("Artifact validation failed: no output files found for ${dist} (glob: ${globPattern})")
+        error("Artifact validation failed: no output files found for ${dist}")
     }
     builtFiles.each { f ->
         if (!f.name.contains(ver)) {
