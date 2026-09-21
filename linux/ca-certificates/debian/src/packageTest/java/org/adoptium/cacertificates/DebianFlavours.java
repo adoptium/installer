@@ -45,7 +45,7 @@ public class DebianFlavours implements ArgumentsProvider {
 		}
 
 		return Stream.of(
-	  	Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)
+			Arguments.of(containerRegistry + "debian", "trixie"),   // Debian/13 (testing)
 			Arguments.of(containerRegistry + "debian", "bookworm"), // Debian/12 (LTS)
 			Arguments.of(containerRegistry + "ubuntu", "resolute"), // Ubuntu/26.04 (LTS)
 			Arguments.of(containerRegistry + "ubuntu", "noble"),    // Ubuntu/24.04 (LTS)
