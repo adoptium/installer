@@ -449,12 +449,12 @@ def generateSpecFiles() {
 
     ArchiveFileName = "Package_Bld_Src_${distro}_${params.TAG}_${arch}_${env.BUILD_NUMBER}.tar.gz"
     echo "ArchiveFileName = ${ArchiveFileName}"
-    sh "find ./linux_new -type f \\( -name '*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) | tar -czf ./${ArchiveFileName} -T -"
+    sh "find ./linux_new -type f \\( -name 'temurin-${Release}-*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) -newer ./linux_new/Jenkinsfile | tar -czf ./${ArchiveFileName} -T -"
 
     archiveArtifacts artifacts: "${ArchiveFileName}", allowEmptyArchive: false
 
     dir('linux_new') {
-        stash name: 'installercode', includes: '**'
+        stash name: "installercode-${env.BUILD_NUMBER}", includes: '**'
     }
 }
 
@@ -505,11 +505,12 @@ def buildAndArchiveDistPackages() {
         }
 
         node(label: nodeLabel) {
+            try {
             env.DOCKER_BUILDKIT = 1
             env.COMPOSE_DOCKER_CLI_BUILD = 1
 
             cleanWs()
-            unstash 'installercode'
+            unstash "installercode-${env.BUILD_NUMBER}"
 
             try {
                 def PackagesToBuild = ['jdk', 'jre']
@@ -607,6 +608,9 @@ def buildAndArchiveDistPackages() {
                 } else if (DistArrayElement == 'alpine') {
                     echo "Skipping archive for Alpine as SKIP_ALPINE is true"
                 }
+            }
+            } finally {
+                cleanWs(deleteDirs: true, disableDeferredWipeout: true)
             }
         }
     }
@@ -1042,6 +1046,8 @@ stage('Generate Spec File') {
     steps {
         script {
             echo "Entering Stage : Generate Spec File"
+            sh "find ./linux_new -type f \\( -name '*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) -delete"
+            echo "Cleaned stale generated packaging files from source tree"
             generateSpecFiles()
         }
     }
