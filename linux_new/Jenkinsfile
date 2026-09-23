@@ -3,18 +3,18 @@
 
 /* Constant Declarations */
 
-NODE_LABEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure' // Default node
-PRODUCT = 'temurin'
-JVM = 'hotspot'
-shouldSkipPipeline = false
+@groovy.transform.Field def NODE_LABEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure' // Default node
+@groovy.transform.Field def PRODUCT = 'temurin'
+@groovy.transform.Field def JVM = 'hotspot'
+@groovy.transform.Field def shouldSkipPipeline = false
 
 // Artifactory Global Variables — URL variables computed in Process Parameters stage
-baseURL = "https://github.com/adoptium/"
-ArchiveFileName = ""
-binaryRepo = ""
-binaryDLRepo = ""
-fullURL = ""
-dlURL = ""
+@groovy.transform.Field def baseURL = "https://github.com/adoptium/"
+@groovy.transform.Field def ArchiveFileName = ""
+@groovy.transform.Field def binaryRepo = ""
+@groovy.transform.Field def binaryDLRepo = ""
+@groovy.transform.Field def fullURL = ""
+@groovy.transform.Field def dlURL = ""
 
 /* Supported Distro Functions */
 // Return lists of supported distributions via functions to prevent large root class field initialization
@@ -73,34 +73,34 @@ def getSuseDistros() {
 /* End Of Distro Definitions*/
 
 // Global Variables
-DLfilenames = []
-JDKArray = []
-ModifiedJDKArray = []
-DISTS_TO_BUILD = []
-distro = ""
-distro_list = ''
-arch = ""
-ReleaseVersion = ""
-Release = ""
-Version = ""
-BuildNum = ""
-packagearch = ""
-AlpArch = ""
-packagearchDeb = ""
-packagearchRhel = ""
-PackageReleaseVersion = "0"
-upstreamversion = ""
-upstreamversionARM32 = ""
-RHELkey = ""
-SUSEkey = ""
-TemurinVersion = ""
+@groovy.transform.Field def DLfilenames = []
+@groovy.transform.Field def JDKArray = []
+@groovy.transform.Field def ModifiedJDKArray = []
+@groovy.transform.Field def DISTS_TO_BUILD = []
+@groovy.transform.Field def distro = ""
+@groovy.transform.Field def distro_list = ''
+@groovy.transform.Field def arch = ""
+@groovy.transform.Field def ReleaseVersion = ""
+@groovy.transform.Field def Release = ""
+@groovy.transform.Field def Version = ""
+@groovy.transform.Field def BuildNum = ""
+@groovy.transform.Field def packagearch = ""
+@groovy.transform.Field def AlpArch = ""
+@groovy.transform.Field def packagearchDeb = ""
+@groovy.transform.Field def packagearchRhel = ""
+@groovy.transform.Field def PackageReleaseVersion = "0"
+@groovy.transform.Field def upstreamversion = ""
+@groovy.transform.Field def upstreamversionARM32 = ""
+@groovy.transform.Field def RHELkey = ""
+@groovy.transform.Field def SUSEkey = ""
+@groovy.transform.Field def TemurinVersion = ""
 
 /* Have Some Default Node Labels */
 /* Specified Here To Simplify Updates Later */
 
-PKGBUILDLABELAPK = 'linux&&apkbuild&&build&&x64&&dockerBuild'
-PKGBUILDLABELDEB = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
-PKGBUILDLABELRHEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
+@groovy.transform.Field def PKGBUILDLABELAPK = 'linux&&apkbuild&&build&&x64&&dockerBuild'
+@groovy.transform.Field def PKGBUILDLABELDEB = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
+@groovy.transform.Field def PKGBUILDLABELRHEL = 'build&&linux&&x64&&dockerBuild&&dynamicAzure'
 
 // Function Definitions Begin
 
