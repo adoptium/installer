@@ -1,244 +1,147 @@
-# Linux Packages of Eclipse Adoptium
+# Linux Packages of Eclipse Adoptium (`linux_new`)
 
-We package for Debian, Red Hat, SUSE (e.g. DEB and RPM based) Linux distributions.
+We package Eclipse Temurin for Debian, Alpine, Red Hat, and SUSE (DEB, APK, and RPM) Linux distributions.
 
-The current implementation to build the packages involves using Gradle to call a small Java program.
-That Java program spins up a Docker container, installing the base O/S and its packaging tools,
-and then looping over configuration to create the various packages and signing them as appropriate
-with the (Eclipse Foundation as a default) signing service.
+The pipeline is driven by a Jenkins [`Jenkinsfile`](Jenkinsfile) which orchestrates the following stages for each requested version and distribution combination:
 
-TODO You can then optionally upload those packages to a package repository of your choice.
-The default Adoptium package repository is https://packages.adoptium.net/ui/packages. The packages are built and uploaded by Jenkins pipeline job defined by [Jenkinsfile](https://github.com/adoptium/installer/blob/master/linux/Jenkinsfile)
+1. **Validate artifacts** — confirm the upstream Temurin binary exists in Artifactory
+2. **Generate spec file** — render Jinja2 templates via [`generate_spec.py`](generate_spec.py) to produce distribution-specific build specs
+3. **Build packages** — run the packaging toolchain inside a Docker container
+4. **Archive artifacts** — archive built packages in Jenkins
+5. **Publish packages** — upload signed packages to the Adoptium package repository
 
-## Prerequisites
+The published packages are available at: https://packages.adoptium.net/ui/packages
 
-To run this locally
+---
 
-* You will need to have Docker 20.10+ installed and running.
-* You will need to have Java 8+ installed.
-* You will need to have a minimum of 8GB of RAM on your system (the build required 4GB).
+## Template Structure
 
-## Building the Packages
+Templates are stored under `{jdk,jre}/<distro>/src/main/packaging/temurin/`.
 
-Builds take at least ~5-15 minutes to complete on a modern machine.  Please ensure that you have Docker installed and running.
+### Shared (`common/`) templates
 
-You'll want to make sure you've set the exact versions of the binaries you want package in the:
+Version-specific template files have been consolidated into a single `common/` directory per distribution family. Jinja2 conditionals handle version-varying behaviour (tool lists, `Provides:` entries, package priority, etc.). Adding a new JDK version requires **no new template files**.
 
-* **Alpine Based** - _{jdk,jre}/alpine/src/main/packaging/\<vendor>\/\<version>\/AKKBUILD_ files.
-* **Debian Based** - _{jdk,jre,ca-certificates}/debian/src/main/packaging/\<vendor>\/\<version>\/debian/rules_ files.
-* **Red Hat Based** - _{jdk,jre}/redhat/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
-* **SUSE Based** - _{jdk,jre}/suse/src/main/packaging/\<vendor>/\<version>/\<vendor\>/\<vendor\>-\<version\>-jdk.spec_ files.
+| Distribution | Shared template location |
+|---|---|
+| Alpine (APK) | `jdk/alpine/src/main/packaging/temurin/common/alpine.jdk.template.j2` |
+| Debian (DEB) | `jdk/debian/src/main/packaging/temurin/common/debian/` |
 
-In all the examples below you'll need to replace the following variables:
+The pipeline resolves templates using a **per-version-first, `common/` fallback** strategy: if a version-specific file exists it takes precedence, otherwise the shared template is used. This allows per-version overrides to be added without breaking the shared case.
 
-* Replace `<version>` with `8|11|17|19|20|21|22|23`
-* Replace `<vendor>` with `temurin|dragonwell|microsoft|openj9`
-* Replace `<platform>` with `Alpine|Debian|RedHat|Suse`
-* Replace `<type>` with `Jdk|Jre` (or `CaCertificates` for the `Debian` platform)
+> **Exception:** JDK 8 Alpine retains a dedicated per-version template (`temurin/8/`) because its version-string expansion format differs from JDK 11+.
 
-**Notes:**
-* Not all combinations are possible, i.e., for some vendors we might only provide certain versions, or types.
-* For `Debian` we provide a separate package with _Certification Authority_ certificates.
+### Shared Java test files (Alpine)
 
-### Build all packages for a version
+`HelloWorld.java`, `TestCryptoLevel.java`, and `TestECDSA.java` live once in `jdk/alpine/src/main/packaging/temurin/common/` and are referenced by all Alpine builds.
 
-```shell
-export DOCKER_BUILDKIT=1
-export _JAVA_OPTIONS="-Xmx4g"
-./gradlew clean package checkPackage -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
-```
+---
 
-The scripts roughly work as follows:
+## Jenkins Pipeline Parameters
 
-* **Gradle Kickoff** - The various `package<type><platform>` tasks in subdirectories under the _jdk_ (or _jre_) directory all have a dependency on the `packageJDK` (`packageJRE`) task,
-which in turn has a dependency on the `package` task (this is how Gradle knows to trigger each of those in turn).
-* **package<type>&lt;platform&gt; Tasks** - These tasks are responsible for building the various packages for the given platform.  They fire up the Docker container
-(A _Dockerfile_ is included in each subdirectory), mount some file locations (so you can get to the output) and then run packaging commands in that container.
-* **check<type>&lt;platform&gt; Tasks** - Test containers are used to install the package and run the tests in
-_src/packageTest/java/packaging_ on them.
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `JAVA_TO_BUILD` | String | — | JDK version to build (e.g. `jdk21`) |
+| `ARCHITECTURE` | Choice | — | Target architecture |
+| `PACKAGE_TYPE` | Choice | — | `jdk` or `jre` |
+| `DRY_RUN` | Boolean | `false` | Skip the entire pipeline (validation only) |
+| `SKIP_UPLOAD` | Boolean | `false` | Build and archive packages but **do not publish** to Artifactory. Useful for validating template or packaging changes without touching the production repository. |
 
-- [task package](build.gradle) --> [task package\<type\>](<type>/build.gradle) --> [task package\<type>\<DISTRO\>](<type>/\<vendor\>/build.gradle )
-- [task checkPackage](build.gradle)  --> [task check\<type\>Package](<type>/build.gradle) --> [task check\<type>\<DISTRO\>](<type>/\<vendor\>/build.gradle )
+---
 
-### Build a Debian specific package for a version
+## Prerequisites (local development)
 
-- replace `<version>` with `8|11|17|19|20|21|22|23`
-- replace `<vendor>` with `temurin|dragonwell|microsoft`
-- Replace `<type>` with `Jdk|Jre`
+* Docker 20.10+ installed and running
+* Python 3.x with `jinja2` and `pyyaml` installed (for `generate_spec.py`)
+* Java 8+ (for the Gradle build steps if running the full Gradle-based check)
+
+---
+
+## Running `generate_spec.py` locally
+
+`generate_spec.py` renders a Jinja2 template for a given version and distribution. It resolves templates using the same fallback logic as the pipeline (per-version first, then `common/`).
 
 ```shell
-export DOCKER_BUILDKIT=1
-export _JAVA_OPTIONS="-Xmx4g"
-./gradlew clean package<type>Debian check<type>Debian --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
+python3 linux_new/generate_spec.py \
+    --version 21 \
+    --ptype jdk \
+    --distro alpine \
+    --product temurin \
+    --output /tmp/generated
 ```
 
-### Build a Red Hat specific package for a version
+---
 
-- replace `<version>` with `8|11|17|19|20|21|22|23`
-- replace `<vendor>` with `temurin|dragonwell|microsoft|openj9`
-
-```shell
-export DOCKER_BUILDKIT=1
-export _JAVA_OPTIONS="-Xmx4g"
-./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
-```
-
-### Build a SUSE specific package for a version
-
-- replace `<version>` with `8|11|17|19|20|21|22|23`
-- replace `<vendor>` with `temurin|dragonwell|microsoft`
-
-```shell
-export DOCKER_BUILDKIT=1
-export _JAVA_OPTIONS="-Xmx4g"
-./gradlew clean packageJdkSuse checkJdkSuse --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version>
-```
-
-## GPG Signing RPMs/APKs
-
-In order to GPG sign the generated RPMs/APKs you must add the following argument to the gradlew command:
-- replace `<DISTRO>` with `Alpine|RedHat|Suse`
-- replace `<version>` with `8|11|17|19|20|21|22|23`
-- replace `<vendor>` with `temurin|dragonwell`
-
-```shell
-./gradlew packageJdk<DISTRO> --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PGPG_KEY=</path/to/private/gpg/key>
-```
-
-## Building from local files
-
-In order to build a jdk/jre package for RPM (suse/redhat) or DEB from local `tar.gz` file(s), put both the `tar.gz` and the `sha256.txt` files in an empty input directory. If the vendor supports building locally, then one can specify this directory when running `./gradlew clean` using the `-PINPUT_DIR` flag
-
-Example:
-```shell
-./gradlew clean packageJdkRedHat checkJdkRedHat --parallel -PPRODUCT=<vendor> -PPRODUCT_VERSION=<version> -PARCH=<architecture> -PINPUT_DIR=<path/to/input/directory>
-```
-
-**NOTE if building an RPM**:
-Make sure to update global variables `upstream_version` and `spec_version` in the corresponding spec-file to match the version number of the jdk/jre RPM that you are building. (This is how RPM determines the version number of the resulting package)
-
-**Note if building an DEB**:
-Make sure to update the `changelog` file in the corresponding vendor's debian folder so the most recent entry is about the version number of the jdk/jre DEB that you are building. (This is how DEB determines the version number of the resulting package)
-
-## Building SRPMs and RPMs Directly
-
-If you do not require testing or advanced build support, it is perfectly fine to eschew the Gradle-based build and to
-directly build SRPMs and RPMs using the spec files in the repository.
-
-In this example, we are using the existing spec files for the Temurin 11 JDK to create an SRPM and then rebuild that
-SRPM into a binary RPM. It supports building it for the current target architecture or for a different one than the host
-system by specifying `vers_arch`.
-
-Prerequisites: `rpm-build` and `rpmdevtools` packages are installed. For example:
-
-```
-$ rpm -q rpmdevtools rpm-build
-rpmdevtools-9.3-3.fc33.noarch
-rpm-build-4.16.1.3-1.fc33.x86_64
-```
-
-### Produce a Source/Binary RPM for x86_64
-
-Consider this RPM build where x86_64 is the build hosts' architecture.
-Download the release blobs and associated sources.
-Suppose build rpm for jdk11 for target architecture `x86_64`
-
-```shell
-cd linux/jdk/redhat/src/main/packaging/temurin/11
-mkdir temurin_x86_64
-pushd temurin_x86_64
-spec=$(pwd)/temurin-11-jdk.spec
-spectool --gf ${spec}
-sha256sum -c *.sha256.txt
-```
-
-Create a SRPM:
-
-```shell
-rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
-         --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
-         --define "_rpmdir $(pwd)" --nodeps -bs ${spec}
-```
-
-Build the binary from the SRPM:
-
-```shell
-rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
-         --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
-         --define "_rpmdir $(pwd)" --rebuild *.src.rpm
-```
-
-### Building for a different architecture
-
-In order to produce RPMs on an x86_64 build host for the s390x target architecture, use the `--target` switch to `rpm-build` to build for a different
-architecture. Suppose the host architecture is `x86_64` and we want to build for target architecture `s390x`:
-
-```shell
-rpmbuild --define "_sourcedir $(pwd)" --define "_specdir $(pwd)" \
-         --define "_builddir $(pwd)" --define "_srcrpmdir $(pwd)" \
-         --define "_rpmdir $(pwd)" --target s390x --rebuild *.src.rpm
-```
-
-## Supported packages
+## Supported Packages
 
 ### APK (Alpine)
-- Supported JDK version 8,11,17,19,20,21,22,23
-- Supported JRE version 8,11,17,19,20,21,22,23
 
-Supported platform amd64
+- Supported JDK versions: 8, 11, 17, 21, 23, 24, 25, 26, 27, 28
+- Supported JRE versions: 8, 11, 17, 21, 23, 24, 25, 26, 27, 28
+- Supported platforms: `x86_64`
 
-| Distro       | Test enabled platforms | Note |
-|--------------|:----------------------:|:----:|
-| alpine/3.x.x |         x86_64         |      |
+| Distro        | Test enabled platforms |
+|---------------|:----------------------:|
+| alpine/3.x.x  |         x86_64         |
 
-### DEB
-- Supported JDK version 8,11,17,19,20,21,22,23
-- Supported JRE version 8,11,17,19,20,21,22,23
+### DEB (Debian / Ubuntu)
 
-Supported platform amd64, arm64, armhf, ppc64le, s390x (s390x is only available for jdk > 8)
+- Supported JDK versions: 8, 11, 17, 21, 23, 24, 25, 26, 27, 28
+- Supported JRE versions: 8, 11, 17, 21, 23, 24, 25, 26, 27, 28
+- Supported platforms: `amd64`, `arm64`, `armhf`, `ppc64le`, `s390x` _(s390x only for JDK > 8)_
 
-| Distro                       | Test enabled platforms | Note |
-|------------------------------|:----------------------:|:----:|
-| debian/13 (trixie/testing)   |         x86_64         |      |
-| debian/12 (bookworm/testing) |         x86_64         |      |
-| debian/11 (bullseye/stable)  |         x86_64         |      |
-| ubuntu/26.04 (resolute)      |         x86_64         |      |
-| ubuntu/24.04 (noble)         |         x86_64         |      |
-| ubuntu/22.04 (jammy)         |         x86_64         |      |
-| ubuntu/20.04 (focal)         |         x86_64         |      |
-| ubuntu/18.04 (bionic)        |         x86_64         |      |
+| Distro                        | Test enabled platforms |
+|-------------------------------|:----------------------:|
+| debian/13 (trixie)            |         x86_64         |
+| debian/12 (bookworm)          |         x86_64         |
+| debian/11 (bullseye)          |         x86_64         |
+| ubuntu/26.04 (resolute)       |         x86_64         |
+| ubuntu/24.04 (noble)          |         x86_64         |
+| ubuntu/22.04 (jammy)          |         x86_64         |
+| ubuntu/20.04 (focal)          |         x86_64         |
+| ubuntu/18.04 (bionic)         |         x86_64         |
 
-- Debian Releases: https://www.debian.org/releases/index.en.html
-- Ubuntu Releases: https://ubuntu.com/about/release-cycle
+- Debian releases: https://www.debian.org/releases/index.en.html
+- Ubuntu releases: https://ubuntu.com/about/release-cycle
 
-### RPM (RedHat and Suse)
-- Supported JDK version 8,11,17,19,20,21,22,23
-- Supported JRE version 8,11,17,19,20,21,22,23
+### RPM (Red Hat and SUSE)
 
-Supported platform x86_64, aarch64, armv7hl, ppc64le, s390x (s390x is only available for jdk > 8)
-SRPM also available.
+- Supported JDK versions: 8, 11, 17, 21, 23, 24, 25, 26, 27, 28
+- Supported JRE versions: 8, 11, 17, 21, 23, 24, 25, 26, 27, 28
+- Supported platforms: `x86_64`, `aarch64`, `armv7hl`, `ppc64le`, `s390x` _(s390x only for JDK > 8)_
+- SRPM also available.
 
-| Distro        | Test enabled platforms |                    Note                     |
-|---------------|:----------------------:|:-------------------------------------------:|
-| amazonlinux/2 |         x86_64         |                                             |
-| centos/7      |         x86_64         |                                             |
-| rpm/fedora/35 |         x86_64         |                                             |
-| rpm/fedora/36 |         x86_64         |                                             |
-| rpm/fedora/37 |         x86_64         |                                             |
-| rpm/fedora/38 |         x86_64         |                                             |
-| rpm/fedora/39 |         x86_64         |                                             |
-| oraclelinux/7 |         x86_64         |                                             |
-| oraclelinux/8 |         x86_64         |                                             |
-| opensuse/15.3 |         x86_64         |                                             |
-| opensuse/15.4 |         x86_64         |                                             |
-| opensuse/15.5 |         x86_64         |                                             |
-| rocky/8       |         x86_64         |                                             |
-| rpm/rhel/7    |         x86_64         |                                             |
-| rpm/rhel/8    |         x86_64         |                                             |
-| rpm/rhel/9    |         x86_64         |                                             |
-| sles/12       |          Null          | Need subscription to even run zypper update |
-| sles/15       |         x86_64         |                                             |
+| Distro          | Test enabled platforms | Note                                         |
+|-----------------|:----------------------:|:---------------------------------------------|
+| amazonlinux/2   |         x86_64         |                                              |
+| centos/7        |         x86_64         |                                              |
+| fedora/35–39    |         x86_64         |                                              |
+| oraclelinux/7   |         x86_64         |                                              |
+| oraclelinux/8   |         x86_64         |                                              |
+| opensuse/15.3   |         x86_64         |                                              |
+| opensuse/15.4   |         x86_64         |                                              |
+| opensuse/15.5   |         x86_64         |                                              |
+| rocky/8         |         x86_64         |                                              |
+| rhel/7          |         x86_64         |                                              |
+| rhel/8          |         x86_64         |                                              |
+| rhel/9          |         x86_64         |                                              |
+| sles/12         |          —             | Requires subscription to run zypper update   |
+| sles/15         |         x86_64         |                                              |
 
-## Install the packages
+---
+
+## Error Handling
+
+The pipeline raises a build failure if:
+
+- The upstream Temurin artifact cannot be found or downloaded (download retries are attempted before failing)
+- Package build produces no output artifacts
+- Post-publish validation confirms that expected packages are not present in Artifactory after upload
+
+Silent failures (green Jenkins build despite missing packages) have been addressed — the pipeline will now fail explicitly in these scenarios.
+
+---
+
+## Installing the Packages
 
 See [Eclipse Temurin Linux (RPM/DEB) installer packages](https://adoptium.net/installation/linux/)

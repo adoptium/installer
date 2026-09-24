@@ -2,7 +2,7 @@ import sys
 import os
 from jinja2 import Environment, FileSystemLoader
 
-def print_parameters(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version):
+def print_parameters(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version, java_version):
     """
     Print the received parameters in a formatted manner.
     """
@@ -19,8 +19,9 @@ def print_parameters(template_path, package_version, hardware_architecture, pack
     print(f"  Upstream Version       : {upstream_version}")
     print(f"  Changelog Version      : {changelog_version}")
     print(f"  Upstream ARM32 Version : {upstreamarm32_version}")
+    print(f"  Java Version           : {java_version}")
 
-def render_template(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version):
+def render_template(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version, java_version):
     """
     Render a Jinja2 template file using provided parameters and save the result to an output file specified by the user.
 
@@ -37,6 +38,7 @@ def render_template(template_path, package_version, hardware_architecture, packa
         upstream_version (str): The upstream release version.
         changelog_version (str): The version to be used in the changelog version
         upstreamarm32_version (str): The upstream version to be used for ARM32 on JDK8
+        java_version (str): The Java major version number (e.g. "11", "17", "21") used by shared templates.
     """
     # Get the directory of the template file and set the output file path in the same directory
     template_dir = os.path.dirname(template_path)
@@ -57,7 +59,8 @@ def render_template(template_path, package_version, hardware_architecture, packa
         package_release_version=package_release_version,
         upstream_version=upstream_version,
         changelog_version=changelog_version,
-        upstreamarm32_version=upstreamarm32_version
+        upstreamarm32_version=upstreamarm32_version,
+        java_version=java_version
     )
 
     # Write the rendered content to the output file
@@ -67,14 +70,14 @@ def render_template(template_path, package_version, hardware_architecture, packa
     print(f"Template rendered and saved to {output_path}")
 
 def main():
-    # Define the expected parameter count (9 parameters + script name)
-    expected_params = 12
+    # Define the expected parameter count (script name + 13 parameters)
+    expected_params = 13
 
     # Check if the correct number of arguments was provided ( add 1 for script name/system param)
     if len(sys.argv) != expected_params + 1:
-        print("Error: Eleven parameters are required.")
+        print("Error: Thirteen parameters are required.")
         print("\nUsage:")
-        print("  python3 script.py <Template Path> <Package Version> <Hardware Architecture> <Package URL> <Package Checksum> <Package Name> <Output File Name>")
+        print("  python3 script.py <Template Path> <Package Version> <Hardware Architecture> <Package URL> <Package Checksum> <Package Name> <Output File Name> <Current Date> <Package Rel Version> <Upstream Version> <Changelog Version> <Upstream ARM32 Version> <Java Version>")
         print("\nParameters:")
         print("  Template Path        - Path to the J2 template file for building the installer package")
         print("  Package Version      - The JDK version for the package being built")
@@ -87,7 +90,8 @@ def main():
         print("  Package Rel Version  - The current package release version")
         print("  Upstream Version     - The Upstream Source Version")
         print("  Changelog Version    - The version to be used in the package changelog")
-        print("  Upstream ARM2 Version- The ARM32 Upstream Version Number")
+        print("  Upstream ARM32 Version - The ARM32 Upstream Version Number")
+        print("  Java Version         - The Java major version number (e.g. 11, 17, 21)")
         sys.exit(1)
 
     # Assign parameters to descriptive variable names
@@ -103,12 +107,13 @@ def main():
     upstream_version = sys.argv[10]
     changelog_version = sys.argv[11]
     upstreamarm32_version = sys.argv[12]
+    java_version = sys.argv[13]
 
     # Print the parameters for debugging
-    print_parameters(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version)
+    print_parameters(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version, java_version)
 
     # Render the template with the provided parameters
-    render_template(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version)
+    render_template(template_path, package_version, hardware_architecture, package_url, package_checksum, package_name, output_file_name, current_date, package_release_version, upstream_version, changelog_version, upstreamarm32_version, java_version)
 
 if __name__ == "__main__":
     main()
