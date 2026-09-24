@@ -1093,31 +1093,76 @@ stage('Verify Publication') {
         script {
             echo "Entering Stage : Verify Publication"
             def pairs = collectPublishedArtifacts()
-            def passed = []
-            def failed = []
+
+            // Bucket results by distro group, preserving insertion order
+            def groups = [:]
             pairs.each { pair ->
-                def url      = pair[0]
-                def fileName = pair[1]
+                def url  = pair[0]
                 def code = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${url}", returnStdout: true).trim()
+
+                // Derive a short group label from the URL path
+                def group = 'Other'
+                if      (url.contains('/deb/'))                                          { group = 'Debian'   }
+                else if (url.contains('/apk/'))                                          { group = 'Alpine'   }
+                else if (url.contains('/opensuse/') || url.contains('/sles/'))           { group = 'SUSE/RPM' }
+                else if (url.contains('/rhel/')    || url.contains('/centos/')  ||
+                         url.contains('/rocky/')   || url.contains('/fedora/')  ||
+                         url.contains('/oraclelinux/') || url.contains('/amazonlinux/')) { group = 'RHEL/RPM' }
+
+                if (!groups.containsKey(group)) {
+                    groups[group] = [passed: [], failed: []]
+                }
                 if (code == '200') {
-                    passed << [url, code]
+                    groups[group].passed << url
                 } else {
-                    failed << [url, code]
+                    groups[group].failed << [url, code]
                 }
             }
-            def distrosStr = DISTS_TO_BUILD.join(', ')
-            echo "===== Publication Verification Summary ====="
-            echo "TAG     : ${params.TAG}"
-            echo "Arch    : ${arch}"
-            echo "Distros : ${distrosStr}"
-            echo "-------------------------------------------"
-            passed.each { p -> echo "PASS  ${p[0]}" }
-            failed.each { f -> echo "FAIL  ${f[0]}  [HTTP ${f[1]}]" }
-            echo "-------------------------------------------"
-            echo "Total: ${pairs.size()} checked, ${passed.size()} passed, ${failed.size()} FAILED"
-            echo "============================================"
-            if (failed.size() > 0) {
-                error("Publication verification failed: ${failed.size()} artifact(s) not reachable in Artifactory. See summary above.")
+
+            def totalChecked = pairs.size()
+            def totalPassed  = 0
+            def totalFailed  = 0
+            groups.values().each { r -> totalPassed += r.passed.size(); totalFailed += r.failed.size() }
+            def distrosStr   = DISTS_TO_BUILD.join(', ')
+            def sep  = '=' * 60
+            def dash = '-' * 60
+
+            echo sep
+            echo "  PUBLICATION VERIFICATION SUMMARY"
+            echo sep
+            echo "  TAG     : ${params.TAG}"
+            echo "  Arch    : ${arch}"
+            echo "  Distros : ${distrosStr}"
+            echo sep
+
+            // Print failures first so they are never buried below passing output
+            if (totalFailed > 0) {
+                echo "  !! FAILURES DETECTED !!"
+                echo dash
+                groups.each { groupName, results ->
+                    results.failed.each { f ->
+                        echo "  FAIL  [${groupName}]  HTTP ${f[1]}  ${f[0]}"
+                    }
+                }
+                echo dash
+            }
+
+            // Per-group pass/fail counts — individual URLs visible in the curl output above
+            echo "  Results by distribution group:"
+            echo dash
+            groups.each { groupName, results ->
+                def gPass  = results.passed.size()
+                def gFail  = results.failed.size()
+                def gTotal = gPass + gFail
+                def status = (gFail == 0) ? 'OK' : "FAILED (${gFail} failure(s))"
+                echo "  ${groupName.padRight(12)} ${gPass}/${gTotal} passed   ${status}"
+            }
+            echo dash
+            echo "  Total : ${totalChecked} checked   ${totalPassed} passed   ${totalFailed} FAILED"
+            echo sep
+
+            if (totalFailed > 0) {
+                error("Publication verification failed: ${totalFailed} artifact(s) not reachable in Artifactory. See summary above.")
             }
         }
     }
