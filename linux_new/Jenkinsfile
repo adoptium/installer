@@ -107,7 +107,7 @@ def getSuseDistros() {
 // Helper function to download and validate files
 def downloadArtifact(url) {
     echo "Downloading: ${url}"
-    def result = sh(script: "curl -sSLf --retry 5 --retry-delay 30 --retry-all-errors -O ${url}", returnStatus: true)
+    def result = sh(script: "curl -sSLf --retry 5 --retry-delay 30 --retry-all-errors -O \"${url}\"", returnStatus: true)
     if (result != 0) {
         error("Failed to download ${url} after retries. File not found or an error occurred (HTTP error or network failure). curl exit code: ${result}")
     }
@@ -331,14 +331,15 @@ def generateSpecFiles() {
                 }
                 outputfile = "APKBUILD"
 
-                if (Release == "8") {
-                    templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}.${PTYPE}${Release}.template.j2"
-                } else {
-                    templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${DistArrayElement}.${PTYPE}.template.j2"
-                }
+                def versionTemplate = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}.${PTYPE}${Release}.template.j2"
+                def commonTemplate = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${DistArrayElement}.${PTYPE}.template.j2"
 
-                if (!fileExists(templatebase)) {
-                    error("Template File Not Found At : ${templatebase}")
+                if (fileExists(versionTemplate)) {
+                    templatebase = versionTemplate
+                } else if (fileExists(commonTemplate)) {
+                    templatebase = commonTemplate
+                } else {
+                    error("Template File Not Found At : ${versionTemplate} or ${commonTemplate}")
                 }
 
                 def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearch}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDate}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${packagever}\" \"${upstreamversion}\" \"${Release}\""
@@ -375,14 +376,15 @@ def generateSpecFiles() {
                     echo "Processing Debian ${debianFilesArrayElement} File"
                     outputfile = debianFilesArrayElement
 
-                    if (Release == "8") {
-                        templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}/${debianFilesArrayElement}.template.j2"
-                    } else {
-                        templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${DistArrayElement}/${debianFilesArrayElement}.template.j2"
-                    }
+                    def versionTemplate = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${DistArrayElement}/${debianFilesArrayElement}.template.j2"
+                    def commonTemplate = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${DistArrayElement}/${debianFilesArrayElement}.template.j2"
 
-                    if (!fileExists(templatebase)) {
-                        error("Template File Not Found At : ${templatebase}")
+                    if (fileExists(versionTemplate)) {
+                        templatebase = versionTemplate
+                    } else if (fileExists(commonTemplate)) {
+                        templatebase = commonTemplate
+                    } else {
+                        error("Template File Not Found At : ${versionTemplate} or ${commonTemplate}")
                     }
 
                     def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearchDeb}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDate}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${packagever}\" \"${upstreamversion}\" \"${Release}\""
@@ -427,16 +429,17 @@ def generateSpecFiles() {
                     upstreamversionARM32 = upstreamversionARM32.replaceFirst("^jdk", "").replaceAll(/-(jre|jdk)$/, "")
                 }
 
-                if (Release == "8") {
-                    templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${PRODUCT}-${Release}-${PTYPE}.template.j2"
+                def versionTemplate = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/${Release}/${PRODUCT}-${Release}-${PTYPE}.template.j2"
+                def commonTemplate = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${PRODUCT}-${PTYPE}.template.j2"
+
+                if (fileExists(versionTemplate)) {
+                    templatebase = versionTemplate
+                } else if (fileExists(commonTemplate)) {
+                    templatebase = commonTemplate
                 } else {
-                    templatebase = "./linux_new/${PTYPE}/${DistArrayElement}/src/main/packaging/${PRODUCT}/common/${PRODUCT}-${PTYPE}.template.j2"
+                    error("Template File Not Found At : ${versionTemplate} or ${commonTemplate}")
                 }
                 outputfile = "${PRODUCT}-${Release}-${PTYPE}.spec"
-
-                if (!fileExists(templatebase)) {
-                    error("Template File Not Found At : ${templatebase}")
-                }
 
                 def speccmd = "python3 linux_new/generate_spec.py \"${templatebase}\" \"${packagever}\" \"${packagearchRhel}\" \"${PKURL}\" \"${PCSUM}\" \"${PFILE}\" \"${outputfile}\" \"${currentDateRHEL}\" \"${PackageReleaseVersion}\" \"${upstreamversion}\" \"${changelogversion}\" \"${upstreamversionARM32}\" \"${Release}\""
                 def genresult = sh(script: speccmd, returnStatus: true)
