@@ -1,5 +1,5 @@
 ARG CONTAINER_REGISTRY=""
-ARG IMAGE=debian:bullseye
+ARG IMAGE=debian:bookworm
 FROM ${CONTAINER_REGISTRY}${IMAGE}
 
 # Combine apt-get update with apt-get install to prevent stale package indexes.

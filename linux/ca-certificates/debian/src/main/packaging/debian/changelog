@@ -2,23 +2,25 @@ adoptium-ca-certificates (1.0.6-1) STABLE; urgency=medium
 
   * Add Ubuntu Resolute Raccoon to the list of supported releases.
 
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 25 Mar 2026 08:20:00 +0000
+
 adoptium-ca-certificates (1.0.5-1) STABLE; urgency=medium
 
   * Add multiarch foreign support
 
- -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 25 March 2026 08:20:00 +0000
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Wed, 25 Mar 2026 08:20:00 +0000
 
 adoptium-ca-certificates (1.0.4-1) STABLE; urgency=medium
 
   * Add Ubuntu Oracular Oriole to the list of supported releases.
 
- -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 16 December 2024 12:00:00 +0000
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 16 Dec 2024 12:00:00 +0000
 
 adoptium-ca-certificates (1.0.3-1) STABLE; urgency=medium
 
   * Add Debian Trixie & Ubuntu Noble to the list of supported releases.
 
- -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 25 April 2024 10:30:30 +0000
+ -- Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>  Thu, 25 Apr 2024 10:30:30 +0000
 
 adoptium-ca-certificates (1.0.2-1) STABLE; urgency=medium
 

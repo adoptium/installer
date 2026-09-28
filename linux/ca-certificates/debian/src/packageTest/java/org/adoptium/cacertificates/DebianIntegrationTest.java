@@ -55,7 +55,7 @@ class DebianIntegrationTest {
 			result = runShell(container, "DEBIAN_FRONTEND=noninteractive apt-get install -y default-jre");
 			assertThat(result.getExitCode()).isEqualTo(0);
 
-			// Certificate fingerprint it SwissSign Gold G2 (https://www.swisssign.com/support/ca-prod.html)
+			// Certificate fingerprint is ISRG Root X1 (https://letsencrypt.org/certificates/)
 			result = runShell(
 				container, "keytool -list -keystore /etc/ssl/certs/adoptium/cacerts -storepass changeit"
 			);
@@ -63,7 +63,7 @@ class DebianIntegrationTest {
 			assertThat(result.getStdout())
 				.containsIgnoringCase("Keystore type: jks")
 				.containsIgnoringCase("Keystore provider: SUN")
-				.contains("swisssigngoldca-g2");
+				.contains("isrgrootx1");
 		}
 	}
 
@@ -97,7 +97,7 @@ class DebianIntegrationTest {
 			assertThat(result.getStdout())
 				.containsIgnoringCase("Keystore type: jks")
 				.containsIgnoringCase("Keystore provider: SUN")
-				.contains("swisssigngoldca-g2");
+				.contains("isrgrootx1");
 
 			result = runShell(container, "update-ca-certificates");
 			assertThat(result.getExitCode()).isEqualTo(0);
@@ -109,7 +109,7 @@ class DebianIntegrationTest {
 			assertThat(result.getStdout())
 				.containsIgnoringCase("Keystore type: jks")
 				.containsIgnoringCase("Keystore provider: SUN")
-				.contains("swisssigngoldca-g2");
+				.contains("isrgrootx1");
 		}
 	}
 
