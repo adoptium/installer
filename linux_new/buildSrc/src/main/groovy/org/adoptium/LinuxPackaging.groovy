@@ -185,14 +185,14 @@ class LinuxPackaging {
 			def execHelper        = project.objects.newInstance(ExecHelper)
 
 			doLast {
-				validateProductDir(project, prod, prodVersion)
+				def packagingDir = resolvePackagingDir(project, prod, prodVersion)
 				if (inputPath != null && !project.file(inputPath).exists()) {
 					throw new IllegalArgumentException("Input directory '${inputPath}' not found")
 				}
 
 				// Copy packaging templates into build dir
 				project.copy {
-					from("src/main/packaging/${prod}/${prodVersion}/")
+					from(packagingDir)
 					into("${project.buildDir}/generated/packaging")
 				}
 
@@ -267,17 +267,29 @@ class LinuxPackaging {
 			}
 
 			doFirst {
-				validateProductDir(project, prod, prodVersion)
+				resolvePackagingDir(project, prod, prodVersion)
 			}
 		}
 	}
 
 	// ── Helpers ────────────────────────────────────────────────────────────
 
-	private static void validateProductDir(Project project, String prod, Integer prodVersion) {
-		if (!project.file("src/main/packaging/${prod}/${prodVersion}").exists()) {
-			throw new IllegalArgumentException("Unknown product ${prod}/${prodVersion}")
+	/**
+	 * Resolves the packaging template directory for the given product and version.
+	 * If a version-specific directory exists (e.g. {@code temurin/8/}) it is used directly.
+	 * Otherwise falls back to the shared {@code common/} directory (used by all JDK11+ versions).
+	 * Throws if neither exists.
+	 */
+	private static File resolvePackagingDir(Project project, String prod, Integer prodVersion) {
+		def versionDir = project.file("src/main/packaging/${prod}/${prodVersion}")
+		if (versionDir.exists()) {
+			return versionDir
 		}
+		def commonDir = project.file("src/main/packaging/${prod}/common")
+		if (commonDir.exists()) {
+			return commonDir
+		}
+		throw new IllegalArgumentException("Unknown product ${prod}/${prodVersion}")
 	}
 
 	private static void copyLocalArtefacts(Project project, String inputPath, String targetDir) {

@@ -1,0 +1,69 @@
+Source: temurin-{{ java_version }}-jdk
+Section: java
+Priority: optional
+Maintainer: Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+Build-Depends: debhelper (>= 11), lsb-release
+
+Package: temurin-{{ java_version }}-jdk
+Architecture: {{ hardware_architecture }}
+Depends: adoptium-ca-certificates,
+         java-common,
+         libasound2,
+         libc6,
+         libx11-6,
+         libfontconfig1,
+         libxext6,
+         libxi6,
+         libxrender1,
+         libxtst6,
+         zlib1g
+Recommends: fonts-dejavu-core,
+            fonts-dejavu-extra
+Provides: java-compiler,
+          java-sdk,
+          java-sdk-headless,
+          java2-sdk,
+          java5-sdk,
+          java6-sdk,
+          java7-sdk,
+          java8-sdk,
+          java9-sdk,
+          java10-sdk,
+{%- for v in range(11, java_version | int + 1) %}
+          java{{ v }}-sdk,
+{%- endfor %}
+          java2-sdk-headless,
+          java5-sdk-headless,
+          java6-sdk-headless,
+          java7-sdk-headless,
+          java8-sdk-headless,
+          java9-sdk-headless,
+          java10-sdk-headless,
+{%- for v in range(11, java_version | int + 1) %}
+          java{{ v }}-sdk-headless,
+{%- endfor %}
+          java-runtime (= {{ java_version }}),
+          java-runtime-headless (= {{ java_version }}),
+          java2-runtime,
+          java5-runtime,
+          java6-runtime,
+          java7-runtime,
+          java8-runtime,
+          java9-runtime,
+          java10-runtime,
+{%- for v in range(11, java_version | int + 1) %}
+          java{{ v }}-runtime,
+{%- endfor %}
+          java2-runtime-headless,
+          java5-runtime-headless,
+          java6-runtime-headless,
+          java7-runtime-headless,
+          java8-runtime-headless,
+          java9-runtime-headless,
+          java10-runtime-headless,
+{%- for v in range(11, java_version | int + 1) %}
+          java{{ v }}-runtime-headless{% if not loop.last %},{% endif %}
+{%- endfor %}
+Description: Eclipse Temurin {{ java_version }} JDK
+ Eclipse Temurin JDK is an OpenJDK-based development environment to create
+ applications and components using the programming language Java.

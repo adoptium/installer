@@ -1,0 +1,348 @@
+%global upstream_version {{ upstream_version }}
+# Only [A-Za-z0-9.] allowed in version:
+# https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
+# also not very intuitive:
+#  $ rpmdev-vercmp {{ java_version }}.0.0.0.0___{{ java_version }}.0.0.0.0+1
+#  {{ java_version }}.0.0.0.0___1 == {{ java_version }}.0.0.0.0+X
+%global spec_version {{ package_version }}
+%global spec_release {{ package_release_version }}
+{% if java_version | int >= 26 %}
+%global priority {{ java_version }}00
+{% elif java_version | int >= 25 %}
+%global priority 2500
+{% elif java_version | int >= 24 %}
+%global priority {{ java_version }}00
+{% elif java_version | int == 23 %}
+%global priority 2300
+{% elif java_version | int == 21 %}
+%global priority 2100
+{% elif java_version | int == 17 %}
+%global priority 1712
+{% elif java_version | int == 11 %}
+%global priority 1112
+{% endif %}
+
+{% if java_version | int != 23 %}
+# if rpmbuild is executed as: `rpmbuild -bb ...spec --without headful ...` then a headless package will be generated
+%bcond_without headful
+
+{% endif %}
+%global source_url_base https://github.com/adoptium/temurin{{ java_version }}-binaries/releases/download
+%global upstream_version_url %(echo %{upstream_version} | sed 's/\+/%%2B/g')
+%global upstream_version_no_plus %(echo %{upstream_version} | sed 's/\+/_/g')
+%global java_provides openjre
+
+# Map architecture to the expected value in the download URL; Allow for a
+# pre-defined value of vers_arch and use that if it's defined
+
+%global vers_arch {{ hardware_architecture }}
+%global src_num 0
+%global sha_src_num 1
+
+{% if java_version | int == 23 %}
+Name:        temurin-23-jre
+{% elif java_version | int >= 26 %}
+%if %{with headful}
+Name: temurin-{{ java_version }}-jre
+%global altname java-{{ java_version }}-temurin-jre
+# Prevent headful and headless JRE being installed together
+Conflicts: temurin-{{ java_version }}-jre-headless
+%else
+Name: temurin-{{ java_version }}-jre-headless
+%global altname java-{{ java_version }}-temurin-jre-headless
+# Prevent headful and headless JRE being installed together
+Conflicts: temurin-{{ java_version }}-jre
+%endif
+# Prevent JDK and any JRE variant being installed together
+Conflicts: temurin-{{ java_version }}-jdk
+{% else %}
+%if %{with headful}
+Name:        temurin-{{ java_version }}-jre
+%global altname java-{{ java_version }}-temurin-jre
+%else
+Name:        temurin-{{ java_version }}-jre-headless
+%global altname java-{{ java_version }}-temurin-jre-headless
+%endif
+{% endif %}
+Version:     %{spec_version}
+Release:     %{spec_release}
+Summary:     Eclipse Temurin {{ java_version }} JRE
+
+Group:       java
+License:     GPLv2 with exceptions
+Vendor:      Eclipse Adoptium
+URL:         https://projects.eclipse.org/projects/adoptium
+Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
+
+AutoReqProv: no
+{% if java_version | int == 23 %}
+Prefix: /usr/lib/jvm/%{name}
+{% else %}
+Prefix: /usr/lib/jvm/%{altname}
+{% endif %}
+
+ExclusiveArch: {{ hardware_architecture }}
+
+%if "%{vers_arch}" == "armv7hl"
+%define vers_arch arm
+%endif
+
+%if "%{vers_arch}" == "x86_64"
+%define vers_arch x64
+%endif
+
+BuildRequires:  tar
+BuildRequires:  wget
+
+Requires: /bin/sh
+Requires: /usr/sbin/alternatives
+Requires: ca-certificates
+{% if java_version | int == 23 %}
+Requires: dejavu-sans-fonts
+Requires: libX11%{?_isa}
+Requires: libXext%{?_isa}
+Requires: libXi%{?_isa}
+Requires: libXrender%{?_isa}
+Requires: libXtst%{?_isa}
+Requires: alsa-lib%{?_isa}
+Requires: fontconfig%{?_isa}
+{% else %}
+%if %{with headful}
+Requires: dejavu-sans-fonts
+Requires: libX11%{?_isa}
+Requires: libXext%{?_isa}
+Requires: libXi%{?_isa}
+Requires: libXrender%{?_isa}
+Requires: libXtst%{?_isa}
+Requires: alsa-lib%{?_isa}
+Requires: fontconfig%{?_isa}
+%endif
+{% endif %}
+Requires: glibc%{?_isa}
+Requires: zlib%{?_isa}
+
+{% if java_version | int == 23 %}
+Provides: jre
+Provides: jre-23
+Provides: jre-23-headless
+Provides: jre-23-%{java_provides}
+Provides: jre-23-%{java_provides}-headless
+Provides: jre-headless
+Provides: jre-%{java_provides}
+Provides: jre-%{java_provides}-headless
+{% else %}
+%if %{with headful}
+Provides: jre
+Provides: jre-{{ java_version }}
+Provides: jre-{{ java_version }}-%{java_provides}
+Provides: jre-%{java_provides}
+%else
+Provides: jre-{{ java_version }}-headless
+Provides: jre-{{ java_version }}-%{java_provides}-headless
+Provides: jre-headless
+Provides: jre-%{java_provides}-headless
+%endif
+{% endif %}
+
+{% if java_version | int != 23 %}
+# Add Virtual Provides For Altname
+Provides: %{altname}
+
+{% endif %}
+{% if java_version | int == 11 or java_version | int == 17 or java_version | int == 21 %}
+# Obsolete Previous JRE{{ java_version }} v0 package due to naming change
+{% if java_version | int == 11 %}
+Obsoletes: temurin-11-jre < 11.0.28.0.0.6-1
+{% elif java_version | int == 17 %}
+Obsoletes: temurin-17-jre < 17.0.16.0.0.8-1
+{% elif java_version | int == 21 %}
+Obsoletes: temurin-21-jre < 21.0.8.0.0.9-1
+{% endif %}
+
+{% elif java_version | int == 24 %}
+# Obsolete JRE24 v0 package due to naming
+Obsoletes: java-24-temurin-jre < 24.0.0.0.0.36-1
+
+{% endif %}
+{% if java_version | int != 23 %}
+# Add Provides For Java Public Libraries
+%if %{with headful}
+Provides: libjawt.so%{?_isa}
+%endif
+Provides: libjvm.so%{?_isa}
+Provides: libjava.so%{?_isa}
+Provides: libverify.so%{?_isa}
+Provides: libjsig.so%{?_isa}
+
+{% endif %}
+# First architecture ({{ hardware_architecture }})
+Source0: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK{{ java_version }}U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz
+Source1: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK{{ java_version }}U-jre_%{vers_arch}_linux_hotspot_%{upstream_version_no_plus}.tar.gz.sha256.txt
+
+# Set the compression format to xz to be compatible with more Red Hat flavours. Newer versions of Fedora use zstd which
+# is not available on CentOS 7, for example. https://github.com/rpm-software-management/rpm/blob/master/macros.in#L353
+# lists the available options.
+%define _source_payload w7.xzdio
+%define _binary_payload w7.xzdio
+
+# Avoid build failures on some distros due to missing build-id in binaries.
+%global debug_package %{nil}
+%global __brp_strip %{nil}
+
+{% if java_version | int >= 21 and java_version | int != 23 and java_version | int < 26 %}
+# Surpress /usr/lib/.build-id entries in the installed RPM (jre/jre-headless only)
+%global _build_id_links none
+
+{% endif %}
+%description
+Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
+applications and components using the programming language Java.
+{% if java_version | int != 23 %}
+%if ! %{with headful}
+%{name} is missing several audio and GUI libraries, and many other dependencies.
+The package is sufficient for most server based Java workloads
+and for experienced admins. To get full functionality, use full JRE or JDK.
+%endif
+{% endif %}
+
+%prep
+pushd "%{_sourcedir}"
+sha256sum -c "%{expand:%{SOURCE%{sha_src_num}}}"
+popd
+
+%setup -n jdk-%{upstream_version}-jre -T -b %{src_num}
+
+%build
+# noop
+
+%install
+{% if java_version | int != 23 %}
+if [ -L %{buildroot}/usr/lib/jvm/%{name} ]; then
+  rm -f %{buildroot}/usr/lib/jvm/%{name}
+fi
+{% endif %}
+mkdir -p %{buildroot}%{prefix}
+cd %{buildroot}%{prefix}
+tar --strip-components=1 -C "%{buildroot}%{prefix}" -xf %{expand:%{SOURCE%{src_num}}}
+
+# Use cacerts included in OS
+rm -f "%{buildroot}%{prefix}/lib/security/cacerts"
+pushd "%{buildroot}%{prefix}/lib/security"
+ln -s /etc/pki/java/cacerts "%{buildroot}%{prefix}/lib/security/cacerts"
+popd
+
+{% if java_version | int != 23 %}
+%if %{with headful}
+echo "This is the headful version, nothing will be removed"
+%else
+echo "This is the headless version, headful libraries will be removed"
+pushd "%{buildroot}%{prefix}/lib"
+ rm -vf libsplashscreen.so libawt_xawt.so libjawt.so
+popd
+%endif
+
+{% endif %}
+# Ensure systemd-tmpfiles-clean does not remove pid files
+# https://bugzilla.redhat.com/show_bug.cgi?id=1704608
+%{__mkdir} -p %{buildroot}/usr/lib/tmpfiles.d
+echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
+
+{% if java_version | int >= 24 and java_version | int < 26 %}
+ln -s %{prefix} %{buildroot}/usr/lib/jvm/%{name}
+
+{% endif %}
+{% if java_version | int >= 26 %}
+# Avoid a build-id file conflict for lib/jexec only.
+# Issue https://github.com/adoptium/installer/issues/1384
+# Temporarily remove the executable bit so find-debuginfo does not process it.
+chmod 0644 "%{buildroot}%{prefix}/lib/jexec"
+
+# Generate the package file list excluding jexec, which will be added back
+# explicitly in %%files with the correct final permissions.
+find "%{buildroot}%{prefix}" \
+  ! -path "%{buildroot}%{prefix}/lib/jexec" \
+  -print | sed "s#^%{buildroot}##" | sort > "%{_builddir}/%{name}.files"
+
+# Readd jexec
+echo "%attr(0755,root,root) %{prefix}/lib/jexec" >> "%{_builddir}/%{name}.files"
+
+{% endif %}
+%post
+if [ $1 -ge 1 ] ; then
+    update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
+{% if java_version | int == 11 %}
+                        --slave %{_bindir}/jaotc jaotc %{prefix}/bin/jaotc \
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
+                        --slave %{_bindir}/jjs jjs %{prefix}/bin/jjs \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
+                        --slave %{_bindir}/pack200 pack200 %{prefix}/bin/pack200 \
+                        --slave %{_bindir}/rmid rmid %{prefix}/bin/rmid \
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry \
+                        --slave %{_bindir}/unpack200 unpack200 %{prefix}/bin/unpack200 \
+                        \
+                        --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
+                        --slave  %{_mandir}/man1/jjs.1 jjs.1 %{prefix}/man/man1/jjs.1 \
+                        --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
+                        --slave  %{_mandir}/man1/pack200.1 pack200.1 %{prefix}/man/man1/pack200.1 \
+                        --slave  %{_mandir}/man1/rmid.1 rmid.1 %{prefix}/man/man1/rmid.1 \
+                        --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
+                        --slave  %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1
+{% elif java_version | int >= 21 %}
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/jwebserver jwebserver %{prefix}/bin/jwebserver \
+                        --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry
+{% elif java_version | int == 17 or java_version | int == 23 %}
+                        --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
+                        --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
+                        --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
+                        --slave %{_bindir}/rmiregistry rmiregistry %{prefix}/bin/rmiregistry
+{% endif %}
+fi
+
+{% if java_version | int != 23 %}
+%posttrans
+# Ensure compatibility path points to the new prefix after upgrade
+if [ -e /usr/lib/jvm/%{name} ] && [ ! -L /usr/lib/jvm/%{name} ]; then
+    # If a (now empty) directory remains, try to remove it
+    rmdir /usr/lib/jvm/%{name} >/dev/null 2>&1 || true
+fi
+ln -sfn %{prefix} /usr/lib/jvm/%{name}
+
+{% endif %}
+%preun
+if [ $1 -eq 0 ]; then
+    update-alternatives --remove java %{prefix}/bin/java
+fi
+
+{% if java_version | int >= 26 %}
+%files -f %{_builddir}/%{name}.files
+%defattr(-,root,root)
+/usr/lib/tmpfiles.d/%{name}.conf
+# Ghost The Symlink to avoid conflicts
+%ghost /usr/lib/jvm/%{name}
+{% elif java_version | int >= 24 %}
+%files
+%defattr(-,root,root)
+%{prefix}
+/usr/lib/jvm/%{name}
+/usr/lib/tmpfiles.d/%{name}.conf
+{% elif java_version | int == 23 %}
+%files
+%defattr(-,root,root)
+%{prefix}
+{% else %}
+%files
+%defattr(-,root,root)
+%{prefix}
+/usr/lib/tmpfiles.d/%{name}.conf
+# Ghost The Symlink to avoid conflicts
+%ghost /usr/lib/jvm/%{name}
+{% endif %}
+
+%changelog
+* {{ current_date }} Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org> {{ package_version }}-{{ package_release_version }}
+- Eclipse Temurin {{ changelog_version }} JRE release.

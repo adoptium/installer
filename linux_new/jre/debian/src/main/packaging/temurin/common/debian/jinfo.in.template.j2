@@ -1,0 +1,26 @@
+name=@pkg_alias@
+alias=@pkg_alias@
+priority=@priority@
+section=contrib
+
+{% if java_version | int == 11 %}
+jdkhl jaotc /usr/lib/jvm/@jvm_dir@/bin/jaotc
+{% endif %}
+hl java /usr/lib/jvm/@jvm_dir@/bin/java
+hl jfr /usr/lib/jvm/@jvm_dir@/bin/jfr
+{% if java_version | int == 11 %}
+hl jjs /usr/lib/jvm/@jvm_dir@/bin/jjs
+{% endif %}
+hl jrunscript /usr/lib/jvm/@jvm_dir@/bin/jrunscript
+{% if java_version | int >= 21 %}
+jdkhl jwebserver /usr/lib/jvm/@jvm_dir@/bin/jwebserver
+{% endif %}
+hl keytool /usr/lib/jvm/@jvm_dir@/bin/keytool
+{% if java_version | int == 11 %}
+hl pack200 /usr/lib/jvm/@jvm_dir@/bin/pack200
+hl rmid /usr/lib/jvm/@jvm_dir@/bin/rmid
+{% endif %}
+hl rmiregistry /usr/lib/jvm/@jvm_dir@/bin/rmiregistry
+{% if java_version | int == 11 %}
+hl unpack200 /usr/lib/jvm/@jvm_dir@/bin/unpack200
+{% endif %}

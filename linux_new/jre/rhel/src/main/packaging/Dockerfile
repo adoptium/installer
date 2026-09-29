@@ -1,6 +1,6 @@
 ARG CONTAINER_REGISTRY=""
 
-FROM ${CONTAINER_REGISTRY}tianon/gosu as gosu
+FROM ${CONTAINER_REGISTRY}tianon/gosu AS gosu
 FROM ${CONTAINER_REGISTRY}fedora:40
 
 RUN dnf update -y && dnf install -y rpmdevtools \
