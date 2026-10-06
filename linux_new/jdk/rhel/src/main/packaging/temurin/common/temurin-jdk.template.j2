@@ -119,6 +119,9 @@ Provides: jre-%{java_provides}-headless
 Provides: %{altname}
 
 {% endif %}
+{# LTS releases 11, 17, and 21 were previously packaged with a different naming
+   scheme (v0 epoch). Obsolete those old package names so upgrades are handled
+   cleanly by the package manager. #}
 {% if java_version | int == 11 or java_version | int == 17 or java_version | int == 21 %}
 # Obsolete Previous JDK{{ java_version }} v0 package due to naming change
 {% if java_version | int == 11 %}
