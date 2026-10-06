@@ -289,7 +289,7 @@ class LinuxPackaging {
 		if (commonDir.exists()) {
 			return commonDir
 		}
-		throw new IllegalArgumentException("Unknown product ${prod}/${prodVersion}")
+		throw new IllegalArgumentException("Unable to find packaging directory for ${prod}/${prodVersion}")
 	}
 
 	private static void copyLocalArtefacts(Project project, String inputPath, String targetDir) {
