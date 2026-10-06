@@ -6,12 +6,10 @@
 #  {{ java_version }}.0.0.0.0___1 == {{ java_version }}.0.0.0.0+X
 %global spec_version {{ package_version }}
 %global spec_release {{ package_release_version }}
-{% if java_version | int >= 26 %}
+{% if java_version | int >= 24 and java_version | int != 25 %}
 %global priority {{ java_version }}00
-{% elif java_version | int >= 25 %}
+{% elif java_version | int == 25 %}
 %global priority 2500
-{% elif java_version | int >= 24 %}
-%global priority {{ java_version }}00
 {% elif java_version | int == 23 %}
 %global priority 2300
 {% elif java_version | int == 21 %}
@@ -39,18 +37,23 @@
 %global src_num 0
 %global sha_src_num 1
 
+{# JDK 23 predates the headful/headless split: it was only ever shipped as a
+   single combined JRE. It therefore does not use the %{with headful} RPM
+   conditional, does not define altname, and uses %{name} directly for the
+   install prefix. All subsequent == 23 guards in this file exist for the same
+   reason. #}
 {% if java_version | int == 23 %}
 Name:        temurin-23-jre
 {% elif java_version | int >= 26 %}
 %if %{with headful}
 Name: temurin-{{ java_version }}-jre
 %global altname java-{{ java_version }}-temurin-jre
-# Prevent headful and headless JRE being installed together
+# Prevent headful and headless JRE being installed together - https://github.com/adoptium/installer/issues/1360
 Conflicts: temurin-{{ java_version }}-jre-headless
 %else
 Name: temurin-{{ java_version }}-jre-headless
 %global altname java-{{ java_version }}-temurin-jre-headless
-# Prevent headful and headless JRE being installed together
+# Prevent headful and headless JRE being installed together - https://github.com/adoptium/installer/issues/1360
 Conflicts: temurin-{{ java_version }}-jre
 %endif
 # Prevent JDK and any JRE variant being installed together

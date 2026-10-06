@@ -65,6 +65,8 @@ _jre() {
 	mv "$_fromroot/legal"   "$_toroot"
 	mv "$_fromroot/lib"     "$_toroot"
 {% if java_version | int == 11 %}
+	# The man directory is only present in JDK 11 JRE distributions; it was not
+	# included in Temurin JRE builds for later releases.
 	mv "$_fromroot/man"     "$_toroot"
 {% endif %}
 	mv "$_fromroot/release" "$_toroot"

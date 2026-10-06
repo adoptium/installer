@@ -178,7 +178,7 @@ popd
 %setup -n jdk-%{upstream_version} -T -b %{src_num}
 
 %build
-# noop
+# noop - Temurin is distributed as a pre-built binary; there is nothing to compile.
 
 %install
 {% if java_version | int != 23 %}
@@ -202,6 +202,9 @@ popd
 echo 'x /tmp/hsperfdata_*' > "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 
+{# JDK 24-25: create the compatibility symlink at install time. JDK 26+ switched
+   to a ghost symlink in %%files (managed by %%posttrans) to avoid RPM conflicts,
+   so the explicit ln -s is only needed for this range. #}
 {% if java_version | int >= 24 and java_version | int < 26 %}
 ln -s %{prefix} %{buildroot}/usr/lib/jvm/%{name}
 

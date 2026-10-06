@@ -6,10 +6,8 @@
 #  {{ java_version }}.0.0.0.0___1 == {{ java_version }}.0.0.0.0+X
 %global spec_version {{ package_version }}
 %global spec_release {{ package_release_version }}
-{% if java_version | int >= 25 %}
+{% if java_version | int >= 24 %}
 %global priority {{ java_version }}00
-{% elif java_version | int == 24 %}
-%global priority 2400
 {% elif java_version | int == 23 %}
 %global priority 2300
 {% elif java_version | int == 21 %}
@@ -47,6 +45,9 @@ URL:         https://projects.eclipse.org/projects/adoptium
 Packager:    Eclipse Adoptium Package Maintainers <temurin-dev@eclipse.org>
 
 AutoReqProv: no
+{# JDK 25+ install under the altname path (java-<version>-temurin-jdk) to align
+   with the standard Java packaging convention. Older versions use the package
+   name (temurin-<version>-jdk) directly as no altname is defined for them. #}
 {% if java_version | int >= 25 %}
 Prefix: %{_libdir}/jvm/%{altname}
 {% else %}
