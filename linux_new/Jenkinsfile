@@ -452,7 +452,7 @@ def generateSpecFiles() {
 
     ArchiveFileName = "Package_Bld_Src_${distro}_${params.TAG}_${arch}_${env.BUILD_NUMBER}.tar.gz"
     echo "ArchiveFileName = ${ArchiveFileName}"
-    sh "find ./linux_new -type f \\( -name 'temurin-${Release}-*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) -newer ./linux_new/Jenkinsfile | tar -czf ./${ArchiveFileName} -T -"
+    sh "find ./linux_new -type f \\( -name '*.spec' -o -name 'control' -o -name 'changelog' -o -name 'rules' -o -name 'APKBUILD' \\) | tar -czf ./${ArchiveFileName} -T -"
 
     archiveArtifacts artifacts: "${ArchiveFileName}", allowEmptyArchive: false
 
