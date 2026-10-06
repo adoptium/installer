@@ -6,6 +6,10 @@
 #  {{ java_version }}.0.0.0.0___1 == {{ java_version }}.0.0.0.0+X
 %global spec_version {{ package_version }}
 %global spec_release {{ package_release_version }}
+{# Set the alternatives priority for this JDK. For JDK 24+, the priority is
+   java_version * 100 (e.g. 2400, 2600) so that newer releases automatically
+   rank higher. Older LTS releases (11, 17, 21) and short-term releases (23, 25)
+   use fixed lower values to preserve the established priority ordering. #}
 {% if java_version | int >= 26 %}
 %global priority {{ java_version }}00
 {% elif java_version | int >= 25 %}
