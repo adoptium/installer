@@ -29,6 +29,7 @@ Provides: java-compiler,
           java8-sdk,
           java9-sdk,
           java10-sdk,
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
 {%- for v in range(11, java_version | int + 1) %}
           java{{ v }}-sdk,
 {%- endfor %}
@@ -39,6 +40,7 @@ Provides: java-compiler,
           java8-sdk-headless,
           java9-sdk-headless,
           java10-sdk-headless,
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
 {%- for v in range(11, java_version | int + 1) %}
           java{{ v }}-sdk-headless,
 {%- endfor %}
@@ -51,6 +53,7 @@ Provides: java-compiler,
           java8-runtime,
           java9-runtime,
           java10-runtime,
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
 {%- for v in range(11, java_version | int + 1) %}
           java{{ v }}-runtime,
 {%- endfor %}
@@ -61,6 +64,7 @@ Provides: java-compiler,
           java8-runtime-headless,
           java9-runtime-headless,
           java10-runtime-headless,
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
 {%- for v in range(11, java_version | int + 1) %}
           java{{ v }}-runtime-headless{% if not loop.last %},{% endif %}
 {%- endfor %}
