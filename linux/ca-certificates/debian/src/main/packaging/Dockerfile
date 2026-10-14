@@ -1,6 +1,6 @@
 ARG CONTAINER_REGISTRY=""
 
-FROM ${CONTAINER_REGISTRY}debian:bullseye
+FROM ${CONTAINER_REGISTRY}debian:bookworm
 
 # Combine apt-get update with apt-get install to prevent stale package indexes.
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential \
