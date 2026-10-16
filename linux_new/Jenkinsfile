@@ -493,6 +493,59 @@ def validateArtifactsForDist(String dist, String ver) {
     echo "Artifact validation passed for ${dist}: ${builtFiles.length} file(s) checked."
 }
 
+// Helper function to run Grype vulnerability scan across all built packages in a dedicated stage
+def runGrypeScan() {
+    echo "Entering : runGrypeScan()"
+    if (!params.ENABLE_GRYPE_SCAN) {
+        echo "Grype vulnerability scanning is disabled (ENABLE_GRYPE_SCAN = false)"
+        return
+    }
+
+    cleanWs()
+    unstash "installercode-${env.BUILD_NUMBER}"
+
+    // Retrieve built packages from the Build & Archive Package stage
+    copyArtifacts projectName: "${env.JOB_NAME}",
+        selector: specific("${env.BUILD_NUMBER}"),
+        filter: '**/build/ospackage/*'
+
+    def outDir = "build/grype-results"
+    sh "mkdir -p ${outDir}"
+
+    def scanStatus = 0
+
+    // Check if Docker is available to run containerized scan
+    def dockerAvailable = (sh(script: 'docker --version', returnStatus: true) == 0)
+    if (dockerAvailable && fileExists('./grype/Dockerfile')) {
+        echo "Building Grype scanner Docker container image..."
+        sh "docker build -t temurin-grype-scanner -f ./grype/Dockerfile ./grype"
+
+        echo "Executing Grype scan inside container..."
+        // HOME must be writable: the host UID has no passwd entry in the image, so '~/.cache/grype/db' would otherwise resolve to '/.cache'
+        def dockerCmd = "docker run --rm -u \$(id -u):\$(id -g) -e HOME=/tmp -v \${PWD}:/work -w /work temurin-grype-scanner --search-dir /work --output-dir /work/${outDir}"
+        scanStatus = sh(script: dockerCmd, returnStatus: true)
+    } else {
+        echo "Docker not available or Dockerfile missing; executing Grype scan directly on agent host..."
+        sh "chmod +x ./grype/*.sh"
+        def hostCmd = "./grype/run-all-scans.sh --search-dir . --output-dir ${outDir}"
+        scanStatus = sh(script: hostCmd, returnStatus: true)
+    }
+
+    // Archive all scan results
+    archiveArtifacts artifacts: "${outDir}/**",
+        onlyIfSuccessful: false,
+        allowEmptyArchive: true
+
+    if (scanStatus == 2) {
+        echo "WARNING: Grype scan completed with findings at or above threshold (exit code 2)."
+        currentBuild.result = 'UNSTABLE'
+    } else if (scanStatus != 0) {
+        echo "WARNING: Grype scan encountered an execution/setup error (exit code ${scanStatus})."
+    } else {
+        echo "Grype scan completed cleanly across all built packages."
+    }
+}
+
 // Helper function to build and archive packages for all distributions
 def buildAndArchiveDistPackages() {
     echo "Entering : buildAndArchiveDistPackages()"
@@ -570,6 +623,7 @@ def buildAndArchiveDistPackages() {
                         validateArtifactsForDist(DistArrayElement, Release.toString())
                     }
                 }
+
             } catch (Exception ex) {
                 echo "Exception in build for ${DistArrayElement}: ${ex}"
                 throw ex
@@ -787,6 +841,285 @@ def collectPublishedArtifacts() {
 
     return pairs
 }
+
+// Helper function to display an aggregated pipeline summary report directly to the console log
+def displayPipelineSummaryReport() {
+    echo "Entering : displayPipelineSummaryReport()"
+
+    def sep = '=' * 80
+    def dash = '-' * 80
+
+    // Collect every report line and print them with a single echo at the end, so the
+    // report appears as one continuous block instead of one "[Pipeline] echo" per line.
+    def rpt = []
+
+    rpt << sep
+    rpt << "                    ECLIPSE TEMURIN LINUX INSTALLER PIPELINE"
+    rpt << "                            FINAL EXECUTION SUMMARY"
+    rpt << sep
+    rpt << "  TAG         : ${params.TAG}"
+    rpt << "  Architecture: ${arch}"
+    def distrosStr = DISTS_TO_BUILD.join(', ')
+    rpt << "  Distros     : ${distrosStr}"
+    rpt << sep
+    rpt << ""
+
+    def overallPass = true
+    def actionItems = []
+    def publicationVerified = false
+    def scanPassed = false
+    // Pad text to a fixed width so every status tag lands in the same column
+    def statusLine = { String text, String status -> String.format("%-71s %s", text, status) }
+
+    // -------------------------------------------------------------------------
+    // [1/3] PACKAGE BUILD STATUS
+    // -------------------------------------------------------------------------
+    rpt << "[1/3] PACKAGE BUILD STATUS"
+    rpt << dash
+    rpt << String.format("  %-18s %-12s %-18s %-18s %s", "Distribution", "Format", "Packages Built", "Size Validation", "Status")
+
+    def totalBuilt = 0
+    // Expected packages per distro (source RPMs included): RHEL = jdk, jre, jre-headless + 3 src.rpm; SUSE = jdk, jre + 2 src.rpm;
+    // Debian = jdk, jre; Alpine = parent, jdk, src, jre (the parent .apk is built by both the JDK and JRE builds, so it is counted once)
+    def expectedPerDist = ['rhel': 6, 'suse': 4, 'alpine': 4]
+    def totalExpected = 0
+    for (String d : DISTS_TO_BUILD) {
+        totalExpected += expectedPerDist.get(d, 2)
+    }
+
+    DISTS_TO_BUILD.each { dist ->
+        def expected = expectedPerDist.get(dist, 2)
+        def format = (dist == 'alpine') ? '.apk' : (dist == 'debian') ? '.deb' : '.rpm'
+        def distLabel = (dist == 'alpine') ? 'Alpine' : (dist == 'debian') ? 'Debian/Ubuntu' : (dist == 'rhel') ? 'RHEL/CentOS' : 'SUSE/openSUSE'
+
+        def seen = new TreeSet()
+        try {
+            def found = findFiles(glob: "**/build/ospackage/*${format}")
+            if (found != null) {
+                found.each { f ->
+                    if (dist == 'alpine' && f.name.endsWith('.apk')) {
+                        seen.add(f.name)
+                    } else if (dist == 'debian' && f.name.endsWith('.deb')) {
+                        seen.add(f.name)
+                    } else if (dist == 'rhel' && f.name.endsWith('.rpm') && (f.path.contains('/rhel/') || f.name.contains('.el') || f.name.contains('rhel'))) {
+                        seen.add(f.name)
+                    } else if (dist == 'suse' && f.name.endsWith('.rpm') && (f.path.contains('/suse/') || f.name.contains('.sle') || f.name.contains('.suse') || f.name.contains('.opensuse'))) {
+                        seen.add(f.name)
+                    }
+                }
+            }
+        } catch (Exception e) {
+            // fallback
+        }
+        def count = seen.size()
+
+        totalBuilt += count
+        def statusStr = (count >= expected) ? "[ PASS ]" : (count > 0) ? "[ WARN ]" : "[ FAIL ]"
+        def validStr = (count > 0) ? "Passed" : "Missing"
+
+        if (count < expected) {
+            overallPass = false
+            actionItems << "Check ${distLabel} container packaging build logs for errors."
+        }
+
+        rpt << String.format("  %-18s %-12s %-18s %-18s %s", distLabel, format, "${count} / ${expected}", validStr, statusStr)
+        for (String pkgName : seen) {
+            rpt << "      - ${pkgName}"
+        }
+    }
+    rpt << dash
+    def buildVerdict = (totalBuilt >= totalExpected) ? "[ PASS ]" : "[ FAIL ]"
+    rpt << statusLine(String.format("  Total Packages Built: %d / %d", totalBuilt, totalExpected), buildVerdict)
+    rpt << ""
+
+    // -------------------------------------------------------------------------
+    // [2/3] PACKAGE PUBLICATION & REACHABILITY
+    // -------------------------------------------------------------------------
+    rpt << "[2/3] PACKAGE PUBLICATION & REACHABILITY"
+    rpt << dash
+
+    if (params.SKIP_UPLOAD || params.DRY_RUN) {
+        def reason = params.DRY_RUN ? "DRY_RUN enabled" : "SKIP_UPLOAD enabled"
+        rpt << statusLine("  Publication skipped (${reason})", "[ SKIP ]")
+    } else {
+        rpt << String.format("  %-18s %-31s %-18s %s", "Repository Group", "Endpoint Verified", "Reachable / Total", "Status")
+
+        def pubPairs = []
+        try {
+            pubPairs = collectPublishedArtifacts()
+        } catch (Exception e) {
+            rpt << "  Unable to retrieve published artifacts list: ${e.message}"
+        }
+
+        def pubGroups = [:]
+        pubPairs.each { pair ->
+            def url = pair[0]
+            def code = '200'
+            try {
+                code = sh(script: "curl -o /dev/null --silent --head --write-out '%{http_code}' ${url}", returnStdout: true).trim()
+            } catch (Exception ignored) {
+                code = '000'
+            }
+
+            def group = 'Other'
+            def endpoint = 'adoptium-repo'
+            if (url.contains('/deb/')) {
+                group = 'Debian (deb)'
+                endpoint = 'adoptium-deb/dists/stable'
+            } else if (url.contains('/apk/')) {
+                group = 'Alpine (apk)'
+                endpoint = 'adoptium-alpine/v3.20/main'
+            } else if (url.contains('/opensuse/') || url.contains('/sles/')) {
+                group = 'SUSE (rpm)'
+                endpoint = 'adoptium-rpm/opensuse/15.6'
+            } else if (url.contains('/rhel/') || url.contains('/centos/') || url.contains('/rocky/') || url.contains('/fedora/') || url.contains('/oraclelinux/') || url.contains('/amazonlinux/')) {
+                group = 'RHEL (rpm)'
+                endpoint = 'adoptium-rpm/rhel/9'
+            }
+
+            if (!pubGroups.containsKey(group)) {
+                pubGroups[group] = [endpoint: endpoint, passed: [], failed: []]
+            }
+            if (code == '200') {
+                pubGroups[group].passed << url
+            } else {
+                pubGroups[group].failed << [url, code]
+            }
+        }
+
+        def totalPubChecked = pubPairs.size()
+        def totalPubPassed = 0
+        def totalPubFailed = 0
+
+        pubGroups.each { groupName, data ->
+            def gPass = data.passed.size()
+            def gFail = data.failed.size()
+            def gTotal = gPass + gFail
+            totalPubPassed += gPass
+            totalPubFailed += gFail
+            def gStatus = (gFail == 0 && gTotal > 0) ? "[ PASS ]" : "[ FAIL ]"
+            rpt << String.format("  %-18s %-31s %-18s %s", groupName, data.endpoint, "${gPass} / ${gTotal}", gStatus)
+        }
+        rpt << dash
+        def pubVerdict = (totalPubFailed == 0 && totalPubChecked > 0) ? "[ PASS ]" : (totalPubChecked == 0) ? "[ WARN ]" : "[ FAIL ]"
+        rpt << statusLine(String.format("  Total Published Artifacts Verified: %d / %d", totalPubPassed, totalPubChecked), pubVerdict)
+        publicationVerified = (totalPubFailed == 0 && totalPubChecked > 0)
+
+        if (totalPubFailed > 0) {
+            overallPass = false
+            rpt << ""
+            rpt << "  Publication Failures:"
+            pubGroups.each { groupName, data ->
+                data.failed.each { f ->
+                    rpt << "    - FAIL [${groupName}] HTTP ${f[1]}: ${f[0]}"
+                    actionItems << "Check Artifactory permissions and upload logs for failed ${groupName} artifact(s)."
+                }
+            }
+        }
+    }
+    rpt << ""
+
+    // -------------------------------------------------------------------------
+    // [3/3] GRYPE SECURITY VULNERABILITY SCAN
+    // -------------------------------------------------------------------------
+    rpt << "[3/3] GRYPE SECURITY VULNERABILITY SCAN"
+    rpt << dash
+
+    if (!params.ENABLE_GRYPE_SCAN) {
+        rpt << statusLine("  Grype scanning disabled (ENABLE_GRYPE_SCAN = false)", "[ SKIP ]")
+    } else {
+        def summaryFile = "build/grype-results/global-summary.txt"
+        def scanSummaryText = ""
+        if (fileExists(summaryFile)) {
+            scanSummaryText = readFile(summaryFile)
+        }
+
+        def scannedCount = 0
+        def cveCrit = 0
+        def cveHigh = 0
+        def cveMed = 0
+        def cveLow = 0
+        def cveNeg = 0
+
+        if (scanSummaryText) {
+            // Parse global-summary.txt: each "  - <package> (Distro: ...)" line under PACKAGES SCANNED is one
+            // package, and the "│ TOTAL │ CRIT │ HIGH │ MEDIUM │ LOW │ NEGLIGIBLE │ TOTAL │" row holds the counts.
+            // Use a plain for loop: String.eachLine is not CPS-safe.
+            for (String line : scanSummaryText.split('\n')) {
+                if (line =~ /^\s+- .+\(Distro: /) {
+                    scannedCount++
+                }
+                def m = (line =~ /│\s*TOTAL\s*│\s*(\d+)\s*│\s*(\d+)\s*│\s*(\d+)\s*│\s*(\d+)\s*│\s*(\d+)\s*│/)
+                if (m.find()) {
+                    cveCrit = m.group(1) as int
+                    cveHigh = m.group(2) as int
+                    cveMed  = m.group(3) as int
+                    cveLow  = m.group(4) as int
+                    cveNeg  = m.group(5) as int
+                }
+            }
+        } else {
+            def jsonFiles = findFiles(glob: 'build/grype-results/**/*.json')
+            scannedCount = (jsonFiles != null) ? jsonFiles.length : 0
+        }
+
+        rpt << "  Packages Scanned   : ${scannedCount}"
+        rpt << "  Fail-On Threshold  : HIGH / CRITICAL"
+        rpt << "  Findings Breakdown : ${cveCrit} Critical, ${cveHigh} High, ${cveMed} Medium, ${cveLow} Low, ${cveNeg} Negligible"
+        rpt << dash
+
+        def scanVerdict = "[ PASS ]"
+        def scanMsg = "CLEAN (No actionable vulnerabilities)"
+        if (scannedCount == 0) {
+            scanVerdict = "[ WARN ]"
+            scanMsg = "NO PACKAGES SCANNED"
+            actionItems << "Grype scan produced no results; check the Grype Vulnerability Scan stage log."
+        } else if (cveCrit > 0 || cveHigh > 0) {
+            scanVerdict = "[ WARN ]"
+            scanMsg = "WARNINGS DETECTED (Findings >= HIGH)"
+            actionItems << "Review ${cveCrit + cveHigh} Critical/High vulnerability finding(s) from Grype scan report."
+        }
+        rpt << statusLine("  Security Scan Verdict: ${scanMsg}", scanVerdict)
+        scanPassed = (scanVerdict == "[ PASS ]")
+    }
+
+    rpt << ""
+    rpt << sep
+    if (overallPass && actionItems.isEmpty()) {
+        rpt << "  OVERALL PIPELINE VERDICT: [ SUCCESS ]"
+        // Only claim what was actually done: publication and scanning can be skipped.
+        def done = ["built"]
+        if (publicationVerified) {
+            done << "verified in Artifactory"
+        }
+        if (scanPassed) {
+            done << "passed security scan"
+        }
+        def doneStr = (done.size() > 1) ? done.take(done.size() - 1).join(', ') + " and " + done.last() : done[0]
+        def skipped = []
+        if (!publicationVerified) {
+            skipped << "publication"
+        }
+        if (!scanPassed) {
+            skipped << "security scan"
+        }
+        rpt << "  All requested packages ${doneStr}."
+        if (!skipped.isEmpty()) {
+            rpt << "  Not performed: ${skipped.join(', ')}."
+        }
+    } else {
+        rpt << "  OVERALL PIPELINE VERDICT: [ FAILED / UNSTABLE ]"
+        if (!actionItems.isEmpty()) {
+            rpt << "  Action Required:"
+            actionItems.unique().eachWithIndex { item, idx ->
+                rpt << "    ${idx + 1}. ${item}"
+            }
+        }
+    }
+    rpt << sep
+
+    echo "\n" + rpt.join('\n')
+}
 // Function Definitions End
 
 /* Pipeline Declaration */
@@ -808,6 +1141,7 @@ pipeline {
         booleanParam(name: 'REPACKAGE', defaultValue: false, description: 'Tick if this is a republish of an existing package, ie xx.xxx.2 , rather than the base release of a package (1)')
         string(name: 'PACKAGE_INCREMENT', defaultValue: '1', description: 'This is the incremental number used for re-releases of package versions - Should be set appropriately if RePackage is True')
         string(name: 'TEMURIN_VERSION_INCREMENT', defaultValue: '0', description: 'Final Element Of The Version Number - Used For Temurin Specific Patches - NEARLY ALWAYS ZERO')
+        booleanParam(name: 'ENABLE_GRYPE_SCAN', defaultValue: true, description: 'Run Grype vulnerability scan on built packages (informational)')
 
         // Add Some Parameter To Allow Selective Builds Of Packages
         booleanParam(name: 'SKIP_DEBIAN', defaultValue: false, description: 'Tick if you dont want to run the Debian package builds and publishes')
@@ -1070,6 +1404,20 @@ stage('Build & Archive Package') {
     }
 }
 // Build And Archive Packages Stage - End
+// Grype Vulnerability Scan Stage - Start
+stage('Grype Vulnerability Scan') {
+    agent { label NODE_LABEL }
+    when {
+        expression { return !shouldSkipPipeline && !params.DRY_RUN && params.ENABLE_GRYPE_SCAN }
+    }
+    steps {
+        script {
+            echo "Entering Stage : Grype Vulnerability Scan"
+            runGrypeScan()
+        }
+    }
+}
+// Grype Vulnerability Scan Stage - End
 // Publish Packages Stage - Start
 stage('Publish Packages') {
     agent { label NODE_LABEL }
@@ -1166,12 +1514,32 @@ stage('Verify Publication') {
             echo sep
 
             if (totalFailed > 0) {
-                error("Publication verification failed: ${totalFailed} artifact(s) not reachable in Artifactory. See summary above.")
+                echo "WARNING: Publication verification detected ${totalFailed} unreachable artifact(s)."
+                currentBuild.result = 'FAILURE'
             }
         }
     }
 }
 // Verify Publication Stage - End
+// Pipeline Summary Report Stage - Start
+stage('Pipeline Summary Report') {
+    agent { label NODE_LABEL }
+    when {
+        expression { return !shouldSkipPipeline }
+    }
+    steps {
+        script {
+            echo "Entering Stage : Pipeline Summary Report"
+            // This stage runs on a fresh workspace, so retrieve the built packages and Grype results first
+            copyArtifacts projectName: "${env.JOB_NAME}",
+                selector: specific("${env.BUILD_NUMBER}"),
+                filter: '**/build/ospackage/*,build/grype-results/**',
+                optional: true
+            displayPipelineSummaryReport()
+        }
+    }
+}
+// Pipeline Summary Report Stage - End
 // Stage Definition - End
     }
     // Housekeeping + Post Build

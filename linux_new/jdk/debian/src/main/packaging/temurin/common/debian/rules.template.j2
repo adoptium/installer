@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 
 pkg_name = temurin-{{ java_version }}-jdk
-priority = {{ java_version }}11
+priority = {{ java_version }}12
 {% if java_version | int == 11 %}
 jvm_tools = jaotc jar jarsigner java javac javadoc javap jcmd jconsole jdb jdeprscan jdeps jfr jhsdb jimage jinfo jjs jlink jmap jmod jps jrunscript jshell jstack jstat jstatd keytool pack200 rmic rmid rmiregistry serialver unpack200 jexec jspawnhelper
 {% elif java_version | int < 21 %}
@@ -30,6 +30,7 @@ override_dh_strip:
 override_dh_strip_nondeterminism:
 	dh_strip_nondeterminism -X$(jvm_home)
 {% endif %}
+
 override_dh_auto_install:
 	# Download and verify checksum of JDK
 	wget --progress=dot:mega -O jdk.tar.gz $($(DEB_HOST_ARCH)_tarball_url)

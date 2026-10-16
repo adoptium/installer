@@ -29,10 +29,10 @@ Provides: java-compiler,
           java8-sdk,
           java9-sdk,
           java10-sdk,
-{#- Dynamically provide virtual packages for java11 up to the current java_version -#}
-{%- for v in range(11, java_version | int + 1) %}
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
+{% for v in range(11, java_version | int + 1) %}
           java{{ v }}-sdk,
-{%- endfor %}
+{% endfor %}
           java2-sdk-headless,
           java5-sdk-headless,
           java6-sdk-headless,
@@ -40,10 +40,10 @@ Provides: java-compiler,
           java8-sdk-headless,
           java9-sdk-headless,
           java10-sdk-headless,
-{#- Dynamically provide virtual packages for java11 up to the current java_version -#}
-{%- for v in range(11, java_version | int + 1) %}
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
+{% for v in range(11, java_version | int + 1) %}
           java{{ v }}-sdk-headless,
-{%- endfor %}
+{% endfor %}
           java-runtime (= {{ java_version }}),
           java-runtime-headless (= {{ java_version }}),
           java2-runtime,
@@ -53,10 +53,10 @@ Provides: java-compiler,
           java8-runtime,
           java9-runtime,
           java10-runtime,
-{#- Dynamically provide virtual packages for java11 up to the current java_version -#}
-{%- for v in range(11, java_version | int + 1) %}
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
+{% for v in range(11, java_version | int + 1) %}
           java{{ v }}-runtime,
-{%- endfor %}
+{% endfor %}
           java2-runtime-headless,
           java5-runtime-headless,
           java6-runtime-headless,
@@ -64,10 +64,10 @@ Provides: java-compiler,
           java8-runtime-headless,
           java9-runtime-headless,
           java10-runtime-headless,
-{#- Dynamically provide virtual packages for java11 up to the current java_version -#}
-{%- for v in range(11, java_version | int + 1) %}
-          java{{ v }}-runtime-headless{% if not loop.last %},{% endif %}
-{%- endfor %}
+{# Dynamically provide virtual packages for java11 up to the current java_version #}
+{% for v in range(11, java_version | int + 1) %}
+          java{{ v }}-runtime-headless{{ ',' if not loop.last else '' }}
+{% endfor %}
 Description: Eclipse Temurin {{ java_version }} JDK
  Eclipse Temurin JDK is an OpenJDK-based development environment to create
  applications and components using the programming language Java.

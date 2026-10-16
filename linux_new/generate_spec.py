@@ -45,7 +45,11 @@ def render_template(template_path, package_version, hardware_architecture, packa
     output_path = os.path.join(template_dir, output_file_name)
 
     # Load the template environment and template file
-    env = Environment(loader=FileSystemLoader(template_dir))
+    # trim_blocks removes the newline after block tags ({% ... %})
+    # lstrip_blocks removes leading whitespace/tabs before block tags
+    # Together they prevent Jinja2 control tags from injecting blank lines
+    # into generated shell scripts (e.g. inside backslash-continued commands).
+    env = Environment(loader=FileSystemLoader(template_dir), trim_blocks=True, lstrip_blocks=True, keep_trailing_newline=True)
     template = env.get_template(os.path.basename(template_path))
 
     # Render the template with provided parameters

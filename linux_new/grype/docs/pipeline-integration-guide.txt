@@ -1,0 +1,101 @@
+================================================================================
+GRYPE VULNERABILITY SCANNING — PIPELINE INTEGRATION CONTEXT DOCUMENT
+Eclipse Temurin Linux Package Builds (APK / DEB / RPM)
+================================================================================
+
+STATUS:       Integrated into linux_new
+PREPARED:     2026-10-16
+GRYPE DB:     v6.1.10, built 2026-10-16  (schema v6.1.10)
+GRYPE BUILD:  v6 / syft v1.51.0
+
+
+────────────────────────────────────────────────────────────────────────────────
+1. PURPOSE
+────────────────────────────────────────────────────────────────────────────────
+
+This document captures the scanning approach and technical context for
+Anchore Grype embedded into the Temurin Linux package build pipeline (linux_new).
+It covers scanner behavior, generated report files, CI gate logic, and
+reproducibility across APK, DEB, and RPM formats.
+
+The primary goal is automated vulnerability scanning of every built package
+post-packaging, producing security audit reports (JSON, SARIF, TXT, Markdown)
+in an informational mode without blocking package creation or publishing.
+
+
+────────────────────────────────────────────────────────────────────────────────
+2. WHAT IS SCANNED AND WHY
+────────────────────────────────────────────────────────────────────────────────
+
+2.1 Scope
+---------
+Scan scope is the INSTALLED CONTENT of each built package — the files that
+actually ship to an end user when they install the package on their system.
+
+Out of scope:
+  - Runtime OS dependencies (musl, glibc, alsa-lib, libX11, zlib, etc.)
+    These are the responsibility of the OS vendor and are not part of the
+    Temurin packages themselves.
+  - Build-time tools and host OS libraries.
+  - Source RPMs (.src.rpm) — contain only upstream tarballs and build specs;
+    no JVM binary or JAR content is present.
+
+2.2 Why PURL-based scanning does not apply here
+------------------------------------------------
+Grype's PURL lookup mode (pkg:apk/..., pkg:deb/..., pkg:rpm/...) queries the
+distro's own advisory feed by package name. It only works for packages that the
+distro officially tracks (e.g. Alpine's musl, Ubuntu's glibc). The Temurin
+packages are privately built and not registered in any distro feed, so PURL
+lookups return nothing.
+
+2.3 How grype finds vulnerabilities in Temurin packages
+--------------------------------------------------------
+Grype extracts the package and runs three cataloguers against the filesystem:
+
+  java-jvm-cataloger
+    Reads the `release` file bundled inside every JDK/JRE image:
+      IMPLEMENTOR="Eclipse Adoptium"
+      JAVA_VERSION="25.0.4.1"
+    From this it generates a CPE:
+      cpe:2.3:a:oracle:openjdk:25.0.4.1:*:*:*:*:*:*:*
+    This CPE is matched against the NVD database and the Oracle CPU advisory
+    feed, which is the authoritative source for OpenJDK/Temurin CVEs.
+
+  java-archive-cataloger
+    Scans any bundled JARs (jrt-fs.jar is present in every build).
+    Matches via Maven coordinates and SHA-1 against GitHub Advisory Database.
+
+  binary-classifier-cataloger
+    Fingerprints ELF binaries (the `java` launcher). Supplements CPE matching.
+
+This approach is identical across all package formats. The outer container
+(APK/DEB/RPM) is purely an extraction format; once unpacked, the scanning
+logic is identical.
+
+
+────────────────────────────────────────────────────────────────────────────────
+3. REPORTE OUTPUTS & ARTIFACTS
+────────────────────────────────────────────────────────────────────────────────
+
+Per package:
+  <stem>.json          Machine-readable findings (Grype v6 JSON format)
+  <stem>.sarif.json    SARIF v2.1.0 format (integrates with GitHub/GitLab security tabs)
+  <stem>.txt           Human-readable table output
+
+Consolidated:
+  summary.txt          Plain-text summary matrix across scanned packages
+  summary.md           Markdown summary table for CI job summaries ($GITHUB_STEP_SUMMARY)
+
+
+────────────────────────────────────────────────────────────────────────────────
+4. CI GATE BEHAVIOUR & EXIT CODES
+────────────────────────────────────────────────────────────────────────────────
+
+  0  — No findings at or above the threshold. Build passes cleanly.
+  1  — Script setup/extraction error (missing files, extraction failure).
+  2  — Findings found at or above threshold (e.g. HIGH or CRITICAL).
+
+In the Temurin linux_new Jenkins pipeline, exit code 2 marks the stage as
+UNSTABLE (informational) without aborting artifact archival or publishing.
+
+================================================================================
