@@ -3,16 +3,23 @@ ARG CONTAINER_REGISTRY=""
 FROM ${CONTAINER_REGISTRY}tianon/gosu AS gosu
 FROM ${CONTAINER_REGISTRY}opensuse/leap:15.6
 
-RUN zypper update -y && zypper install -y rpm-build \
-	rpm-devel \
-	rpmdevtools \
-	rpmlint \
-	dirmngr \
-	tar \
-	dpkg \
-	findutils \
-	tini \
-	wget
+# Fetch repository metadata over HTTPS so it cannot be altered in transit by an
+# intermediate proxy (plain HTTP produced "Digest verification failed" on some
+# build agents). Digest and GPG verification remain enabled. There is no TTY in
+# a build, so run zypper non-interactively.
+RUN sed -i 's#http://download.opensuse.org#https://download.opensuse.org#g' /etc/zypp/repos.d/*.repo \
+	&& zypper --non-interactive --gpg-auto-import-keys refresh \
+	&& zypper --non-interactive update -y \
+	&& zypper --non-interactive install -y rpm-build \
+		rpm-devel \
+		rpmdevtools \
+		rpmlint \
+		dirmngr \
+		tar \
+		dpkg \
+		findutils \
+		tini \
+		wget
 
 COPY --from=gosu /gosu /usr/local/bin/
 
