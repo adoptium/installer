@@ -42,7 +42,6 @@ Provides: java-runtime (= {{ java_version }}),
 {% for v in range(11, java_version | int + 1) %}
           java{{ v }}-runtime-headless{{ ',' if not loop.last else '' }}
 {% endfor %}
-{{ '' }}
 Description: Eclipse Temurin {{ java_version }} JRE
  Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
  Java applications and services.

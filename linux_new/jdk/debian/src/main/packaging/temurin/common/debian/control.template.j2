@@ -68,7 +68,6 @@ Provides: java-compiler,
 {% for v in range(11, java_version | int + 1) %}
           java{{ v }}-runtime-headless{{ ',' if not loop.last else '' }}
 {% endfor %}
-{{ '' }}
 Description: Eclipse Temurin {{ java_version }} JDK
  Eclipse Temurin JDK is an OpenJDK-based development environment to create
  applications and components using the programming language Java.
