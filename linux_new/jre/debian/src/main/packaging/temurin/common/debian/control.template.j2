@@ -29,9 +29,9 @@ Provides: java-runtime (= {{ java_version }}),
           java8-runtime,
           java9-runtime,
           java10-runtime,
-{%- for v in range(11, java_version | int + 1) %}
+{% for v in range(11, java_version | int + 1) %}
           java{{ v }}-runtime,
-{%- endfor %}
+{% endfor %}
           java2-runtime-headless,
           java5-runtime-headless,
           java6-runtime-headless,
@@ -39,9 +39,10 @@ Provides: java-runtime (= {{ java_version }}),
           java8-runtime-headless,
           java9-runtime-headless,
           java10-runtime-headless,
-{%- for v in range(11, java_version | int + 1) %}
-          java{{ v }}-runtime-headless{% if not loop.last %},{% endif %}
-{%- endfor %}
+{% for v in range(11, java_version | int + 1) %}
+          java{{ v }}-runtime-headless{{ ',' if not loop.last else '' }}
+{% endfor %}
+{{ '' }}
 Description: Eclipse Temurin {{ java_version }} JRE
  Eclipse Temurin JRE is an OpenJDK-based runtime environment to execute
  Java applications and services.

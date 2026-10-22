@@ -241,14 +241,15 @@ if [ $1 -ge 1 ] ; then
 {% endif %}
                         --slave  %{_mandir}/man1/java.1 java.1 %{prefix}/man/man1/java.1 \
                         --slave  %{_mandir}/man1/keytool.1 keytool.1 %{prefix}/man/man1/keytool.1 \
-                        --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
 {% if java_version | int == 11 %}
+                        --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
                         --slave  %{_mandir}/man1/jjs.1 jjs.1 %{prefix}/man/man1/jjs.1 \
                         --slave  %{_mandir}/man1/pack200.1 pack200.1 %{prefix}/man/man1/pack200.1 \
                         --slave  %{_mandir}/man1/rmid.1 rmid.1 %{prefix}/man/man1/rmid.1 \
-                        --slave  %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1 \
+                        --slave  %{_mandir}/man1/unpack200.1 unpack200.1 %{prefix}/man/man1/unpack200.1
+{% else %}
+                        --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1
 {% endif %}
-
     update-alternatives --install %{_bindir}/javac javac %{prefix}/bin/javac %{priority} \
 {% if java_version | int == 11 %}
                         --slave %{_bindir}/jaotc jaotc %{prefix}/bin/jaotc \
@@ -275,14 +276,18 @@ if [ $1 -ge 1 ] ; then
                         --slave %{_bindir}/jshell jshell %{prefix}/bin/jshell \
                         --slave %{_bindir}/jstack jstack %{prefix}/bin/jstack \
                         --slave %{_bindir}/jstat jstat %{prefix}/bin/jstat \
+{% if java_version | int >= 21 and java_version | int != 11 %}
                         --slave %{_bindir}/jstatd jstatd %{prefix}/bin/jstatd \
-{% if java_version | int >= 21 %}
                         --slave %{_bindir}/jwebserver jwebserver %{prefix}/bin/jwebserver \
-{% endif %}
-{% if java_version | int == 11 %}
-                        --slave %{_bindir}/rmic rmic %{prefix}/bin/rmic \
-{% endif %}
                         --slave %{_bindir}/serialver serialver %{prefix}/bin/serialver \
+{% elif java_version | int == 11 %}
+                        --slave %{_bindir}/jstatd jstatd %{prefix}/bin/jstatd \
+                        --slave %{_bindir}/rmic rmic %{prefix}/bin/rmic \
+                        --slave %{_bindir}/serialver serialver %{prefix}/bin/serialver \
+{% else %}
+                        --slave %{_bindir}/jstatd jstatd %{prefix}/bin/jstatd \
+                        --slave %{_bindir}/serialver serialver %{prefix}/bin/serialver \
+{% endif %}
                         --slave  %{_mandir}/man1/jar.1 jar.1 %{prefix}/man/man1/jar.1 \
                         --slave  %{_mandir}/man1/jarsigner.1 jarsigner.1 %{prefix}/man/man1/jarsigner.1 \
                         --slave  %{_mandir}/man1/javac.1 javac.1 %{prefix}/man/man1/javac.1 \
@@ -305,14 +310,18 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/jshell.1 jshell.1 %{prefix}/man/man1/jshell.1 \
                         --slave  %{_mandir}/man1/jstack.1 jstack.1 %{prefix}/man/man1/jstack.1 \
                         --slave  %{_mandir}/man1/jstat.1 jstat.1 %{prefix}/man/man1/jstat.1 \
+{% if java_version | int >= 21 and java_version | int != 11 %}
                         --slave  %{_mandir}/man1/jstatd.1 jstatd.1 %{prefix}/man/man1/jstatd.1 \
-{% if java_version | int >= 21 %}
                         --slave  %{_mandir}/man1/jwebserver.1 jwebserver.1 %{prefix}/man/man1/jwebserver.1 \
-{% endif %}
-{% if java_version | int == 11 %}
-                        --slave  %{_mandir}/man1/rmic.1 rmic.1 %{prefix}/man/man1/rmic.1 \
-{% endif %}
                         --slave  %{_mandir}/man1/serialver.1 serialver.1 %{prefix}/man/man1/serialver.1
+{% elif java_version | int == 11 %}
+                        --slave  %{_mandir}/man1/jstatd.1 jstatd.1 %{prefix}/man/man1/jstatd.1 \
+                        --slave  %{_mandir}/man1/rmic.1 rmic.1 %{prefix}/man/man1/rmic.1 \
+                        --slave  %{_mandir}/man1/serialver.1 serialver.1 %{prefix}/man/man1/serialver.1
+{% else %}
+                        --slave  %{_mandir}/man1/jstatd.1 jstatd.1 %{prefix}/man/man1/jstatd.1 \
+                        --slave  %{_mandir}/man1/serialver.1 serialver.1 %{prefix}/man/man1/serialver.1
+{% endif %}
 fi
 
 {% if java_version | int != 23 %}
