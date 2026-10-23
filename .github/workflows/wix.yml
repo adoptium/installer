@@ -30,7 +30,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Install wix toolset
-        run: dotnet tool install --global wix --version 6.0.0 --verbosity quiet
+        run: dotnet tool install --global wix --version 6.0.2 --verbosity quiet
 
       - name: Fetch latest Windows version from Adoptium API
         run: |
