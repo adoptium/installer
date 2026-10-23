@@ -50,7 +50,29 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET TAG=jdk-11.0.18+10
   ```
 
-  Source directory lookup also supports extra OpenJDK version components, such as `jdk-27.0.1.0.2+1` or `jdk-27.0.1.0.2.3.4+1`, under both `OpenJDK27` and `OpenJDK-Latest`. If the exact lookups fail, it uses a unique directory matching the first four version components and the requested JDK/JRE type; multiple matches are rejected. `MSI_PRODUCT_VERSION` must still use the four-component MSI format.
+  For Java 10 and later, you can optionally set `PRODUCT_PATCH_UPDATE_VERSION`
+  to include a fifth version component. For example, to build `25.0.5.0.2+1`:
+
+  ```batch
+  SET PRODUCT_MAJOR_VERSION=25
+  SET PRODUCT_MINOR_VERSION=0
+  SET PRODUCT_MAINTENANCE_VERSION=5
+  SET PRODUCT_PATCH_VERSION=0
+  SET PRODUCT_PATCH_UPDATE_VERSION=2
+  SET PRODUCT_BUILD_NUMBER=1
+  SET MSI_PRODUCT_VERSION=25.0.5.1
+  ```
+
+  This produces `PRODUCT_SHORT_VERSION=25.0.5.0.2+1` for installer display
+  names (including translations) and `PRODUCT_FULL_VERSION=25.0.5.0.2.1` for
+  the default MSI filename. Source-folder lookup also supports
+  `jdk-25.0.5.0.2+1` (or `jdk-25.0.5.0.2+1-jre` for a JRE).
+  `MSI_PRODUCT_VERSION` remains a separate Windows Installer version and does
+  not gain a fifth component.
+
+  Leave `PRODUCT_PATCH_UPDATE_VERSION` unset (or clear it with
+  `SET PRODUCT_PATCH_UPDATE_VERSION=`) to preserve the existing version output
+  exactly. An explicitly supplied `0` includes `.0` as the fifth component.
 
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
 
