@@ -27,7 +27,7 @@
         - if the version is 17.0.16+8,  this is 0
         - if the version is 17.0.8.1+1, this is 1
 
-.PARAMETER ProductUpdateVersion
+.PARAMETER ProductPatchUpdateVersion
     This is a number that comes between the patch and build numbers if it exists.
     For most builds, this is 0. Only used in rare special cases. Example: Oct 2026 release, right after Mudhra TLS Cert compromise).
     Examples:
@@ -93,9 +93,9 @@
 
 .PARAMETER OutputFileName
     Optional. The name of the output file. Note: Inno Setup will automatically add the '.exe' file extension
-    Note: The filename includes will just include ProductPatchVersion if it is nonzero, or both ProductPatchVersion and ProductUpdateVersion if ProductUpdateVersion is nonzero.
+    Note: The filename includes will just include ProductPatchVersion if it is nonzero, or both ProductPatchVersion and ProductPatchUpdateVersion if ProductPatchUpdateVersion is nonzero.
     Default:
-        "OpenJDK${ProductMajorVersion}U-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion.$ProductUpdateVersion_$ProductBuildNumber"
+        "OpenJDK${ProductMajorVersion}U-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion.$ProductPatchUpdateVersion_$ProductBuildNumber"
 
 .PARAMETER License
     Optional. The path to the license file. This can either be a full path to any file, or a relative path to a license file in the inno_setup/licenses folder.
@@ -204,7 +204,7 @@ param (
     [int]$ProductPatchVersion = 0,
 
     [Parameter(Mandatory = $false)]
-    [int]$ProductUpdateVersion = 0,
+    [int]$ProductPatchUpdateVersion = 0,
 
     [Parameter(Mandatory = $true)]
     [int]$ProductBuildNumber,
@@ -291,9 +291,9 @@ $CapitalizedJVM = CapitalizeString `
 
 $VersionMajorToPlus = "${ProductMajorVersion}.${ProductMinorVersion}.${ProductMaintenanceVersion}"
 
-# Include ProductPatchVersion and ProductUpdateVersion in the version string if they are not zero
-if ($ProductUpdateVersion -ne 0) {
-    $VersionMajorToPlus += ".$ProductPatchVersion.$ProductUpdateVersion"
+# Include ProductPatchVersion and ProductPatchUpdateVersion in the version string if they are not zero
+if ($ProductPatchUpdateVersion -ne 0) {
+    $VersionMajorToPlus += ".$ProductPatchVersion.$ProductPatchUpdateVersion"
 }
 elseif ($ProductPatchVersion -ne 0) {
     $VersionMajorToPlus += ".$ProductPatchVersion"
@@ -362,7 +362,7 @@ $InnoSetupArgs += "/DProductMajorVersion=`"$ProductMajorVersion`""
 $InnoSetupArgs += "/DProductMinorVersion=`"$ProductMinorVersion`""
 $InnoSetupArgs += "/DProductMaintenanceVersion=`"$ProductMaintenanceVersion`""
 $InnoSetupArgs += "/DProductPatchVersion=`"$ProductPatchVersion`""
-$InnoSetupArgs += "/DProductUpdateVersion=`"$ProductUpdateVersion`""
+$InnoSetupArgs += "/DProductPatchUpdateVersion=`"$ProductPatchUpdateVersion`""
 $InnoSetupArgs += "/DProductBuildNumber=`"$ProductBuildNumber`""
 $InnoSetupArgs += "/DExeProductVersion=`"$ExeProductVersion`""
 $InnoSetupArgs += "/DAppPublisherURL=`"$ProductPublisherLink`""
