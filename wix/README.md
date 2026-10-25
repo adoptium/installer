@@ -50,6 +50,8 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   SET TAG=jdk-11.0.18+10
   ```
 
+  Source directory lookup also supports extra OpenJDK version components, such as `jdk-27.0.1.0.2+1` or `jdk-27.0.1.0.2.3.4+1`, under both `OpenJDK27` and `OpenJDK-Latest`. If the exact lookups fail, it uses a unique directory matching the first four version components and the requested JDK/JRE type; multiple matches are rejected. `MSI_PRODUCT_VERSION` must still use the four-component MSI format.
+
   To customize branding information you can export the following environment variables to override the default values. The default values are listed below:
 
   ```batch

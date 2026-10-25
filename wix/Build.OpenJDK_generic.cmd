@@ -169,6 +169,27 @@ FOR %%A IN (%ARCH%) DO (
             goto CONTINUE
         )
     )
+
+    @REM Extra OpenJDK version components cannot be reconstructed from MSI version fields.
+    SET EXTENDED_REPRO_DIR=
+    FOR %%R IN (!PRODUCT_SKU!!PRODUCT_MAJOR_VERSION! !PRODUCT_SKU!-Latest) DO (
+        FOR /D %%D IN (".\SourceDir\%%R\!TEMPLATE_NAME!\!FOLDER_PLATFORM!\jdk-!PRODUCT_MAJOR_VERSION!.!PRODUCT_MINOR_VERSION!.!PRODUCT_MAINTENANCE_VERSION!.!PRODUCT_PATCH_VERSION!.*+*") DO (
+            SET SOURCE_NAME=%%~nxD
+            SET SOURCE_CATEGORY=jdk
+            IF "!SOURCE_NAME:~-4!" == "-jre" SET SOURCE_CATEGORY=jre
+            IF "!SOURCE_CATEGORY!" == "!PRODUCT_CATEGORY!" (
+                IF DEFINED EXTENDED_REPRO_DIR (
+                    ECHO Multiple extended-version source directories found / failed
+                    GOTO FAILED
+                )
+                SET "EXTENDED_REPRO_DIR=%%~D"
+            )
+        )
+    )
+    IF DEFINED EXTENDED_REPRO_DIR (
+        SET "REPRO_DIR=!EXTENDED_REPRO_DIR!"
+        GOTO CONTINUE
+    )
     
     ECHO SOURCE Dir not found / failed
     ECHO Listing directory :
