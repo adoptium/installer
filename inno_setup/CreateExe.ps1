@@ -27,6 +27,13 @@
         - if the version is 17.0.16+8,  this is 0
         - if the version is 17.0.8.1+1, this is 1
 
+.PARAMETER ProductPatchUpdateVersion
+    This is a number that comes between the patch and build numbers if it exists.
+    For most builds, this is 0. Only used in rare special cases. Example: Oct 2026 release, right after Mudhra TLS Cert compromise).
+    Examples:
+        - if the version is 25.0.5.1+1, this is 0
+        - if the version is 25.0.5.0.2+1, this is 2
+
 .PARAMETER ProductBuildNumber
     Example: if the version is 17.0.16+8, this is 8
 
@@ -86,8 +93,9 @@
 
 .PARAMETER OutputFileName
     Optional. The name of the output file. Note: Inno Setup will automatically add the '.exe' file extension
+    Note: The filename includes will just include ProductPatchVersion if it is nonzero, or both ProductPatchVersion and ProductPatchUpdateVersion if ProductPatchUpdateVersion is nonzero.
     Default:
-        "OpenJDK${ProductMajorVersion}U-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion_$ProductBuildNumber"
+        "OpenJDK${ProductMajorVersion}U-$ProductCategory_$Arch_windows_$JVM-$ProductMajorVersion.$ProductMinorVersion.$ProductMaintenanceVersion.$ProductPatchVersion.$ProductPatchUpdateVersion_$ProductBuildNumber"
 
 .PARAMETER License
     Optional. The path to the license file. This can either be a full path to any file, or a relative path to a license file in the inno_setup/licenses folder.
@@ -192,8 +200,11 @@ param (
     [Parameter(Mandatory = $true)]
     [int]$ProductMaintenanceVersion,
 
-    [Parameter(Mandatory = $true)]
-    [int]$ProductPatchVersion,
+    [Parameter(Mandatory = $false)]
+    [int]$ProductPatchVersion = 0,
+
+    [Parameter(Mandatory = $false)]
+    [int]$ProductPatchUpdateVersion = 0,
 
     [Parameter(Mandatory = $true)]
     [int]$ProductBuildNumber,
@@ -278,17 +289,25 @@ $ArchitecturesAllowed = GetArchitectureAllowedTemplateInput -Arch $Arch
 $CapitalizedJVM = CapitalizeString `
     -InputString $JVM `
 
-$VersionMajorToMaintenance = "${ProductMajorVersion}.${ProductMinorVersion}.${ProductMaintenanceVersion}"
+$VersionMajorToPlus = "${ProductMajorVersion}.${ProductMinorVersion}.${ProductMaintenanceVersion}"
+
+# Include ProductPatchVersion and ProductPatchUpdateVersion in the version string if they are not zero
+if ($ProductPatchUpdateVersion -ne 0) {
+    $VersionMajorToPlus += ".$ProductPatchVersion.$ProductPatchUpdateVersion"
+}
+elseif ($ProductPatchVersion -ne 0) {
+    $VersionMajorToPlus += ".$ProductPatchVersion"
+}
 
 # Set default values if optional parameters are not provided
 $AppName = SetDefaultIfEmpty `
     -InputValue $AppName `
-    -DefaultValue "$VendorBranding $($ProductCategory.ToUpper()) with ${CapitalizedJVM} ${VersionMajorToMaintenance}+${ProductBuildNumber} ($Arch)"
+    -DefaultValue "$VendorBranding $($ProductCategory.ToUpper()) with ${CapitalizedJVM} ${VersionMajorToPlus}+${ProductBuildNumber} ($Arch)"
 
 ## Note: Inno Setup will add the '.exe' file extension automatically
 $OutputFileName = SetDefaultIfEmpty `
     -InputValue $OutputFileName `
-    -DefaultValue "OpenJDK${ProductMajorVersion}U-${ProductCategory}_${Arch}_windows_${JVM}_${VersionMajorToMaintenance}_${ProductBuildNumber}"
+    -DefaultValue "OpenJDK${ProductMajorVersion}U-${ProductCategory}_${Arch}_windows_${JVM}_${VersionMajorToPlus}_${ProductBuildNumber}"
 
 ## If $env:INNO_SETUP_PATH is not set, default to the standard installation path for a machine-scope installation
 $INNO_SETUP_PATH = SetDefaultIfEmpty `
@@ -343,6 +362,7 @@ $InnoSetupArgs += "/DProductMajorVersion=`"$ProductMajorVersion`""
 $InnoSetupArgs += "/DProductMinorVersion=`"$ProductMinorVersion`""
 $InnoSetupArgs += "/DProductMaintenanceVersion=`"$ProductMaintenanceVersion`""
 $InnoSetupArgs += "/DProductPatchVersion=`"$ProductPatchVersion`""
+$InnoSetupArgs += "/DProductPatchUpdateVersion=`"$ProductPatchUpdateVersion`""
 $InnoSetupArgs += "/DProductBuildNumber=`"$ProductBuildNumber`""
 $InnoSetupArgs += "/DExeProductVersion=`"$ExeProductVersion`""
 $InnoSetupArgs += "/DAppPublisherURL=`"$ProductPublisherLink`""
