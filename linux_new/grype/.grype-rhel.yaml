@@ -1,0 +1,77 @@
+# .grype-rhel.yaml — Grype config for RHEL/CentOS/Fedora RPM content scanning
+# Used by grype-linux-scan.sh when distro matches rhel:* etc.
+
+distro: 'rhel:9'
+
+output:
+  - table
+file: ''
+pretty: false
+sort-by: 'risk'
+by-cve: true
+
+fail-on-severity: 'high'
+
+add-cpes-if-none: true
+
+match:
+  jvm:
+    using-cpes: true      # match JVM vulnerabilities via CPE against NVD/Oracle advisories
+  java:
+    using-cpes: false
+  golang:
+    using-cpes: false
+  python:
+    using-cpes: false
+  javascript:
+    using-cpes: false
+  dotnet:
+    using-cpes: false
+  rpm:
+    missing-epoch-strategy: 'auto'
+    use-cpes-for-eol: false
+
+search:
+  scope: 'squashed'
+  indexed-archives: true
+  unindexed-archives: false
+
+# Red Hat EUS fix channel: 'auto' applies EUS fixes when SBOM data indicates a
+# RHEL EUS subscription.
+fix-channel:
+  redhat-eus:
+    apply: 'auto'
+    versions: '>= 8.0'
+
+# ── Ignore rules ──────────────────────────────────────────────────────────────
+# Suppress known-accepted findings. Full schema:
+#   - vulnerability: CVE-YYYY-NNNNN
+#     package:
+#       name: <name or regex>
+#       type: rpm
+#     reason: '<justification>'
+ignore:
+  # Example:
+  # - vulnerability: CVE-2023-4911
+  #   package:
+  #     name: glibc
+  #     type: rpm
+  #   reason: 'GLIBC_TUNABLES not accessible in our container deployment; reviewed 2025-01-15'
+
+alerts:
+  enable-eol-distro-warnings: true
+
+db:
+  cache-dir: '~/.cache/grype/db'
+  update-url: 'https://grype.anchore.io/databases'
+  auto-update: true
+  validate-by-hash-on-start: true
+  validate-age: true
+  max-allowed-built-age: '120h'
+  require-update-check: false
+
+log:
+  quiet: false
+  level: 'warn'
+
+show-suppressed: false

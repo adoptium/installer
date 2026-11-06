@@ -1,0 +1,62 @@
+================================================================================
+GRYPE VULNERABILITY SCAN REPORT — SUSE Linux Enterprise / openSUSE (RPM)
+Eclipse Temurin 25 JDK/JRE — SLES 15 (x86_64)
+================================================================================
+
+SCAN DATE        2026-10-16
+SCANNER          grype v6 (syft v1.51.0)
+VULNERABILITY DB Built 2026-10-16T06:29:51Z  |  Schema v6.1.10
+                 Source: grype.anchore.io (NVD, Oracle CPU, SUSE, GitHub, EPSS, KEV)
+DISTRO CONTEXT   sles:15
+FAIL THRESHOLD   HIGH and above
+
+PACKAGES SCANNED
+  temurin-25-jdk  25.0.4.1.0.1-0  x86_64  (full JDK)
+  temurin-25-jdk  25.0.4.1.0.1-0  src     (source RPM)
+  temurin-25-jre  25.0.4.1.0.1-0  x86_64  (full JRE)
+  temurin-25-jre  25.0.4.1.0.1-0  src     (source RPM)
+
+SCAN METHOD
+  Each RPM was extracted (rpm2cpio + cpio) and scanned as a directory (grype dir:).
+  Three cataloguers ran against every package:
+    java-jvm-cataloger       — reads release file → CPE → NVD/Oracle advisories
+    java-archive-cataloger   — scans bundled JARs (jrt-fs.jar)
+    binary-classifier-cataloger — fingerprints ELF binaries
+
+RESULTS SUMMARY
+  ┌────────────────────────────────────────────────────────┬────────┬──────┬────────┬──────┬────────────┬────────┐
+  │ Package                                                │ CRIT   │ HIGH │ MEDIUM │ LOW  │ NEGLIGIBLE │ TOTAL  │
+  ├────────────────────────────────────────────────────────┼────────┼──────┼────────┼──────┼────────────┼────────┤
+  │ temurin-25-jdk           25.0.4.1.0.1-0.x86_64         │   0    │  0   │   0    │  0   │     0      │   0    │
+  │ temurin-25-jdk           25.0.4.1.0.1-0.src            │   0    │  0   │   0    │  0   │     0      │   0    │
+  │ temurin-25-jre           25.0.4.1.0.1-0.x86_64         │   0    │  0   │   0    │  0   │     0      │   0    │
+  │ temurin-25-jre           25.0.4.1.0.1-0.src            │   0    │  0   │   0    │  0   │     0      │   0    │
+  ├────────────────────────────────────────────────────────┼────────┼──────┼────────┼──────┼────────────┼────────┤
+  │ TOTAL                                                  │   0    │  0   │   0    │  0   │     0      │   0    │
+  └────────────────────────────────────────────────────────┴────────┴──────┴────────┴──────┴────────────┴────────┘
+
+VERDICT:  ✓ PASSED — no vulnerabilities found
+
+DETAIL
+  No CVEs matched against any of the four packages. The JVM version (25.0.4.1)
+  is above all known fix thresholds in the NVD/Oracle advisory database at the
+  time of scan. The most recent applicable Oracle CPU advisories fixed in 25.0.4
+  (CVE-2026-70906, CVE-2026-41254, CVE-2026-47063 et al.) and 25.0.4.1
+  (CVE-2026-61308, CVE-2026-70907) are fully addressed by this release.
+
+NOTES
+  - Scan scope: installed package content only. Runtime OS dependencies declared
+    in Requires: (glibc, libX11-6, alsa-lib, libfreetype6, etc.) are not in
+    scope per project requirements.
+  - The .src.rpm packages contain only spec files and upstream sources; no
+    compiled JVM or JAR content is present, so no cataloguer finds are expected.
+  - Re-run this scan against each new release build. Grype DB should be refreshed
+    before each scan (max-allowed-built-age: 120h).
+
+SCAN TIMESTAMPS
+  temurin-25-jdk (bin):  2026-10-16T11:13:56+01:00
+  temurin-25-jdk (src):  2026-10-16T11:13:59+01:00
+  temurin-25-jre (bin):  2026-10-16T11:14:03+01:00
+  temurin-25-jre (src):  2026-10-16T11:14:05+01:00
+
+================================================================================

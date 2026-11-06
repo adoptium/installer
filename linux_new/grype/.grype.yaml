@@ -1,0 +1,77 @@
+# .grype.yaml — Grype configuration for Alpine APK content scanning
+# Used by grype-apk-scan.sh. Pass explicitly: grype --config .grype.yaml
+# All settings can also be overridden by environment variables (GRYPE_*)
+
+# Distro hint for CPE/advisory matching. Override with --distro alpine:X.Y
+distro: 'alpine:3.24'
+
+output:
+  - table
+file: ''
+pretty: false
+sort-by: 'risk'
+by-cve: true
+
+# CI gate: exit 2 when any unignored vuln is at or above this severity
+fail-on-severity: 'high'
+
+add-cpes-if-none: true
+
+match:
+  jvm:
+    using-cpes: true      # match JVM vulnerabilities via CPE against NVD/Oracle advisories
+  java:
+    using-cpes: false
+  golang:
+    using-cpes: false
+  python:
+    using-cpes: false
+  javascript:
+    using-cpes: false
+  dotnet:
+    using-cpes: false
+  rpm:
+    missing-epoch-strategy: 'auto'
+
+search:
+  scope: 'squashed'
+  indexed-archives: true    # scan bundled JARs
+  unindexed-archives: false
+
+# ── Ignore rules ──────────────────────────────────────────────────────────────
+# Suppress known-accepted findings. Full schema:
+#   - vulnerability: CVE-YYYY-NNNNN
+#     package:
+#       name: <name or regex>
+#       type: apk
+#     reason: '<justification>'
+ignore:
+  # Example: suppress a specific CVE with documented justification:
+  # - vulnerability: CVE-2025-26519
+  #   package:
+  #     name: musl
+  #     type: apk
+  #   reason: 'iconv EUC-KR path not reachable in our workload'
+
+alerts:
+  enable-eol-distro-warnings: true
+
+# For air-gapped environments: set auto-update: false and pre-stage the DB
+# with `grype db import <file>` or point update-url to an internal mirror.
+db:
+  cache-dir: '~/.cache/grype/db'
+  update-url: 'https://grype.anchore.io/databases'
+  auto-update: true
+  validate-by-hash-on-start: true
+  validate-age: true
+  max-allowed-built-age: '120h'
+  require-update-check: false
+  update-available-timeout: '30s'
+  update-download-timeout: '5m'
+  max-update-check-frequency: '2h'
+
+log:
+  quiet: false
+  level: 'warn'
+
+show-suppressed: false
