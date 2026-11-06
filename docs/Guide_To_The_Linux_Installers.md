@@ -93,7 +93,7 @@ The following sections will detail the source changes required when a release is
 
   And additionally were an additional architecture being added (Alpine is currently only supported on x86_64 and Alpine from JDK version 21 onwards), then the <b>arch</b> field would also need appending.
 
-  Once all changes are made in the header section, its time to move on to the footer section.  
+  Once all changes are made in the header section, its time to move on to the footer section.
 
     ```
     pkgname=temurin-21
@@ -211,6 +211,8 @@ java21-sdk-headless,
 The process for updating the source files for both RHEL & Suse based distributions is identical. The source file that drives the build process for the produced rpm files is typically named like this <i>vendor-version-jdk</i>  ```temurin-21-jdk.spec``` ( located under _jdk_ / redhat / src / main / packaging / _temurin_ / _21_for example).  Details on how to update/amend the relevant sections of the spec file are below:
 
 <h5>2.3.1 The header section(example below:)</h5>
+
+Microsoft's Red Hat [msopenjdk-25.spec](../linux/jdk/redhat/src/main/packaging/microsoft/25/msopenjdk-25.spec) must explicitly declare `Provides: libjawt.so()(64bit)` because `AutoReqProv: no` disables automatic capability generation. This advertises the bundled `libjawt.so` on x86_64 and aarch64 so dependent packages, such as `vtk-java`, can resolve their library dependency without any issue during installation. Automatic dependency generation remains disabled.
 
 This section requires updates to the following 2 fields:
 
@@ -377,6 +379,99 @@ Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_ar
 </details>
 </details>
 
+
+<details><summary>2.4 Microsoft OpenJDK 25 Azure Linux Compatibility</summary>
+</br>
+
+This section describes the Azure Linux compatibility changes in the Microsoft Red Hat
+[msopenjdk-25.spec](../linux/jdk/redhat/src/main/packaging/microsoft/25/msopenjdk-25.spec).
+The examples below reflect the Azure Linux specific changes for Microsoft OpenJDK 25, not for other JDK versions. The SUSE specs and other Microsoft JDK major versions are unchanged.
+
+<h5>2.4.1 Versioned Java and headless capabilities</h5>
+
+The spec retains its 17 existing Java, JDK and JRE capability names and adds eight headless
+aliases. All 25 capabilities use <b>`= 1:%{version}-%{release}`</b>, where
+`%{java_provides}` expands to `openjdk`:
+
+```spec
+Provides: java = 1:%{version}-%{release}
+Provides: java-25 = 1:%{version}-%{release}
+Provides: java-25-devel = 1:%{version}-%{release}
+Provides: java-25-%{java_provides} = 1:%{version}-%{release}
+Provides: java-25-%{java_provides}-devel = 1:%{version}-%{release}
+Provides: java-devel = 1:%{version}-%{release}
+Provides: java-devel-%{java_provides} = 1:%{version}-%{release}
+Provides: java-%{java_provides} = 1:%{version}-%{release}
+Provides: java-%{java_provides}-devel = 1:%{version}-%{release}
+Provides: java-sdk = 1:%{version}-%{release}
+Provides: java-sdk-25 = 1:%{version}-%{release}
+Provides: java-sdk-25-%{java_provides} = 1:%{version}-%{release}
+Provides: java-sdk-%{java_provides} = 1:%{version}-%{release}
+Provides: jre = 1:%{version}-%{release}
+Provides: jre-25 = 1:%{version}-%{release}
+Provides: jre-25-%{java_provides} = 1:%{version}-%{release}
+Provides: jre-%{java_provides} = 1:%{version}-%{release}
+Provides: java-headless = 1:%{version}-%{release}
+Provides: java-25-headless = 1:%{version}-%{release}
+Provides: java-%{java_provides}-headless = 1:%{version}-%{release}
+Provides: java-25-%{java_provides}-headless = 1:%{version}-%{release}
+Provides: jre-headless = 1:%{version}-%{release}
+Provides: jre-25-headless = 1:%{version}-%{release}
+Provides: jre-%{java_provides}-headless = 1:%{version}-%{release}
+Provides: jre-25-%{java_provides}-headless = 1:%{version}-%{release}
+```
+
+The `1:` is the epoch of each virtual capability, <b>not an `Epoch:` tag on the package</b>.
+For example, with `spec_version` set to `25.0.5.0.2` and `spec_release` set to `1`, the
+capability `java-25-openjdk` has EVR `1:25.0.5.0.2-1`, while the package itself has no epoch.
+These declarations satisfy compatible epoch-1 requirements such as
+`java-25-openjdk >= 1:25`. They do not also advertise epoch-0 versions: an exact requirement
+such as `java-25-openjdk = 0:25.0.5.0.2-1` does not match.
+
+Versioned provides make RPM compare dependency constraints against the declared EVR instead
+of relying on the old bare provides. Preserve the epoch and version suffix when editing any
+of these aliases. Keep the existing `upstream_version`, `spec_version` and `spec_release`
+macro names; the provides resolve their version and release through the existing
+`Version:` and `Release:` fields.
+
+The headless aliases are virtual capabilities of the same full JDK RPM, not separate JRE or
+headless subpackages. They do not remove graphical libraries or change the existing
+`Recommends:`. Whether recommended font, graphics and audio packages are installed still
+depends on the package manager's weak-dependency policy.
+
+<h5>2.4.2 JVM-directory alternatives and ownership</h5>
+
+The spec defines `%global jvmdir %{_prefix}/lib/jvm`, normally `/usr/lib/jvm`.
+All eight directory alternatives below target `%{prefix}`, normally
+`/usr/lib/jvm/msopenjdk-25`, using the existing `%{priority}` value (`2511`):
+
+| Link under `%{jvmdir}` | Alternatives group | Registration |
+|---|---|---|
+| `java` | `java_sdk` | Slave of the `javac` master |
+| `jre` | `jre` | Slave of the `java` master |
+| `java-25-openjdk` | `java_sdk_25_openjdk` | Independent master |
+| `java-25` | `java_sdk_25` | Independent master |
+| `java-openjdk` | `java_sdk_openjdk` | Independent master |
+| `jre-25-openjdk` | `jre_25_openjdk` | Independent master |
+| `jre-25` | `jre_25` | Independent master |
+| `jre-openjdk` | `jre_openjdk` | Independent master |
+
+Registering the generic directory links as slaves keeps them synchronized with the selected
+`java` and `javac` commands. Register the six independent masters in `%post`, and remove
+those same six entries in `%preun` only on final erase (`$1` equals `0`). Removing the
+`java` and `javac` alternatives also removes their directory slaves; do not remove the
+slave groups as independent masters. Upgrade removal (`$1` equals `1`) must leave the
+alternatives intact.
+
+Keep all eight directory links declared as
+`%ghost` entries in `%files`: they are owned by the RPM but managed by
+`update-alternatives`, not shipped as payload symlinks.
+
+These registrations add candidates; they do not force a Microsoft JDK over an existing
+manual alternatives selection. A link resolves to `%{prefix}` only when this JDK is the
+selected candidate for its master group.
+
+</details>
 
 ## 3. Adding/Removing An Additional Supported Distribution
 

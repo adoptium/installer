@@ -7,6 +7,7 @@
 
 %global source_url_base https://aka.ms/download-jdk
 %global java_provides openjdk
+%global jvmdir %{_prefix}/lib/jvm
 
 %global local_build_ %{?local_build}%{!?local_build:0}
 %global override_arch_ %{?override_arch}%{!?override_arch:0}
@@ -66,6 +67,8 @@ Requires: ca-certificates
 Requires: glibc%{?_isa}
 Requires: zlib%{?_isa}
 
+Provides: libjawt.so()(64bit)
+
 Recommends: dejavu-sans-fonts
 Recommends: alsa-lib%{?_isa}
 Recommends: libX11%{?_isa}
@@ -77,23 +80,31 @@ Recommends: fontconfig%{?_isa}
 Recommends: freetype%{?_isa}
 Recommends: libasound%{?_isa}
 
-Provides: java
-Provides: java-25
-Provides: java-25-devel
-Provides: java-25-%{java_provides}
-Provides: java-25-%{java_provides}-devel
-Provides: java-devel
-Provides: java-devel-%{java_provides}
-Provides: java-%{java_provides}
-Provides: java-%{java_provides}-devel
-Provides: java-sdk
-Provides: java-sdk-25
-Provides: java-sdk-25-%{java_provides}
-Provides: java-sdk-%{java_provides}
-Provides: jre
-Provides: jre-25
-Provides: jre-25-%{java_provides}
-Provides: jre-%{java_provides}
+Provides: java = 1:%{version}-%{release}
+Provides: java-25 = 1:%{version}-%{release}
+Provides: java-25-devel = 1:%{version}-%{release}
+Provides: java-25-%{java_provides} = 1:%{version}-%{release}
+Provides: java-25-%{java_provides}-devel = 1:%{version}-%{release}
+Provides: java-devel = 1:%{version}-%{release}
+Provides: java-devel-%{java_provides} = 1:%{version}-%{release}
+Provides: java-%{java_provides} = 1:%{version}-%{release}
+Provides: java-%{java_provides}-devel = 1:%{version}-%{release}
+Provides: java-sdk = 1:%{version}-%{release}
+Provides: java-sdk-25 = 1:%{version}-%{release}
+Provides: java-sdk-25-%{java_provides} = 1:%{version}-%{release}
+Provides: java-sdk-%{java_provides} = 1:%{version}-%{release}
+Provides: jre = 1:%{version}-%{release}
+Provides: jre-25 = 1:%{version}-%{release}
+Provides: jre-25-%{java_provides} = 1:%{version}-%{release}
+Provides: jre-%{java_provides} = 1:%{version}-%{release}
+Provides: java-headless = 1:%{version}-%{release}
+Provides: java-25-headless = 1:%{version}-%{release}
+Provides: java-%{java_provides}-headless = 1:%{version}-%{release}
+Provides: java-25-%{java_provides}-headless = 1:%{version}-%{release}
+Provides: jre-headless = 1:%{version}-%{release}
+Provides: jre-25-headless = 1:%{version}-%{release}
+Provides: jre-%{java_provides}-headless = 1:%{version}-%{release}
+Provides: jre-25-%{java_provides}-headless = 1:%{version}-%{release}
 
 # First architecture (x64)
 Source0: %{source_url_base}/microsoft-jdk-%{spec_version}-linux-%{vers_arch}.tar.gz
@@ -149,6 +160,7 @@ echo 'x /tmp/.java_pid*' >> "%{buildroot}/usr/lib/tmpfiles.d/%{name}.conf"
 %post
 if [ $1 -ge 1 ] ; then
     update-alternatives --install %{_bindir}/java java %{prefix}/bin/java %{priority} \
+                        --slave %{jvmdir}/jre jre %{prefix} \
                         --slave %{_bindir}/jfr jfr %{prefix}/bin/jfr \
                         --slave %{_bindir}/jrunscript jrunscript %{prefix}/bin/jrunscript \
                         --slave %{_bindir}/keytool keytool %{prefix}/bin/keytool \
@@ -162,6 +174,7 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/rmiregistry.1 rmiregistry.1 %{prefix}/man/man1/rmiregistry.1 \
 
     update-alternatives --install %{_bindir}/javac javac %{prefix}/bin/javac %{priority} \
+                        --slave %{jvmdir}/java java_sdk %{prefix} \
                         --slave %{_bindir}/jar jar %{prefix}/bin/jar \
                         --slave %{_bindir}/jarsigner jarsigner %{prefix}/bin/jarsigner \
                         --slave %{_bindir}/javadoc javadoc %{prefix}/bin/javadoc \
@@ -210,16 +223,38 @@ if [ $1 -ge 1 ] ; then
                         --slave  %{_mandir}/man1/serialver.1 serialver.1 %{prefix}/man/man1/serialver.1
 fi
 
+update-alternatives --install %{jvmdir}/java-25-openjdk java_sdk_25_openjdk %{prefix} %{priority}
+update-alternatives --install %{jvmdir}/java-25 java_sdk_25 %{prefix} %{priority}
+update-alternatives --install %{jvmdir}/java-openjdk java_sdk_openjdk %{prefix} %{priority}
+update-alternatives --install %{jvmdir}/jre-25-openjdk jre_25_openjdk %{prefix} %{priority}
+update-alternatives --install %{jvmdir}/jre-25 jre_25 %{prefix} %{priority}
+update-alternatives --install %{jvmdir}/jre-openjdk jre_openjdk %{prefix} %{priority}
+
 %preun
 if [ $1 -eq 0 ]; then
     update-alternatives --remove java %{prefix}/bin/java
     update-alternatives --remove javac %{prefix}/bin/javac
+    update-alternatives --remove java_sdk_25_openjdk %{prefix}
+    update-alternatives --remove java_sdk_25 %{prefix}
+    update-alternatives --remove java_sdk_openjdk %{prefix}
+    update-alternatives --remove jre_25_openjdk %{prefix}
+    update-alternatives --remove jre_25 %{prefix}
+    update-alternatives --remove jre_openjdk %{prefix}
 fi
 
 %files
 %defattr(-,root,root)
 %{prefix}
 /usr/lib/tmpfiles.d/%{name}.conf
+
+%ghost %{jvmdir}/java
+%ghost %{jvmdir}/java-25
+%ghost %{jvmdir}/java-openjdk
+%ghost %{jvmdir}/java-25-openjdk
+%ghost %{jvmdir}/jre
+%ghost %{jvmdir}/jre-25
+%ghost %{jvmdir}/jre-openjdk
+%ghost %{jvmdir}/jre-25-openjdk
 
 %changelog
 * Sat Oct 24 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.5.0.2-1
