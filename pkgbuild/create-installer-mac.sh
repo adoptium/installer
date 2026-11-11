@@ -30,7 +30,7 @@ WORK_DIRECTORY=$(mktemp -d "${TMPDIR:-/tmp}/temurin-mac.XXXXXX")
 readonly WORK_DIRECTORY
 trap 'rm -rf "$WORK_DIRECTORY"' EXIT
 
-for f in "$WORKSPACE"/workspace/target/${SEARCH_PATTERN}; do
+for f in "$WORKSPACE"/workspace/target/"${SEARCH_PATTERN}"; do
   if [ ! -f "$f" ]; then
     echo "No input archives match: $WORKSPACE/workspace/target/$SEARCH_PATTERN" >&2
     exit 1
