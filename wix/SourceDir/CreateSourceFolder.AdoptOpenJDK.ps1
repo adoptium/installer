@@ -25,7 +25,7 @@
 
 .PARAMETER wix_version
     The version wix that is currently installed.
-    Used to determine WixToolset.Heat version to be installed. Default is 6.0.0.
+    Used to determine WixToolset.Heat version to be installed. Default is 6.0.2.
 
 .NOTES
     File Name: CreateSourceFolder.AdoptOpenJDK.ps1
@@ -50,7 +50,7 @@ param (
   [Parameter(Mandatory = $false)]
   [string]$wix_path = "",
   [Parameter(Mandatory = $false)]
-  [string]$wix_version = "6.0.0"
+  [string]$wix_version = "6.0.2"
 )
 
 Get-ChildItem -Path .\ -Filter *.zip -File -Name | ForEach-Object {

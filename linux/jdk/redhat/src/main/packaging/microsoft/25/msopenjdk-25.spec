@@ -1,7 +1,7 @@
-%global upstream_version 25.0.4.1+1
+%global upstream_version 25.0.5.0.2+1
 # Only [A-Za-z0-9.] allowed in version:
 # https://docs.fedoraproject.org/en-US/packaging-guidelines/Versioning/#_upstream_uses_invalid_characters_in_the_version
-%global spec_version 25.0.4.1
+%global spec_version 25.0.5.0.2
 %global spec_release 1
 %global priority 2511
 
@@ -222,6 +222,8 @@ fi
 /usr/lib/tmpfiles.d/%{name}.conf
 
 %changelog
+* Sat Oct 24 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.5.0.2-1
+- Microsoft 25.0.5.0.2+1 initial release.
 * Wed Aug 12 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.4.1-1
 - Microsoft 25.0.4.1+1 initial release.
 * Sat Apr 18 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.3-1

@@ -881,7 +881,7 @@ def displayPipelineSummaryReport() {
     def totalBuilt = 0
     // Expected packages per distro (source RPMs included): RHEL = jdk, jre, jre-headless + 3 src.rpm; SUSE = jdk, jre + 2 src.rpm;
     // Debian = jdk, jre; Alpine = parent, jdk, src, jre (the parent .apk is built by both the JDK and JRE builds, so it is counted once)
-    def expectedPerDist = ['rhel': 6, 'suse': 4, 'alpine': 4]
+    def expectedPerDist = ['rhel': (Release.toString() == '23' ? 4 : 6), 'suse': 4, 'alpine': 4]
     def totalExpected = 0
     for (String d : DISTS_TO_BUILD) {
         totalExpected += expectedPerDist.get(d, 2)
