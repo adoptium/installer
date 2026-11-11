@@ -116,7 +116,7 @@ def collect_reports(input_paths):
             if res:
                 reports.append(res)
         except Exception as e:
-            print(f"Warning: Failed to parse {f}: {e}", file=sys.stderr)
+             raise ValueError(f"Failed to parse Grype report {f}: {e}") from e
 
     return reports
 

@@ -157,7 +157,10 @@ for APK_FILE in "${APK_FILES[@]}"; do
 
     EXTRACT_DIR="$WORK_DIR/$APK_BASE"
     mkdir -p "$EXTRACT_DIR"
-    tar -xzf "$APK_FILE" -C "$EXTRACT_DIR" 2>/dev/null || true
+    if ! tar -xzf "$APK_FILE" -C "$EXTRACT_DIR"; then
+        echo "ERROR: Failed to extract $APK_FILE" >&2
+        exit 1
+    fi
 
     REPORT_TXT="$OUTPUT_DIR/${APK_BASE}.txt"
     REPORT_JSON="$OUTPUT_DIR/${APK_BASE}.json"

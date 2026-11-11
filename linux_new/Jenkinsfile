@@ -1525,7 +1525,7 @@ stage('Verify Publication') {
 stage('Pipeline Summary Report') {
     agent { label NODE_LABEL }
     when {
-        expression { return !shouldSkipPipeline }
+                expression { return !shouldSkipPipeline && !params.DRY_RUN }
     }
     steps {
         script {
