@@ -56,7 +56,7 @@ ensure_grype() {
         return 0
     fi
 
-    for candidate in "$HOME/.local/bin" "/usr/local/bin" "/tmp/bin"; do
+    for candidate in "$HOME/.local/bin" "/usr/local/bin"; do
         if [[ -x "$candidate/grype" ]]; then
             export PATH="$candidate:$PATH"
             return 0

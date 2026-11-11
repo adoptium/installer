@@ -501,48 +501,62 @@ def runGrypeScan() {
         return
     }
 
-    cleanWs()
-    unstash "installercode-${env.BUILD_NUMBER}"
-
-    // Retrieve built packages from the Build & Archive Package stage
-    copyArtifacts projectName: "${env.JOB_NAME}",
-        selector: specific("${env.BUILD_NUMBER}"),
-        filter: '**/build/ospackage/*'
-
     def outDir = "build/grype-results"
-    sh "mkdir -p ${outDir}"
-
     def scanStatus = 0
 
-    // Check if Docker is available to run containerized scan
-    def dockerAvailable = (sh(script: 'docker --version', returnStatus: true) == 0)
-    if (dockerAvailable && fileExists('./grype/Dockerfile')) {
-        echo "Building Grype scanner Docker container image..."
-        sh "docker build -t temurin-grype-scanner -f ./grype/Dockerfile ./grype"
+    try {
+        cleanWs()
+        unstash "installercode-${env.BUILD_NUMBER}"
 
-        echo "Executing Grype scan inside container..."
-        // HOME must be writable: the host UID has no passwd entry in the image, so '~/.cache/grype/db' would otherwise resolve to '/.cache'
-        def dockerCmd = "docker run --rm -u \$(id -u):\$(id -g) -e HOME=/tmp -v \${PWD}:/work -w /work temurin-grype-scanner --search-dir /work --output-dir /work/${outDir}"
-        scanStatus = sh(script: dockerCmd, returnStatus: true)
-    } else {
-        echo "Docker not available or Dockerfile missing; executing Grype scan directly on agent host..."
-        sh "chmod +x ./grype/*.sh"
-        def hostCmd = "./grype/run-all-scans.sh --search-dir . --output-dir ${outDir}"
-        scanStatus = sh(script: hostCmd, returnStatus: true)
-    }
+        // Retrieve built packages from the Build & Archive Package stage
+        copyArtifacts projectName: "${env.JOB_NAME}",
+            selector: specific("${env.BUILD_NUMBER}"),
+            filter: '**/build/ospackage/*'
 
-    // Archive all scan results
-    archiveArtifacts artifacts: "${outDir}/**",
-        onlyIfSuccessful: false,
-        allowEmptyArchive: true
+        sh "mkdir -p ${outDir}"
 
-    if (scanStatus == 2) {
-        echo "WARNING: Grype scan completed with findings at or above threshold (exit code 2)."
-        currentBuild.result = 'UNSTABLE'
-    } else if (scanStatus != 0) {
-        echo "WARNING: Grype scan encountered an execution/setup error (exit code ${scanStatus})."
-    } else {
-        echo "Grype scan completed cleanly across all built packages."
+        // Check if Docker is available to run containerized scan
+        def dockerAvailable = (sh(script: 'docker --version', returnStatus: true) == 0)
+        if (dockerAvailable && fileExists('./grype/Dockerfile')) {
+            echo "Building Grype scanner Docker container image..."
+            def imageId = sh(script: 'docker build -q -f ./grype/Dockerfile ./grype', returnStdout: true).trim()
+
+            echo "Executing Grype scan inside container (${imageId})..."
+            // HOME must be writable: the host UID has no passwd entry in the image, so '~/.cache/grype/db' would otherwise resolve to '/.cache'
+            def dockerCmd = "docker run --rm -u \$(id -u):\$(id -g) -e HOME=/tmp -v \${PWD}:/work -w /work ${imageId} --search-dir /work --output-dir /work/${outDir}"
+            scanStatus = sh(script: dockerCmd, returnStatus: true)
+        } else {
+            echo "Docker not available or Dockerfile missing; executing Grype scan directly on agent host..."
+            sh "chmod +x ./grype/*.sh"
+            def hostCmd = "./grype/run-all-scans.sh --search-dir . --output-dir ${outDir}"
+            scanStatus = sh(script: hostCmd, returnStatus: true)
+        }
+
+        if (scanStatus == 2) {
+            echo "WARNING: Grype scan completed with findings at or above threshold (exit code 2)."
+            currentBuild.result = 'UNSTABLE'
+        } else if (scanStatus != 0) {
+            echo "WARNING: Grype scan encountered an execution/setup error (exit code ${scanStatus})."
+        } else {
+            echo "Grype scan completed cleanly across all built packages."
+        }
+    } catch (Exception e) {
+        if (e instanceof InterruptedException || e.getClass().getName().contains("FlowInterruptedException")) {
+            throw e
+        }
+        echo "WARNING: Grype scan encountered an execution/setup error: ${e.message}"
+    } finally {
+        // Archive all scan results
+        try {
+            archiveArtifacts artifacts: "${outDir}/**",
+                onlyIfSuccessful: false,
+                allowEmptyArchive: true
+        } catch (Exception e) {
+            if (e instanceof InterruptedException || e.getClass().getName().contains("FlowInterruptedException")) {
+                throw e
+            }
+            echo "Note: Grype scan artifact archival skipped or failed: ${e.message}"
+        }
     }
 }
 
@@ -880,8 +894,8 @@ def displayPipelineSummaryReport() {
 
     def totalBuilt = 0
     // Expected packages per distro (source RPMs included): RHEL = jdk, jre, jre-headless + 3 src.rpm; SUSE = jdk, jre + 2 src.rpm;
-    // Debian = jdk, jre; Alpine = parent, jdk, src, jre (the parent .apk is built by both the JDK and JRE builds, so it is counted once)
-    def expectedPerDist = ['rhel': (Release.toString() == '23' ? 4 : 6), 'suse': 4, 'alpine': 4]
+    // Debian = jdk, jre; Alpine = parent, jdk, src, jre (except JDK 8 = 2: jdk, jre)
+    def expectedPerDist = ['rhel': (Release.toString() == '23' ? 4 : 6), 'suse': 4, 'alpine': (Release.toString() == '8' ? 2 : 4)]
     def totalExpected = 0
     for (String d : DISTS_TO_BUILD) {
         totalExpected += expectedPerDist.get(d, 2)
@@ -1085,6 +1099,15 @@ def displayPipelineSummaryReport() {
 
     rpt << ""
     rpt << sep
+
+    def buildResult = currentBuild.currentResult ?: currentBuild.result ?: 'SUCCESS'
+    if (buildResult != 'SUCCESS') {
+        overallPass = false
+        if (actionItems.isEmpty()) {
+            actionItems << "Pipeline execution completed with status '${buildResult}' — check preceding stage logs."
+        }
+    }
+
     if (overallPass && actionItems.isEmpty()) {
         rpt << "  OVERALL PIPELINE VERDICT: [ SUCCESS ]"
         // Only claim what was actually done: publication and scanning can be skipped.
