@@ -152,12 +152,12 @@ for APK_FILE in "${APK_FILES[@]}"; do
     echo "── $APK_BASE ──────────────────────────────────────"
 
     # Read package name from .PKGINFO for --name flag
-    PKG_NAME="$(tar -xOf "$APK_FILE" .PKGINFO 2>/dev/null | awk '/^pkgname =/ {print $3}')"
+    PKG_NAME="$((tar --warning=no-unknown-keyword -xOf "$APK_FILE" .PKGINFO 2>/dev/null || tar -xOf "$APK_FILE" .PKGINFO 2>/dev/null) | awk '/^pkgname =/ {print $3}')"
     [[ -z "$PKG_NAME" ]] && PKG_NAME="$APK_BASE"
 
     EXTRACT_DIR="$WORK_DIR/$APK_BASE"
     mkdir -p "$EXTRACT_DIR"
-    if ! tar -xzf "$APK_FILE" -C "$EXTRACT_DIR"; then
+    if ! tar --warning=no-unknown-keyword -xzf "$APK_FILE" -C "$EXTRACT_DIR" 2>/dev/null && ! tar -xzf "$APK_FILE" -C "$EXTRACT_DIR"; then
         echo "ERROR: Failed to extract $APK_FILE" >&2
         exit 1
     fi

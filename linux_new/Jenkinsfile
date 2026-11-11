@@ -1585,7 +1585,7 @@ stage('Pipeline Summary Report') {
                     echo "FileName : ${ArchiveFileName}"
 
                     if (!params.SKIP_SRC && !params.SKIP_UPLOAD) {
-                        build job: 'publish_linux_pkg_src', parameters: [
+                        build job: 'publish_linux_pkg_src', propagate: false, parameters: [
                         string(name: 'TAG', value: params.TAG),
                         string(name: 'FILENAME', value: ArchiveFileName)
                         ]
