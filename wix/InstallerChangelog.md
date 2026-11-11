@@ -8,6 +8,10 @@
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
+## 2026-11-11
+### Added
+- Windows Installer builds can optionally display a fail-open sponsored image served by a configurable HTTPS endpoint.
+
 ## 2025-06-02
 ### Changed
 - Update to wix v6
