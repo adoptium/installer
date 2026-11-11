@@ -6,7 +6,7 @@ Repository for creating installable packages for Eclipse Adoptium based releases
 
 The packages are created using:
 1. [Wix Toolset](http://wixtoolset.org) (Windows), detail see [implementation](./wix)
-2. [Packages](http://s.sudre.free.fr/Software/Packages/about.html) (MacOS), detail see [implementation](./pkgbuild)
+2. Apple's `pkgbuild` and `productbuild` (macOS), detail see [implementation](./pkgbuild)
 3. Linux installer include deb and rpm based package, detail see [implementation](./linux)
 
 The available packages can be seen from the Eclipse Temurin OpenJDK download page: https://adoptium.net/temurin/releases
