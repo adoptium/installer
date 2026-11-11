@@ -47,8 +47,9 @@ def rebase_fixture(package_dir, relative_path, legacy):
     with (source_bundle / "Contents" / "Info.plist").open("rb") as file:
         bundle_info = plistlib.load(file)
     bundle_id = bundle_info["CFBundleIdentifier"]
-    if bundle_id != info.attrib["identifier"]:
-        raise ValueError("Fixture package and bundle identifiers must match")
+    package_id = info.attrib["identifier"]
+    if bundle_id not in {package_id, f"{package_id}.bundle"}:
+        raise ValueError("Unexpected fixture bundle identifier")
 
     destination_bundle = payload.joinpath(*destination_path.parts)
     destination_bundle.parent.mkdir(parents=True)
@@ -103,12 +104,21 @@ def rebase_fixture(package_dir, relative_path, legacy):
                     raise ValueError("Unexpected bundle path in package metadata")
                 item.set("path", f"./{destination_path}")
 
-    domains = distribution.find("./domains")
-    if domains is None:
-        raise ValueError("Fixture distribution has no domains")
-    domains.attrib.update(
-        enable_anywhere="false", enable_currentUserHome="true", enable_localSystem="false"
+    options = distribution.find("./options")
+    if options is None or options.get("rootVolumeOnly") != "true":
+        raise ValueError("Fixture distribution does not target only the root volume")
+    if distribution.find("./domains") is not None:
+        raise ValueError("Fixture distribution unexpectedly declares installation domains")
+    del options.attrib["rootVolumeOnly"]
+    domains = ElementTree.Element(
+        "domains",
+        {
+            "enable_anywhere": "false",
+            "enable_currentUserHome": "true",
+            "enable_localSystem": "false",
+        },
     )
+    distribution.insert(list(distribution).index(options) + 1, domains)
     for package_ref in list(distribution.findall("./pkg-ref")):
         if legacy and package_ref.find("./bundle-version") is not None:
             distribution.remove(package_ref)

@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <installer-gui-script minSpecVersion="1.0">
   <title>{package-name}</title>
-  <options hostArchitectures="{arch}" require-scripts="false"/>
-  <domains enable_anywhere="false" enable_currentUserHome="false" enable_localSystem="true"/>
+  <options rootVolumeOnly="true" hostArchitectures="{arch}"/>
   <background file="{logo}" scaling="proportional" alignment="bottomleft"/>
   <background-darkAqua file="{logo}" scaling="proportional" alignment="bottomleft"/>
   <welcome file="welcome.html"/>

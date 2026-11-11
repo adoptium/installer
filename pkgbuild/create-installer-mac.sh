@@ -22,6 +22,10 @@ SCRIPT_DIRECTORY=$(cd "$(dirname "$0")" && pwd)
 : "${FULL_VERSION:?FULL_VERSION is required}"
 SEARCH_PATTERN=${SEARCH_PATTERN:-OpenJDK*-j*.tar.gz}
 
+if [ -n "${CERTIFICATE:-}" ]; then
+  echo "Warning: CERTIFICATE is ignored; the installer must be signed separately." >&2
+fi
+
 WORK_DIRECTORY=$(mktemp -d "${TMPDIR:-/tmp}/temurin-mac.XXXXXX")
 readonly WORK_DIRECTORY
 trap 'rm -rf "$WORK_DIRECTORY"' EXIT

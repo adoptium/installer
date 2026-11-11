@@ -68,9 +68,8 @@ PAYLOAD="${WORK_DIRECTORY}/hotspot/payload.pkg/Payload"
 BUNDLE="${PAYLOAD}/Library/Java/JavaVirtualMachines/temurin-17.jdk"
 assert_xml "$DIST" 'string(/installer-gui-script/title)' "$PACKAGE_NAME"
 assert_xml "$DIST" 'string(//options/@hostArchitectures)' arm64
-assert_xml "$DIST" 'string(//domains/@enable_anywhere)' false
-assert_xml "$DIST" 'string(//domains/@enable_currentUserHome)' false
-assert_xml "$DIST" 'string(//domains/@enable_localSystem)' true
+assert_xml "$DIST" 'string(//options/@rootVolumeOnly)' true
+assert_xml "$DIST" 'count(//domains)' 0
 assert_xml "$DIST" 'string(//background/@file)' 'logo & mark.png'
 assert_xml "$DIST" 'string(//background/@alignment)' bottomleft
 assert_xml "$DIST" 'string(//background/@scaling)' proportional
@@ -126,8 +125,13 @@ ARCHIVE="${WRAPPER_WORKSPACE}/workspace/target/OpenJDK17U-jdk_aarch64_mac_hotspo
 JRE_ARCHIVE="${WRAPPER_WORKSPACE}/workspace/target/OpenJDK17U-jre_x64_mac_hotspot_17.0.3_7.tar.gz"
 tar -czf "$ARCHIVE" -C "$(dirname "$INPUT")" "$(basename "$INPUT")"
 tar -czf "$JRE_ARCHIVE" -C "$(dirname "$INPUT")" "$(basename "$INPUT")"
-WORKSPACE="$WRAPPER_WORKSPACE" MAJOR_VERSION=17 FULL_VERSION=17.0.3+7 CERTIFICATE=unused \
-  bash "${REPOSITORY}/pkgbuild/create-installer-mac.sh"
+if ! WORKSPACE="$WRAPPER_WORKSPACE" MAJOR_VERSION=17 FULL_VERSION=17.0.3+7 CERTIFICATE=unused \
+  bash "${REPOSITORY}/pkgbuild/create-installer-mac.sh" 2>"${WORK_DIRECTORY}/wrapper.stderr"; then
+  cat "${WORK_DIRECTORY}/wrapper.stderr" >&2
+  fail "Archive entry point failed"
+fi
+grep -Fq 'CERTIFICATE is ignored' "${WORK_DIRECTORY}/wrapper.stderr" \
+  || fail "No warning was emitted for the legacy CERTIFICATE setting"
 [ -f "${ARCHIVE%.tar.gz}.pkg" ] || fail "Archive entry point did not create an installer"
 [ -f "${JRE_ARCHIVE%.tar.gz}.pkg" ] || fail "Archive entry point did not create the JRE installer"
 [ ! -e "$ARCHIVE" ] || fail "Successfully packaged source archive was not removed"

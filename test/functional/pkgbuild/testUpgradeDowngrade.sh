@@ -50,7 +50,7 @@ esac
 
 build_fixture() {
   local profile="$1" release="$2" version="$3" short_version="$4" build_version="$5"
-  local identifier="$6" major="$7" type="$8"
+  local identifier="$6" major="$7" type="$8" bundle_identifier="$9"
   local build="$WORK_DIRECTORY/builds/${profile}-${release}"
   local relative="${WORK_DIRECTORY#"$HOME"/}/installed/${profile}.${type}"
   mkdir -p "$build/input/Contents/Home"
@@ -58,7 +58,7 @@ build_fixture() {
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
-  <key>CFBundleIdentifier</key><string>$identifier</string>
+  <key>CFBundleIdentifier</key><string>$bundle_identifier</string>
   <key>CFBundleVersion</key><string>$build_version</string>
   <key>CFBundleShortVersionString</key><string>$short_version</string>
   <key>CFBundlePackageType</key><string>BNDL</string>
@@ -131,14 +131,20 @@ run_transition() {
 
 test_profile() {
   local profile="$1" major="$2" type="$3" old_version="$4" old_short="$5" old_build="$6"
-  local new_version="$7" new_short="$8" new_build="$9"
+  local new_version="$7" new_short="$8" new_build="$9" bundle_mode="${10}"
   local identifier="org.adoptium.installer.test${RUN_ID}.${profile}"
+  local bundle_identifier
+  case "$bundle_mode" in
+    same) bundle_identifier="$identifier" ;;
+    distinct) bundle_identifier="${identifier}.bundle" ;;
+    *) fail "Unknown fixture bundle identifier mode: $bundle_mode" ;;
+  esac
   if pkgutil --volume "$HOME" --pkg-info "$identifier" >/dev/null 2>&1; then
     fail "Test receipt already exists: $identifier"
   fi
   printf '%s\n' "$identifier" >> "$RECEIPTS"
-  build_fixture "$profile" old "$old_version" "$old_short" "$old_build" "$identifier" "$major" "$type"
-  build_fixture "$profile" new "$new_version" "$new_short" "$new_build" "$identifier" "$major" "$type"
+  build_fixture "$profile" old "$old_version" "$old_short" "$old_build" "$identifier" "$major" "$type" "$bundle_identifier"
+  build_fixture "$profile" new "$new_version" "$new_short" "$new_build" "$identifier" "$major" "$type" "$bundle_identifier"
 
   local direction baseline result first_style second_style first_release second_release
   for direction in upgrade downgrade; do
@@ -163,7 +169,7 @@ test_profile() {
   done
 }
 
-test_profile jdk25 25 jdk "25.0.4.1+1-LTS" "25.0.4.1" "1" "25.0.5+8-LTS" "25.0.5" "8"
-test_profile jdk25build 25 jdk "25.0.5+7-LTS" "25.0.5" "7" "25.0.5+8-LTS" "25.0.5" "8"
-test_profile jdk8 8 jdk "1.8.0_503-b08" "1.0" "1.8.0_503" "1.8.0_504-b01" "1.0" "1.8.0_504"
-test_profile jre11 11 jre "11.0.32+8" "11.0.32" "" "11.0.33+10" "11.0.33" ""
+test_profile jdk25 25 jdk "25.0.4.1+1-LTS" "25.0.4.1" "1" "25.0.5+8-LTS" "25.0.5" "8" distinct
+test_profile jdk25build 25 jdk "25.0.5+7-LTS" "25.0.5" "7" "25.0.5+8-LTS" "25.0.5" "8" distinct
+test_profile jdk8 8 jdk "1.8.0_503-b08" "1.0" "1.8.0_503" "1.8.0_504-b01" "1.0" "1.8.0_504" same
+test_profile jre11 11 jre "11.0.32+8" "11.0.32" "" "11.0.33+10" "11.0.33" "" distinct

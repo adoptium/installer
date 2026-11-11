@@ -67,7 +67,8 @@ separate release steps through the Eclipse service, using
 file, ad-hoc re-signing or local notarization is performed during packaging.
 The former `--sign` option now reports an error instead of silently producing an
 unsigned package. The legacy `CERTIFICATE` environment variable is ignored;
-the existing Jenkins invocation and downstream signing service require no changes.
+if set, it produces a warning. The existing Jenkins invocation and downstream
+signing service require no changes.
 
 Unsigned local packages are for testing, not distribution. To preview one, open
 the `.pkg` in Installer.app. Nothing is installed until you choose **Install**
