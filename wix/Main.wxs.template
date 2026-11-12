@@ -32,9 +32,13 @@
         <Property Id="AdvertImageUrl" Value="$(env.ADVERT_IMAGE_URL)" Hidden="yes" />
       <?endif?>
       <Property Id="AdvertDisclosureText" Value="!(loc.AdvertDlgDescription)" />
+      <Property Id="AdvertLinkTooltip" Value="!(loc.AdvertLinkTooltip)" />
       <Property Id="DISABLE_ADVERT" Value="0" />
       <Binary Id="AdvertCustomAction" SourceFile="$(var.AdvertCustomActionPath)" />
       <CustomAction Id="FetchAdvert" BinaryRef="AdvertCustomAction" DllEntry="FetchAdvert"
+        Execute="immediate" Return="ignore" />
+      <!-- Published by the banner button when the API returns a click URL. -->
+      <CustomAction Id="OpenAdvertLink" BinaryRef="AdvertCustomAction" DllEntry="OpenAdvertLink"
         Execute="immediate" Return="ignore" />
     <?endif?>
 

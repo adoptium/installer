@@ -5,6 +5,8 @@
 #include <windows.h>
 #include <msi.h>
 #include <msiquery.h>
+#include <objbase.h>
+#include <shellapi.h>
 #include <winhttp.h>
 
 #include <algorithm>
@@ -13,12 +15,16 @@
 #include <vector>
 
 #pragma comment(lib, "msi.lib")
+#pragma comment(lib, "ole32.lib")
+#pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "winhttp.lib")
 
 #if defined(_M_IX86)
 #pragma comment(linker, "/EXPORT:FetchAdvert=_FetchAdvert@4")
+#pragma comment(linker, "/EXPORT:OpenAdvertLink=_OpenAdvertLink@4")
 #else
 #pragma comment(linker, "/EXPORT:FetchAdvert")
+#pragma comment(linker, "/EXPORT:OpenAdvertLink")
 #endif
 
 namespace
@@ -29,7 +35,9 @@ constexpr DWORD kDownloadBufferBytes = 64U * 1024U;
 constexpr DWORD kImageHeaderBytes = 64U * 1024U;
 constexpr DWORD kMaxAdvertUrlCharacters = 2048U;
 constexpr wchar_t kRemoteAdvertBinaryId[] = L"AdvertRemote";
+constexpr wchar_t kAdvertClickUrlProperty[] = L"AdvertClickUrl";
 constexpr int kAdvertControlAttributes = 0x00000007; // visible, enabled, sunken
+constexpr int kAdvertButtonAttributes = 0x00040003; // visible, enabled, bitmap
 constexpr int kProgressDialogWidth = 370;
 constexpr int kAdvertAreaY = 130;
 constexpr int kAdvertAreaWidth = 330;
@@ -290,7 +298,7 @@ public:
     {
     }
 
-    JsonAdvertResult ReadFirstAdvertImage(std::string& image)
+    JsonAdvertResult ReadFirstAdvert(std::string& image, std::string& clickUrl)
     {
         if (!Consume('['))
         {
@@ -310,6 +318,7 @@ public:
         }
 
         bool foundImage = false;
+        bool foundClickUrl = false;
         SkipWhitespace();
         if (!Consume('}'))
         {
@@ -328,6 +337,28 @@ public:
                         return JsonAdvertResult::invalid;
                     }
                     foundImage = true;
+                }
+                else if (name == "url")
+                {
+                    if (foundClickUrl)
+                    {
+                        return JsonAdvertResult::invalid;
+                    }
+                    // A missing, null, or non-string click URL leaves the banner
+                    // displayed without a link.
+                    SkipWhitespace();
+                    if (current_ != end_ && *current_ == '"')
+                    {
+                        if (!ReadString(clickUrl))
+                        {
+                            return JsonAdvertResult::invalid;
+                        }
+                    }
+                    else if (!SkipValue(0))
+                    {
+                        return JsonAdvertResult::invalid;
+                    }
+                    foundClickUrl = true;
                 }
                 else if (!SkipValue(0))
                 {
@@ -915,6 +946,7 @@ bool RequestAdvertImageUrl(
     MSIHANDLE install,
     const std::wstring& apiUrl,
     std::wstring& imageUrl,
+    std::wstring& clickUrl,
     bool& noAdvert,
     const wchar_t*& failureReason,
     DWORD& error) noexcept
@@ -1169,8 +1201,9 @@ bool RequestAdvertImageUrl(
     }
 
     std::string imageUtf8;
+    std::string clickUrlUtf8;
     const JsonAdvertResult parsed =
-        JsonReader(response.data(), response.size()).ReadFirstAdvertImage(imageUtf8);
+        JsonReader(response.data(), response.size()).ReadFirstAdvert(imageUtf8, clickUrlUtf8);
     if (parsed == JsonAdvertResult::empty)
     {
         noAdvert = true;
@@ -1182,8 +1215,29 @@ bool RequestAdvertImageUrl(
         failureReason = L"the API returned invalid advert JSON";
         return false;
     }
+    if (!clickUrlUtf8.empty() && !Utf8ToWide(clickUrlUtf8, clickUrl))
+    {
+        clickUrl.clear();
+    }
 
     return true;
+}
+
+bool IsAllowedClickUrl(const std::wstring& url) noexcept
+{
+    std::wstring host;
+    std::wstring objectName;
+    INTERNET_PORT port = INTERNET_DEFAULT_HTTPS_PORT;
+    bool secure = true;
+    DWORD error = ERROR_SUCCESS;
+    try
+    {
+        return ParseAdvertUrl(url, host, port, objectName, secure, error);
+    }
+    catch (...)
+    {
+        return false;
+    }
 }
 
 bool DownloadAdvert(
@@ -1458,8 +1512,11 @@ bool DownloadAdvert(
 bool AddTemporaryAdvertUi(
     MSIHANDLE install,
     const std::wstring& imageFile,
+    bool clickable,
+    bool& linked,
     DWORD& error) noexcept
 {
+    linked = false;
     DWORD imageWidth = 0;
     DWORD imageHeight = 0;
     if (!ReadImageDimensions(imageFile, imageWidth, imageHeight))
@@ -1561,13 +1618,33 @@ bool AddTemporaryAdvertUi(
 
     MsiRecordSetStringW(controlRecord.Get(), 1, L"ProgressDlg");
     MsiRecordSetStringW(controlRecord.Get(), 2, L"ProgressAdvertImage");
-    MsiRecordSetStringW(controlRecord.Get(), 3, L"Bitmap");
+    // A bitmap push button is the only Windows Installer image control that can
+    // publish a DoAction event while the modeless progress dialog is displayed.
+    MsiRecordSetStringW(controlRecord.Get(), 3, clickable ? L"PushButton" : L"Bitmap");
     MsiRecordSetInteger(controlRecord.Get(), 4, controlX);
     MsiRecordSetInteger(controlRecord.Get(), 5, controlY);
     MsiRecordSetInteger(controlRecord.Get(), 6, controlWidth);
     MsiRecordSetInteger(controlRecord.Get(), 7, controlHeight);
-    MsiRecordSetInteger(controlRecord.Get(), 8, kAdvertControlAttributes);
+    MsiRecordSetInteger(
+        controlRecord.Get(), 8, clickable ? kAdvertButtonAttributes : kAdvertControlAttributes);
     MsiRecordSetStringW(controlRecord.Get(), 10, kRemoteAdvertBinaryId);
+    if (clickable)
+    {
+        // The Help column is not formatted, so resolve the localized tooltip here.
+        std::wstring tooltip;
+        try
+        {
+            if (GetProperty(install, L"AdvertLinkTooltip", tooltip) && !tooltip.empty() &&
+                tooltip.find(L'|') == std::wstring::npos)
+            {
+                tooltip.push_back(L'|');
+                MsiRecordSetStringW(controlRecord.Get(), 12, tooltip.c_str());
+            }
+        }
+        catch (...)
+        {
+        }
+    }
 
     result = MsiViewModify(
         controlView.Get(), MSIMODIFY_INSERT_TEMPORARY, controlRecord.Get());
@@ -1595,6 +1672,32 @@ bool AddTemporaryAdvertUi(
     }
 
     MsiViewClose(controlView.Get());
+
+    if (clickable)
+    {
+        MSIHANDLE rawEventView = 0;
+        if (MsiDatabaseOpenViewW(
+                database.Get(),
+                L"SELECT `Dialog_`, `Control_`, `Event`, `Argument`, `Condition`, `Ordering` "
+                L"FROM `ControlEvent`",
+                &rawEventView) == ERROR_SUCCESS)
+        {
+            InstallerHandle eventView(rawEventView);
+            InstallerHandle eventRecord(MsiCreateRecord(6));
+            if (eventRecord.Get() != 0 && MsiViewExecute(eventView.Get(), 0) == ERROR_SUCCESS)
+            {
+                MsiRecordSetStringW(eventRecord.Get(), 1, L"ProgressDlg");
+                MsiRecordSetStringW(eventRecord.Get(), 2, L"ProgressAdvertImage");
+                MsiRecordSetStringW(eventRecord.Get(), 3, L"DoAction");
+                MsiRecordSetStringW(eventRecord.Get(), 4, L"OpenAdvertLink");
+                MsiRecordSetStringW(eventRecord.Get(), 5, L"1");
+                MsiRecordSetInteger(eventRecord.Get(), 6, 1);
+                linked = MsiViewModify(
+                    eventView.Get(), MSIMODIFY_INSERT_TEMPORARY, eventRecord.Get()) == ERROR_SUCCESS;
+            }
+            MsiViewClose(eventView.Get());
+        }
+    }
     return true;
 }
 } // namespace
@@ -1604,10 +1707,12 @@ extern "C" UINT __stdcall FetchAdvert(MSIHANDLE install)
     // Advertising is optional. Every failure is fail-open so it can never block installation.
     MsiSetPropertyW(install, L"ADVERT_FETCH_ATTEMPTED", L"1");
     MsiSetPropertyW(install, L"ADVERT_LOADED", L"");
+    MsiSetPropertyW(install, kAdvertClickUrlProperty, L"");
 
     try
     {
         std::wstring url;
+        std::wstring clickUrl;
         std::wstring apiUrl;
         if (GetProperty(install, L"AdvertApiUrl", apiUrl) && !apiUrl.empty())
         {
@@ -1615,7 +1720,7 @@ extern "C" UINT __stdcall FetchAdvert(MSIHANDLE install)
             const wchar_t* failureReason = L"the API request failed";
             DWORD error = ERROR_SUCCESS;
             if (!RequestAdvertImageUrl(
-                    install, apiUrl, url, noAdvert, failureReason, error))
+                    install, apiUrl, url, clickUrl, noAdvert, failureReason, error))
             {
                 LogFailure(install, failureReason, error);
                 return ERROR_SUCCESS;
@@ -1641,7 +1746,19 @@ extern "C" UINT __stdcall FetchAdvert(MSIHANDLE install)
             return ERROR_SUCCESS;
         }
 
-        const bool inserted = AddTemporaryAdvertUi(install, imageFile, error);
+        bool clickable = false;
+        if (!clickUrl.empty())
+        {
+            clickable = IsAllowedClickUrl(clickUrl) &&
+                MsiSetPropertyW(install, kAdvertClickUrlProperty, clickUrl.c_str()) == ERROR_SUCCESS;
+            if (!clickable)
+            {
+                LogMessage(install, L"the click URL is invalid; the banner will not be linked");
+            }
+        }
+
+        bool linked = false;
+        const bool inserted = AddTemporaryAdvertUi(install, imageFile, clickable, linked, error);
         DeleteFileW(imageFile.c_str());
         if (!inserted)
         {
@@ -1656,11 +1773,54 @@ extern "C" UINT __stdcall FetchAdvert(MSIHANDLE install)
             return ERROR_SUCCESS;
         }
 
+        if (clickable && !linked)
+        {
+            LogMessage(install, L"the banner click action could not be registered");
+        }
         LogMessage(install, L"image loaded successfully");
     }
     catch (...)
     {
         LogMessage(install, L"an unexpected error occurred; skipping");
+    }
+
+    return ERROR_SUCCESS;
+}
+
+extern "C" UINT __stdcall OpenAdvertLink(MSIHANDLE install)
+{
+    // Published by the banner button. Failures are logged and never affect installation.
+    try
+    {
+        std::wstring url;
+        if (!GetProperty(install, kAdvertClickUrlProperty, url) || url.empty() ||
+            !IsAllowedClickUrl(url))
+        {
+            LogMessage(install, L"no valid click URL is available");
+            return ERROR_SUCCESS;
+        }
+
+        const HRESULT comResult =
+            CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+        const HINSTANCE result =
+            ShellExecuteW(nullptr, L"open", url.c_str(), nullptr, nullptr, SW_SHOWNORMAL);
+        if (SUCCEEDED(comResult))
+        {
+            CoUninitialize();
+        }
+        if (reinterpret_cast<INT_PTR>(result) <= 32)
+        {
+            LogFailure(
+                install,
+                L"the click URL could not be opened",
+                static_cast<DWORD>(reinterpret_cast<INT_PTR>(result)));
+            return ERROR_SUCCESS;
+        }
+        LogMessage(install, L"opened the click URL");
+    }
+    catch (...)
+    {
+        LogMessage(install, L"an unexpected error occurred while opening the click URL");
     }
 
     return ERROR_SUCCESS;

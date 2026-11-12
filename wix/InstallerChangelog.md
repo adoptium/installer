@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ## 2026-11-11
 ### Added
 - Windows Installer builds can optionally display a fail-open sponsored image served by a configurable HTTPS endpoint.
+- The sponsored image opens the API-provided click URL in the default browser when selected.
 
 ## 2025-06-02
 ### Changed

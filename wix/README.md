@@ -101,10 +101,13 @@ call Build.OpenJDK_generic.cmd
 
 The installer posts one request to the API, which selects an eligible campaign
 and records its impression. It then downloads the returned image and displays it
-beneath the progress bar while installation is running. Campaigns can be changed
-without rebuilding the MSI. A timeout, network failure, empty campaign response,
-invalid response, or disabled custom action leaves the standard progress dialog
-unchanged and cannot fail the installation.
+beneath the progress bar while installation is running. When the response also
+contains a `url`, the banner becomes a button that opens that URL unchanged in
+the user's default browser, so the API's tracking link records the click. A
+missing or invalid `url` leaves the banner displayed without a link. Campaigns
+can be changed without rebuilding the MSI. A timeout, network failure, empty
+campaign response, invalid response, or disabled custom action leaves the
+standard progress dialog unchanged and cannot fail the installation.
 
 The API request defaults are:
 
@@ -134,6 +137,10 @@ Endpoint requirements:
 - For local testing only, plain HTTP is accepted for the literal loopback hosts
   `localhost`, `127.0.0.1`, and `::1`. HTTP is rejected for every other host.
 - A direct HTTP 200 response; redirects and URLs containing credentials are rejected.
+- The click `url` follows the same rules as the image URL: HTTPS (or loopback
+  HTTP for local testing), no credentials, fragments, whitespace or control
+  characters, and at most 2048 characters. It may redirect after it is opened
+  in the browser.
 - A JPEG, BMP, or PNG response no larger than 1 MiB. JPEG or BMP is required for
   Windows 7 compatibility; PNG is supported by the Windows Installer bitmap
   control on Windows 8 and later.
