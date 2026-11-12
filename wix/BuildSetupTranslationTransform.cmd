@@ -18,6 +18,7 @@ wix build -arch !PLATFORM! ^
     !ITW_WXS! ^
     -ext WixToolset.UI.wixext ^
     -ext WixToolset.Util.wixext ^
+    -d AdvertCustomActionPath="!ADVERT_CUSTOM_ACTION_PATH!" ^
     -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" ^
     -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" ^
     -d ProductSku="!PRODUCT_SKU!" ^

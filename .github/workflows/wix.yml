@@ -96,6 +96,7 @@ jobs:
           PRODUCT_CATEGORY: jdk
           ARCH: ${{ matrix.ARCH }}
           JVM: ${{ matrix.JVM }}
+          ADVERT_API_URL: https://newsroom.eclipse.org/api/ads
         shell: cmd
 
       - name: Create JRE Installer

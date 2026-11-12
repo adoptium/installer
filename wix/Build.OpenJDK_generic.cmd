@@ -15,6 +15,8 @@ REM SKIP_MSI_VALIDATION=true (Add -sval option to light.exe to skip MSI/MSM vali
 REM UPGRADE_CODE_SEED=thisIsAPrivateSecretSeed ( optional ) for upgradable MSI (If none, new PRODUCT_UPGRADE_CODE is generate for each run)
 REM OUTPUT_BASE_FILENAME=customFileName (optional) for setting file names that are not based on the default naming convention
 REM WIX_VERSION=6.0.2 (optional) for setting the version of Wix Toolset to use
+REM ADVERT_API_URL=https://newsroom.eclipse.org/api/ads (optional) enables Eclipse Newsroom adverts
+REM ADVERT_IMAGE_URL=https://example.org/advert.jpg (optional direct-image test override)
 
 SETLOCAL ENABLEEXTENSIONS
 SET ERR=0
@@ -42,6 +44,15 @@ IF NOT DEFINED PRODUCT_SUPPORT_LINK SET PRODUCT_SUPPORT_LINK=https://adoptium.ne
 IF NOT DEFINED PRODUCT_UPDATE_INFO_LINK SET PRODUCT_UPDATE_INFO_LINK=https://adoptium.net/temurin/releases
 IF NOT DEFINED WIX_HEAT_PATH SET WIX_HEAT_PATH=.\Resources\heat_dir\heat.exe
 IF NOT DEFINED WIX_VERSION SET WIX_VERSION=6.0.2
+SET ADVERT_ENABLED=false
+IF DEFINED ADVERT_API_URL (
+    SET ADVERT_ENABLED=true
+    IF NOT DEFINED ADVERT_API_HOST SET ADVERT_API_HOST=adoptium.net
+    IF NOT DEFINED ADVERT_API_SOURCE SET ADVERT_API_SOURCE=temurin-msi-installer
+    IF NOT DEFINED ADVERT_API_PUBLISH_TO SET ADVERT_API_PUBLISH_TO=adoptium_msi_installer
+    IF NOT DEFINED ADVERT_API_FORMAT SET ADVERT_API_FORMAT=ads_banner_880x240
+)
+IF DEFINED ADVERT_IMAGE_URL SET ADVERT_ENABLED=true
 
 REM default windows_SDK version
 REM See folder e.g. "C:\Program Files (x86)\Windows Kits\[10]\bin\[10.0.26100.0]\!PLATFORM!"
@@ -301,6 +312,16 @@ FOR %%A IN (%ARCH%) DO (
     )
     @ECHO OFF
 
+    SET "ADVERT_CUSTOM_ACTION_PATH=unused"
+    IF "!ADVERT_ENABLED!" == "true" (
+        SET "ADVERT_CUSTOM_ACTION_PATH=!WORKDIR!!OUTPUT_BASE_FILENAME!-AdvertCustomAction.dll"
+        CALL "%~dp0helpers\Build-AdvertCustomAction.cmd" !PLATFORM! "!ADVERT_CUSTOM_ACTION_PATH!"
+        IF ERRORLEVEL 1 (
+            ECHO Failed to build the runtime advert custom action
+            GOTO FAILED
+        )
+    )
+
     ECHO BUILD
     @ECHO ON
     wix build -arch !PLATFORM! ^
@@ -309,6 +330,7 @@ FOR %%A IN (%ARCH%) DO (
         !ITW_WXS! ^
         -ext WixToolset.UI.wixext ^
         -ext WixToolset.Util.wixext ^
+        -d AdvertCustomActionPath="!ADVERT_CUSTOM_ACTION_PATH!" ^
         -d IcedTeaWebDir="!ICEDTEAWEB_DIR!" ^
         -d OutputBaseFilename="!OUTPUT_BASE_FILENAME!" ^
         -d ProductSku="!PRODUCT_SKU!" ^
@@ -409,6 +431,7 @@ FOR %%A IN (%ARCH%) DO (
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.!TEMPLATE_NAME!.*.wxl"
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Base.*.wxl"
     DEL "%WORKDIR%!OUTPUT_BASE_FILENAME!-!PRODUCT_SKU!.Variables.wxi"
+    IF "!ADVERT_ENABLED!" == "true" IF EXIST "!ADVERT_CUSTOM_ACTION_PATH!" DEL "!ADVERT_CUSTOM_ACTION_PATH!"
     IF DEFINED ITW_WXS (
         DEL !ITW_WXS!
     )
@@ -416,6 +439,7 @@ FOR %%A IN (%ARCH%) DO (
     SET TEMPLATE_NAME=
   )
   SET ITW_WXS=
+  SET ADVERT_CUSTOM_ACTION_PATH=
 )
 ENDLOCAL
 

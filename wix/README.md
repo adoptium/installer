@@ -4,6 +4,7 @@
 1. Install ["Windows SDK for Desktop C++ amd64 Apps" feature from Windows SDK](https://learn.microsoft.com/windows/apps/windows-sdk/) for building multi-lingual setups.
 1. Digital signature service if the MSI should be signed (optional). If you plan to sign the MSI, you need to install the Windows SDK feature "Windows SDK Signing Tools for Desktops Apps".
 1. For reviewing the MSI setup or creating custom MST transforms you can install feature "MSI Tools" from Windows SDK (optional).
+1. Visual Studio Build Tools with the "Desktop development with C++" workload when building with runtime adverts (optional).
 
 ## How to upgrade to a new OpenJDK version
 
@@ -88,7 +89,79 @@ call powershell.exe ./CreateSourceFolder.AdoptOpenJDK.ps1 ^
   set OUTPUT_BASE_FILENAME=%PRODUCT_SKU%%PRODUCT_MAJOR_VERSION%-%PRODUCT_CATEGORY%_%FOLDER_PLATFORM%_windows_%PACKAGE_TYPE%-%PRODUCT_FULL_VERSION%F
   ```
 
- `Build.OpenJDK_generic.cmd` depends on the windows SDK. The default version used is `10.0.22621.0`, but you can set the following variables if you have a different + compatible version installed:
+### Optional runtime advert
+
+Set `ADVERT_API_URL` while building to request an advert from the Eclipse
+Newsroom API during full, interactive, first-time installs:
+
+```batch
+set ADVERT_API_URL=https://newsroom.eclipse.org/api/ads
+call Build.OpenJDK_generic.cmd
+```
+
+The installer posts one request to the API, which selects an eligible campaign
+and records its impression. It then downloads the returned image and displays it
+beneath the progress bar while installation is running. When the response also
+contains a `url`, the banner becomes a button that opens that URL unchanged in
+the user's default browser, so the API's tracking link records the click. A
+missing or invalid `url` leaves the banner displayed without a link. Campaigns
+can be changed without rebuilding the MSI. A timeout, network failure, empty
+campaign response, invalid response, or disabled custom action leaves the
+standard progress dialog unchanged and cannot fail the installation.
+
+The API request defaults are:
+
+```batch
+set ADVERT_API_HOST=adoptium.net
+set ADVERT_API_SOURCE=temurin-msi-installer
+set ADVERT_API_PUBLISH_TO=adoptium_msi_installer
+set ADVERT_API_FORMAT=ads_banner_880x240
+```
+
+The default JSON POST body is:
+
+```json
+{"host":"adoptium.net","source":"temurin-msi-installer","publish_to":"adoptium_msi_installer","format":{"ads_banner_880x240":1}}
+```
+
+An empty array response means that no campaign is eligible for this placement;
+the installer continues without an advert.
+
+These values can be overridden at build time. When `ADVERT_API_URL` is unset,
+`ADVERT_IMAGE_URL` provides a direct-image override for controlled testing.
+
+Endpoint requirements:
+
+- The API and returned production image must use HTTPS with valid certificates
+  and TLS 1.2.
+- For local testing only, plain HTTP is accepted for the literal loopback hosts
+  `localhost`, `127.0.0.1`, and `::1`. HTTP is rejected for every other host.
+- A direct HTTP 200 response; redirects and URLs containing credentials are rejected.
+- The click `url` follows the same rules as the image URL: HTTPS (or loopback
+  HTTP for local testing), no credentials, fragments, whitespace or control
+  characters, and at most 2048 characters. It may redirect after it is opened
+  in the browser.
+- A JPEG, BMP, or PNG response no larger than 1 MiB. JPEG or BMP is required for
+  Windows 7 compatibility; PNG is supported by the Windows Installer bitmap
+  control on Windows 8 and later.
+- Images should be 880 x 240 pixels (11:3). They are centered and scaled
+  proportionally into the available progress dialog area.
+- Do not require cookies or include user-specific identifiers in the URL. The
+  API records the request host, source and client IP. Servers receive the fixed
+  user agent `Eclipse-Adoptium-MSI-Advert/1.0`.
+
+The downloaded file is deleted after its bytes are added to a temporary MSI
+Binary-table row. It is not installed or cached on the target machine. Because
+runtime content is not covered by the MSI signature, use an endpoint controlled
+by the same trusted publisher as the MSI.
+
+Administrators can suppress the request and dialog without changing the MSI:
+
+```batch
+msiexec /i OpenJDK.msi DISABLE_ADVERT=1
+```
+
+ `Build.OpenJDK_generic.cmd` depends on the windows SDK. The default version used is `10.0.26100.0`, but you can set the following variables if you have a different + compatible version installed:
 
   ```batch
   SET WIN_SDK_MAJOR_VERSION=10

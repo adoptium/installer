@@ -18,6 +18,30 @@
     <SetProperty Id="ARPINSTALLLOCATION" Value="[INSTALLDIR]" After="CostFinalize" />
     <Icon Id="logo.ico" SourceFile="{vendor_branding_logo}" />
 
+    <?if $(env.ADVERT_ENABLED)=true ?>
+      <!-- The selected response image is loaded into temporary Binary and Control
+           table rows and is never written to the target system. -->
+      <?ifdef env.ADVERT_API_URL ?>
+        <Property Id="AdvertApiUrl" Value="$(env.ADVERT_API_URL)" Hidden="yes" />
+        <Property Id="AdvertApiHost" Value="$(env.ADVERT_API_HOST)" Hidden="yes" />
+        <Property Id="AdvertApiSource" Value="$(env.ADVERT_API_SOURCE)" Hidden="yes" />
+        <Property Id="AdvertApiPublishTo" Value="$(env.ADVERT_API_PUBLISH_TO)" Hidden="yes" />
+        <Property Id="AdvertApiFormat" Value="$(env.ADVERT_API_FORMAT)" Hidden="yes" />
+      <?endif?>
+      <?ifdef env.ADVERT_IMAGE_URL ?>
+        <Property Id="AdvertImageUrl" Value="$(env.ADVERT_IMAGE_URL)" Hidden="yes" />
+      <?endif?>
+      <Property Id="AdvertDisclosureText" Value="!(loc.AdvertDlgDescription)" />
+      <Property Id="AdvertLinkTooltip" Value="!(loc.AdvertLinkTooltip)" />
+      <Property Id="DISABLE_ADVERT" Value="0" />
+      <Binary Id="AdvertCustomAction" SourceFile="$(var.AdvertCustomActionPath)" />
+      <CustomAction Id="FetchAdvert" BinaryRef="AdvertCustomAction" DllEntry="FetchAdvert"
+        Execute="immediate" Return="ignore" />
+      <!-- Published by the banner button when the API returns a click URL. -->
+      <CustomAction Id="OpenAdvertLink" BinaryRef="AdvertCustomAction" DllEntry="OpenAdvertLink"
+        Execute="immediate" Return="ignore" />
+    <?endif?>
+
     <!-- Required for Windows 7 and later. -->
     <Launch Condition="Installed OR VersionNT &gt;= 601" Message="!(loc.OSVersionRequired)" />
     <Launch
@@ -79,6 +103,12 @@
         Condition='ACTION="INSTALL" AND (ALLUSERS="" OR ALLUSERS=0 OR (ALLUSERS=2 AND (NOT Privileged)))' />
       <Custom Action="CustomSetPerMachineFolder" After="CustomSetPerUserFolder"
         Condition='ACTION="INSTALL" AND (ALLUSERS=1 OR (ALLUSERS=2 AND Privileged))' />
+      <?if $(env.ADVERT_ENABLED)=true ?>
+        <!-- PrepareDlg remains visible while this short, fail-open request runs.
+             Do not contact the endpoint for passive/silent or maintenance installs. -->
+        <Custom Action="FetchAdvert" After="CostFinalize"
+          Condition='UILevel = 5 AND NOT Installed AND DISABLE_ADVERT &lt;&gt; "1"' />
+      <?endif?>
     </InstallUISequence>
 
     <!-- Add the shortcuts to your installer package -->

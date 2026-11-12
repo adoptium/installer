@@ -4,6 +4,8 @@
 	<String Id="ProductHelpLink" Value="{product_help_link}" />
 	<String Id="ProductUrlInfoAbout" Value="{product_support_link}" />
 	<String Id="ProductUrlUpdateInfo" Value="{product_update_info_link}" />
+	<String Id="AdvertDlgDescription" Value="Advertisement" />
+	<String Id="AdvertLinkTooltip" Value="Open this advert in your web browser" />
 	<String Id="OSVersionRequired" Value="Windows 7 ou ultérieur est requis." />
 	<String Id="ProductIsNotSupportedOnItanium" Value="Ce produit n'est pas pris en charge sur les systèmes Itanium 64 bits." />
 	<String Id="FeatureEnvironmentTitle" Value="Ajouter au PATH" />
