@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<installer-gui-script minSpecVersion="1.0">
+  <title>{package-name}</title>
+  <options rootVolumeOnly="true" hostArchitectures="{arch}"/>
+  <background file="{logo}" scaling="proportional" alignment="bottomleft"/>
+  <background-darkAqua file="{logo}" scaling="proportional" alignment="bottomleft"/>
+  <welcome file="welcome.html"/>
+  <license file="license.rtf"/>
+  <conclusion file="conclusion.html"/>
+  <choices-outline>
+    <line choice="installer_choice_1"/>
+  </choices-outline>
+  <choice id="installer_choice_1" title="{identifier}" description="">
+    <pkg-ref id="{identifier}"/>
+  </choice>
+  <pkg-ref id="{identifier}" version="{full_version}" auth="Root">#payload.pkg</pkg-ref>
+</installer-gui-script>

@@ -14,23 +14,34 @@
 # limitations under the License.
 ################################################################################
 
-set -eu
+set -euo pipefail
+umask 022
 
-SIGN_OPTION=
-SIGN_CMD=
-NOTARIZE_OPTION=
+SCRIPT_DIRECTORY=$(cd "$(dirname "$0")" && pwd)
+MAJOR_VERSION=
+FULL_VERSION=
+INPUT_DIRECTORY=
+OUTPUT_DIRECTORY=
+JVM=
+ARCHITECTURE=
+TYPE=
 IDENTIFIER=
 VENDOR="temurin"
 PACKAGE_NAME="Eclipse Temurin"
-LOGO="Resources/adoptium.png"
+LOGO="${SCRIPT_DIRECTORY}/Resources/adoptium.png"
+
+fail() {
+  echo "Error: $*" >&2
+  exit 1
+}
 
 while test $# -gt 0; do
   case "$1" in
     -h|--help)
       echo "options:"
       echo "-h, --help               show brief help"
-      echo "--major_version          <8,11,17,19>"
-      echo "--full_version           17.0.3_7"
+      echo "--major_version          Java feature version, e.g. 17"
+      echo "--full_version           17.0.3+7"
       echo "-i, --input_directory    path to extracted jdk"
       echo "-o, --output_directory   name of the pkg file"
       echo "--jvm                    hotspot or openj9"
@@ -38,87 +49,53 @@ while test $# -gt 0; do
       echo "--type                   jdk or jre"
       echo "--vendor                 adoptium, dragonwell etc"
       echo "--package-name           full name of the package (shown in the title)"
-      echo "--logo                   Relative path to a custom logo (bottom left)"
+      echo "--logo                   Path to a custom logo (bottom left)"
       echo "--identifier             override the identifier e.g net.adoptopenjdk.17.jdk"
-      echo "-s, --sign               sign the installer"
+      echo "Produces an unsigned package for the Eclipse signing service."
       exit 0
       ;;
-    --major_version)
-      shift
-      MAJOR_VERSION=$1
-      shift
-      ;;
-    --full_version)
-      shift
-      FULL_VERSION=$1
-      shift
-      ;;
-    -i|--input_directory)
-      shift
-      INPUT_DIRECTORY=$1
-      shift
-      ;;
-    -o|--output_directory)
-      shift
-      OUTPUT_DIRECTORY=$1
-      shift
-      ;;
-    --jvm)
-      shift
-      JVM=$1
-      shift
-      ;;
-    --architecture)
-      shift
-      ARCHITECTURE="$1"
-      shift
-      ;;
-    --type)
-      shift
-      TYPE=$1
-      shift
-      ;;
-    --vendor)
-      shift
-      VENDOR="$1"
-      shift
-      ;;
-    --package-name)
-      shift
-      PACKAGE_NAME="$1"
-      shift
-      ;;
-    --logo)
-      shift
-      LOGO="$1"
-      shift
-      ;;
-    --identifier)
-      shift
-      IDENTIFIER="$1"
-      shift
+    --major_version|--full_version|-i|--input_directory|-o|--output_directory|--jvm|--architecture|--type|--vendor|--package-name|--logo|--identifier)
+      [ "$#" -ge 2 ] && [ -n "$2" ] || fail "Missing value for $1"
+      case "$1" in
+        --major_version) MAJOR_VERSION=$2 ;;
+        --full_version) FULL_VERSION=$2 ;;
+        -i|--input_directory) INPUT_DIRECTORY=$2 ;;
+        -o|--output_directory) OUTPUT_DIRECTORY=$2 ;;
+        --jvm) JVM=$2 ;;
+        --architecture) ARCHITECTURE=$2 ;;
+        --type) TYPE=$2 ;;
+        --vendor) VENDOR=$2 ;;
+        --package-name) PACKAGE_NAME=$2 ;;
+        --logo) LOGO=$2 ;;
+        --identifier) IDENTIFIER=$2 ;;
+      esac
+      shift 2
       ;;
     -s|--sign)
-      shift
-      SIGN_OPTION="true"
-      SIGN_CERT="$1"
-      NOTARIZE_OPTION="true"
-      shift
+      fail "Local signing is no longer supported. Use codesign/eclipse-codesign.sh after building."
       ;;
     *)
-      break
+      fail "Unknown option: $1"
       ;;
   esac
 done
 
-# Ensures that ARCHITECTURE is valid to avoid incorrectly compiled PKGs
+[[ "$MAJOR_VERSION" =~ ^[1-9][0-9]*$ ]] || fail "A numeric --major_version is required"
+[[ "$FULL_VERSION" =~ ^[0-9][A-Za-z0-9.+_-]*$ ]] || fail "A valid --full_version is required"
+[[ "$VENDOR" != *[!A-Za-z0-9._-]* ]] || fail "Invalid vendor: $VENDOR"
+[ -n "$INPUT_DIRECTORY" ] && [ -d "${INPUT_DIRECTORY}/Contents" ] && [ -f "${INPUT_DIRECTORY}/Contents/Info.plist" ] \
+  || fail "--input_directory must contain a macOS JDK or JRE bundle (Contents/Info.plist)"
+[ -n "$OUTPUT_DIRECTORY" ] || fail "--output_directory is required"
+[ -f "$LOGO" ] || fail "Logo not found: $LOGO"
+
 case $ARCHITECTURE in
-  x86_64) ;;
-  arm64) ;;
-  *)
-    echo "Unknown architecture: $ARCHITECTURE"
-    exit 1
-    ;;
+  x86_64|arm64) ;;
+  *) fail "Unknown architecture: $ARCHITECTURE" ;;
+esac
+
+case $TYPE in
+  jdk|jre) ;;
+  *) fail "Unknown package type: $TYPE" ;;
 esac
 
 case $JVM in
@@ -127,79 +104,93 @@ case $JVM in
       IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}-openj9.${TYPE}"
     fi
     DIRECTORY="${VENDOR}-${MAJOR_VERSION}-openj9.${TYPE}"
-    BUNDLE="${PACKAGE_NAME} (OpenJ9)"
-    cp Licenses/license-OpenJ9.en-us.rtf Resources/license.rtf
-    case $TYPE in
-      jre) BUNDLE="${PACKAGE_NAME} (OpenJ9, JRE)" ;;
-      jdk) BUNDLE="${PACKAGE_NAME} (OpenJ9)" ;;
-    esac
+    LICENSE="license-OpenJ9.en-us.rtf"
     ;;
-  *)
+  hotspot)
     if [ -z "$IDENTIFIER" ]; then
       IDENTIFIER="net.${VENDOR}.${MAJOR_VERSION}.${TYPE}"
     fi
     DIRECTORY="${VENDOR}-${MAJOR_VERSION}.${TYPE}"
-    cp Licenses/license-GPLv2+CE.en-us.rtf Resources/license.rtf
-    case $TYPE in
-      jre) BUNDLE="${PACKAGE_NAME} (JRE)" ;;
-      jdk) BUNDLE="${PACKAGE_NAME}" ;;
-    esac
+    LICENSE="license-GPLv2+CE.en-us.rtf"
     ;;
+  *) fail "Unknown JVM: $JVM" ;;
 esac
 
-OUTPUT_FILE=$(basename "$OUTPUT_DIRECTORY" | cut -f 1 -d '.')
+[[ "$IDENTIFIER" != *[!A-Za-z0-9._-]* ]] || fail "Invalid identifier: $IDENTIFIER"
 
-rm -rf *.pkg build/*.pkg distribution.xml Resources/en.lproj/welcome.html Resources/en.lproj/conclusion.html OpenJDKPKG.pkgproj "${DIRECTORY}"
+WORK_DIRECTORY=$(mktemp -d "${TMPDIR:-/tmp}/temurin-pkg.XXXXXX")
+readonly WORK_DIRECTORY
+trap 'rm -rf "$WORK_DIRECTORY"' EXIT
 
-cp -R "${INPUT_DIRECTORY}" "${DIRECTORY}"
+PAYLOAD_DIRECTORY="${WORK_DIRECTORY}/root/Library/Java/JavaVirtualMachines"
+RESOURCE_DIRECTORY="${WORK_DIRECTORY}/Resources"
+mkdir -p "$PAYLOAD_DIRECTORY" "$RESOURCE_DIRECTORY/en.lproj" "${WORK_DIRECTORY}/scripts"
+ditto --norsrc --noextattr --noqtn "$INPUT_DIRECTORY" "${PAYLOAD_DIRECTORY}/${DIRECTORY}"
+chmod 755 "${PAYLOAD_DIRECTORY}/${DIRECTORY}"
+cp "${SCRIPT_DIRECTORY}/Resources/preinstall" "${WORK_DIRECTORY}/scripts/preinstall"
+chmod 755 "${WORK_DIRECTORY}/scripts/preinstall"
+cp "${SCRIPT_DIRECTORY}/Licenses/${LICENSE}" "${RESOURCE_DIRECTORY}/en.lproj/license.rtf"
+LOGO_FILE=$(basename "$LOGO")
+cp "$LOGO" "${RESOURCE_DIRECTORY}/${LOGO_FILE}"
 
-if [ ! -z "$SIGN_OPTION" ]; then
-    xattr -cr .
-    security unlock-keychain -p `cat ~/.password` login.keychain-db
-    /usr/bin/codesign --verbose=4 --deep --force -s - ${DIRECTORY}
-fi
+escape_template_value() {
+  printf '%s' "$1" | sed \
+    -e 's/&/\&amp;/g' \
+    -e 's/</\&lt;/g' \
+    -e 's/>/\&gt;/g' \
+    -e 's/"/\&quot;/g' \
+    -e "s/'/\\&apos;/g" \
+    -e 's/[\\&|]/\\&/g'
+}
 
-cat OpenJDKPKG.pkgproj.template  \
-  | sed -E "s~\\{path\\}~$DIRECTORY~g" \
-  | sed -E "s~\\{output\\}~$OUTPUT_FILE~g" \
-  | sed -E "s~\\{identifier\\}~$IDENTIFIER~g" \
-  | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
-  | sed -E "s~\\{directory\\}~$DIRECTORY~g" \
-  | sed -E "s~\\{logo\\}~$LOGO~g" \
-  | sed -E "s~\\{arch\\}~$ARCHITECTURE~g" \
-  | sed -E "s~\\{full-version\\}~$FULL_VERSION~g" \
-  >OpenJDKPKG.pkgproj ; \
+XML_PACKAGE_NAME=$(escape_template_value "$PACKAGE_NAME")
+XML_DIRECTORY=$(escape_template_value "$DIRECTORY")
+XML_IDENTIFIER=$(escape_template_value "$IDENTIFIER")
+XML_FULL_VERSION=$(escape_template_value "$FULL_VERSION")
+XML_LOGO_FILE=$(escape_template_value "$LOGO_FILE")
 
-  cat Resources/en.lproj/welcome.html.tmpl  \
-  | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
-  | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
-  | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
-  >Resources/introduction.html ; \
+render_template() {
+  sed \
+    -e "s|{package-name}|$XML_PACKAGE_NAME|g" \
+    -e "s|{directory}|$XML_DIRECTORY|g" \
+    -e "s|{identifier}|$XML_IDENTIFIER|g" \
+    -e "s|{full_version}|$XML_FULL_VERSION|g" \
+    -e "s|{logo}|$XML_LOGO_FILE|g" \
+    -e "s|{arch}|$ARCHITECTURE|g" \
+    "$1" > "$2"
+}
 
-  cat Resources/en.lproj/conclusion.html.tmpl  \
-  | sed -E "s/\\{full_version\\}/$FULL_VERSION/g" \
-  | sed -E "s/\\{directory\\}/$DIRECTORY/g" \
-  | sed -E "s~\\{package-name\\}~$PACKAGE_NAME~g" \
-  >Resources/summary.html ; \
+render_template "${SCRIPT_DIRECTORY}/distribution.xml.template" "${WORK_DIRECTORY}/Distribution"
+render_template "${SCRIPT_DIRECTORY}/components.plist.template" "${WORK_DIRECTORY}/components.plist"
+render_template "${SCRIPT_DIRECTORY}/Resources/en.lproj/welcome.html.tmpl" "${RESOURCE_DIRECTORY}/en.lproj/welcome.html"
+render_template "${SCRIPT_DIRECTORY}/Resources/en.lproj/conclusion.html.tmpl" "${RESOURCE_DIRECTORY}/en.lproj/conclusion.html"
 
-/usr/local/bin/packagesbuild -v OpenJDKPKG.pkgproj
+pkgbuild \
+  --root "${WORK_DIRECTORY}/root" \
+  --component-plist "${WORK_DIRECTORY}/components.plist" \
+  --identifier "$IDENTIFIER" \
+  --version "$FULL_VERSION" \
+  --install-location / \
+  --ownership recommended \
+  --scripts "${WORK_DIRECTORY}/scripts" \
+  --filter '(^|/)(\._[^/]*|\.DS_Store|\.pbdevelopment|CVS|\.cvsignore|\.cvspass|\.svn|\.git|\.gitignore|Resources Disabled)(/|$)|\.nib/(classes\.nib|designable\.db|info\.nib)$' \
+  "${WORK_DIRECTORY}/component.pkg"
 
-if [ ! -z "$SIGN_OPTION" ]; then
-    /usr/bin/productsign --sign "${SIGN_CERT}" build/"$OUTPUT_FILE.pkg" "$OUTPUT_DIRECTORY"
-else
-    mv build/"$OUTPUT_FILE.pkg" "$OUTPUT_DIRECTORY"
-fi
+# pkgbuild otherwise resets permissions on pre-existing shared directories.
+pkgutil --expand "${WORK_DIRECTORY}/component.pkg" "${WORK_DIRECTORY}/component"
+sed 's/overwrite-permissions="true"/overwrite-permissions="false"/' \
+  "${WORK_DIRECTORY}/component/PackageInfo" > "${WORK_DIRECTORY}/PackageInfo"
+[ "$(xmllint --xpath 'string(/pkg-info/@overwrite-permissions)' "${WORK_DIRECTORY}/PackageInfo")" = false ] \
+  || fail "Could not preserve existing directory permissions in PackageInfo"
+mv "${WORK_DIRECTORY}/PackageInfo" "${WORK_DIRECTORY}/component/PackageInfo"
+pkgutil --flatten "${WORK_DIRECTORY}/component" "${WORK_DIRECTORY}/payload.pkg"
 
-if [ ! -z "$NOTARIZE_OPTION" ]; then
-  echo "Notarizing the installer (please be patient! this takes aprox 10 minutes)"
-  sudo xcode-select --switch /Applications/Xcode.app || true
-  cd notarize
-  npm install
-  node notarize.js --appBundleId $IDENTIFIER --appPath ${OUTPUT_DIRECTORY}
-  if [ $? != 0 ]; then
-    exit 1
-  fi
-  # Validates that the app has been notarized
-  spctl -a -v --type install ${OUTPUT_DIRECTORY}
-  cd -
-fi
+productbuild \
+  --distribution "${WORK_DIRECTORY}/Distribution" \
+  --resources "$RESOURCE_DIRECTORY" \
+  --package-path "$WORK_DIRECTORY" \
+  "${WORK_DIRECTORY}/product.pkg"
+
+mkdir -p "$(dirname "$OUTPUT_DIRECTORY")"
+mv "${WORK_DIRECTORY}/product.pkg" "$OUTPUT_DIRECTORY"
+echo "Created unsigned installer: $OUTPUT_DIRECTORY"

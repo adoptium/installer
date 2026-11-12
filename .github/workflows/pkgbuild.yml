@@ -4,63 +4,65 @@ on:
   pull_request:
     branches: [ master ]
     paths:
-      - 'pkgbuild/**'
-      - '.github/workflows/pkgbuild.yml'
+      - .github/workflows/pkgbuild.yml
+      - pkgbuild/**
+      - test/functional/pkgbuild/**
 permissions:
   contents: read
-
 jobs:
-  pkgbuild:
-    strategy:
-      fail-fast: false
-      matrix:
-        jdk: [8, 11, 17, 21]
-        architecture: [x64, aarch64]
-        exclude:
-          - jdk: 8
-            architecture: aarch64
-    name: pkgbuild
+  resolve-latest-releases:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.resolve.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Resolve latest LTS packages from the Adoptium API
+        id: resolve
+        run: |
+          MATRIX="$(python3 pkgbuild/resolve_latest_mac_matrix.py)"
+          echo "matrix=${MATRIX}" >> "$GITHUB_OUTPUT"
+
+  test:
     runs-on: macos-latest
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Test native packaging and API matrix generation
+        run: |
+          bash test/functional/pkgbuild/runInstallerTests.sh
+          bash test/functional/pkgbuild/testUpgradeDowngrade.sh
+          PYTHONPATH=. python3 -m unittest discover \
+            -s test/functional/pkgbuild -p 'test_*.py'
 
-    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
-    - name: Install dependencies
-      run: | 
-        brew update
-        brew install --cask packages
-
-    - name: Fetch latest macOS version from Adoptium API
-      run: |
-        response=$(curl -s "https://api.adoptium.net/v3/assets/feature_releases/${{ matrix.jdk }}/ga?architecture=${{ matrix.architecture }}&image_type=jdk&os=mac&page=0&page_size=1")
-        json=$(echo "$response" | jq '.[0]')
-
-        major=$(echo "$json" | jq -r '.version_data.major')
-        echo "MAJOR_VERSION=$major" >> $GITHUB_ENV
-        echo "TAG=$(echo "$json" | jq -r '.release_name')" >> $GITHUB_ENV
-
-        # SUB_TAG is used to create the file name of the JDK/JRE zip file
-        release_name=$(echo "$json" | jq -r '.release_name')
-        if [[ "$major" -eq 8 ]]; then
-          subTag=$(echo "$release_name" | sed -e 's/jdk//' -e 's/-//')
-        else
-          subTag=$(echo "$release_name" | sed -e 's/jdk-//' -e 's/+/_/')
-        fi
-        echo "FULL_VERSION=$subTag" >> $GITHUB_ENV
-        echo "SUB_TAG=$subTag" >> $GITHUB_ENV
-
-    - name: Download prebuilt binaries
-      run: |
-        mkdir -p workspace/target/
-        cd workspace/target/
-        wget -q "https://github.com/adoptium/temurin${{ env.MAJOR_VERSION }}-binaries/releases/download/${{ env.TAG }}/OpenJDK${{ env.MAJOR_VERSION }}U-jdk_${{ matrix.architecture }}_mac_hotspot_${{ env.SUB_TAG }}.tar.gz"
-
-    - name: Create Package
-      run: |
-        export WORKSPACE=$PWD
-        bash pkgbuild/create-installer-mac.sh
-
-    - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-      with:
-        name: macos-${{ env.MAJOR_VERSION }}-${{ matrix.architecture }}
-        path: workspace/target/*.pkg
+  pkgbuild:
+    needs: [resolve-latest-releases, test]
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.resolve-latest-releases.outputs.matrix) }}
+    name: "macOS ${{ matrix.major_version }} ${{ matrix.architecture }} ${{ matrix.image_type }}"
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Download latest Temurin archive
+        env:
+          ARCHIVE_URL: ${{ matrix.archive_url }}
+          ARCHIVE_NAME: ${{ matrix.archive_name }}
+          ARCHIVE_SHA256: ${{ matrix.archive_sha256 }}
+        run: |
+          mkdir -p workspace/target
+          curl --fail --location --retry 3 \
+            "$ARCHIVE_URL" \
+            --output "workspace/target/$ARCHIVE_NAME"
+          printf '%s  %s\n' "$ARCHIVE_SHA256" "workspace/target/$ARCHIVE_NAME" \
+            | shasum -a 256 -c
+      - name: Build unsigned installer for Eclipse signing service
+        env:
+          WORKSPACE: ${{ github.workspace }}
+          MAJOR_VERSION: ${{ matrix.major_version }}
+          FULL_VERSION: ${{ matrix.full_version }}
+        run: bash pkgbuild/create-installer-mac.sh
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: macOS-${{ matrix.major_version }}-${{ matrix.architecture }}-${{ matrix.image_type }}
+          path: workspace/target/*.pkg

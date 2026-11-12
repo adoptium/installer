@@ -14,34 +14,32 @@
 # limitations under the License.
 ################################################################################
 
-set -eu
+set -euo pipefail
 
-if [ -f ~/.password ]; then
-  security unlock-keychain -p `cat ~/.password` login.keychain-db
+SCRIPT_DIRECTORY=$(cd "$(dirname "$0")" && pwd)
+: "${WORKSPACE:?WORKSPACE must point to the installer workspace}"
+: "${MAJOR_VERSION:?MAJOR_VERSION is required}"
+: "${FULL_VERSION:?FULL_VERSION is required}"
+SEARCH_PATTERN=${SEARCH_PATTERN:-OpenJDK*-j*.tar.gz}
+
+if [ -n "${CERTIFICATE:-}" ]; then
+  echo "Warning: CERTIFICATE is ignored; the installer must be signed separately." >&2
 fi
 
-set +u
-if [ -z "$CERTIFICATE" ]; then
-  SIGN_CMD=
-  SIGN_CERT=
-else
-  SIGN_CMD="--sign"
-  SIGN_CERT="${CERTIFICATE}"
-fi
-set -u
+WORK_DIRECTORY=$(mktemp -d "${TMPDIR:-/tmp}/temurin-mac.XXXXXX")
+readonly WORK_DIRECTORY
+trap 'rm -rf "$WORK_DIRECTORY"' EXIT
 
-set +u
-if [ -z "$SEARCH_PATTERN" ]; then
-  SEARCH_PATTERN=OpenJDK*-j*.tar.gz
-fi
-set -u
-
-cd pkgbuild
-for f in $WORKSPACE/workspace/target/${SEARCH_PATTERN};
-do tar -xf "$f";
+# SEARCH_PATTERN is a glob and must stay unquoted so it expands.
+# shellcheck disable=SC2086
+for f in "$WORKSPACE"/workspace/target/${SEARCH_PATTERN}; do
+  if [ ! -f "$f" ]; then
+    echo "No input archives match: $WORKSPACE/workspace/target/$SEARCH_PATTERN" >&2
+    exit 1
+  fi
   echo "Processing: $f"
-
-  rm -rf Resources/license.rtf
+  INPUT_DIRECTORY=$(mktemp -d "${WORK_DIRECTORY}/input.XXXXXX")
+  tar -xf "$f" -C "$INPUT_DIRECTORY"
 
   case $f in
     *hotspot*)
@@ -74,19 +72,26 @@ do tar -xf "$f";
     *aarch64*)
       ARCHITECTURE="arm64"
       ;;
+    *)
+      echo "Cannot identify architecture from filename: $f" >&2
+      exit 1
+      ;;
   esac
 
-  directory=$(ls -d jdk*)
-  file=${f%%.tar.gz*}
-
-  if [ -z "$SIGN_CMD" ]; then
-    echo running "./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}"
-    ./packagesbuild.sh --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}
-  else
-    echo running "./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}"
-    ./packagesbuild.sh ${SIGN_CMD} "${SIGN_CERT}" --major_version ${MAJOR_VERSION} --full_version ${FULL_VERSION} --input_directory ${directory} --output_directory ${file}.pkg --jvm ${JVM} --architecture ${ARCHITECTURE} --type ${TYPE}
+  set -- "$INPUT_DIRECTORY"/*
+  if [ "$#" -ne 1 ] || [ ! -d "$1/Contents" ]; then
+    echo "Expected exactly one JDK or JRE bundle in $f" >&2
+    exit 1
   fi
 
-  rm -rf ${directory}
-  rm -rf ${f}
+  "${SCRIPT_DIRECTORY}/packagesbuild.sh" \
+    --major_version "$MAJOR_VERSION" \
+    --full_version "$FULL_VERSION" \
+    --input_directory "$1" \
+    --output_directory "${f%.tar.gz}.pkg" \
+    --jvm "$JVM" \
+    --architecture "$ARCHITECTURE" \
+    --type "$TYPE"
+
+  rm "$f"
 done
