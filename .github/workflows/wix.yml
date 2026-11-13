@@ -20,9 +20,6 @@ jobs:
         include:
           - jdk: 8
             ICEDTEA_WEB_VERSION: "icedtea-web-1.8.8"
-          - jdk: 11
-            arch: x86-32
-            jvm: hotspot
 
     name: wix
     runs-on: windows-latest
