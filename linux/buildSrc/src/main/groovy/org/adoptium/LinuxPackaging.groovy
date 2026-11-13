@@ -133,6 +133,13 @@ class LinuxPackaging {
 		p.rootProject.hasProperty('CONTAINER_REGISTRY') ? p.rootProject.CONTAINER_REGISTRY.toString() : ''
 	}
 
+	private static File packagingDir(Project p, String prod, Integer prodVersion) {
+		if (p.rootProject.hasProperty('PACKAGING_DIR')) {
+			return p.file(p.rootProject.PACKAGING_DIR.toString())
+		}
+		return p.file("src/main/packaging/${prod}/${prodVersion}")
+	}
+
 	// ── Task creation ──────────────────────────────────────────────────────
 
 	private static void createTasks(Project project, Map config) {
@@ -192,7 +199,7 @@ class LinuxPackaging {
 
 				// Copy packaging templates into build dir
 				project.copy {
-					from("src/main/packaging/${prod}/${prodVersion}/")
+					from(packagingDir(project, prod, prodVersion))
 					into("${project.buildDir}/generated/packaging")
 				}
 
@@ -275,7 +282,7 @@ class LinuxPackaging {
 	// ── Helpers ────────────────────────────────────────────────────────────
 
 	private static void validateProductDir(Project project, String prod, Integer prodVersion) {
-		if (!project.file("src/main/packaging/${prod}/${prodVersion}").exists()) {
+		if (!packagingDir(project, prod, prodVersion).exists()) {
 			throw new IllegalArgumentException("Unknown product ${prod}/${prodVersion}")
 		}
 	}

@@ -212,7 +212,7 @@ The process for updating the source files for both RHEL & Suse based distributio
 
 <h5>2.3.1 The header section(example below:)</h5>
 
-Microsoft's Red Hat [msopenjdk-25.spec](../linux/jdk/redhat/src/main/packaging/microsoft/25/msopenjdk-25.spec) must explicitly declare `Provides: libjawt.so()(64bit)` because `AutoReqProv: no` disables automatic capability generation. This advertises the bundled `libjawt.so` on x86_64 and aarch64 so dependent packages, such as `vtk-java`, can resolve their library dependency without any issue during installation. Automatic dependency generation remains disabled.
+Microsoft's Azure Linux [msopenjdk-25.spec](../linux/jdk/redhat/src/main/packaging/microsoft/azurelinux/25/msopenjdk-25.spec) must explicitly declare `Provides: libjawt.so()(64bit)` because `AutoReqProv: no` disables automatic capability generation. This advertises the bundled `libjawt.so` on x86_64 and aarch64 so dependent packages, such as `vtk-java`, can resolve their library dependency without any issue during installation. Automatic dependency generation remains disabled.
 
 This section requires updates to the following 2 fields:
 
@@ -383,8 +383,8 @@ Source9: %{source_url_base}/jdk-%{upstream_version_url}/OpenJDK21U-jdk_%{vers_ar
 <details><summary>2.4 Microsoft OpenJDK 25 Azure Linux Compatibility</summary>
 </br>
 
-This section describes the Azure Linux compatibility changes in the Microsoft Red Hat
-[msopenjdk-25.spec](../linux/jdk/redhat/src/main/packaging/microsoft/25/msopenjdk-25.spec).
+This section describes the Azure Linux compatibility changes in the Microsoft Azure Linux
+[msopenjdk-25.spec](../linux/jdk/redhat/src/main/packaging/microsoft/azurelinux/25/msopenjdk-25.spec).
 The examples below reflect the Azure Linux specific changes for Microsoft OpenJDK 25, not for other JDK versions. The SUSE specs and other Microsoft JDK major versions are unchanged.
 
 <h5>2.4.1 Versioned Java and headless capabilities</h5>
