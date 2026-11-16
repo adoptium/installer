@@ -136,8 +136,9 @@ class LinuxPackaging {
 	private static File packagingDir(Project p, String prod, Integer prodVersion) {
 		if (p.rootProject.hasProperty('PACKAGING_DIR')) {
 			return p.file(p.rootProject.PACKAGING_DIR.toString())
+		} else {
+			return p.file("src/main/packaging/${prod}/${prodVersion}")
 		}
-		return p.file("src/main/packaging/${prod}/${prodVersion}")
 	}
 
 	// ── Task creation ──────────────────────────────────────────────────────

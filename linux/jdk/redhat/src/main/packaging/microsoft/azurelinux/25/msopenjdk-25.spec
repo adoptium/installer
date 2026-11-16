@@ -259,13 +259,3 @@ fi
 %changelog
 * Sat Oct 24 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.5.0.2-1
 - Microsoft 25.0.5.0.2+1 initial release.
-* Wed Aug 12 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.4.1-1
-- Microsoft 25.0.4.1+1 initial release.
-* Sat Apr 18 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.3-1
-- Microsoft 25.0.3+9 initial release.
-* Wed Jan 07 2026 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.2-1
-- Microsoft 25.0.2+10 initial release.
-* Mon Oct 13 2025 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.1-1
-- Microsoft 25.0.1+8 initial release.
-* Tue Sep 16 2025 Microsoft Package Maintainers <openjdk@microsoft.com> 25.0.0-1
-- Microsoft 25.0.0+36 initial release.
